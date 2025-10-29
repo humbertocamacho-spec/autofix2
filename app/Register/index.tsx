@@ -30,7 +30,7 @@ export default function RegisterScreen() {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <Text style={styles.title}>Crear Cuenta</Text>
+        <Text style={styles.title}>Create Account</Text>
 
         <TextInput
             style={styles.input}
