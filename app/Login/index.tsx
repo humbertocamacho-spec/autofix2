@@ -11,7 +11,8 @@ export default function LoginScreen() {
   const handleLogin = () => {
     if (email === 'example.com' && password === '1234') {
       setError('');
-      router.replace('/Home');
+      router.replace('/Map');
+      //router.replace('/Home/map');
     } else {
       setError('Correo o contraseña incorrectos');
     }
