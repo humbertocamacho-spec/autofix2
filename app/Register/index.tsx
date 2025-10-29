@@ -30,6 +30,8 @@ export default function RegisterScreen() {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
+        <Text style={styles.titlecompany}>AutoFix</Text>
+
         <Text style={styles.title}>Create Account</Text>
 
         <TextInput
@@ -98,6 +100,7 @@ export default function RegisterScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: '#f5f5f5' },
+  titlecompany: {fontSize: 56, fontWeight: 'bold' , marginBottom: 50, textAlign: 'center', color: '#333'},
   title: { fontSize: 28, fontWeight: 'bold', marginBottom: 30, textAlign: 'center', color: '#333' },
   input: { backgroundColor: '#fff', padding: 15, borderRadius: 8, marginBottom: 15, fontSize: 16, borderWidth: 1, borderColor: '#ddd' },
   button: { backgroundColor: '#007AFF', padding: 15, borderRadius: 8, alignItems: 'center' },
