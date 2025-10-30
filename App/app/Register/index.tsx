@@ -11,16 +11,34 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const isDisabled = !name || !lastname || !phone || !email || !password;
 
-  const handleRegister = () => {
-    
-    if (isDisabled) {
-        Alert.alert('Error', 'Completa todos los campos');
-        return;
+  const handleRegister = async () => {
+  if (isDisabled) {
+    Alert.alert('Error', 'Completa todos los campos');
+    return;
+  }
+
+  try {
+    const res = await fetch('http://192.168.2.8:5001/api/auth/register', { // usa 10.0.2.2 si es emulador Android
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, lastname, phone, email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      Alert.alert('Error', data.message);
+      return;
     }
 
-    Alert.alert('Éxito', 'Cuenta creada (Ejemplo)');
+    Alert.alert('Éxito', 'Cuenta creada correctamente');
     router.replace('../Login');
-  };
+  } catch (error) {
+    console.error(error);
+    Alert.alert('Error', 'No se pudo conectar al servidor');
+  }
+};
+
 
   return (
     <>

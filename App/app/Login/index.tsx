@@ -8,15 +8,35 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    if (email === 'example.com' && password === '1234') {
-      setError('');
-      router.replace('/Map');
-      //router.replace('/Home/map');
-    } else {
-      setError('Correo o contraseña incorrectos');
+  const handleLogin = async () => {
+  if (!email || !password) {
+    setError('Completa todos los campos');
+    return;
+  }
+
+  try {
+    const res = await fetch('http://192.168.2.8:5001/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      setError(data.message);
+      return;
     }
-  };
+
+    setError('');
+    // Guardar userId o token si quieres
+    router.replace('/Map'); // Navegar a la pantalla principal
+  } catch (err) {
+    console.error(err);
+    setError('No se pudo conectar al servidor');
+  }
+};
+
 
   return (
     <>
