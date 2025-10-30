@@ -12,9 +12,22 @@ export default function RegisterScreen() {
   const isDisabled = !name || !lastname || !phone || !email || !password;
 
   const handleRegister = async () => {
-    if (isDisabled) {
-      Alert.alert('Error', 'Completa todos los campos');
+
+    const emailvalidate = /^[^\s@]+@gmail\.com$/;
+    const phonevalidate = /^[0-9]{10}$/;
+
+    if(!emailvalidate.test(email)) {
+      Alert.alert('Error','Correo Invalido');
       return;
+    }
+
+    if(!phonevalidate.test(phone)) {
+      Alert.alert('Error','Telefono Invalido');
+      return;
+    }
+
+    if(password.length < 8) {
+      Alert.alert('Error','La Contraseña debe incluir almenos 8 caracteres')
     }
 
     try {
