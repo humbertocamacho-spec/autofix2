@@ -23,20 +23,18 @@ export default function LoginScreen() {
 
     const data = await res.json();
 
-    if (!data.ok) {
-      setError(data.message);
-      return;
+      if (!data.ok) {
+        setError(data.message);
+        return;
+      }
+
+      setError('');
+      router.replace('/Map'); 
+    } catch (err) {
+      console.error(err);
+      setError('No se pudo conectar al servidor');
     }
-
-    setError('');
-    // Guardar userId o token si quieres
-    router.replace('/Map'); // Navegar a la pantalla principal
-  } catch (err) {
-    console.error(err);
-    setError('No se pudo conectar al servidor');
-  }
-};
-
+  };
 
   return (
     <>
