@@ -1,12 +1,14 @@
 import { Stack, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [remember, setRemember] = useState(false);
 
   const handleLogin = async () => {
   if (!email || !password) {
@@ -36,65 +38,142 @@ export default function LoginScreen() {
     }
   };
 
+  type RememberCheckBoxProps = {
+  value: boolean;
+  onValueChange: (newValue: boolean) => void;
+  label: string;
+  };
+
+  const RememberCheckBox: React.FC<RememberCheckBoxProps> = ({ value, onValueChange, label }) => {
+    return (
+      <TouchableOpacity
+        style={styles.checkboxContainer}
+        onPress={() => onValueChange(!value)}
+        activeOpacity={0.8}
+      >
+        <View style={[styles.checkbox, value && styles.checkboxChecked]} />
+        <Text style={styles.checkboxLabel}>{label}</Text>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
 
       <KeyboardAvoidingView
-        style={styles.container}
+        style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <Text style={styles.titlecompany}>AutoFix</Text>
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+          
+          <View style={styles.logoContainer}>
+            <Image source={require('../../assets/images/LogoAutoFix.png')}
+            style={styles.LogoAutoFix}
+            resizeMode='contain'
+            />
+          </View>
+          
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>¡Bienvenido!</Text>
+            <Text style={styles.subtitle}>Ingresa tu correo y contraseña</Text>
+          </View>
+          
+          <View style={styles.inputContainer}>
 
-        <Text style={styles.title}>Sign Up</Text>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.inputField}
+                placeholder="Correo"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              <Ionicons
+                name="mail-outline"
+                size={20}
+                color="#27B9BA"
+                style={styles.inputIcon}
+              />
+            </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="E-mail"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.inputField}
+                placeholder="Contraseña"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                autoCapitalize="none"
+              />
+              <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color="#27B9BA"
+                style={styles.inputIcon}
+              />
+            </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          autoCapitalize="none"
-        />
+          </View>
+          
+          <View style={styles.actionsContainer}>
+            <RememberCheckBox
+              value={remember}
+              onValueChange={setRemember}
+              label={" Recordar"}
+            />
 
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+            <TouchableOpacity onPress={() => console.log('¿Olvidaste tu contraseña?')}>
+              <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
+            </TouchableOpacity>
+          </View>
 
-        <TouchableOpacity
-          style={[styles.button, !email || !password ? styles.buttonDisabled : {}, { marginBottom: 15 }]}
-          onPress={handleLogin}
-          disabled={!email || !password}
-        >
-          <Text style={styles.buttonText}>Sign Up</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          style={[styles.button]}
-          onPress={() => router.push('../Register')}
-        >
-          <Text style={styles.buttonText}>Create Account</Text>
-        </TouchableOpacity>
+          {error ? <Text style={styles.error}>{error}</Text> : null}
 
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button]}
+              onPress={handleLogin}
+              disabled={!email || !password}
+            >
+              <Text style={styles.buttonText}>Iniciar Sesión</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.newuserContainer}>
+            <Text>¿No tienes un usuario?</Text>
+            <TouchableOpacity onPress={() => router.push('/Register')}>
+              <Text style={[styles.linkText, { marginLeft: 5 }]}>Registrate aquí</Text>
+            </TouchableOpacity>
+          </View>
+
+        </ScrollView>
       </KeyboardAvoidingView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: '#f5f5f5' },
-  titlecompany: {fontSize: 56, fontWeight: 'bold' , marginBottom: 130, textAlign: 'center', color: '#333'},
-  title: { fontSize: 28, fontWeight: 'bold', marginBottom: 30, textAlign: 'left', color: '#333' },
-  input: { backgroundColor: '#fff', padding: 15, borderRadius: 8, marginBottom: 15, fontSize: 16, borderWidth: 1, borderColor: '#ddd' },
+  container: { flex: 1, justifyContent: 'center', padding: 25, backgroundColor: '#f5f5f5' },
+  logoContainer: { alignItems: 'center' },
+  LogoAutoFix: { width: 250, height: 250 },
+  titleContainer: { textAlign: 'center', marginBottom: 25, marginTop: -45 },
+  title: { fontSize: 38, fontWeight: 'bold', textAlign: 'center', color: '#27B9BA' },
+  subtitle: { fontSize: 18, fontWeight: 'normal', marginBottom: 80, textAlign: 'center', color: '#000000ff' },
+  inputContainer: { width: '100%' },
+  inputWrapper: { flexDirection: 'row', alignItems: 'center', width: '100%', backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#ddd', marginBottom: 25, paddingHorizontal: 15 },
+  inputField: { flex: 1, height: 50, fontSize: 16 },
+  inputIcon: { marginLeft: 10 },
+  actionsContainer: { width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 100 },
+  checkboxContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  checkbox: { width: 20, height: 20, borderWidth: 1, borderColor: '#ccc', borderRadius: 4 },
+  checkboxChecked: { backgroundColor: '#27B9BA' },
+  checkboxLabel: { marginLeft: 8, fontSize: 14, color: '#333' },
+  linkText: { color: '#007AFF', fontSize: 14 },
   error: { color: 'red', marginBottom: 10, textAlign: 'center' },
-  button: { backgroundColor: '#007AFF', padding: 15, borderRadius: 8, alignItems: 'center' },
-  buttonDisabled: { backgroundColor: '#A0CFFF' },
+  buttonContainer: { width: '100%' },
+  button: { width: '100%', backgroundColor: '#27B9BA', padding: 15, borderRadius: 8, alignItems: 'center', marginBottom: 10 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  newuserContainer: { width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 40 }
 });
