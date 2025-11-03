@@ -1,7 +1,8 @@
 import { Stack, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -10,77 +11,91 @@ export default function LoginScreen() {
   const [error, setError] = useState('');
   const [remember, setRemember] = useState(false);
 
+  useEffect(() => {
+    const loadSavedCredentials = async () => {
+      try {
+        const savedEmail = await AsyncStorage.getItem('savedEmail');
+        const savedPassword = await AsyncStorage.getItem('savedPassword');
+
+        if (savedEmail) setEmail(savedEmail);
+        if (savedPassword) setPassword(savedPassword);
+        if (savedEmail && savedPassword) setRemember(true);
+      } catch (err) {
+        console.warn('Error cargando datos guardados:', err);
+      }
+    };
+    loadSavedCredentials();
+  }, []);
+
   const handleLogin = async () => {
-  if (!email || !password) {
-    setError('Completa todos los campos');
-    return;
-  }
+    if (!email || !password) {
+      setError('Completa todos los campos');
+      return;
+    }
 
-  try {
-    const res = await fetch('http://192.168.2.8:5001/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch('http://192.168.2.8:5001/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
       if (!data.ok) {
-        setError(data.message);
+        setError(data.message || 'Error en el login');
         return;
       }
 
       setError('');
-      router.replace('/Map'); 
+
+      try {
+        if (remember) {
+          await AsyncStorage.setItem('savedEmail', email);
+          await AsyncStorage.setItem('savedPassword', password);
+        } else {
+          await AsyncStorage.removeItem('savedEmail');
+          await AsyncStorage.removeItem('savedPassword');
+        }
+      } catch (storageError) {
+        console.warn('Error guardando datos:', storageError);
+      }
+
+      router.replace('/Map');
     } catch (err) {
       console.error(err);
       setError('No se pudo conectar al servidor');
     }
   };
 
-  type RememberCheckBoxProps = {
-  value: boolean;
-  onValueChange: (newValue: boolean) => void;
-  label: string;
+  const handleForgotPassword = () => {
+    router.push('/Register');
   };
 
-  const RememberCheckBox: React.FC<RememberCheckBoxProps> = ({ value, onValueChange, label }) => {
-    return (
-      <TouchableOpacity
-        style={styles.checkboxContainer}
-        onPress={() => onValueChange(!value)}
-        activeOpacity={0.8}
-      >
-        <View style={[styles.checkbox, value && styles.checkboxChecked]} />
-        <Text style={styles.checkboxLabel}>{label}</Text>
-      </TouchableOpacity>
-    );
-  };
+  const RememberCheckBox = ({ value, onValueChange, label }: { value: boolean; onValueChange: (val: boolean) => void; label: string }) => (
+    <TouchableOpacity style={styles.checkboxContainer} onPress={() => onValueChange(!value)} activeOpacity={0.8}>
+      <View style={[styles.checkbox, value && styles.checkboxChecked]} />
+      <Text style={styles.checkboxLabel}>{label}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <KeyboardAvoidingView
-        style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          
+
           <View style={styles.logoContainer}>
-            <Image source={require('../../assets/images/LogoAutoFix.png')}
-            style={styles.LogoAutoFix}
-            resizeMode='contain'
-            />
+            <Image source={require('../../assets/images/LogoAutoFix.png')} style={styles.LogoAutoFix} resizeMode="contain" />
           </View>
-          
+
           <View style={styles.titleContainer}>
             <Text style={styles.title}>¡Bienvenido!</Text>
             <Text style={styles.subtitle}>Ingresa tu correo y contraseña</Text>
           </View>
-          
-          <View style={styles.inputContainer}>
 
+          <View style={styles.inputContainer}>
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.inputField}
@@ -90,12 +105,7 @@ export default function LoginScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
-              <Ionicons
-                name="mail-outline"
-                size={20}
-                color="#27B9BA"
-                style={styles.inputIcon}
-              />
+              <Ionicons name="mail-outline" size={20} color="#27B9BA" style={styles.inputIcon} />
             </View>
 
             <View style={styles.inputWrapper}>
@@ -107,24 +117,13 @@ export default function LoginScreen() {
                 secureTextEntry
                 autoCapitalize="none"
               />
-              <Ionicons
-                name="lock-closed-outline"
-                size={20}
-                color="#27B9BA"
-                style={styles.inputIcon}
-              />
+              <Ionicons name="lock-closed-outline" size={20} color="#27B9BA" style={styles.inputIcon} />
             </View>
-
           </View>
-          
-          <View style={styles.actionsContainer}>
-            <RememberCheckBox
-              value={remember}
-              onValueChange={setRemember}
-              label={" Recordar"}
-            />
 
-            <TouchableOpacity onPress={() => console.log('¿Olvidaste tu contraseña?')}>
+          <View style={styles.actionsContainer}>
+            <RememberCheckBox value={remember} onValueChange={setRemember} label=" Recordar" />
+            <TouchableOpacity onPress={handleForgotPassword}>
               <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
             </TouchableOpacity>
           </View>
@@ -132,11 +131,7 @@ export default function LoginScreen() {
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.button]}
-              onPress={handleLogin}
-              disabled={!email || !password}
-            >
+            <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={!email || !password}>
               <Text style={styles.buttonText}>Iniciar Sesión</Text>
             </TouchableOpacity>
           </View>
