@@ -36,7 +36,7 @@ export default function RegisterScreen() {
     }
 
     try {
-      const res = await fetch('http://192.168.0.118:5001/api/auth/register', {
+      const res = await fetch('http://10.0.2.2:5001/api/auth/register', { // usa 10.0.2.2 emulador
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, phone, email, password }),
@@ -211,9 +211,9 @@ const styles = StyleSheet.create({
   inputField: { flex: 1, height: 50, fontSize: 16 },
   inputIcon: { marginLeft: 10 },
   error: { color: 'red', marginBottom: 10, textAlign: 'center', fontWeight: 'bold' },
-  buttonContainer: { width: '100%'},
+  buttonContainer: { width: '100%' },
   button: { width: '100%', backgroundColor: '#27B9BA', padding: 15, borderRadius: 8, alignItems: 'center', marginBottom: 10 },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold'},
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
   buttonDisabled: { backgroundColor: '#27B9BA', opacity: 0.6 }, 
   newuserContainer: { width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
   actionsContainer: { width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 50 },
