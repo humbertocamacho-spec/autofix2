@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '../../src/config';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -44,7 +45,7 @@ export default function LoginScreen() {
     }
 
     try {
-      const res = await fetch('http://192.168.0.118:5001/api/auth/login', {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
