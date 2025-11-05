@@ -2,6 +2,7 @@ import { Stack, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View,Text,ScrollView,Image, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { API_URL } from '@env';
 
 export default function RegisterScreen() {
   const [name,setName] = useState("");
@@ -36,7 +37,7 @@ export default function RegisterScreen() {
     }
 
     try {
-      const res = await fetch('http://10.0.2.2:5001/api/auth/register', { // usa 10.0.2.2 emulador
+      const res = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, phone, email, password }),
