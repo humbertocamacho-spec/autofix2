@@ -36,9 +36,9 @@ router.post('/login', async (req, res) => {
 //Ruta Register
 router.post('/register', async (req, res) => {
   try {
-    const { name, lastname, phone, email, password } = req.body;
+    const { name, phone, email, password } = req.body;
 
-    if (!name || !lastname || !phone || !email || !password) {
+    if (!name || !phone || !email || !password) {
       return res.status(400).json({ ok: false, message: 'Todos los campos son obligatorios' });
     }
 
@@ -62,8 +62,8 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password,10);
 
     const [result] = await pool.query(
-      'INSERT INTO users (name, lastname, phone, email, password) VALUES (?, ?, ?, ?, ?)',
-      [name, lastname, phone, email, hashedPassword]
+      'INSERT INTO users (name, phone, email, password) VALUES (?, ?, ?, ?)',
+      [name, phone, email, hashedPassword]
     );
 
     res.json({ ok: true, message: 'Usuario registrado', userId: result.insertId });

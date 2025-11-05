@@ -1,6 +1,16 @@
 import { Stack, useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ScrollView,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -34,7 +44,7 @@ export default function LoginScreen() {
     }
 
     try {
-      const res = await fetch('http://192.168.2.8:5001/api/auth/login', {
+      const res = await fetch('http://192.168.0.118:5001/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -49,6 +59,7 @@ export default function LoginScreen() {
 
       setError('');
 
+      // Guardar credenciales si "Recordar" está activado
       try {
         if (remember) {
           await AsyncStorage.setItem('savedEmail', email);
@@ -61,6 +72,7 @@ export default function LoginScreen() {
         console.warn('Error guardando datos:', storageError);
       }
 
+      // Redirigir al mapa
       router.replace('/Map');
     } catch (err) {
       console.error(err);
@@ -72,8 +84,20 @@ export default function LoginScreen() {
     router.push('/Register');
   };
 
-  const RememberCheckBox = ({ value, onValueChange, label }: { value: boolean; onValueChange: (val: boolean) => void; label: string }) => (
-    <TouchableOpacity style={styles.checkboxContainer} onPress={() => onValueChange(!value)} activeOpacity={0.8}>
+  const RememberCheckBox = ({
+    value,
+    onValueChange,
+    label,
+  }: {
+    value: boolean;
+    onValueChange: (val: boolean) => void;
+    label: string;
+  }) => (
+    <TouchableOpacity
+      style={styles.checkboxContainer}
+      onPress={() => onValueChange(!value)}
+      activeOpacity={0.8}
+    >
       <View style={[styles.checkbox, value && styles.checkboxChecked]} />
       <Text style={styles.checkboxLabel}>{label}</Text>
     </TouchableOpacity>
@@ -83,11 +107,17 @@ export default function LoginScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-
           <View style={styles.logoContainer}>
-            <Image source={require('../../assets/images/LogoAutoFix.png')} style={styles.LogoAutoFix} resizeMode="contain" />
+            <Image
+              source={require('../../assets/images/LogoAutoFix.png')}
+              style={styles.LogoAutoFix}
+              resizeMode="contain"
+            />
           </View>
 
           <View style={styles.titleContainer}>
@@ -131,7 +161,11 @@ export default function LoginScreen() {
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={!email || !password}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleLogin}
+              disabled={!email || !password}
+            >
               <Text style={styles.buttonText}>Iniciar Sesión</Text>
             </TouchableOpacity>
           </View>
@@ -139,10 +173,9 @@ export default function LoginScreen() {
           <View style={styles.newuserContainer}>
             <Text>¿No tienes un usuario?</Text>
             <TouchableOpacity onPress={() => router.push('/Register')}>
-              <Text style={[styles.linkText, { marginLeft: 5 }]}>Registrate aquí</Text>
+              <Text style={[styles.linkText, { marginLeft: 5 }]}>Regístrate aquí</Text>
             </TouchableOpacity>
           </View>
-
         </ScrollView>
       </KeyboardAvoidingView>
     </>
