@@ -1,14 +1,11 @@
 import { Stack, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { 
-  Alert, KeyboardAvoidingView, Platform, StyleSheet, View, Text, ScrollView, Image, TextInput, TouchableOpacity, Dimensions 
-} from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View, Text, ScrollView, Image, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { API_URL } from '@env';
 
-const { width, height } = Dimensions.get('window'); // dimensiones de la pantalla
+const { width, height } = Dimensions.get('window');
 
-// Props tipadas para RememberCheckBox
 type RememberCheckBoxProps = {
   value: boolean;
   onValueChange: (newValue: boolean) => void;
@@ -16,23 +13,19 @@ type RememberCheckBoxProps = {
 };
 
 const RememberCheckBox: React.FC<RememberCheckBoxProps> = ({ value, onValueChange, label }) => (
-  <TouchableOpacity
-    style={styles.checkboxContainer}
-    onPress={() => onValueChange(!value)}
-    activeOpacity={0.8}
-  >
+  <TouchableOpacity style={styles.checkboxContainer} onPress={() => onValueChange(!value)} activeOpacity={0.8}>
     <View style={[styles.checkbox, value && styles.checkboxChecked]} />
     <Text style={styles.checkboxLabel}>{label}</Text>
   </TouchableOpacity>
 );
 
 export default function RegisterScreen() {
-  const [name, setName] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [remember, setRemember] = useState<boolean>(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [remember, setRemember] = useState(false);
 
   const router = useRouter();
 
@@ -51,7 +44,7 @@ export default function RegisterScreen() {
     }
 
     if (!phonevalidate.test(phone)) {
-      Alert.alert('Error', 'Telefono Invalido');
+      Alert.alert('Error', 'Teléfono Invalido');
       return;
     }
 
@@ -64,7 +57,7 @@ export default function RegisterScreen() {
       const res = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone, email, password }),
+        body: JSON.stringify({ name, phone, email, password })
       });
 
       const data: { ok: boolean; message?: string } = await res.json();
@@ -86,15 +79,11 @@ export default function RegisterScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView 
-          contentContainerStyle={styles.container} 
-          keyboardShouldPersistTaps="handled"
+        <KeyboardAvoidingView
+          style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 25, backgroundColor: '#f5f5f5' }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
         >
-          {/* Logo */}
           <View style={styles.logoContainer}>
             <Image
               source={require('../../assets/images/LogoAutoFix.png')}
@@ -103,15 +92,12 @@ export default function RegisterScreen() {
             />
           </View>
 
-          {/* Titulo */}
           <View style={styles.titleContainer}>
             <Text style={styles.title}>¡Comencemos!</Text>
             <Text style={styles.subtitle}>Completa los datos para registrarte</Text>
           </View>
 
-          {/* Inputs */}
           <View style={styles.inputContainer}>
-            {/* Nombre */}
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.inputField}
@@ -120,7 +106,7 @@ export default function RegisterScreen() {
                 onChangeText={setName}
                 autoCapitalize="words"
               />
-              <Ionicons 
+              <Ionicons
                 name="person-outline"
                 size={width * 0.06}
                 color="#27B9BA"
@@ -128,7 +114,6 @@ export default function RegisterScreen() {
               />
             </View>
 
-            {/* Correo */}
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.inputField}
@@ -146,7 +131,6 @@ export default function RegisterScreen() {
               />
             </View>
 
-            {/* Teléfono */}
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.inputField}
@@ -164,7 +148,6 @@ export default function RegisterScreen() {
               />
             </View>
 
-            {/* Contraseña */}
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.inputField}
@@ -182,7 +165,6 @@ export default function RegisterScreen() {
               />
             </View>
 
-            {/* Recordar */}
             <View style={styles.actionsContainer}>
               <RememberCheckBox
                 value={remember}
@@ -197,72 +179,43 @@ export default function RegisterScreen() {
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          {/* Botón */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={handleRegister}>
               <Text style={styles.buttonText}>Siguiente</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Login */}
           <View style={styles.newUserContainer}>
             <Text>¿Ya tienes un usuario?</Text>
             <TouchableOpacity onPress={() => router.push('/Login')}>
               <Text style={styles.linkText}>Inicia Sesión</Text>
             </TouchableOpacity>
           </View>
-
-        </ScrollView>
       </KeyboardAvoidingView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: width * 0.06,
-    backgroundColor: '#f5f5f5',
-    paddingBottom: height * 0.05
-  },
-  logoContainer: { marginTop: height * 0.05,marginBottom: -40 },
+  logoContainer: { marginTop: height * 0.01, marginBottom: -40, alignItems: 'center' },
   logo: { width: width * 0.6, height: width * 0.6 },
-
   titleContainer: { alignItems: 'center', marginBottom: height * 0.03 },
   title: { fontSize: width * 0.1, fontWeight: 'bold', color: '#27B9BA', textAlign: 'center' },
   subtitle: { fontSize: width * 0.045, color: '#000', textAlign: 'center', marginTop: height * 0.005 },
-
   inputContainer: { width: '100%', marginBottom: height * 0.03 },
-  inputWrapper: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    width: '100%', 
-    backgroundColor: '#fff', 
-    borderRadius: 8, 
-    borderWidth: 1, 
-    borderColor: '#ddd', 
-    marginBottom: height * 0.02, 
-    paddingHorizontal: width * 0.04,
-    height: height * 0.065
-  },
+  inputWrapper: { flexDirection: 'row', alignItems: 'center', width: '100%', backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#ddd', marginBottom: height * 0.02, paddingHorizontal: width * 0.04, height: height * 0.065 },
   inputField: { flex: 1, fontSize: width * 0.045, height: '100%' },
   inputIcon: { marginLeft: width * 0.02 },
-
   actionsContainer: { width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: height * 0.05 },
   checkbox: { width: width * 0.05, height: width * 0.05, borderWidth: 1, borderColor: '#ccc', borderRadius: 4 },
   checkboxChecked: { backgroundColor: '#27B9BA' },
   checkboxLabel: { marginLeft: width * 0.02, fontSize: width * 0.03, color: '#333' },
   checkboxContainer: { flexDirection: 'row', alignItems: 'center' },
   textCondition: { fontSize: width * 0.03, color: '#007AFF' },
-
   buttonContainer: { width: '100%' },
   button: { width: '100%', backgroundColor: '#27B9BA', paddingVertical: height * 0.018, borderRadius: 8, alignItems: 'center', marginBottom: height * 0.02 },
   buttonText: { color: '#fff', fontSize: width * 0.045, fontWeight: 'bold' },
-
   newUserContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: height * 0.03 },
   linkText: { color: '#007AFF', fontSize: width * 0.04, marginLeft: 5 },
-
   error: { color: 'red', textAlign: 'center', fontWeight: 'bold', marginBottom: height * 0.01 }
 });

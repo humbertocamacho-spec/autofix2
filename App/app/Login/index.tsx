@@ -1,17 +1,6 @@
 import { Stack, useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Image,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  ScrollView,
-  Dimensions,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ScrollView, Dimensions, } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '@env';
@@ -79,7 +68,6 @@ export default function LoginScreen() {
 
       setError('');
 
-      // Guardar credenciales si "Recordar" está activado
       try {
         if (remember) {
           await AsyncStorage.setItem('savedEmail', email);
@@ -106,11 +94,11 @@ export default function LoginScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <KeyboardAvoidingView
+          style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 25, backgroundColor: '#f5f5f5' }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        >
           <View style={styles.logoContainer}>
             <Image
               source={require('../../assets/images/LogoAutoFix.png')}
@@ -175,54 +163,30 @@ export default function LoginScreen() {
               <Text style={[styles.linkText, { marginLeft: 5 }]}>Regístrate aquí</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
       </KeyboardAvoidingView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: width * 0.06,
-    backgroundColor: '#f5f5f5',
-    paddingBottom: height * 0.05,
-  },
-  logoContainer: { marginTop: height * 0.01, marginBottom: height * 0.01 },
-  logo: { width: width * 0.6, height: width * 0.8 },
 
+  logoContainer: { marginTop: height * -0.05, marginBottom: height * 0.01, alignItems: 'center' },
+  logo: { width: width * 0.6, height: width * 0.8 },
   titleContainer: { alignItems: 'center', marginBottom: height * 0.03, marginTop: -80 },
   title: { fontSize: width * 0.09, fontWeight: 'bold', color: '#27B9BA', textAlign: 'center' },
   subtitle: { fontSize: width * 0.045, color: '#000', textAlign: 'center', marginTop: height * 0.005 },
-
   inputContainer: { width: '100%', marginBottom: height * 0.01,  marginTop: 80 },
-  inputWrapper: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    width: '100%', 
-    backgroundColor: '#fff', 
-    borderRadius: 8, 
-    borderWidth: 1, 
-    borderColor: '#ddd', 
-    marginBottom: height * 0.02, 
-    paddingHorizontal: width * 0.04,
-    height: height * 0.065,
-  },
+  inputWrapper: {  flexDirection: 'row',  alignItems: 'center',  width: '100%',  backgroundColor: '#fff',  borderRadius: 8,  borderWidth: 1,  borderColor: '#ddd', marginBottom: height * 0.02,  paddingHorizontal: width * 0.04, height: height * 0.065, },
   inputField: { flex: 1, fontSize: width * 0.045, height: '100%' },
   inputIcon: { marginLeft: width * 0.02 },
-
   actionsContainer: { width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: height * 0.10 },
   checkboxContainer: { flexDirection: 'row', alignItems: 'center' },
   checkbox: { width: width * 0.05, height: width * 0.05, borderWidth: 1, borderColor: '#ccc', borderRadius: 4 },
   checkboxChecked: { backgroundColor: '#27B9BA' },
   checkboxLabel: { marginLeft: width * 0.02, fontSize: width * 0.035, color: '#333' },
-
   buttonContainer: { width: '100%' },
   button: { width: '100%', backgroundColor: '#27B9BA', paddingVertical: height * 0.018, borderRadius: 8, alignItems: 'center', marginBottom: height * 0.02 },
   buttonText: { color: '#fff', fontSize: width * 0.045, fontWeight: 'bold' },
-
   linkText: { color: '#007AFF', fontSize: width * 0.04 },
   error: { color: 'red', textAlign: 'center', fontWeight: 'bold', marginBottom: height * 0.01 },
   newUserContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: height * 0.03 },
