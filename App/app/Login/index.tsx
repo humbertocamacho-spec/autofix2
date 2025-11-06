@@ -14,11 +14,7 @@ type RememberCheckBoxProps = {
 };
 
 const RememberCheckBox: React.FC<RememberCheckBoxProps> = ({ value, onValueChange, label }) => (
-  <TouchableOpacity
-    style={styles.checkboxContainer}
-    onPress={() => onValueChange(!value)}
-    activeOpacity={0.8}
-  >
+  <TouchableOpacity style={styles.checkboxContainer} onPress={() => onValueChange(!value)} activeOpacity={0.8}>
     <View style={[styles.checkbox, value && styles.checkboxChecked]} />
     <Text style={styles.checkboxLabel}>{label}</Text>
   </TouchableOpacity>
@@ -95,73 +91,75 @@ export default function LoginScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
         <KeyboardAvoidingView
-          style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 25, backgroundColor: '#f5f5f5' }}
+          style={{ flex: 1, justifyContent: 'center', backgroundColor: '#f5f5f5', paddingHorizontal: 25 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+          keyboardVerticalOffset={0}
         >
-          <View style={styles.logoContainer}>
-            <Image
-              source={require('../../assets/images/LogoAutoFix.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-          </View>
-
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>¡Bienvenido!</Text>
-            <Text style={styles.subtitle}>Ingresa tu correo y contraseña</Text>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.inputField}
-                placeholder="Correo"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <View style={styles.logoContainer}>
+              <Image
+                source={require('../../assets/images/LogoAutoFix.png')}
+                style={styles.logo}
+                resizeMode="contain"
               />
-              <Ionicons name="mail-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon} />
             </View>
 
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.inputField}
-                placeholder="Contraseña"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                autoCapitalize="none"
-              />
-              <Ionicons name="lock-closed-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon} />
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>¡Bienvenido!</Text>
+              <Text style={styles.subtitle}>Ingresa tu correo y contraseña</Text>
             </View>
-          </View>
 
-          <View style={styles.actionsContainer}>
-            <RememberCheckBox value={remember} onValueChange={setRemember} label=" Recordar" />
-            <TouchableOpacity onPress={handleForgotPassword}>
-              <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
-            </TouchableOpacity>
-          </View>
+            <View style={styles.inputContainer}>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="Correo"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+                <Ionicons name="mail-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon} />
+              </View>
 
-          {error ? <Text style={styles.error}>{error}</Text> : null}
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="Contraseña"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  autoCapitalize="none"
+                />
+                <Ionicons name="lock-closed-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon} />
+              </View>
+            </View>
 
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleLogin}
-              disabled={!email || !password}
-            >
-              <Text style={styles.buttonText}>Iniciar Sesión</Text>
-            </TouchableOpacity>
-          </View>
+            <View style={styles.actionsContainer}>
+              <RememberCheckBox value={remember} onValueChange={setRemember} label=" Recordar" />
+              <TouchableOpacity onPress={handleForgotPassword}>
+                <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
+              </TouchableOpacity>
+            </View>
 
-          <View style={styles.newUserContainer}>
-            <Text>¿No tienes un usuario?</Text>
-            <TouchableOpacity onPress={() => router.push('/Register')}>
-              <Text style={[styles.linkText, { marginLeft: 5 }]}>Regístrate aquí</Text>
-            </TouchableOpacity>
+            {error ? <Text style={styles.error}>{error}</Text> : null}
+
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleLogin}
+                disabled={!email || !password}
+              >
+                <Text style={styles.buttonText}>Iniciar Sesión</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.newUserContainer}>
+              <Text>¿No tienes un usuario?</Text>
+              <TouchableOpacity onPress={() => router.push('/Register')}>
+                <Text style={[styles.linkText, { marginLeft: 5 }]}>Regístrate aquí</Text>
+              </TouchableOpacity>
+            </View>
           </View>
       </KeyboardAvoidingView>
     </>
