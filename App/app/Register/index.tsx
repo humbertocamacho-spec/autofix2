@@ -80,116 +80,118 @@ export default function RegisterScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
         <KeyboardAvoidingView
-          style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 25, backgroundColor: '#f5f5f5' }}
+          style={{ flex: 1, justifyContent: 'center', backgroundColor: '#f5f5f5', paddingHorizontal: 25 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+          keyboardVerticalOffset={0}
         >
-          <View style={styles.logoContainer}>
-            <Image
-              source={require('../../assets/images/LogoAutoFix.png')}
-              style={styles.logo}
-              resizeMode='contain'
-            />
-          </View>
-
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>¡Comencemos!</Text>
-            <Text style={styles.subtitle}>Completa los datos para registrarte</Text>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.inputField}
-                placeholder="Nombre"
-                value={name}
-                onChangeText={setName}
-                autoCapitalize="words"
-              />
-              <Ionicons
-                name="person-outline"
-                size={width * 0.06}
-                color="#27B9BA"
-                style={styles.inputIcon}
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <View style={styles.logoContainer}>
+              <Image
+                source={require('../../assets/images/LogoAutoFix.png')}
+                style={styles.logo}
+                resizeMode='contain'
               />
             </View>
 
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.inputField}
-                placeholder="Correo"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-              <Ionicons
-                name="mail-outline"
-                size={width * 0.06}
-                color="#27B9BA"
-                style={styles.inputIcon}
-              />
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>¡Comencemos!</Text>
+              <Text style={styles.subtitle}>Completa los datos para registrarte</Text>
             </View>
 
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.inputField}
-                placeholder="Teléfono"
-                value={phone}
-                onChangeText={setPhone}
-                keyboardType="phone-pad"
-                autoCapitalize="none"
-              />
-              <Ionicons
-                name="call-outline"
-                size={width * 0.06}
-                color="#27B9BA"
-                style={styles.inputIcon}
-              />
+            <View style={styles.inputContainer}>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="Nombre"
+                  value={name}
+                  onChangeText={setName}
+                  autoCapitalize="words"
+                />
+                <Ionicons
+                  name="person-outline"
+                  size={width * 0.06}
+                  color="#27B9BA"
+                  style={styles.inputIcon}
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="Correo"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+                <Ionicons
+                  name="mail-outline"
+                  size={width * 0.06}
+                  color="#27B9BA"
+                  style={styles.inputIcon}
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="Teléfono"
+                  value={phone}
+                  onChangeText={setPhone}
+                  keyboardType="phone-pad"
+                  autoCapitalize="none"
+                />
+                <Ionicons
+                  name="call-outline"
+                  size={width * 0.06}
+                  color="#27B9BA"
+                  style={styles.inputIcon}
+                />
+              </View>
+
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.inputField}
+                  placeholder="Contraseña"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  autoCapitalize="none"
+                />
+                <Ionicons
+                  name="lock-closed-outline"
+                  size={width * 0.06}
+                  color="#27B9BA"
+                  style={styles.inputIcon}
+                />
+              </View>
+
+              <View style={styles.actionsContainer}>
+                <RememberCheckBox
+                  value={remember}
+                  onValueChange={setRemember}
+                  label={"Al marcar esta casilla aceptas nuestros"}
+                />
+                <TouchableOpacity onPress={() => console.log('Términos y Condiciones')}>
+                  <Text style={styles.textCondition}>Términos y Condiciones</Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.inputField}
-                placeholder="Contraseña"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                autoCapitalize="none"
-              />
-              <Ionicons
-                name="lock-closed-outline"
-                size={width * 0.06}
-                color="#27B9BA"
-                style={styles.inputIcon}
-              />
-            </View>
+            {error ? <Text style={styles.error}>{error}</Text> : null}
 
-            <View style={styles.actionsContainer}>
-              <RememberCheckBox
-                value={remember}
-                onValueChange={setRemember}
-                label={"Al marcar esta casilla aceptas nuestros"}
-              />
-              <TouchableOpacity onPress={() => console.log('Términos y Condiciones')}>
-                <Text style={styles.textCondition}>Términos y Condiciones</Text>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={handleRegister}>
+                <Text style={styles.buttonText}>Siguiente</Text>
               </TouchableOpacity>
             </View>
-          </View>
 
-          {error ? <Text style={styles.error}>{error}</Text> : null}
-
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={handleRegister}>
-              <Text style={styles.buttonText}>Siguiente</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.newUserContainer}>
-            <Text>¿Ya tienes un usuario?</Text>
-            <TouchableOpacity onPress={() => router.push('/Login')}>
-              <Text style={styles.linkText}>Inicia Sesión</Text>
-            </TouchableOpacity>
+            <View style={styles.newUserContainer}>
+              <Text>¿Ya tienes un usuario?</Text>
+              <TouchableOpacity onPress={() => router.push('/Login')}>
+                <Text style={styles.linkText}>Inicia Sesión</Text>
+              </TouchableOpacity>
+            </View>
           </View>
       </KeyboardAvoidingView>
     </>
