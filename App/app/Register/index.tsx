@@ -2,7 +2,7 @@ import { Stack, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View,Text,ScrollView,Image, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { API_URL } from '@env';
+import Constants from 'expo-constants';
 
 export default function RegisterScreen() {
   const [name,setName] = useState("");
@@ -12,6 +12,7 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [remember, setRemember] = useState(false);
+    const API_URL = Constants.expoConfig?.extra?.API_URL;
 
   const handleRegister = async () => {
     if (!name||!email || !phone|| !password) {
@@ -80,121 +81,119 @@ export default function RegisterScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <View style={styles.logContainer}>
-          <Image
-            source={require('../../assets/images/LogoAutoFix.png')}
-            style={styles.LogoAutoFix}
-            resizeMode='contain'
-          />
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <View style={styles.logContainer}>
+            <Image
+              source={require('../../assets/images/LogoAutoFix.png')}
+              style={styles.LogoAutoFix}
+              resizeMode='contain'
+            />
+            </View>
+
+          <View style={styles.titleContainer}>
+
+            <Text style={styles.title}>¡Comencemos!</Text>
+            <Text style={styles.subtitle}>Completa los datos para registrarte</Text>
           </View>
 
-        <View style={styles.titleContainer}>
+          <View style={styles.inputContainer}>
+            <View style={styles.inputWrapper}>
 
-          <Text style={styles.title}>¡Comencemos!</Text>
-          <Text style={styles.subtitle}>Completa los datos para registrarte</Text>
-        </View>
-
-        <View style={styles.inputContainer}>
-          <View style={styles.inputWrapper}>
-
-          <TextInput
-              style={styles.inputField}
-              placeholder="Nombre"
-              value={name}
-              onChangeText={setName}
-              autoCapitalize="words"
-          />
-          <Ionicons 
-              name="person-outline"
-              size={20}
-              color="#27B9BA"
-              style={styles.inputIcon}
-          />
-          </View>
-          <View style={styles.inputWrapper}>
             <TextInput
-            style={styles.inputField}
-            placeholder="Correo"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <Ionicons
-              name="mail-outline"
-              size={20}
-              color="#27B9BA"
-              style={styles.inputIcon}
-          />
-          </View>
-          <View style={styles.inputWrapper}>
-          <TextInput
+                style={styles.inputField}
+                placeholder="Nombre"
+                value={name}
+                onChangeText={setName}
+                autoCapitalize="words"
+            />
+            <Ionicons 
+                name="person-outline"
+                size={20}
+                color="#27B9BA"
+                style={styles.inputIcon}
+            />
+            </View>
+            <View style={styles.inputWrapper}>
+              <TextInput
               style={styles.inputField}
-              placeholder="Teléfono"
-              value={phone}
-              onChangeText={setPhone}
-              keyboardType="phone-pad"
+              placeholder="Correo"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
               autoCapitalize="none"
-          />
-          <Ionicons
-              name="call-outline"
-              size={20}
-              color="#27B9BA"
-              style={styles.inputIcon}
-          />
-          </View>
-          <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.inputField}
-            placeholder="Contraseña"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            autoCapitalize="none"
-          />
-          <Ionicons
-              name="lock-closed-outline"
-              size={20}
-              color="#27B9BA"
-              style={styles.inputIcon}
-          />
-          </View>
-          <View style={styles.actionsContainer}>
-              <RememberCheckBox
-                value={remember}
-                onValueChange={setRemember}
-                label={"Al marcar esta casilla aceptas nuestros"}
-                />
-              <TouchableOpacity onPress={() => console.log('Terminos y Condiciones')}>
-                <Text style={styles.textcondition}>Terminos y Condiciones</Text>
-              </TouchableOpacity>
-           </View>
-      </View>
-
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button]} 
-            onPress={handleRegister}
-          >
-            <Text style={styles.buttonText}>Siguiente</Text>
-          </TouchableOpacity>
+            />
+            <Ionicons
+                name="mail-outline"
+                size={20}
+                color="#27B9BA"
+                style={styles.inputIcon}
+            />
+            </View>
+            <View style={styles.inputWrapper}>
+            <TextInput
+                style={styles.inputField}
+                placeholder="Teléfono"
+                value={phone}
+                onChangeText={setPhone}
+                keyboardType="phone-pad"
+                autoCapitalize="none"
+            />
+            <Ionicons
+                name="call-outline"
+                size={20}
+                color="#27B9BA"
+                style={styles.inputIcon}
+            />
+            </View>
+            <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.inputField}
+              placeholder="Contraseña"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              autoCapitalize="none"
+            />
+            <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color="#27B9BA"
+                style={styles.inputIcon}
+            />
+            </View>
+            <View style={styles.actionsContainer}>
+                <RememberCheckBox
+                  value={remember}
+                  onValueChange={setRemember}
+                  label={"Al marcar esta casilla aceptas nuestros"}
+                  />
+                <TouchableOpacity onPress={() => console.log('Terminos y Condiciones')}>
+                  <Text style={styles.textcondition}>Terminos y Condiciones</Text>
+                </TouchableOpacity>
+            </View>
         </View>
 
-        <View style={styles.newuserContainer}>
-          <Text>¿Ya tienes un usuario?</Text>
-         <TouchableOpacity onPress={() => router.push('/Login')}>
-             <Text style={[styles.linkText, { marginLeft: 5 }]}>Inicia Sesión</Text>
-          </TouchableOpacity>
-        </View>
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button]} 
+              onPress={handleRegister}
+            >
+              <Text style={styles.buttonText}>Siguiente</Text>
+            </TouchableOpacity>
+          </View>
 
-        </ScrollView>
+          <View style={styles.newuserContainer}>
+            <Text>¿Ya tienes un usuario?</Text>
+          <TouchableOpacity onPress={() => router.push('/Login')}>
+              <Text style={[styles.linkText, { marginLeft: 5 }]}>Inicia Sesión</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </KeyboardAvoidingView>
     </>
   );
