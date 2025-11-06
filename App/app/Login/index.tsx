@@ -10,24 +10,43 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '@env';
 
+const { width, height } = Dimensions.get('window');
+
+type RememberCheckBoxProps = {
+  value: boolean;
+  onValueChange: (val: boolean) => void;
+  label: string;
+};
+
+const RememberCheckBox: React.FC<RememberCheckBoxProps> = ({ value, onValueChange, label }) => (
+  <TouchableOpacity
+    style={styles.checkboxContainer}
+    onPress={() => onValueChange(!value)}
+    activeOpacity={0.8}
+  >
+    <View style={[styles.checkbox, value && styles.checkboxChecked]} />
+    <Text style={styles.checkboxLabel}>{label}</Text>
+  </TouchableOpacity>
+);
+
 export default function LoginScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [remember, setRemember] = useState(false);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const [remember, setRemember] = useState<boolean>(false);
 
   useEffect(() => {
     const loadSavedCredentials = async () => {
       try {
         const savedEmail = await AsyncStorage.getItem('savedEmail');
         const savedPassword = await AsyncStorage.getItem('savedPassword');
-
         if (savedEmail) setEmail(savedEmail);
         if (savedPassword) setPassword(savedPassword);
         if (savedEmail && savedPassword) setRemember(true);
@@ -51,7 +70,7 @@ export default function LoginScreen() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json();
+      const data: { ok: boolean; message?: string } = await res.json();
 
       if (!data.ok) {
         setError(data.message || 'Error en el login');
@@ -73,7 +92,6 @@ export default function LoginScreen() {
         console.warn('Error guardando datos:', storageError);
       }
 
-      // Redirigir al mapa
       router.replace('/Map');
     } catch (err) {
       console.error(err);
@@ -85,29 +103,9 @@ export default function LoginScreen() {
     router.push('/Register');
   };
 
-  const RememberCheckBox = ({
-    value,
-    onValueChange,
-    label,
-  }: {
-    value: boolean;
-    onValueChange: (val: boolean) => void;
-    label: string;
-  }) => (
-    <TouchableOpacity
-      style={styles.checkboxContainer}
-      onPress={() => onValueChange(!value)}
-      activeOpacity={0.8}
-    >
-      <View style={[styles.checkbox, value && styles.checkboxChecked]} />
-      <Text style={styles.checkboxLabel}>{label}</Text>
-    </TouchableOpacity>
-  );
-
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -116,7 +114,7 @@ export default function LoginScreen() {
           <View style={styles.logoContainer}>
             <Image
               source={require('../../assets/images/LogoAutoFix.png')}
-              style={styles.LogoAutoFix}
+              style={styles.logo}
               resizeMode="contain"
             />
           </View>
@@ -136,7 +134,7 @@ export default function LoginScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
-              <Ionicons name="mail-outline" size={20} color="#27B9BA" style={styles.inputIcon} />
+              <Ionicons name="mail-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon} />
             </View>
 
             <View style={styles.inputWrapper}>
@@ -148,7 +146,7 @@ export default function LoginScreen() {
                 secureTextEntry
                 autoCapitalize="none"
               />
-              <Ionicons name="lock-closed-outline" size={20} color="#27B9BA" style={styles.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon} />
             </View>
           </View>
 
@@ -171,7 +169,7 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.newuserContainer}>
+          <View style={styles.newUserContainer}>
             <Text>¿No tienes un usuario?</Text>
             <TouchableOpacity onPress={() => router.push('/Register')}>
               <Text style={[styles.linkText, { marginLeft: 5 }]}>Regístrate aquí</Text>
@@ -184,25 +182,48 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 25, backgroundColor: '#f5f5f5' },
-  logoContainer: { alignItems: 'center' },
-  LogoAutoFix: { width: 250, height: 250 },
-  titleContainer: { textAlign: 'center', marginBottom: 25, marginTop: -45 },
-  title: { fontSize: 38, fontWeight: 'bold', textAlign: 'center', color: '#27B9BA' },
-  subtitle: { fontSize: 18, fontWeight: 'normal', marginBottom: 80, textAlign: 'center', color: '#000000ff' },
-  inputContainer: { width: '100%' },
-  inputWrapper: { flexDirection: 'row', alignItems: 'center', width: '100%', backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#ddd', marginBottom: 25, paddingHorizontal: 15 },
-  inputField: { flex: 1, height: 50, fontSize: 16 },
-  inputIcon: { marginLeft: 10 },
-  actionsContainer: { width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 100 },
-  checkboxContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
-  checkbox: { width: 20, height: 20, borderWidth: 1, borderColor: '#ccc', borderRadius: 4 },
+  container: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: width * 0.06,
+    backgroundColor: '#f5f5f5',
+    paddingBottom: height * 0.05,
+  },
+  logoContainer: { marginTop: height * 0.01, marginBottom: height * 0.01 },
+  logo: { width: width * 0.6, height: width * 0.8 },
+
+  titleContainer: { alignItems: 'center', marginBottom: height * 0.03, marginTop: -80 },
+  title: { fontSize: width * 0.09, fontWeight: 'bold', color: '#27B9BA', textAlign: 'center' },
+  subtitle: { fontSize: width * 0.045, color: '#000', textAlign: 'center', marginTop: height * 0.005 },
+
+  inputContainer: { width: '100%', marginBottom: height * 0.01,  marginTop: 80 },
+  inputWrapper: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    width: '100%', 
+    backgroundColor: '#fff', 
+    borderRadius: 8, 
+    borderWidth: 1, 
+    borderColor: '#ddd', 
+    marginBottom: height * 0.02, 
+    paddingHorizontal: width * 0.04,
+    height: height * 0.065,
+  },
+  inputField: { flex: 1, fontSize: width * 0.045, height: '100%' },
+  inputIcon: { marginLeft: width * 0.02 },
+
+  actionsContainer: { width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: height * 0.10 },
+  checkboxContainer: { flexDirection: 'row', alignItems: 'center' },
+  checkbox: { width: width * 0.05, height: width * 0.05, borderWidth: 1, borderColor: '#ccc', borderRadius: 4 },
   checkboxChecked: { backgroundColor: '#27B9BA' },
-  checkboxLabel: { marginLeft: 8, fontSize: 14, color: '#333' },
-  linkText: { color: '#007AFF', fontSize: 14 },
-  error: { color: 'red', marginBottom: 10, textAlign: 'center' },
+  checkboxLabel: { marginLeft: width * 0.02, fontSize: width * 0.035, color: '#333' },
+
   buttonContainer: { width: '100%' },
-  button: { width: '100%', backgroundColor: '#27B9BA', padding: 15, borderRadius: 8, alignItems: 'center', marginBottom: 10 },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  newuserContainer: { width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 40 }
+  button: { width: '100%', backgroundColor: '#27B9BA', paddingVertical: height * 0.018, borderRadius: 8, alignItems: 'center', marginBottom: height * 0.02 },
+  buttonText: { color: '#fff', fontSize: width * 0.045, fontWeight: 'bold' },
+
+  linkText: { color: '#007AFF', fontSize: width * 0.04 },
+  error: { color: 'red', textAlign: 'center', fontWeight: 'bold', marginBottom: height * 0.01 },
+  newUserContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: height * 0.03 },
 });
