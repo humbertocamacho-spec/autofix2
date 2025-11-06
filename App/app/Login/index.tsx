@@ -14,11 +14,7 @@ type RememberCheckBoxProps = {
 };
 
 const RememberCheckBox: React.FC<RememberCheckBoxProps> = ({ value, onValueChange, label }) => (
-  <TouchableOpacity
-    style={styles.checkboxContainer}
-    onPress={() => onValueChange(!value)}
-    activeOpacity={0.8}
-  >
+  <TouchableOpacity style={styles.checkboxContainer} onPress={() => onValueChange(!value)} activeOpacity={0.8}>
     <View style={[styles.checkbox, value && styles.checkboxChecked]} />
     <Text style={styles.checkboxLabel}>{label}</Text>
   </TouchableOpacity>
