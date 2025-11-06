@@ -13,11 +13,7 @@ type RememberCheckBoxProps = {
 };
 
 const RememberCheckBox: React.FC<RememberCheckBoxProps> = ({ value, onValueChange, label }) => (
-  <TouchableOpacity
-    style={styles.checkboxContainer}
-    onPress={() => onValueChange(!value)}
-    activeOpacity={0.8}
-  >
+  <TouchableOpacity style={styles.checkboxContainer} onPress={() => onValueChange(!value)} activeOpacity={0.8} >
     <View style={[styles.checkbox, value && styles.checkboxChecked]} />
     <Text style={styles.checkboxLabel}>{label}</Text>
   </TouchableOpacity>
@@ -112,12 +108,7 @@ export default function RegisterScreen() {
                 onChangeText={setName}
                 autoCapitalize="words"
               />
-              <Ionicons 
-                name="person-outline"
-                size={width * 0.06}
-                color="#27B9BA"
-                style={styles.inputIcon}
-              />
+              <Ionicons  name="person-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon} />
             </View>
 
             <View style={styles.inputWrapper}>
@@ -129,12 +120,7 @@ export default function RegisterScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
-              <Ionicons
-                name="mail-outline"
-                size={width * 0.06}
-                color="#27B9BA"
-                style={styles.inputIcon}
-              />
+              <Ionicons name="mail-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon} />
             </View>
 
             <View style={styles.inputWrapper}>
@@ -146,12 +132,7 @@ export default function RegisterScreen() {
                 keyboardType="phone-pad"
                 autoCapitalize="none"
               />
-              <Ionicons
-                name="call-outline"
-                size={width * 0.06}
-                color="#27B9BA"
-                style={styles.inputIcon}
-              />
+              <Ionicons name="call-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon}/>
             </View>
 
             <View style={styles.inputWrapper}>
@@ -163,20 +144,12 @@ export default function RegisterScreen() {
                 secureTextEntry
                 autoCapitalize="none"
               />
-              <Ionicons
-                name="lock-closed-outline"
-                size={width * 0.06}
-                color="#27B9BA"
-                style={styles.inputIcon}
+              <Ionicons name="lock-closed-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon}
               />
             </View>
 
             <View style={styles.actionsContainer}>
-              <RememberCheckBox
-                value={remember}
-                onValueChange={setRemember}
-                label={"Al marcar esta casilla aceptas nuestros"}
-              />
+              <RememberCheckBox value={remember} onValueChange={setRemember} label={"Al marcar esta casilla aceptas nuestros"}/>
               <TouchableOpacity onPress={() => console.log('Términos y Condiciones')}>
                 <Text style={styles.textCondition}>Términos y Condiciones</Text>
               </TouchableOpacity>
@@ -205,42 +178,25 @@ export default function RegisterScreen() {
 
 const styles = StyleSheet.create({
 
-  logoContainer: { marginTop: height * 0.05, marginBottom: height * 0.03, alignItems: 'center' },
+  logoContainer: { marginTop: height * 0.03, marginBottom: height * -0.07, alignItems: 'center' },
   logo: { width: width * 0.6, height: width * 0.6 },
-
   titleContainer: { alignItems: 'center', marginBottom: height * 0.03 },
   title: { fontSize: width * 0.1, fontWeight: 'bold', color: '#27B9BA', textAlign: 'center' },
   subtitle: { fontSize: width * 0.045, color: '#000', textAlign: 'center', marginTop: height * 0.005 },
-
   inputContainer: { width: '100%', marginBottom: height * 0.03 },
-  inputWrapper: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    width: '100%', 
-    backgroundColor: '#fff', 
-    borderRadius: 8, 
-    borderWidth: 1, 
-    borderColor: '#ddd', 
-    marginBottom: height * 0.02, 
-    paddingHorizontal: width * 0.04,
-    height: height * 0.065
-  },
+  inputWrapper: { flexDirection: 'row', alignItems: 'center', width: '100%', backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#ddd', marginBottom: height * 0.02, paddingHorizontal: width * 0.04,height: height * 0.065},
   inputField: { flex: 1, fontSize: width * 0.045, height: '100%' },
   inputIcon: { marginLeft: width * 0.02 },
-
   actionsContainer: { width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: height * 0.05 },
   checkbox: { width: width * 0.05, height: width * 0.05, borderWidth: 1, borderColor: '#ccc', borderRadius: 4 },
   checkboxChecked: { backgroundColor: '#27B9BA' },
   checkboxLabel: { marginLeft: width * 0.02, fontSize: width * 0.03, color: '#333' },
   checkboxContainer: { flexDirection: 'row', alignItems: 'center' },
-  textCondition: { fontSize: width * 0.03, color: '#007AFF' },
-
+  textCondition: { fontSize: width * 0.025, color: '#007AFF' },
   buttonContainer: { width: '100%' },
   button: { width: '100%', backgroundColor: '#27B9BA', paddingVertical: height * 0.018, borderRadius: 8, alignItems: 'center', marginBottom: height * 0.02 },
   buttonText: { color: '#fff', fontSize: width * 0.045, fontWeight: 'bold' },
-
   newUserContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: height * 0.03 },
   linkText: { color: '#007AFF', fontSize: width * 0.04, marginLeft: 5 },
-
   error: { color: 'red', textAlign: 'center', fontWeight: 'bold', marginBottom: height * 0.01 }
 });
