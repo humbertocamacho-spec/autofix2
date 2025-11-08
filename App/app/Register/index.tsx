@@ -2,7 +2,6 @@ import { Stack, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {  Alert, KeyboardAvoidingView, Platform, StyleSheet, View, Text, ScrollView, Image, TextInput, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Constants from 'expo-constants';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,7 +25,7 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [remember, setRemember] = useState<boolean>(false);
-  const API_URL = Constants.expoConfig?.extra?.API_URL;
+  const API_URL = "https://backend-autofix-production.up.railway.app";
 
   const router = useRouter();
 

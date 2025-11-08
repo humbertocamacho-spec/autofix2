@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Image, Text, TextInput, TouchableOpacity, View, Dimensions, } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Constants from 'expo-constants';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,8 +25,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [remember, setRemember] = useState<boolean>(false);
-  const API_URL = Constants.expoConfig?.extra?.API_URL;
-
+  const API_URL = "https://backend-autofix-production.up.railway.app";
 
   useEffect(() => {
     const loadSavedCredentials = async () => {
