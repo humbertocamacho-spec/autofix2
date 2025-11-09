@@ -17,6 +17,7 @@ app.get('/', async (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use("/api/partners", partnerRoutes);
 
 app.listen(config.server.port, () => {
   console.log(`🚀 Servidor corriendo en el puerto ${config.server.port}`);

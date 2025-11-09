@@ -3,6 +3,15 @@ module.exports = function (api) {
   return {
     presets: ['babel-preset-expo'],
     plugins: [
+      [
+        'module-resolver',
+        {
+          alias: {
+            '@backend-types': './Backend/src/types',
+          },
+        },
+      ],
+      'expo-router/babel',
       
     ],
   };

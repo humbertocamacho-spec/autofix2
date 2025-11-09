@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, Dimensions, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import MapView, { Marker, Region } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
+import { getPartners } from '@/services/partners';
+import { Partner } from '@backend-types/partner';
 
 const { width } = Dimensions.get('window');
 
@@ -23,6 +25,8 @@ export default function MapScreen() {
   const [tempRegion, setTempRegion] = useState<Region | null>(null);
   const slideAnim = useRef(new Animated.Value(-width)).current;
   const mapRef = useRef<MapView>(null);
+  const [partners, setPartners] = useState<Partner[]>([]);
+
 
   useEffect(() => {
     (async () => {
@@ -48,6 +52,52 @@ export default function MapScreen() {
     })();
   }, []);
 
+  useEffect(() => {
+    const fetchPartners = async () => {
+      try {
+        const data = await getPartners();
+        console.log('Partners fetched:', data);
+        if (Array.isArray(data)) {
+          setPartners(data);
+        } else if (data) {
+          setPartners([data]);
+        }
+      } catch (error) {
+        console.error('Error fetching partners:', error);
+      }
+    };
+
+    fetchPartners();
+  }, []);
+  
+  useEffect(() => {
+    if (mapRef.current && region && partners.length > 0) {
+
+      const validPartnerCoords = partners
+        .map((p) => {
+          const lat = parseFloat(p.latitude);
+          const lng = parseFloat(p.longitude);
+          if (isNaN(lat) || isNaN(lng)) return null;
+          return { latitude: lat, longitude: lng };
+        })
+        .filter((coord) => coord !== null);
+
+      const coords = [
+        { latitude: region.latitude, longitude: region.longitude },
+        ...validPartnerCoords,
+      ];
+
+      if (coords.length > 1) {
+        mapRef.current.fitToCoordinates(coords, {
+          edgePadding: { top: 100, right: 100, bottom: 100, left: 100 },
+          animated: true,
+        });
+      }
+    }
+  }, [partners, region]);
+
+
+
   const toggleMenu = () => {
     const toValue = menuVisible ? -width : 0;
     setMenuVisible(!menuVisible);
@@ -66,18 +116,6 @@ export default function MapScreen() {
     setMapModalVisible(false);
   };
 
-  const shops = [
-    {
-      id: 1,
-      title: 'Workshop 1',
-      latlng: { latitude: (region?.latitude ?? 0) + 0.005, longitude: (region?.longitude ?? 0) - 0.005 },
-    },
-    {
-      id: 2,
-      title: 'Workshop 2',
-      latlng: { latitude: (region?.latitude ?? 0) - 0.01, longitude: (region?.longitude ?? 0) + 0.008 },
-    },
-  ];
 
   if (loading || !region) {
     return (
@@ -110,16 +148,37 @@ export default function MapScreen() {
       </View>
 
       <View style={styles.container}>
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          region={region}
-          showsUserLocation
-        >
+         <MapView ref={mapRef} style={styles.map} region={region} showsUserLocation >
+
           <Marker coordinate={region} title="Tu ubicación" pinColor="red" />
-          {shops.map((shop) => (
-            <Marker key={shop.id} coordinate={shop.latlng} title={shop.title} pinColor="blue" />
-          ))}
+
+          {partners.map((partner) => {
+            const lat = parseFloat(partner.latitude);
+            const lon = parseFloat(partner.longitude);
+
+            if (isNaN(lat) || isNaN(lon)) return null;
+
+            return (
+              <Marker
+                key={partner.id}
+                coordinate={{ latitude: lat, longitude: lon }}
+                pinColor="blue"
+                onPress={() =>
+                  router.push({
+                    pathname: "/Map/details",
+                    params: {
+                      id: partner.id.toString(),
+                      name: partner.location,
+                      logo_url: partner.logo_url || "",
+                      latitude: partner.latitude,
+                      longitude: partner.longitude,
+                    },
+                  })
+                }
+              />
+            );
+          })}
+
         </MapView>
 
         <View style={styles.searchContainer}>
@@ -131,6 +190,25 @@ export default function MapScreen() {
               placeholderTextColor="#666"
             />
           </View>
+          {partners.length > 0 && (
+            <TouchableOpacity
+              style={styles.partnerButton}
+              onPress={() =>
+                router.push({ pathname: "/Map/details",
+                  params: {
+                    id: partners[0].id.toString(),
+                    name: partners[0].location,
+                    logo_url: partners[0].logo_url || "",
+                    latitude: partners[0].latitude,
+                    longitude: partners[0].longitude,
+                  },
+                })
+              }
+            >
+              <Ionicons name="car-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
+              <Text style={styles.partnerButtonText}>{partners[0].location}</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <Modal
@@ -230,4 +308,6 @@ const styles = StyleSheet.create({
   modalButtons: { flexDirection: 'row', justifyContent: 'space-around', padding: 15 },
   button: { paddingVertical: 10, paddingHorizontal: 25, borderRadius: 8 },
   buttonText: { color: '#fff', fontWeight: 'bold' },
+  partnerButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#27B9BA', paddingVertical: 12, paddingHorizontal: 15, borderRadius: 10, marginHorizontal: 15, marginTop: 5, justifyContent: 'center', elevation: 3, },
+  partnerButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold', }
 });
