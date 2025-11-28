@@ -1,9 +1,13 @@
 import * as Location from 'expo-location';
 import { Stack, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Animated, Dimensions, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Animated, Dimensions, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
 import MapView, { Marker, Region } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
+import { getPartners } from '@/services/partners';
+import { Partner } from '@backend-types/partner';
+import { getSpecialities } from '@/services/specialities';
+import { getPartnerSpecialities } from '@/services/partner_specialities';
 
 const { width } = Dimensions.get('window');
 
@@ -13,6 +17,19 @@ const defaultRegion = {
   latitudeDelta: 0.04,
   longitudeDelta: 0.04,
 };
+function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
 export default function MapScreen() {
   const router = useRouter();
@@ -23,6 +40,30 @@ export default function MapScreen() {
   const [tempRegion, setTempRegion] = useState<Region | null>(null);
   const slideAnim = useRef(new Animated.Value(-width)).current;
   const mapRef = useRef<MapView>(null);
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [specialities, setSpecialities] = useState<any[]>([]);
+  const [selectedSpeciality, setSelectedSpeciality] = useState<number | null>(null);
+  const [partnersSpecialities, setPartnersSpecialities] = useState<any[]>([]);
+  const [searchText, setSearchText] = useState('');
+  const [showCitasSubMenu, setShowCitasSubMenu] = useState(false);
+  const modalMapRef = useRef<MapView>(null);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [specData, psData] = await Promise.all([
+          getSpecialities(),
+          getPartnerSpecialities(),
+        ]);
+        setSpecialities(specData);
+        setPartnersSpecialities(psData);
+      } catch (error) {
+        console.error('Error cargando datos:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -41,21 +82,86 @@ export default function MapScreen() {
           });
         }
       } catch {
-          setRegion(defaultRegion);
+        setRegion(defaultRegion);
       } finally {
         setLoading(false);
       }
     })();
   }, []);
 
+  useEffect(() => {
+    const fetchPartners = async () => {
+      try {
+        const data = await getPartners();
+        if (Array.isArray(data)) {
+          setPartners(data);
+        } else if (data) {
+          setPartners([data]);
+        }
+      } catch (error) {
+        console.error('Error fetching partners:', error);
+      }
+    };
+
+    fetchPartners();
+  }, []);
+
+  const nearbyPartners = partners.filter((partner) => {
+  const lat = parseFloat(partner.latitude);
+  const lon = parseFloat(partner.longitude);
+  if (isNaN(lat) || isNaN(lon) || !region) return false;
+
+  const distance = getDistanceFromLatLonInKm(
+    region.latitude,
+    region.longitude,
+    lat,
+    lon
+  );
+
+  const withinDistance = distance <= 10;
+  const hasSpeciality = selectedSpeciality
+    ? partnersSpecialities.some(
+        (ps) => ps.partner_id === partner.id && ps.speciality_id === selectedSpeciality
+      )
+    : true;
+
+  const matchesSearch = partner.name
+    ?.toLowerCase()
+    .includes(searchText.toLowerCase());
+
+  return withinDistance && hasSpeciality && (!searchText || matchesSearch);
+});
+
+
+  useEffect(() => {
+    if (mapRef.current && region && nearbyPartners.length > 0) {
+      const validCoords = nearbyPartners.map((p) => ({
+        latitude: parseFloat(p.latitude),
+        longitude: parseFloat(p.longitude),
+      }));
+
+      const coords = [
+        { latitude: region.latitude, longitude: region.longitude },
+        ...validCoords,
+      ];
+
+      if (coords.length > 1) {
+        mapRef.current.fitToCoordinates(coords, {
+          edgePadding: { top: 100, right: 100, bottom: 100, left: 100 },
+          animated: true,
+        });
+      }
+    }
+  }, [nearbyPartners, region]);
+
   const toggleMenu = () => {
-    const toValue = menuVisible ? -width : 0;
-    setMenuVisible(!menuVisible);
+    const newValue = !menuVisible;
     Animated.timing(slideAnim, {
-      toValue: menuVisible ? -width : 0,
+      toValue: newValue ? 0 : -width,
       duration: 300,
       useNativeDriver: true,
-    }).start(() => setMenuVisible(!menuVisible));
+    }).start();
+    setMenuVisible(newValue);
   };
 
   const confirmNewLocation = () => {
@@ -65,19 +171,6 @@ export default function MapScreen() {
     }
     setMapModalVisible(false);
   };
-
-  const shops = [
-    {
-      id: 1,
-      title: 'Workshop 1',
-      latlng: { latitude: (region?.latitude ?? 0) + 0.005, longitude: (region?.longitude ?? 0) - 0.005 },
-    },
-    {
-      id: 2,
-      title: 'Workshop 2',
-      latlng: { latitude: (region?.latitude ?? 0) - 0.01, longitude: (region?.longitude ?? 0) + 0.008 },
-    },
-  ];
 
   if (loading || !region) {
     return (
@@ -110,61 +203,113 @@ export default function MapScreen() {
       </View>
 
       <View style={styles.container}>
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          region={region}
-          showsUserLocation
-        >
+        <MapView ref={mapRef} style={styles.map} region={region} showsUserLocation={true}>
+
           <Marker coordinate={region} title="Tu ubicación" pinColor="red" />
-          {shops.map((shop) => (
-            <Marker key={shop.id} coordinate={shop.latlng} title={shop.title} pinColor="blue" />
-          ))}
+          {nearbyPartners.map((partner) => {
+          const lat = parseFloat(partner.latitude);
+          const lon = parseFloat(partner.longitude);
+
+          const isMatch =
+            searchText.trim().length > 0 &&
+            partner.name.toLowerCase().includes(searchText.toLowerCase());
+
+  return (
+    <Marker key={partner.id + (isMatch ? '-match' : '-nomatch')}
+      coordinate={{ latitude: lat, longitude: lon }} pinColor={isMatch ? "green" : "blue"}
+        tracksViewChanges={true}
+            onPress={() => {
+              const specs = partnersSpecialities
+                .filter((ps) => ps.partner_id === partner.id)
+                .map((ps) => {
+                  const spec = specialities.find((s) => s.id === ps.speciality_id);
+                  return spec ? spec.name : "";
+                });
+
+                router.push({
+                  pathname: "../Map/details",
+                  params: {
+                    id: partner.id.toString(),
+                    name: partner.name,
+                    location: partner.location,
+                    phone: partner.phone || "",
+                    whatsapp: partner.whatsapp || "",
+                    logo_url: partner.logo_url || "",
+                    latitude: partner.latitude,
+                    longitude: partner.longitude,
+                    description: partner.description,
+                    specialities: JSON.stringify(specs),
+                  },
+                });
+              }}
+              />
+            );
+          })}
         </MapView>
 
         <View style={styles.searchContainer}>
           <View style={styles.searchWrapped}>
-            <Ionicons name="search-outline" size={20} color="#7a7a7a" style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Buscar Tiendas"
-              placeholderTextColor="#666"
-            />
+            <Ionicons name="search-outline" size={20} color="#7a7a7a" marginRight={10} />
+            <TextInput style={styles.searchInput} placeholder="Buscar Tiendas" placeholderTextColor="#666" value={searchText} onChangeText={setSearchText} />
           </View>
+
+          <TouchableOpacity
+            onPress={() =>
+              router.push({
+                pathname: '/Recommendations',
+                params: {
+                  latitude: region?.latitude.toString() || '',
+                  longitude: region?.longitude.toString() || '',
+                },
+              })
+            }
+          >
+            <Text style={styles.recommendationsButton}>Recomendaciones Cercanas</Text>
+          </TouchableOpacity>
+
+          <ScrollView style={styles.scrollSpecialities} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            <View style={styles.specialityContainer}>
+              {specialities.map((item) => (
+                <TouchableOpacity key={item.id} style={[styles.specialityButton, selectedSpeciality === item.id && styles.specialityButtonActive]} onPress={() => setSelectedSpeciality(selectedSpeciality === item.id ? null : item.id)}>
+                  <Text style={[styles.specialityText, selectedSpeciality === item.id && styles.specialityTextActive]}>{item.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
         </View>
 
-        <Modal
-          visible={mapModalVisible}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setMapModalVisible(false)}
-        >
+        <Modal visible={mapModalVisible} animationType="fade" transparent={true} onRequestClose={() => setMapModalVisible(false)}>
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Mover ubicación</Text>
+              <Text style={styles.modalTitle}>Cambiar ubicación</Text>
 
-              <MapView
-                style={styles.modalMap}
-                initialRegion={tempRegion || region}
-                onRegionChangeComplete={setTempRegion}
-              />
+              <MapView ref={modalMapRef} style={styles.modalMap} initialRegion={tempRegion || region} onRegionChangeComplete={setTempRegion} />
 
               <View style={styles.markerFixed}>
                 <Ionicons name="location-sharp" size={40} color="red" />
               </View>
+              <TouchableOpacity style={styles.gpsButton} onPress={async () => {
+                const { coords } = await Location.getCurrentPositionAsync({});
+
+                const realRegion = {
+                  latitude: coords.latitude,
+                  longitude: coords.longitude,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+                };
+                setTempRegion(realRegion);
+                modalMapRef.current?.animateToRegion(realRegion, 1000);
+              }}
+              >
+                <Ionicons name="locate" size={28} color="#27B9BA" />
+              </TouchableOpacity>
 
               <View style={styles.modalButtons}>
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: '#aaa' }]}
-                  onPress={() => setMapModalVisible(false)}
-                >
+                <TouchableOpacity style={[styles.button, { backgroundColor: '#aaa' }]} onPress={() => setMapModalVisible(false)}>
                   <Text style={styles.buttonText}>Cancelar</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={[styles.button, { backgroundColor: '#27B9BA' }]}
-                  onPress={confirmNewLocation}
-                >
+                <TouchableOpacity style={[styles.button, { backgroundColor: '#27B9BA' }]} onPress={confirmNewLocation}>
                   <Text style={styles.buttonText}>Confirmar</Text>
                 </TouchableOpacity>
               </View>
@@ -174,28 +319,45 @@ export default function MapScreen() {
 
         {menuVisible && (
           <View style={styles.overlay}>
-            <TouchableOpacity
-              style={StyleSheet.absoluteFill}
-              onPress={toggleMenu}
-              activeOpacity={1}
-            />
-            <Animated.View
-              style={[styles.sideMenu, { transform: [{ translateX: slideAnim }] }]}
-            >
+            <TouchableOpacity style={StyleSheet.absoluteFill} onPress={toggleMenu} activeOpacity={1} />
+            <Animated.View style={[styles.sideMenu, { transform: [{ translateX: slideAnim }] }]}>
+
               <View style={styles.menuHeader}>
                 <Text style={styles.menuTitle}>Menú</Text>
               </View>
 
-              <TouchableOpacity
-                style={styles.menuButton}
-                onPress={() => {
-                  toggleMenu();
-                  router.replace('../Login');
-                }}
+              <TouchableOpacity style={styles.menuButton} onPress={() => {
+                toggleMenu();
+                router.replace('../Login');
+              }}
               >
+
                 <Ionicons name="log-out-outline" size={20} color="#000" style={{ marginRight: 10 }} />
                 <Text style={styles.menuButtonText}>Cerrar sesión</Text>
               </TouchableOpacity>
+
+              <TouchableOpacity style={styles.menuButton} onPress={() => setShowCitasSubMenu(!showCitasSubMenu)}>
+                <Ionicons name="calendar-outline" size={20} color="#000" style={{ marginRight: 10 }} />
+                <Text style={styles.menuButtonText}>Mis citas</Text>
+                <Ionicons
+                  name={showCitasSubMenu ? "chevron-up-outline" : "chevron-down-outline"}
+                  size={20}
+                  color="#000"
+                  style={{ marginLeft: 'auto' }}
+                />
+              </TouchableOpacity>
+
+              {showCitasSubMenu && (
+                <View style={{ marginBottom: 5 }}>
+                  <TouchableOpacity style={styles.subMenuButton} onPress={() => { toggleMenu(); router.push('../Ticket/TicketsPending'); }}>
+                    <Text style={styles.subMenuText}>Pendientes</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={styles.subMenuButton} onPress={() => { toggleMenu(); router.push('../Ticket/TicketsConfirmed'); }}>
+                    <Text style={styles.subMenuText}>Confirmadas</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </Animated.View>
           </View>
         )}
@@ -206,16 +368,14 @@ export default function MapScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  map: { ...StyleSheet.absoluteFillObject, height: 330 },
+  map: { ...StyleSheet.absoluteFillObject, height: 310 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 50, paddingBottom: 10, paddingHorizontal: 15, backgroundColor: '#27B9BA', borderBottomWidth: 1, borderBottomColor: '#eee'},
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 50, paddingBottom: 10, paddingHorizontal: 15, backgroundColor: '#27B9BA', borderBottomWidth: 1, borderBottomColor: '#eee' },
   menuIcon: { fontSize: 28, fontWeight: 'bold', color: '#ffff' },
-  titleContainer: { textAlign: 'center', marginBottom: 100, marginTop: -45 },
-  headerTitle: { position: 'absolute', left: 0, right: 0, textAlign: 'center', marginTop: 52, fontSize: 25, fontWeight: 'bold'},
-  searchContainer: { position: 'absolute', top: 0, width: '100%', height: '50%', marginTop: 330, alignSelf: 'center', backgroundColor: '#ffffffff', padding: 10, elevation: 5 },
-  searchWrapped: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#ecececff', borderRadius: 8, paddingVertical: 5, paddingHorizontal: 10, margin: 15 },
-  searchIcon: { marginRight: 10 },
-  searchInput: { flex: 1, paddingVertical: 15, fontSize: 16 },
+  titleContainer: { textAlign: 'center', marginBottom: 90, marginTop: -45 },
+  headerTitle: { position: 'absolute', left: 0, right: 0, textAlign: 'center', marginTop: 52, fontSize: 25, fontWeight: 'bold' },
+  searchWrapped: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#ecececff', borderRadius: 8, paddingVertical: 5, paddingHorizontal: 10, margin: 10, marginTop: 5 },
+  searchInput: { flex: 1, paddingVertical: 10, fontSize: 15 },
   overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.3)' },
   sideMenu: { position: 'absolute', left: 0, top: 0, bottom: 0, width: width * 0.7, backgroundColor: '#27B9BA', paddingTop: 10, paddingHorizontal: 20, elevation: 15, borderTopRightRadius: 20, borderBottomRightRadius: 20 },
   menuHeader: { marginBottom: 20 },
@@ -230,4 +390,19 @@ const styles = StyleSheet.create({
   modalButtons: { flexDirection: 'row', justifyContent: 'space-around', padding: 15 },
   button: { paddingVertical: 10, paddingHorizontal: 25, borderRadius: 8 },
   buttonText: { color: '#fff', fontWeight: 'bold' },
+  partnerButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#27B9BA', paddingVertical: 12, paddingHorizontal: 15, borderRadius: 10, marginHorizontal: 15, marginTop: 5, justifyContent: 'center', elevation: 3, },
+  partnerButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold', },
+  searchContainer: { position: 'absolute', bottom: 0, width: '100%', height: '57%', backgroundColor: '#fff', padding: 10, elevation: 5 },
+  scrollSpecialities: { maxHeight: "100%", marginTop: 10, marginBottom: 10, },
+  scrollContent: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', paddingBottom: 10, },
+  specialityContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
+  specialityButton: { backgroundColor: '#e0e0e0', paddingVertical: 8, paddingHorizontal: 15, borderRadius: 20, margin: 5 },
+  specialityButtonActive: { backgroundColor: '#27B9BA' },
+  specialityText: { color: '#000', fontWeight: '500' },
+  specialityTextActive: { color: '#fff', fontWeight: '700' },
+  recommendationsButton: { textAlign: 'center', backgroundColor: '#27B9BA', paddingVertical: 10, paddingHorizontal: 15, borderRadius: 10, marginHorizontal: 15, color: '#fff', fontSize: 15, fontWeight: 'bold', },
+  subMenuButton: { paddingVertical: 10, paddingHorizontal: 10, borderRadius: 8, marginBottom: 5, backgroundColor: "#e0f7f7" },
+  subMenuText: { fontSize: 16, color: "#000", },
+  gpsButton: { position: "absolute", top: 50, right: 10, zIndex: 999, width: 48, height: 48, backgroundColor: "#fff", borderRadius: 30, justifyContent: "center", alignItems: "center", elevation: 10, },
+
 });

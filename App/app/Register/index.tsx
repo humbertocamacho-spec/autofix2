@@ -1,9 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import {  Alert, KeyboardAvoidingView, Platform, StyleSheet, View, Text, ScrollView, Image, TextInput, TouchableOpacity, Dimensions } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View, Text, Image, TextInput, TouchableOpacity, ScrollView, useWindowDimensions, PixelRatio } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-const { width, height } = Dimensions.get('window');
 
 type RememberCheckBoxProps = {
   value: boolean;
@@ -12,20 +10,29 @@ type RememberCheckBoxProps = {
 };
 
 const RememberCheckBox: React.FC<RememberCheckBoxProps> = ({ value, onValueChange, label }) => (
-  <TouchableOpacity style={styles.checkboxContainer} onPress={() => onValueChange(!value)} activeOpacity={0.8} >
+  <TouchableOpacity
+    style={styles.checkboxContainer}
+    onPress={() => onValueChange(!value)}
+    activeOpacity={0.8}
+  >
     <View style={[styles.checkbox, value && styles.checkboxChecked]} />
     <Text style={styles.checkboxLabel}>{label}</Text>
   </TouchableOpacity>
 );
 
 export default function RegisterScreen() {
-  const [name, setName] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [remember, setRemember] = useState<boolean>(false);
-  const API_URL = "https://backend-autofix-production.up.railway.app";
+  const { width, height } = useWindowDimensions();
+  const scaleFont = (size: number) => size * PixelRatio.getFontScale();
+  const moderateScale = (size: number) => size * (width / 375);
+
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const API_URL = 'https://backend-autofix-production.up.railway.app';
 
   const router = useRouter();
 
@@ -39,17 +46,17 @@ export default function RegisterScreen() {
     const phonevalidate = /^[0-9]{10}$/;
 
     if (!emailvalidate.test(email)) {
-      Alert.alert('Error', 'Correo Invalido');
+      Alert.alert('Error', 'El correo electrónico es inválido. Recuerda que debe incluir el símbolo "@" y un dominio (example@email.com).');
       return;
     }
 
     if (!phonevalidate.test(phone)) {
-      Alert.alert('Error', 'Telefono Invalido');
+      Alert.alert('Error', 'El número debe ser de 10 dígitos y solo contener números, sin espacios, guiones o extensiones.');
       return;
     }
 
     if (password.length < 8) {
-      Alert.alert('Error', 'La Contraseña debe incluir al menos 8 caracteres');
+      Alert.alert('Error', 'La contraseña debe tener al menos 8 caracteres');
       return;
     }
 
@@ -60,7 +67,7 @@ export default function RegisterScreen() {
         body: JSON.stringify({ name, phone, email, password }),
       });
 
-      const data: { ok: boolean; message?: string } = await res.json();
+      const data = await res.json();
 
       if (!data.ok) {
         Alert.alert('Error', data.message ?? 'Error desconocido');
@@ -80,122 +87,146 @@ export default function RegisterScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       <KeyboardAvoidingView
-        style={{ flex: 1, justifyContent: 'center', backgroundColor: '#f5f5f5', paddingHorizontal: 25 }}
+        style={{ flex: 1, backgroundColor: '#f5f5f5' }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={0}
       >
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-          <View style={styles.logoContainer}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 25 }} keyboardShouldPersistTaps="handled">
+          <View style={{ alignItems: 'center', marginBottom: moderateScale(-30) }}>
             <Image
               source={require('../../assets/images/LogoAutoFix.png')}
-              style={styles.logo}
-              resizeMode='contain'
+              style={{ width: moderateScale(200), height: moderateScale(200) }}
+              resizeMode="contain"
             />
           </View>
 
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>¡Comencemos!</Text>
-            <Text style={styles.subtitle}>Completa los datos para registrarte</Text>
+          <View style={{ alignItems: 'center', marginBottom: moderateScale(50) }}>
+            <Text style={[styles.title, { fontSize: moderateScale(34) }]}>¡Comencemos!</Text>
+            <Text style={[styles.subtitle, { fontSize: moderateScale(15) }]}>
+              Completa los datos para registrarte
+            </Text>
           </View>
 
-          <View style={styles.inputContainer}>
+          <View style={{ marginBottom: moderateScale(15) }}>
             <View style={styles.inputWrapper}>
               <TextInput
-                style={styles.inputField}
+                style={[styles.inputField, { fontSize: scaleFont(16) }]}
                 placeholder="Nombre"
+                placeholderTextColor="#888"
                 value={name}
                 onChangeText={setName}
                 autoCapitalize="words"
               />
-              <Ionicons  name="person-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={Math.min(width * 0.05, 28)} color="#27B9BA" />
             </View>
 
             <View style={styles.inputWrapper}>
               <TextInput
-                style={styles.inputField}
+                style={[styles.inputField, { fontSize: scaleFont(16) }]}
                 placeholder="Correo"
+                placeholderTextColor="#888"
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
-              <Ionicons name="mail-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon} />
+              <Ionicons name="mail-outline" size={Math.min(width * 0.05, 28)} color="#27B9BA" />
             </View>
 
             <View style={styles.inputWrapper}>
               <TextInput
-                style={styles.inputField}
+                style={[styles.inputField, { fontSize: scaleFont(16) }]}
                 placeholder="Teléfono"
+                placeholderTextColor="#888"
                 value={phone}
                 onChangeText={setPhone}
                 keyboardType="phone-pad"
                 autoCapitalize="none"
               />
-              <Ionicons name="call-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon}/>
+              <Ionicons name="call-outline" size={Math.min(width * 0.05, 28)} color="#27B9BA" />
             </View>
 
             <View style={styles.inputWrapper}>
               <TextInput
-                style={styles.inputField}
+                style={[styles.inputField, { fontSize: scaleFont(16), color: '#000' }]}
                 placeholder="Contraseña"
+                placeholderTextColor="#888"
                 value={password}
                 onChangeText={setPassword}
-                secureTextEntry
+                secureTextEntry={!showPassword}
                 autoCapitalize="none"
               />
-              <Ionicons name="lock-closed-outline" size={width * 0.06} color="#27B9BA" style={styles.inputIcon}
-              />
+              <TouchableOpacity
+                onPress={() => {
+                  if (password.length > 0) setShowPassword(!showPassword);
+                }}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name={
+                    password.length === 0
+                      ? "lock-closed-outline"
+                      : showPassword
+                        ? "eye-off-outline"
+                        : "eye-outline"
+                  }
+                  size={Math.min(width * 0.05, 28)}
+                  color="#27B9BA"
+                  style={{ marginLeft: 10 }}
+                />
+              </TouchableOpacity>
+
             </View>
 
             <View style={styles.actionsContainer}>
-              <RememberCheckBox value={remember} onValueChange={setRemember} label={"Al marcar esta casilla aceptas nuestros"}/>
-              <TouchableOpacity onPress={() => console.log('Términos y Condiciones')}>
-                <Text style={styles.textCondition}>Términos y Condiciones</Text>
+              <RememberCheckBox
+                value={remember}
+                onValueChange={setRemember}
+                label="Al marcar esta casilla aceptas nuestros"
+              />
+              <TouchableOpacity onPress={() => console.log('Términos y condiciones')}>
+                <Text style={[styles.textCondition, { fontSize: scaleFont(10) }]}>
+                  Términos y Condiciones
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={handleRegister}>
-              <Text style={styles.buttonText}>Siguiente</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={[styles.button, { paddingVertical: moderateScale(12) }]}
+            onPress={handleRegister}
+          >
+            <Text style={[styles.buttonText, { fontSize: scaleFont(17) }]}>Siguiente</Text>
+          </TouchableOpacity>
 
           <View style={styles.newUserContainer}>
             <Text>¿Ya tienes un usuario?</Text>
             <TouchableOpacity onPress={() => router.push('/Login')}>
-              <Text style={styles.linkText}>Inicia Sesión</Text>
+              <Text style={[styles.linkText, { marginLeft: 5 }]}>Inicia sesión</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-
-  logoContainer: { marginTop: height * 0.03, marginBottom: height * -0.07, alignItems: 'center' },
-  logo: { width: width * 0.6, height: width * 0.6 },
-  titleContainer: { alignItems: 'center', marginBottom: height * 0.03 },
-  title: { fontSize: width * 0.1, fontWeight: 'bold', color: '#27B9BA', textAlign: 'center' },
-  subtitle: { fontSize: width * 0.045, color: '#000', textAlign: 'center', marginTop: height * 0.005 },
-  inputContainer: { width: '100%', marginBottom: height * 0.03 },
-  inputWrapper: { flexDirection: 'row', alignItems: 'center', width: '100%', backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#ddd', marginBottom: height * 0.02, paddingHorizontal: width * 0.04,height: height * 0.065},
-  inputField: { flex: 1, fontSize: width * 0.045, height: '100%' },
-  inputIcon: { marginLeft: width * 0.02 },
-  actionsContainer: { width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: height * 0.05 },
-  checkbox: { width: width * 0.05, height: width * 0.05, borderWidth: 1, borderColor: '#ccc', borderRadius: 4 },
-  checkboxChecked: { backgroundColor: '#27B9BA' },
-  checkboxLabel: { marginLeft: width * 0.02, fontSize: width * 0.03, color: '#333' },
+  inputWrapper: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#ddd', marginBottom: 15, paddingHorizontal: 15, height: 55 },
+  inputField: { flex: 1, height: '100%' },
+  inputIcon: { marginLeft: 10 },
+  actionsContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 80 },
   checkboxContainer: { flexDirection: 'row', alignItems: 'center' },
-  textCondition: { fontSize: width * 0.025, color: '#007AFF' },
-  buttonContainer: { width: '100%' },
-  button: { width: '100%', backgroundColor: '#27B9BA', paddingVertical: height * 0.018, borderRadius: 8, alignItems: 'center', marginBottom: height * 0.02 },
-  buttonText: { color: '#fff', fontSize: width * 0.045, fontWeight: 'bold' },
-  newUserContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: height * 0.03 },
-  linkText: { color: '#007AFF', fontSize: width * 0.04, marginLeft: 5 },
-  error: { color: 'red', textAlign: 'center', fontWeight: 'bold', marginBottom: height * 0.01 }
+  checkbox: { width: 20, height: 20, borderWidth: 1, borderColor: '#ccc', borderRadius: 4 },
+  checkboxChecked: { backgroundColor: '#27B9BA' },
+  checkboxLabel: { marginLeft: 8, fontSize: 10, color: '#333' },
+  textCondition: { color: '#007AFF' },
+  button: { backgroundColor: '#27B9BA', borderRadius: 8, alignItems: 'center', marginBottom: 20 },
+  buttonText: { color: '#fff', fontWeight: 'bold' },
+  title: { fontWeight: 'bold', color: '#27B9BA', textAlign: 'center' },
+  subtitle: { color: '#000', textAlign: 'center' },
+  linkText: { color: '#007AFF', fontSize: 15 },
+  error: { color: 'red', textAlign: 'center', fontWeight: 'bold', marginBottom: 10 },
+  newUserContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
 });

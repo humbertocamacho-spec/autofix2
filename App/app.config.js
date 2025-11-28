@@ -10,35 +10,47 @@ export default {
     scheme: 'autofix',
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
+
     ios: {
       supportsTablet: true,
+      "bundleIdentifier": "com.autofix.app",
     },
+
+    splash: {
+      image: "./assets/images/splash-icon.png",
+      resizeMode: "contain",
+      backgroundColor: "#ffffff",
+    },
+
     android: {
-      package: 'com.anonymous.autofix',
+      package: 'com.autofix.app',
+      "config": {
+        "googleMaps": {
+          "apiKey": process.env.GOOGLE_API_KEY,
+        }
+      },
+      versionCode: 1,
+      permissions: [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "FOREGROUND_SERVICE",
+      ],
     },
+
     plugins: [
       'expo-router',
-      [
-        'expo-splash-screen',
-        {
-          image: './assets/images/splash-icon.jpg',
-          imageWidth: 200,
-          resizeMode: 'contain',
-          backgroundColor: '#ffffff',
-          dark: {
-            backgroundColor: '#000000',
-          },
-        },
-      ],
     ],
+
     experiments: {
       typedRoutes: true,
       reactCompiler: true,
     },
+
     extra: {
-      API_URL: process.env.API_URL || 'https://default-api-url.com',
+      API_URL: process.env.API_URL,
+      GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
       eas: {
-        projectId: '',
+        projectId: '0ba948f4-0961-441f-9e14-cbbf6ec47528',
       },
     },
   },

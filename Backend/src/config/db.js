@@ -9,14 +9,4 @@ const pool = mysql.createPool({
   database: config.db.database,
 });
 
-(async () => {
-  try {
-    const connection = await pool.getConnection();
-    console.log('✅ Conectado correctamente a MySQL (Railway)');
-    connection.release();
-  } catch (error) {
-    console.error('❌ Error al conectar con MySQL:', error.message);
-  }
-})();
-
 export default pool;
