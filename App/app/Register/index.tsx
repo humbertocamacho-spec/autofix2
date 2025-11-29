@@ -32,7 +32,7 @@ export default function RegisterScreen() {
   const [error, setError] = useState('');
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const API_URL = 'https://backend-autofix-production.up.railway.app';
+  const API_URL = 'https://backend-autofix2-production.up.railway.app';
 
   const router = useRouter();
 
