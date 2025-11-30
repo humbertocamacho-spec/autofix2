@@ -25,7 +25,6 @@ export async function getPendingTicketsByClient(client_id: number) {
   }
 }
 
-
 export async function deletePendingTicket(id: number) {
   if (!id || isNaN(id)) {
     console.error("deletePendingTicket: ID inválido", id);
