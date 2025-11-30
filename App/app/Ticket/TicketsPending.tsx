@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   editButton: { position: "absolute", top: 50, left: "100%", zIndex: 10, },
   card: { padding: 15, borderRadius: 12, marginBottom: 10, position: "relative" },
   row: { flexDirection: "row", alignItems: "center" },
-  logo: { width: 50, height: 50, borderRadius: 10, marginRight: 10 },
+  logo: { width: 50, height: 50, borderRadius: 10, marginRight: 10, resizeMode: 'contain', backgroundColor: '#ffffffff' },
   partnerName: { color: "#fff", fontSize: 18, fontWeight: "bold" },
   phone: { color: "#fff", fontSize: 14 },
   infoText: { color: "#fff", fontSize: 15, marginLeft: 6 },

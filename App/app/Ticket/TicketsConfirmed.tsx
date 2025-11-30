@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 25, fontWeight: "bold", color: "#000", textAlign: "center", margin: 10 },
   card: { padding: 15, borderRadius: 12, marginBottom: 10, position: "relative" },
   row: { flexDirection: "row", alignItems: "center" },
-  logo: { width: 50, height: 50, borderRadius: 10, marginRight: 10 },
+  logo: { width: 50, height: 50, borderRadius: 10, marginRight: 10, resizeMode: 'contain', backgroundColor: '#ffffffff' },
   partnerName: { color: "#fff", fontSize: 18, fontWeight: "bold" },
   phone: { color: "#fff", fontSize: 14 },
   infoText: { color: "#fff", fontSize: 15, marginLeft: 6 },
