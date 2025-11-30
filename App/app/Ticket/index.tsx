@@ -29,27 +29,33 @@ export default function ConfirmTickets() {
 
   const autoCreatePending = async (appointment: any) => {
     try {
-      const result = await createPendingTicket({
+
+      const payload = {
         client_id: Number(appointment.client_id),
         car_id: appointment.car_id,
         partner_id: appointment.partner_id,
         date: appointment.date,
         time: appointment.time,
-        notes: appointment.notes,
-        partner_name: appointment.partner_name,
-        partner_phone: appointment.partner_phone,
-        logo_url: appointment.logo_url,
-      });
+        notes: appointment.notes || "",
+        partner_name: appointment.partner_name || null,
+        partner_phone: appointment.partner_phone || null,
+        logo_url: appointment.logo_url || null,
+      };
+
+      const result = await createPendingTicket(payload);
 
       if (result && result.id) {
-        appointment.pending_id = result.id;
-        return appointment;
+        return {
+          ...appointment,
+          pending_id: result.id,
+          notes: appointment.notes || "",
+        };
       } else {
-        console.warn("No se obtuvo ID del pending_ticket creado:", result);
+        console.warn("createPendingTicket no devolvió ID:", result);
         return null;
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("Error creando pending ticket:", err.message || err);
       return null;
     }
   };
@@ -58,7 +64,6 @@ export default function ConfirmTickets() {
     const init = async () => {
       try {
         let list: any[] = await getPendingTicketsByClient(Number(clientId));
-
         list = list.map(ticket => ({
           ...ticket,
           pending_id: ticket.id,
@@ -74,12 +79,19 @@ export default function ConfirmTickets() {
 
         if (!exists) {
           const created = await autoCreatePending(newAppointment);
-          list.push(created);
+          if (created) { // ← solo agregar si NO es null
+            list.push(created);
+          } else {
+            console.warn("No se pudo crear el pending ticket automáticamente");
+            // Opcional: crear uno local sin pending_id
+            list.push({ ...newAppointment, pending_id: null, notes: "" });
+          }
         }
 
-        setAppointments(list);
+        setAppointments(list.filter(Boolean)); // ← elimina cualquier null
       } catch (err) {
         console.log("Error inicializando pantalla:", err);
+        setAppointments([]);
       }
     };
 
