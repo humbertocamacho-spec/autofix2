@@ -1,6 +1,6 @@
 export async function getCarBrands() {
     try {
-        const res = await fetch("https://backend-autofix-production.up.railway.app/api/car_brands");
+        const res = await fetch("https://prolific-happiness-production.up.railway.app/api/car_brands");
 
         if (!res.ok) {
             console.error(`Error HTTP: ${res.status} al obtener car_brands`);

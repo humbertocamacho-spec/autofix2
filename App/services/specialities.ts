@@ -1,6 +1,6 @@
 export async function getSpecialities() {
     try {
-        const res = await fetch("https://backend-autofix-production.up.railway.app/api/specialities");
+        const res = await fetch("https://prolific-happiness-production.up.railway.app/api/specialities");
 
         if (!res.ok) {
             console.error(`Error HTTP: ${res.status} al obtener specialities`);

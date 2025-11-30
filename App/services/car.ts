@@ -1,6 +1,6 @@
 import { Cars } from "@backend-types/car";
 
-const BASE_URL = "https://backend-autofix-production.up.railway.app/api/car";
+const BASE_URL = "https://prolific-happiness-production.up.railway.app/api/car";
 
 export async function getCars() {
     try {

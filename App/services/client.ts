@@ -1,4 +1,4 @@
-const BASE_URL = "https://backend-autofix-production.up.railway.app/api/client";
+const BASE_URL = "https://prolific-happiness-production.up.railway.app/api/client";
 
 export async function getClients() {
     try {

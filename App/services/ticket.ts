@@ -1,6 +1,6 @@
 import { Ticket } from "@backend-types/ticket";
 
-const BASE_URL = "https://backend-autofix-production.up.railway.app/api/ticket";
+const BASE_URL = "https://prolific-happiness-production.up.railway.app/api/ticket";
 
 export async function getTickets(car_id: number, partner_id: number, client_id: number) {
     try {
