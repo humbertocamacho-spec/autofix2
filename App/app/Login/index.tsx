@@ -34,7 +34,7 @@ export default function LoginScreen() {
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const API_URL = 'https://autofix2-production.up.railway.app';
+  const API_URL = 'https://prolific-happiness-production.up.railway.app';
 
   useEffect(() => {
     const loadSavedCredentials = async () => {
