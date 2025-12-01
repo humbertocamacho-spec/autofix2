@@ -47,6 +47,9 @@ export default function MapScreen() {
   const [searchText, setSearchText] = useState('');
   const [showCitasSubMenu, setShowCitasSubMenu] = useState(false);
   const modalMapRef = useRef<MapView>(null);
+  const [distanceRadius, setDistanceRadius] = useState(10);
+  const [distanceModalVisible, setDistanceModalVisible] = useState(false);
+
 
 
   useEffect(() => {
@@ -107,30 +110,30 @@ export default function MapScreen() {
   }, []);
 
   const nearbyPartners = partners.filter((partner) => {
-  const lat = parseFloat(partner.latitude);
-  const lon = parseFloat(partner.longitude);
-  if (isNaN(lat) || isNaN(lon) || !region) return false;
+    const lat = parseFloat(partner.latitude);
+    const lon = parseFloat(partner.longitude);
+    if (isNaN(lat) || isNaN(lon) || !region) return false;
 
-  const distance = getDistanceFromLatLonInKm(
-    region.latitude,
-    region.longitude,
-    lat,
-    lon
-  );
+    const distance = getDistanceFromLatLonInKm(
+      region.latitude,
+      region.longitude,
+      lat,
+      lon
+    );
 
-  const withinDistance = distance <= 10;
-  const hasSpeciality = selectedSpeciality
-    ? partnersSpecialities.some(
+    const withinDistance = distance <= distanceRadius;
+    const hasSpeciality = selectedSpeciality
+      ? partnersSpecialities.some(
         (ps) => ps.partner_id === partner.id && ps.speciality_id === selectedSpeciality
       )
-    : true;
+      : true;
 
-  const matchesSearch = partner.name
-    ?.toLowerCase()
-    .includes(searchText.toLowerCase());
+    const matchesSearch = partner.name
+      ?.toLowerCase()
+      .includes(searchText.toLowerCase());
 
-  return withinDistance && hasSpeciality && (!searchText || matchesSearch);
-});
+    return withinDistance && hasSpeciality && (!searchText || matchesSearch);
+  });
 
 
   useEffect(() => {
@@ -203,45 +206,55 @@ export default function MapScreen() {
       </View>
 
       <View style={styles.container}>
+        <View style={styles.distanceButtonContainer}>
+          <TouchableOpacity
+            style={styles.distanceButton}
+            onPress={() => setDistanceModalVisible(true)}
+          >
+            <Text style={styles.distanceButtonText}>{distanceRadius} km</Text>
+            <Ionicons name="chevron-down" size={14} color="#fff" />
+          </TouchableOpacity>
+        </View>
+
         <MapView ref={mapRef} style={styles.map} region={region} showsUserLocation={true}>
 
           <Marker coordinate={region} title="Tu ubicación" pinColor="red" />
           {nearbyPartners.map((partner) => {
-          const lat = parseFloat(partner.latitude);
-          const lon = parseFloat(partner.longitude);
+            const lat = parseFloat(partner.latitude);
+            const lon = parseFloat(partner.longitude);
 
-          const isMatch =
-            searchText.trim().length > 0 &&
-            partner.name.toLowerCase().includes(searchText.toLowerCase());
+            const isMatch =
+              searchText.trim().length > 0 &&
+              partner.name.toLowerCase().includes(searchText.toLowerCase());
 
-  return (
-    <Marker key={partner.id + (isMatch ? '-match' : '-nomatch')}
-      coordinate={{ latitude: lat, longitude: lon }} pinColor={isMatch ? "green" : "blue"}
-        tracksViewChanges={true}
-            onPress={() => {
-              const specs = partnersSpecialities
-                .filter((ps) => ps.partner_id === partner.id)
-                .map((ps) => {
-                  const spec = specialities.find((s) => s.id === ps.speciality_id);
-                  return spec ? spec.name : "";
-                });
+            return (
+              <Marker key={partner.id + (isMatch ? '-match' : '-nomatch')}
+                coordinate={{ latitude: lat, longitude: lon }} pinColor={isMatch ? "green" : "blue"}
+                tracksViewChanges={true}
+                onPress={() => {
+                  const specs = partnersSpecialities
+                    .filter((ps) => ps.partner_id === partner.id)
+                    .map((ps) => {
+                      const spec = specialities.find((s) => s.id === ps.speciality_id);
+                      return spec ? spec.name : "";
+                    });
 
-                router.push({
-                  pathname: "../Map/details",
-                  params: {
-                    id: partner.id.toString(),
-                    name: partner.name,
-                    location: partner.location,
-                    phone: partner.phone || "",
-                    whatsapp: partner.whatsapp || "",
-                    logo_url: partner.logo_url || "",
-                    latitude: partner.latitude,
-                    longitude: partner.longitude,
-                    description: partner.description,
-                    specialities: JSON.stringify(specs),
-                  },
-                });
-              }}
+                  router.push({
+                    pathname: "../Map/details",
+                    params: {
+                      id: partner.id.toString(),
+                      name: partner.name,
+                      location: partner.location,
+                      phone: partner.phone || "",
+                      whatsapp: partner.whatsapp || "",
+                      logo_url: partner.logo_url || "",
+                      latitude: partner.latitude,
+                      longitude: partner.longitude,
+                      description: partner.description,
+                      specialities: JSON.stringify(specs),
+                    },
+                  });
+                }}
               />
             );
           })}
@@ -315,7 +328,29 @@ export default function MapScreen() {
               </View>
             </View>
           </View>
-        </Modal>
+
+
+        </Modal>{distanceModalVisible && (<View style={styles.distanceModalOverlay}><View style={styles.distanceModal}>
+          <TouchableOpacity style={styles.closeButton} onPress={() => setDistanceModalVisible(false)}>
+            <Ionicons name="close" size={22} color="#333" />
+          </TouchableOpacity>
+
+          <Text style={styles.distanceModalTitle}> Seleccionar radio de búsqueda </Text>
+          {[10, 15, 20, 25, 30].map((km) => (
+            <TouchableOpacity
+              key={km}
+              style={[styles.distanceOption, distanceRadius === km && styles.distanceOptionActive,]}
+              onPress={() => {
+                setDistanceRadius(km);
+                setDistanceModalVisible(false);
+              }}
+            >
+              <Text style={[styles.distanceOptionText, distanceRadius === km && styles.distanceOptionTextActive,]} > {km} km </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        </View>
+        )}
 
         {menuVisible && (
           <View style={styles.overlay}>
@@ -361,7 +396,7 @@ export default function MapScreen() {
             </Animated.View>
           </View>
         )}
-      </View>
+      </View >
     </>
   );
 }
@@ -376,7 +411,7 @@ const styles = StyleSheet.create({
   headerTitle: { position: 'absolute', left: 0, right: 0, textAlign: 'center', marginTop: 52, fontSize: 25, fontWeight: 'bold' },
   searchWrapped: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#ecececff', borderRadius: 8, paddingVertical: 5, paddingHorizontal: 10, margin: 10, marginTop: 5 },
   searchInput: { flex: 1, paddingVertical: 10, fontSize: 15 },
-  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.3)' },
+  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.3)', zIndex: 9999, },
   sideMenu: { position: 'absolute', left: 0, top: 0, bottom: 0, width: width * 0.7, backgroundColor: '#27B9BA', paddingTop: 10, paddingHorizontal: 20, elevation: 15, borderTopRightRadius: 20, borderBottomRightRadius: 20 },
   menuHeader: { marginBottom: 20 },
   menuTitle: { fontSize: 28, fontWeight: 'bold', color: '#fff' },
@@ -404,5 +439,16 @@ const styles = StyleSheet.create({
   subMenuButton: { paddingVertical: 10, paddingHorizontal: 10, borderRadius: 8, marginBottom: 5, backgroundColor: "#e0f7f7" },
   subMenuText: { fontSize: 16, color: "#000", },
   gpsButton: { position: "absolute", top: 50, right: 10, zIndex: 999, width: 48, height: 48, backgroundColor: "#fff", borderRadius: 30, justifyContent: "center", alignItems: "center", elevation: 10, },
+  distanceButtonContainer: { position: "absolute", top: 10, right: 60, zIndex: 1, },
+  distanceButton: { flexDirection: "row", backgroundColor: "#27B9BA", paddingVertical: 6, paddingHorizontal: 12, borderRadius: 12, alignItems: "center", elevation: 6, },
+  distanceButtonText: { color: "#fff", fontSize: 14, fontWeight: "bold", marginRight: 5, },
+  distanceModalOverlay: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.4)", },
+  distanceModal: { width: 200, backgroundColor: "#fff", padding: 20, borderRadius: 12, paddingTop: 27, elevation: 10, position: "relative", },
+  closeButton: { position: "absolute", top: 5, right: 10, width: 26, height: 26, borderRadius: 18, backgroundColor: "#f2f2f2", justifyContent: "center", alignItems: "center", elevation: 5, zIndex: 999, },
+  distanceModalTitle: { fontSize: 16, fontWeight: "bold", textAlign: "center", marginBottom: 15, },
+  distanceOption: { paddingVertical: 10, backgroundColor: "#f0f0f0", borderRadius: 8, marginBottom: 8, alignItems: "center", },
+  distanceOptionActive: { backgroundColor: "#27B9BA", },
+  distanceOptionText: { fontSize: 15, fontWeight: "600", color: "#333", },
+  distanceOptionTextActive: { color: "#fff", fontWeight: "bold", },
 
 });
