@@ -1,6 +1,7 @@
+import { API_URL } from '../config/env';
 import { Cars } from "@backend-types/car";
 
-const BASE_URL = "https://prolific-happiness-production.up.railway.app/api/car";
+const BASE_URL = `${API_URL}/api/car`;
 
 export async function getCars() {
     try {

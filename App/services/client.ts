@@ -1,4 +1,6 @@
-const BASE_URL = "https://prolific-happiness-production.up.railway.app/api/client";
+import { API_URL } from '../config/env';
+
+const BASE_URL = `${API_URL}/api/client`;
 
 export async function getClients() {
     try {

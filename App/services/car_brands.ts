@@ -1,6 +1,8 @@
+import { API_URL } from '../config/env';
+
 export async function getCarBrands() {
     try {
-        const res = await fetch("https://prolific-happiness-production.up.railway.app/api/car_brands");
+        const res = await fetch(`${API_URL}/api/car_brands`);
 
         if (!res.ok) {
             console.error(`Error HTTP: ${res.status} al obtener car_brands`);

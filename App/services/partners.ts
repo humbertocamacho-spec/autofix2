@@ -1,6 +1,8 @@
+import { API_URL } from '../config/env';
+
 export async function getPartners() {
     try {
-        const res = await fetch("https://prolific-happiness-production.up.railway.app/api/partners");
+        const res = await fetch(`${API_URL}/api/partners`);
 
         if (!res.ok) {
             console.error(`Error HTTP: ${res.status} al obtener partners`);

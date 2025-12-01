@@ -1,4 +1,4 @@
-import { API_URL } from '../config/env'; // ajusta la ruta según tu archivo
+import { API_URL } from '../config/env';
 
 export async function getSpecialities() {
   try {
