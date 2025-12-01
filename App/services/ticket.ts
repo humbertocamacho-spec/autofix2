@@ -1,5 +1,6 @@
 import { Ticket } from "@backend-types/ticket";
-import { API_URL} from '@env';
+
+const BASE_URL = "https://prolific-happiness-production.up.railway.app/api/ticket";
 
 export async function getTickets(car_id: number, partner_id: number, client_id: number) {
     try {
@@ -10,7 +11,7 @@ export async function getTickets(car_id: number, partner_id: number, client_id: 
             throw new Error("IDs inválidos enviados a getTickets");
         }
 
-        const url = `${API_URL}/api/ticket/${car_id}/${partner_id}/${client_id}`;
+        const url = `${BASE_URL}/${car_id}/${partner_id}/${client_id}`;
         console.log("URL solicitada:", url);
 
         const res = await fetch(url);
@@ -36,7 +37,7 @@ export async function createTicket(ticketData: Ticket) {
     try {
         console.log("Enviando ticket:", ticketData);
 
-        const res = await fetch(`${API_URL}/api/ticket`, {
+        const res = await fetch(BASE_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(ticketData),
@@ -61,7 +62,7 @@ export async function createTicket(ticketData: Ticket) {
 
 export async function getTicketsByClient(client_id: number) {
     try {
-        const res = await fetch(`${API_URL}/api/ticket?client_id=${client_id}`);
+        const res = await fetch(`${BASE_URL}?client_id=${client_id}`);
         if (!res.ok) return [];
         return await res.json();
     } catch (error) {
@@ -72,7 +73,7 @@ export async function getTicketsByClient(client_id: number) {
 
 export async function deleteTicket(id: number) {
     try {
-        const res = await fetch(`${API_URL}/api/ticket/${id}`, {
+        const res = await fetch(`${BASE_URL}/${id}`, {
             method: "DELETE",
         });
 
@@ -84,7 +85,7 @@ export async function deleteTicket(id: number) {
 }
 export async function getOccupiedHours(partner_id: number, date: string) {
     try {
-        const url = `${API_URL}/api/ticket/occupied?partner_id=${partner_id}&date=${date}`;
+        const url = `${BASE_URL}/occupied?partner_id=${partner_id}&date=${date}`;
         const res = await fetch(url);
 
         if (!res.ok) {
