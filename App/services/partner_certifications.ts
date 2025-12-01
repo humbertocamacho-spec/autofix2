@@ -1,7 +1,8 @@
+import { API_URL} from '@env';
+
 export async function getPartnerCertifications(partner_id: number) {
   try {
-    const res = await fetch(
-      `https://prolific-happiness-production.up.railway.app/api/partner_certifications?partner_id=${partner_id}`,
+    const res = await fetch(`${API_URL}/api/partner_certifications?partner_id=${partner_id}`,
       {
         method: "GET",
         headers: {

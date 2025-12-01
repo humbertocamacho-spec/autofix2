@@ -1,10 +1,9 @@
 import { Cars } from "@backend-types/car";
-
-const BASE_URL = "https://prolific-happiness-production.up.railway.app/api/car";
+import { API_URL} from '@env';
 
 export async function getCars() {
     try {
-        const res = await fetch(BASE_URL);
+        const res = await fetch(`${API_URL}/api/car`);
 
         if (!res.ok) {
             console.error(`Error HTTP: ${res.status}`);
@@ -20,7 +19,7 @@ export async function getCars() {
 
 export async function createCar(carData: Cars) {
   try {
-    const res = await fetch(BASE_URL, {
+    const res = await fetch(`${API_URL}/api/car`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(carData)
@@ -41,7 +40,7 @@ export async function createCar(carData: Cars) {
 
 export async function updateCar(id: number, carData: Cars) {
   try {
-    const res = await fetch(`${BASE_URL}/${id}`, {
+    const res = await fetch(`${`${API_URL}/api/car`}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(carData)
@@ -62,7 +61,7 @@ export async function updateCar(id: number, carData: Cars) {
 
 export async function deleteCar(id: number) {
     try {
-        const res = await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
+        const res = await fetch(`${`${API_URL}/api/car`}/${id}`, { method: "DELETE" });
         return await res.json();
     } catch (error) {
         console.error("Error en deleteCar:", error);

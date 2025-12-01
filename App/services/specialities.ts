@@ -1,6 +1,8 @@
+import { API_URL} from '@env';
+
 export async function getSpecialities() {
     try {
-        const res = await fetch("https://prolific-happiness-production.up.railway.app/api/specialities");
+        const res = await fetch(`${API_URL}/api/specialities`);
 
         if (!res.ok) {
             console.error(`Error HTTP: ${res.status} al obtener specialities`);

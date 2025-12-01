@@ -1,6 +1,8 @@
+import { API_URL} from '@env';
+
 export async function createPendingTicket(data: any) {
     try {
-        const res = await fetch("https://prolific-happiness-production.up.railway.app/api/pending_tickets/", {
+        const res = await fetch(`${API_URL}/api/pending_tickets`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)
@@ -16,7 +18,7 @@ export async function createPendingTicket(data: any) {
 export async function getPendingTicketsByClient(client_id: number) {
   try {
     const res = await fetch(
-      `https://prolific-happiness-production.up.railway.app/api/pending_tickets/${client_id}`
+      `${API_URL}/api/pending_tickets/${client_id}`
     );
     return await res.json();
   } catch (error) {
@@ -33,7 +35,7 @@ export async function deletePendingTicket(id: number) {
 
   try {
     const res = await fetch(
-      `https://prolific-happiness-production.up.railway.app/api/pending_tickets/${id}`,
+      `${API_URL}/api/pending_tickets/${id}`,
       { method: "DELETE" }
     );
 
@@ -55,7 +57,7 @@ export async function deletePendingTicket(id: number) {
 export async function updatePendingTicket(id: number, data: any) {
   try {
     const res = await fetch(
-      `https://prolific-happiness-production.up.railway.app/api/pending_tickets/${id}`,
+      `${API_URL}/api/pending_tickets/${id}`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

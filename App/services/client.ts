@@ -1,8 +1,8 @@
-const BASE_URL = "https://prolific-happiness-production.up.railway.app/api/client";
+import { API_URL} from '@env';
 
 export async function getClients() {
     try {
-        const res = await fetch(BASE_URL);
+        const res = await fetch(`${API_URL}/api/client`);
 
         if (!res.ok) {
             console.error(`Error HTTP: ${res.status}`);
