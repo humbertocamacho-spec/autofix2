@@ -10,7 +10,9 @@ import { getPartnerSpecialities } from '@/services/partner_specialities';
 export default function RecommendationsScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { latitude, longitude } = params;
+  const { latitude, longitude, radius } = params;
+  const distanceRadius = parseFloat(radius as string) || 10;
+
 
   const [partners, setPartners] = useState<Partner[]>([]);
   const [region, setRegion] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -60,33 +62,33 @@ export default function RecommendationsScreen() {
     const a =
       Math.sin(dLat / 2) ** 2 +
       Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) ** 2;
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
 
   const nearbyPartners = partners
-  .map((partner) => {
-    const lat = parseFloat(partner.latitude);
-    const lon = parseFloat(partner.longitude);
+    .map((partner) => {
+      const lat = parseFloat(partner.latitude);
+      const lon = parseFloat(partner.longitude);
 
-    if (isNaN(lat) || isNaN(lon) || !region) {
-      return { ...partner, distance: Infinity, priority: partner.priority ?? 10,};
-    }
+      if (isNaN(lat) || isNaN(lon) || !region) {
+        return { ...partner, distance: Infinity, priority: partner.priority ?? 10, };
+      }
 
-    const distance = getDistanceFromLatLonInKm( region.latitude, region.longitude, lat, lon);
+      const distance = getDistanceFromLatLonInKm(region.latitude, region.longitude, lat, lon);
 
-    return {...partner, distance, priority: partner.priority ?? 10,};
-  })
+      return { ...partner, distance, priority: partner.priority ?? 10, };
+    })
 
-  .filter((p) => p.distance <= 10)
-  .sort((a, b) => {
-    if (a.priority !== b.priority) {
-      return a.priority - b.priority;
-    }
-    return a.distance - b.distance;
-  });
+    .filter((p) => p.distance <= distanceRadius)
+    .sort((a, b) => {
+      if (a.priority !== b.priority) {
+        return a.priority - b.priority;
+      }
+      return a.distance - b.distance;
+    });
 
   const screenHeight = Dimensions.get("window").height;
 
@@ -134,7 +136,7 @@ export default function RecommendationsScreen() {
                   specialities: JSON.stringify(specs),
                 },
               })}>
-                
+
                 <View style={styles.cardImageWrapper}>
                   <Image
                     source={{ uri: partner.logo_url || "https://i.sstatic.net/kRRyP.png" }}
@@ -157,7 +159,7 @@ export default function RecommendationsScreen() {
       ) : (
         <View style={[styles.centerContainer, { height: screenHeight - 100 }]}>
           <Text style={styles.noResultsText}>
-            No se encontraron talleres cercanos en un radio de 10 km.
+            No se encontraron talleres cercanos en un radio de {distanceRadius} km.
           </Text>
         </View>
       )}
@@ -170,8 +172,8 @@ const styles = StyleSheet.create({
   titleRecommendations: { fontSize: 25, fontWeight: "bold", color: "#000000ff", textAlign: "center", backgroundColor: "#fff", width: "100%", padding: 10 },
   cardsContainer: { flexGrow: 1, flexDirection: "row", flexWrap: "wrap", justifyContent: "space-around", alignItems: "flex-start", paddingVertical: 15, backgroundColor: "#fff" },
   partnerCard: { width: "42%", height: 180, alignItems: "center", backgroundColor: "#27B9BA", borderRadius: 10, marginVertical: 8, elevation: 3, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4, overflow: "hidden" },
-  cardImageWrapper: { width: "100%", height: 100, backgroundColor: "#f2f2f2", justifyContent: "center", alignItems: "center",},
-  cardImage: { width: "100%", height: "100%", resizeMode: "contain",},
+  cardImageWrapper: { width: "100%", height: 100, backgroundColor: "#f2f2f2", justifyContent: "center", alignItems: "center", },
+  cardImage: { width: "100%", height: "100%", resizeMode: "contain", },
   cardContent: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 6 },
   nameText: { fontSize: 16, fontWeight: "bold", color: "#fff", textAlign: "center" },
   distanceText: { color: "#fff", fontSize: 12, marginTop: 4 },
