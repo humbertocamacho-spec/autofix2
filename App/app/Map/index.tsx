@@ -273,6 +273,7 @@ export default function MapScreen() {
                 params: {
                   latitude: region?.latitude.toString() || '',
                   longitude: region?.longitude.toString() || '',
+                  radius: distanceRadius.toString(),
                 },
               })
             }
