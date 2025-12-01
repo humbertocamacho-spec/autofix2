@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ScrollView, useWindowDimensions, PixelRatio } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL, GOOGLE_API_KEY } from '../../config/env';
 
 type RememberCheckBoxProps = {
   value: boolean;
@@ -34,6 +33,8 @@ export default function LoginScreen() {
   const [error, setError] = useState('');
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const API_URL = 'https://prolific-happiness-production.up.railway.app';
 
   useEffect(() => {
     const loadSavedCredentials = async () => {
