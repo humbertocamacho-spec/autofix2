@@ -33,7 +33,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
         </label>
         <input
           type="email"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:bg-[#27B9BA]"
           placeholder="hello@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -47,7 +47,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
         </label>
         <input
           type="password"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:bg-[#27B9BA]"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -77,9 +77,9 @@ export default function LoginForm({ onLoginSuccess }: Props) {
       <div className="text-center">
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+          className="w-full bg-[#27B9BA] text-white py-3 rounded-lg font-semibold hover:bg-[#25afaf] transition"
         >
-          Sign Me In
+          Iniciar Sesión
         </button>
       </div>
     </form>

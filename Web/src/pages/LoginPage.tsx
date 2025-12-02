@@ -36,11 +36,11 @@ export default function LoginPage() {
             </p>
 
             <div className="space-y-3 mb-6">
-              <button className="w-full border border-blue-600 text-blue-600 py-2 rounded-lg font-medium hover:bg-blue-50 transition flex items-center justify-center gap-2">
+              <button className="w-full border border-[#27B9BA] text-[#27B9BA] py-2 rounded-lg font-medium hover:bg-blue-50 transition flex items-center justify-center gap-2">
                 <i className="fa fa-google"></i> Iniciar sesión con Google
               </button>
 
-              <button className="w-full border border-blue-600 text-blue-600 py-2 rounded-lg font-medium hover:bg-blue-50 transition flex items-center justify-center gap-2">
+              <button className="w-full border border-[#27B9BA] text-[#27B9BA] py-2 rounded-lg font-medium hover:bg-blue-50 transition flex items-center justify-center gap-2">
                 <i className="fa fa-facebook-f"></i> Iniciar sesión con Facebook
               </button>
             </div>

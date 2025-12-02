@@ -22,7 +22,6 @@ export default function RegisterForm() {
       return;
     }
 
-    // ✔ Al registrarse → ir al login
     navigate("/login");
   };
 
@@ -33,7 +32,7 @@ export default function RegisterForm() {
         <label className="block mb-1 font-semibold text-gray-800">Name</label>
         <input
           type="text"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#27B9BA]"
           placeholder="Your name"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -45,7 +44,7 @@ export default function RegisterForm() {
         <label className="block mb-1 font-semibold text-gray-800">Email</label>
         <input
           type="email"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#27B9BA]"
           placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -57,7 +56,7 @@ export default function RegisterForm() {
         <label className="block mb-1 font-semibold text-gray-800">Phone</label>
         <input
           type="text"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#27B9BA]"
           placeholder="Your phone"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
@@ -69,7 +68,7 @@ export default function RegisterForm() {
         <label className="block mb-1 font-semibold text-gray-800">Password</label>
         <input
           type="password"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#27B9BA]"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -89,7 +88,7 @@ export default function RegisterForm() {
       <div className="text-center">
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+          className="w-full bg-[#27B9BA] text-white py-3 rounded-lg font-semibold hover:bg-[#25afaf] transition"
         >
           Create Account
         </button>
