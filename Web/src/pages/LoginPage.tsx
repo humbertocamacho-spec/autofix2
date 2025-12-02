@@ -1,6 +1,13 @@
+import { useNavigate } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+
+  const handleLoginSuccess = () => {
+    navigate("/home");
+  };
+
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
@@ -11,38 +18,41 @@ export default function LoginPage() {
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden">
         <div className="flex flex-col md:flex-row">
 
-          <div className="md:w-1/2 bg-white flex flex-col items-center justify-center relative p-10">
-            <div className="text-center my-6">
-              <img src="assets/images/logo-dark.png" className="w-40 mx-auto" />
-            </div>
-
+          <div className="md:w-1/2 bg-white relative flex items-center justify-center p-10">
             <img
-              src="assets/images/log.png"
-              className="w-80 mx-auto drop-shadow-xl"
+              src="assets/images/Logo.jpg"
+              className="w-[420px] h-auto object-contain select-none mx-auto my-auto block"
+              alt="Logo"
             />
           </div>
 
           <div className="md:w-1/2 p-10 bg-white">
             <h4 className="text-2xl font-semibold mb-2 text-gray-900">
-              Sign in your account
+              Inicia sesión en tu cuenta
             </h4>
 
             <p className="text-gray-600 mb-6 leading-tight">
-              Welcome back! Login with your data that you entered<br />
-              during registration
+              Bienvenido de nuevo! Inicia sesión con tus datos
             </p>
 
             <div className="space-y-3 mb-6">
               <button className="w-full border border-blue-600 text-blue-600 py-2 rounded-lg font-medium hover:bg-blue-50 transition flex items-center justify-center gap-2">
-                <i className="fa fa-google"></i> Login with Google
+                <i className="fa fa-google"></i> Iniciar sesión con Google
               </button>
 
               <button className="w-full border border-blue-600 text-blue-600 py-2 rounded-lg font-medium hover:bg-blue-50 transition flex items-center justify-center gap-2">
-                <i className="fa fa-facebook-f"></i> Login with Facebook
+                <i className="fa fa-facebook-f"></i> Iniciar sesión con Facebook
               </button>
             </div>
 
-            <LoginForm />
+            <LoginForm onLoginSuccess={handleLoginSuccess} />
+
+            <p className="text-center mt-5 text-sm text-gray-700">
+              No cuentas con una cuenta?{" "}
+              <a href="/register" className="text-blue-600 hover:underline">
+                Registrate
+              </a>
+            </p>
           </div>
         </div>
       </div>

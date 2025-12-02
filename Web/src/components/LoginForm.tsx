@@ -55,7 +55,6 @@ export default function LoginForm({ onLoginSuccess }: Props) {
         />
       </div>
 
-      {/* Row inferior */}
       <div className="flex items-center justify-between text-sm mt-2">
 
         <label className="flex items-center gap-2 cursor-pointer">
@@ -63,7 +62,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
             type="checkbox"
             className="w-4 h-4 accent-blue-600"
           />
-          <span className="text-gray-700">Remember my preference</span>
+          <span className="text-gray-700">Recordar</span>
         </label>
 
         <a href="#" className="text-blue-600 hover:underline">
@@ -71,12 +70,10 @@ export default function LoginForm({ onLoginSuccess }: Props) {
         </a>
       </div>
 
-      {/* Error */}
       {error && (
         <p className="text-red-500 text-sm">{error}</p>
       )}
 
-      {/* Botón */}
       <div className="text-center">
         <button
           type="submit"
