@@ -65,9 +65,12 @@ export default function LoginForm({ onLoginSuccess }: Props) {
           <span className="text-gray-700">Recordar</span>
         </label>
 
-        <a href="#" className="text-blue-600 hover:underline">
+         <button
+          type="button"
+          className="text-blue-600 hover:underline"
+        >
           Forgot Password?
-        </a>
+        </button>
       </div>
 
       {error && (

@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
 
 export default function LoginPage() {
   const navigate = useNavigate();
 
   const handleLoginSuccess = () => {
-    navigate("/home");
+    navigate("/dashboard");
   };
 
   return (
@@ -49,9 +49,7 @@ export default function LoginPage() {
 
             <p className="text-center mt-5 text-sm text-gray-700">
               No cuentas con una cuenta?{" "}
-              <a href="/register" className="text-blue-600 hover:underline">
-                Registrate
-              </a>
+              <Link to="/register" className="text-blue-600 hover:underline">Registrate </Link>
             </p>
           </div>
         </div>
