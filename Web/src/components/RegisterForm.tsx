@@ -32,7 +32,7 @@ export default function RegisterForm() {
         <label className="block mb-1 font-semibold text-gray-800">Name</label>
         <input
           type="text"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#27B9BA]"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#ffffff]"
           placeholder="Your name"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -44,7 +44,7 @@ export default function RegisterForm() {
         <label className="block mb-1 font-semibold text-gray-800">Email</label>
         <input
           type="email"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#27B9BA]"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#ffffff]"
           placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -56,7 +56,7 @@ export default function RegisterForm() {
         <label className="block mb-1 font-semibold text-gray-800">Phone</label>
         <input
           type="text"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#27B9BA]"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#ffffff]"
           placeholder="Your phone"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
@@ -68,7 +68,7 @@ export default function RegisterForm() {
         <label className="block mb-1 font-semibold text-gray-800">Password</label>
         <input
           type="password"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#27B9BA]"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#ffffff]"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
