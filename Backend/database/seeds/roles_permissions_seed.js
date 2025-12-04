@@ -1,31 +1,37 @@
 export async function seed(knex) {
   await knex("roles_permissions").del();
 
-  const allPermissions = await knex("permissions").pluck("id");
+  const permissions = await knex("permissions");
 
-  // ADMIN = todos los permisos
-  const adminAssignments = allPermissions.map(permissionId => ({
-    role_id: 1,
-    permission_id: permissionId
-  }));
+  const getPerms = (moduleIds, actions = ["create", "read", "update", "delete"]) =>
+    permissions
+      .filter(p => moduleIds.includes(p.module_id) && actions.some(a => p.name.startsWith(a)))
+      .map(p => p.id);
 
-  // PARTNER
-  const partnerPermissions = [5, 7, 9, 11, 14, 3, 4];
-  const partnerAssignments = partnerPermissions.map(permissionId => ({
-    role_id: 2,
-    permission_id: permissionId
-  }));
+  const adminPerms = permissions.map(p => p.id);
 
-  // CLIENT
-  const clientPermissions = [8, 10, 13, 6, 2, 16, 3, 4];
-  const clientAssignments = clientPermissions.map(permissionId => ({
-    role_id: 3,
-    permission_id: permissionId
-  }));
+  const partnerPerms = [
+    ...getPerms([5], ["create","read","update"]),         
+    ...getPerms([9,10], ["read","update"]),            
+    ...getPerms([3,4], ["read"]),                     
+    ...getPerms([8], ["read"]),                        
+    ...getPerms([7], ["read"]),                         
+    ...getPerms([6], ["read"]),                          
+    ...getPerms([2], ["read","update"]),              
+  ];
+
+  const clientPerms = [
+    ...getPerms([7], ["read"]),                         
+    ...getPerms([9,10], ["read"]),                       
+    ...getPerms([8], ["read"]),                         
+    ...getPerms([5], ["read"]),                          
+    ...getPerms([2], ["read"]),                         
+    ...getPerms([3], ["read"]),                      
+  ];
 
   await knex("roles_permissions").insert([
-    ...adminAssignments,
-    ...partnerAssignments,
-    ...clientAssignments
+    ...adminPerms.map(id => ({ role_id: 1, permission_id: id })),
+    ...partnerPerms.map(id => ({ role_id: 2, permission_id: id })),
+    ...clientPerms.map(id => ({ role_id: 3, permission_id: id })),
   ]);
 }
