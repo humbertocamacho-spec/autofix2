@@ -27,7 +27,6 @@ router.post('/login', async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(401).json({ ok: false, message: 'Contraseña incorrecta' });
 
-    // Obtener permisos
     const [permissions] = await pool.query(
       `SELECT p.name 
        FROM roles_permissions rp 
@@ -36,7 +35,6 @@ router.post('/login', async (req, res) => {
       [user.role_id]
     );
 
-    // Identificar si es cliente
     let client_id = null;
     let partner_id = null;
 
@@ -50,13 +48,12 @@ router.post('/login', async (req, res) => {
       partner_id = p.length ? p[0].id : null;
     }
 
-    // generar token
     const token = jwt.sign(
       {
         user_id: user.id,
         role_id: user.role_id
       },
-      "SUPER_SECRET_KEY", // cámbiala luego
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
