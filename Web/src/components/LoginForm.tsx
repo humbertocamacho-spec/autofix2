@@ -58,11 +58,10 @@ export default function LoginForm({ onLoginSuccess }: Props) {
         <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="checkbox"
-            className="w-4 h-4 accent-blue-600"
+            className="w-4 h-4 accent-[#27B9BA]"
           />
           <span className="text-gray-700">Recordar</span>
         </label>
-
         <button type="button" className="text-blue-600 hover:underline"> Olvidaste tu contraseña? </button>
       </div>
 
