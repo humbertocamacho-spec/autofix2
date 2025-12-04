@@ -1,13 +1,12 @@
 import express from 'express';
 import pool from '../config/db.js';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 const emailvalidate = /^[^\s@]+@gmail\.com$/;
 const phonevalidate = /^[0-9]{10}$/;
 
-// LOGIN
+//Ruta Login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -27,50 +26,27 @@ router.post('/login', async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(401).json({ ok: false, message: 'Contraseña incorrecta' });
 
-    // Obtener permisos
-    const [permissions] = await pool.query(
-      `SELECT p.name 
-       FROM roles_permissions rp 
-       JOIN permissions p ON rp.permission_id = p.id 
-       WHERE rp.role_id = ?`,
-      [user.role_id]
+    const [clientResult] = await pool.query(
+      "SELECT id FROM clients WHERE user_id = ?",
+      [user.id]
     );
 
-    // Identificar si es cliente
-    let client_id = null;
-    let partner_id = null;
-
-    if (user.role_id === 3) {
-      const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
-      client_id = c.length ? c[0].id : null;
+    if (clientResult.length === 0) {
+      return res.status(500).json({
+        ok: false,
+        message: "El usuario no tiene un cliente asociado"
+      });
     }
 
-    if (user.role_id === 2) {
-      const [p] = await pool.query("SELECT id FROM partners WHERE user_id = ?", [user.id]);
-      partner_id = p.length ? p[0].id : null;
-    }
-
-    // generar token
-    const token = jwt.sign(
-      {
-        user_id: user.id,
-        role_id: user.role_id
-      },
-      process.env.JWT_SECRET, 
-      { expiresIn: '7d' }
-    );
+    const client_id = clientResult[0].id;
 
     res.json({
       ok: true,
-      message: 'Login exitoso',
-      token,
+      message: "Login exitoso",
       user: {
         id: user.id,
-        email: user.email,
-        role_id: user.role_id,
-        client_id,
-        partner_id,
-        permissions: permissions.map(p => p.name)
+        client_id: client_id, 
+        email: user.email
       }
     });
 
