@@ -6,6 +6,15 @@ export interface User {
 
 export interface AuthResponse {
   ok: boolean;
-  user?: User;
   message?: string;
+  token?: string;
+  user?: {
+    id: number;
+    email: string;
+    role_id: number;
+    client_id?: number;
+    partner_id?: number;
+    permissions?: string[];
+  };
 }
+

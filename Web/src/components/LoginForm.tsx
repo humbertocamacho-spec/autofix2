@@ -18,8 +18,11 @@ export default function LoginForm({ onLoginSuccess }: Props) {
 
     if (data.ok && data.user) {
       localStorage.setItem("user", JSON.stringify(data.user));
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+    }
       onLoginSuccess && onLoginSuccess();
-    } else {
+    }else {
       setError(data.message || "Error en login");
     }
   };
