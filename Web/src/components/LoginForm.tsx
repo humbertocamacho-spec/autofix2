@@ -34,7 +34,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
         <label className="block mb-1 font-semibold text-gray-800"> Correo</label>
         <input
           type="email"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:bg-[#27B9BA]"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:bg-[#ffffff]"
           placeholder="Correo"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -46,7 +46,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
         <label className="block mb-1 font-semibold text-gray-800"> Contraseña </label>
         <input
           type="password"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:bg-[#27B9BA]"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:bg-[#ffffff]"
           placeholder="Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
