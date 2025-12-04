@@ -48,7 +48,7 @@ export default function LoginPage() {
             <LoginForm onLoginSuccess={handleLoginSuccess} />
 
             <p className="text-center mt-5 text-sm text-gray-700">
-              No cuentas con una cuenta?{" "}
+              No tienes una cuenta?{" "}
               <Link to="/register" className="text-blue-600 hover:underline">Registrate </Link>
             </p>
           </div>

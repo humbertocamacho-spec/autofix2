@@ -29,11 +29,11 @@ export default function RegisterForm() {
     <form onSubmit={handleSubmit} className="space-y-5">
 
       <div>
-        <label className="block mb-1 font-semibold text-gray-800">Name</label>
+        <label className="block mb-1 font-semibold text-gray-800">Nombre</label>
         <input
           type="text"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#27B9BA]"
-          placeholder="Your name"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#ffffff]"
+          placeholder="Nombre"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -41,11 +41,11 @@ export default function RegisterForm() {
       </div>
 
       <div>
-        <label className="block mb-1 font-semibold text-gray-800">Email</label>
+        <label className="block mb-1 font-semibold text-gray-800">Correo</label>
         <input
           type="email"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#27B9BA]"
-          placeholder="you@example.com"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#ffffff]"
+          placeholder="Correo"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -53,11 +53,11 @@ export default function RegisterForm() {
       </div>
 
       <div>
-        <label className="block mb-1 font-semibold text-gray-800">Phone</label>
+        <label className="block mb-1 font-semibold text-gray-800">Teléfono</label>
         <input
           type="text"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#27B9BA]"
-          placeholder="Your phone"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#ffffff]"
+          placeholder="Teléfono"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           required
@@ -65,11 +65,11 @@ export default function RegisterForm() {
       </div>
 
       <div>
-        <label className="block mb-1 font-semibold text-gray-800">Password</label>
+        <label className="block mb-1 font-semibold text-gray-800">Contraseña</label>
         <input
           type="password"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#27B9BA]"
-          placeholder="Password"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:bg-[#ffffff]"
+          placeholder="Contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -79,7 +79,7 @@ export default function RegisterForm() {
       <div className="flex items-center text-sm mt-2">
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" className="w-4 h-4 accent-blue-600" />
-          <span className="text-gray-700">I accept the terms</span>
+          <span className="text-gray-700">Aceptas los términos y condiciones</span>
         </label>
       </div>
 
@@ -90,7 +90,7 @@ export default function RegisterForm() {
           type="submit"
           className="w-full bg-[#27B9BA] text-white py-3 rounded-lg font-semibold hover:bg-[#25afaf] transition"
         >
-          Create Account
+          Crear cuenta
         </button>
       </div>
     </form>
