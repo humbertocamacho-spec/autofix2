@@ -31,9 +31,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
     <form onSubmit={handleSubmit} className="space-y-5">
 
       <div>
-        <label className="block mb-1 font-semibold text-gray-800">
-          Email
-        </label>
+        <label className="block mb-1 font-semibold text-gray-800"> Email</label>
         <input
           type="email"
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:bg-[#27B9BA]"
@@ -45,9 +43,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
       </div>
 
       <div>
-        <label className="block mb-1 font-semibold text-gray-800">
-          Password
-        </label>
+        <label className="block mb-1 font-semibold text-gray-800"> Password </label>
         <input
           type="password"
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:bg-[#27B9BA]"
@@ -59,7 +55,6 @@ export default function LoginForm({ onLoginSuccess }: Props) {
       </div>
 
       <div className="flex items-center justify-between text-sm mt-2">
-
         <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="checkbox"
@@ -68,12 +63,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
           <span className="text-gray-700">Recordar</span>
         </label>
 
-         <button
-          type="button"
-          className="text-blue-600 hover:underline"
-        >
-          Forgot Password?
-        </button>
+        <button type="button" className="text-blue-600 hover:underline"> Forgot Password? </button>
       </div>
 
       {error && (
@@ -81,10 +71,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
       )}
 
       <div className="text-center">
-        <button
-          type="submit"
-          className="w-full bg-[#27B9BA] text-white py-3 rounded-lg font-semibold hover:bg-[#25afaf] transition"
-        >
+        <button type="submit" className="w-full bg-[#27B9BA] text-white py-3 rounded-lg font-semibold hover:bg-[#25afaf] transition">
           Iniciar Sesión
         </button>
       </div>
