@@ -66,7 +66,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
       </div>
 
       {error && (
-        <p className="text-red-500 text-sm">{error}</p>
+        <p className="text-red-500 text-sm text-center">{error}</p>
       )}
 
       <div className="text-center">
