@@ -1,174 +1,221 @@
-import { useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
-import StatCard from "../components/StatCard";
-import Tabs from "../components/Tabs";
-import TimelineChart from "../components/TimelineChart";
-import RadialChart from "../components/RadialChart";
-import NewClientsChart from "../components/NewClientsChart";
+import { HiOutlineBriefcase, HiOutlineUserGroup, HiOutlineClipboardCheck, HiOutlineMail, HiOutlineCalendar, HiOutlineClock } from "react-icons/hi";
+
+interface StatCardProps {
+  title: string;
+  value: string;
+  icon: React.ReactNode;
+  trend?: string;
+  trendUp?: boolean;
+}
+
+const StatCard = ({ title, value, icon, trend, trendUp = true }: StatCardProps) => {
+  return (
+    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-gray-500 text-sm font-medium">{title}</p>
+          <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
+          {trend && (
+            <p className={`text-sm font-medium mt-3 flex items-center ${trendUp ? "text-green-600" : "text-red-600"}`}>
+              <span className="mr-1">{trendUp ? "↑" : "↓"}</span>
+              {trend}
+            </p>
+          )}
+        </div>
+        <div className="p-4 bg-[#27B9BA]/10 rounded-2xl">
+          <div className="text-[#27B9BA]">{icon}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function Overview() {
-  const [activeTab, setActiveTab] = useState("Daily");
-
   return (
     <DashboardLayout>
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-      
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
+        <p className="text-gray-600 mt-2">Bienvenido de nuevo! Aquí está lo que está pasando con tus proyectos hoy.</p>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-
         <StatCard
-          number="78"
-          label="Total Project Handled"
-          iconColor="#2953E8"
-          iconPath="M34.4221 13.9831C34.3342..."
+          title="Total Projects Handled"
+          value="78"
+          icon={<HiOutlineBriefcase size={28} />}
+          trend="12% from last month"
+          trendUp={true}
         />
-
         <StatCard
-          number="214"
-          label="Contacts You Have"
-          iconColor="#2953E8"
-          iconPath="M17.8936 22.4999C23.6925..."
+          title="Total Contacts"
+          value="214"
+          icon={<HiOutlineUserGroup size={28} />}
+          trend="8% from last month"
+          trendUp={true}
         />
-
         <StatCard
-          number="93"
-          label="Total Unfinished Task"
-          iconColor="#2953E8"
-          iconPath="M12 1.5H6C3.51472..."
+          title="Unfinished Tasks"
+          value="93"
+          icon={<HiOutlineClipboardCheck size={28} />}
+          trend="5% from last month"
+          trendUp={false}
         />
-
         <StatCard
-          number="12"
-          label="Unread Messages"
-          iconColor="#2953E8"
-          iconPath="M34.4998 1.91666H11.4998..."
+          title="Unread Messages"
+          value="12"
+          icon={<HiOutlineMail size={28} />}
+          trend="3 new today"
+          trendUp={true}
         />
       </div>
 
-      <div className="bg-white rounded-xl shadow p-6 mb-10">
-        <div className="flex items-center justify-between mb-4">
-          <h4 className="text-xl font-bold">Project Created</h4>
-
-          <Tabs
-            tabs={["Daily", "Weekly", "Monthly"]}
-            active={activeTab}
-            onChange={setActiveTab}
-          />
-        </div>
-
-        <div className="mb-6 flex items-center">
-          <span className="text-3xl font-bold mr-4">
-            {activeTab === "Daily" && "0.45%"}
-            {activeTab === "Weekly" && "5.75%"}
-            {activeTab === "Monthly" && "1.20%"}
-          </span>
-
-          <div className="flex items-center text-gray-600">
-            <svg width="27" height="14">
-              <path d="M0 13.435L13.435 0L26.8701 13.435H0Z" fill="#2FCA51" />
-            </svg>
-            <span className="ml-2">last month $563,443</span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-gray-900">Quick To-Do List</h3>
+            <button className="text-[#27B9BA] hover:bg-[#27B9BA]/10 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+              View all
+            </button>
           </div>
-        </div>
-
-        <TimelineChart tab={activeTab} />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-
-        <div className="bg-white shadow rounded-xl p-6">
-          <h4 className="text-xl font-bold mb-4">Monthly Target</h4>
-          <RadialChart percentage={75} />
-        </div>
-
-        <div className="bg-white shadow rounded-xl p-6">
-          <h4 className="text-xl font-bold mb-4">New Clients</h4>
-          <NewClientsChart />
-        </div>
-
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-
-        <div className="bg-white rounded-xl shadow p-6 h-[500px] overflow-y-auto">
-          <h4 className="text-xl font-bold mb-4">Quick To-Do List</h4>
 
           <div className="space-y-6">
             <div>
-              <span className="px-3 py-1 text-xs bg-green-200 text-green-700 rounded">Graphic Designer</span>
-              <p className="font-bold mt-2">Visual Graphic for Presentation to Client</p>
-
-              <div className="mt-3">
-                <p className="text-sm font-semibold">
-                  Progress <span className="float-right">24%</span>
-                </p>
-                <div className="w-full bg-gray-200 rounded h-2 mt-1">
-                  <div className="bg-green-500 h-2 rounded" style={{ width: "24%" }} />
+              <span className="inline-block px-3 py-1 text-xs font-medium bg-emerald-100 text-emerald-700 rounded-full">
+                Graphic Design
+              </span>
+              <h4 className="font-semibold text-gray-900 mt-3">
+                Visual Graphic for Client Presentation
+              </h4>
+              <div className="mt-4">
+                <div className="flex justify-between text-sm text-gray-600 mb-2">
+                  <span>Progress</span>
+                  <span className="font-medium">24%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div
+                    className="bg-emerald-500 h-2.5 rounded-full transition-all duration-500"
+                    style={{ width: "24%" }}
+                  />
                 </div>
               </div>
             </div>
 
             <div>
-              <span className="px-3 py-1 text-xs bg-purple-200 text-purple-700 rounded">Digital Marketing</span>
-              <p className="font-bold mt-2">Build Database Design for Fasto Admin v2</p>
+              <span className="inline-block px-3 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
+                Development
+              </span>
+              <h4 className="font-semibold text-gray-900 mt-3">
+                Build Database Design for AutoFix v2
+              </h4>
+              <div className="mt-4">
+                <div className="flex justify-between text-sm text-gray-600 mb-2">
+                  <span>Progress</span>
+                  <span className="font-medium">79%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div
+                    className="bg-purple-600 h-2.5 rounded-full transition-all duration-500"
+                    style={{ width: "79%" }}
+                  />
+                </div>
+              </div>
+            </div>
 
-              <div className="mt-3">
-                <p className="text-sm font-semibold">
-                  Progress <span className="float-right">79%</span>
-                </p>
-                <div className="w-full bg-gray-200 rounded h-2 mt-1">
-                  <div className="bg-purple-600 h-2 rounded" style={{ width: "79%" }} />
+            <div>
+              <span className="inline-block px-3 py-1 text-xs font-medium bg-[#27B9BA]/10 text-[#27B9BA] rounded-full">
+                Marketing
+              </span>
+              <h4 className="font-semibold text-gray-900 mt-3">
+                Launch AutoFix Campaign Q4
+              </h4>
+              <div className="mt-4">
+                <div className="flex justify-between text-sm text-gray-600 mb-2">
+                  <span>Progress</span>
+                  <span className="font-medium">45%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div
+                    className="bg-[#27B9BA] h-2.5 rounded-full transition-all duration-500"
+                    style={{ width: "45%" }}
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow p-6 h-[500px] overflow-y-auto">
-          <h4 className="text-xl font-bold mb-4">Upcoming Projects</h4>
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-gray-900">Upcoming Projects</h3>
+            <button className="text-[#27B9BA] hover:bg-[#27B9BA]/10 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+              See all
+            </button>
+          </div>
 
           <div className="space-y-6">
-            <div>
-              <p className="text-sm text-blue-500 mb-1 font-medium">Yoast Esac</p>
-              <h4 className="font-bold">Redesign Kripton Mobile App</h4>
-              <p className="text-sm mt-2">
-                <i className="fa fa-calendar text-gray-500 mr-2"></i> Created on Sep 8th, 2020
-              </p>
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-linear-to-br from-[#27B9BA] to-[#1e9a9b] rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0">
+                K
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-[#27B9BA] font-medium">Kripton Inc.</p>
+                <h4 className="font-bold text-gray-900">Redesign Kripton Mobile App</h4>
+                <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <HiOutlineCalendar size={16} />
+                    Sep 8th, 2025
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <HiOutlineClock size={16} />
+                    2 weeks left
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <p className="text-sm text-blue-500 mb-1 font-medium">Yoast Esac</p>
-              <h4 className="font-bold">Build Branding Persona for Etza.id</h4>
-              <p className="text-sm mt-2">
-                <i className="fa fa-calendar text-gray-500 mr-2"></i> Created on Sep 8th, 2020
-              </p>
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-linear-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0">
+                E
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-purple-600 font-medium">Etza Studio</p>
+                <h4 className="font-bold text-gray-900">Build Branding Persona for Etza.id</h4>
+                <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <HiOutlineCalendar size={16} />
+                    Sep 12th, 2025
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <HiOutlineClock size={16} />
+                    3 weeks left
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-linear-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0">
+                A
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-orange-600 font-medium">AutoFix Internal</p>
+                <h4 className="font-bold text-gray-900">AutoFix Dashboard v3 Redesign</h4>
+                <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <HiOutlineCalendar size={16} />
+                    Oct 1st, 2025
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <HiOutlineClock size={16} />
+                    4 weeks left
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
       </div>
-
-      <div className="bg-white rounded-xl shadow p-6">
-        <h4 className="text-xl font-bold mb-4">Recent Messages</h4>
-
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <img src="https://i.pravatar.cc/40?img=1" className="w-10 h-10 rounded-full" />
-            <div>
-              <p className="font-bold">Chandara Kiev</p>
-              <p className="text-gray-600 text-sm">Lorem ipsum dolor sit amet...</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <img src="https://i.pravatar.cc/40?img=2" className="w-10 h-10 rounded-full" />
-            <div>
-              <p className="font-bold">Samuel Quequee</p>
-              <p className="text-gray-600 text-sm">Lorem ipsum dolor sit amet...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </DashboardLayout>
   );
 }

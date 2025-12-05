@@ -1,218 +1,210 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { HiMenu, HiChevronDown, HiChevronRight, HiOutlineHome, HiOutlineClipboardList, HiOutlineUserGroup, HiOutlineChat, HiOutlineChartBar, HiOutlineCollection, HiOutlineCog, HiOutlineLogout } from "react-icons/hi";
-import { HiOutlineUsers } from "react-icons/hi2";
+import { HiOutlineHome, HiOutlineUsers, HiOutlineClipboardList, HiOutlineCollection, HiOutlineUserGroup, HiOutlineCog, HiOutlineLogout, HiOutlineChevronDown, HiOutlineChevronRight, HiOutlineMenu, HiOutlineSearch, HiOutlineBell } from "react-icons/hi";
 
-interface Props { children: ReactNode; }
+interface Props {
+  children: ReactNode;
+}
 
 export default function DashboardLayout({ children }: Props) {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [openMenu, setOpenMenu] = useState<string | null>(null);
-    const location = useLocation();
-    const handleToggleMenu = (menu: string) => {
-        setOpenMenu(openMenu === menu ? null : menu);
-    };
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const location = useLocation();
 
-    return (
-        <div className="flex min-h-screen bg-gray-100">
-            <aside
-                className={`bg-white shadow-lg border-r transition-all duration-300 
-        flex flex-col
-        ${sidebarOpen ? "w-72" : "w-20"}`}
-            >
-                <div className="flex items-center justify-between p-5 border-b">
-                    <h1 className="text-2xl font-bold text-blue-600">
-                        {sidebarOpen ? "Vora." : "V"}
-                    </h1>
-                    <button
-                        onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="text-gray-600 hover:text-gray-800 lg:block hidden"
-                    >
-                        <HiMenu size={26} />
-                    </button>
-                </div>
+  const toggleMenu = (menu: string) => {
+    setOpenMenu(openMenu === menu ? null : menu);
+  };
 
-                <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
-                    <ul className="mt-4 px-3 space-y-2">
-                        <li>
-                            <Link
-                                to="/dashboard"
-                                className={`flex items-center gap-4 p-3 rounded-lg transition
-                ${location.pathname === "/dashboard"
-                                        ? "bg-blue-50 text-blue-600"
-                                        : "hover:bg-gray-100 text-gray-700"}`}
-                            >
-                                <HiOutlineHome size={22} />
-                                {sidebarOpen && <span className="font-medium">Dashboard</span>}
-                            </Link>
-                        </li>
+  const isActive = (path: string) => location.pathname.startsWith(path);
+  const iconSize = sidebarOpen ? 23 : 28;
 
-                        <li>
-                            <Link
-                                to="/dashboard/partners"
-                                className={`flex items-center gap-4 p-3 rounded-lg transition
-                ${location.pathname === "/dashboard/partners"
-                                        ? "bg-blue-50 text-blue-600"
-                                        : "hover:bg-gray-100 text-gray-700"}`}
-                            >
-                                <HiOutlineUsers size={22} />
-                                {sidebarOpen && <span className="font-medium">Partners</span>}
-                            </Link>
-                        </li>
-
-                        <li>
-                            <button
-                                onClick={() => handleToggleMenu("projects")}
-                                className={`flex items-center w-full justify-between p-3 rounded-lg transition
-                ${openMenu === "projects" ? "bg-gray-100" : "hover:bg-gray-100"}`}
-                            >
-                                <div className="flex items-center gap-4 text-gray-700">
-                                    <HiOutlineClipboardList size={22} />
-                                    {sidebarOpen && <span className="font-medium">Projects</span>}
-                                </div>
-
-                                {sidebarOpen && (
-                                    openMenu === "projects" ? <HiChevronDown /> : <HiChevronRight />
-                                )}
-                            </button>
-
-                            {openMenu === "projects" && sidebarOpen && (
-                                <ul className="ml-12 mt-2 space-y-2">
-                                    <li>
-                                        <Link to="/projects/list" className="block text-sm text-gray-600 hover:text-blue-600">
-                                            Project List
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link to="/projects/create" className="block text-sm text-gray-600 hover:text-blue-600">
-                                            Create Project
-                                        </Link>
-                                    </li>
-                                </ul>
-                            )}
-                        </li>
-
-                        <li>
-                            <Link
-                                to="/clients"
-                                className={`flex items-center gap-4 p-3 rounded-lg transition
-                  ${location.pathname === "/clients"
-                                        ? "bg-blue-50 text-blue-600"
-                                        : "hover:bg-gray-100 text-gray-700"}`}
-                            >
-                                <HiOutlineUserGroup size={22} />
-                                {sidebarOpen && <span className="font-medium">Clients</span>}
-                            </Link>
-                        </li>
-
-                        <li>
-                            <Link
-                                to="/messages"
-                                className={`flex items-center gap-4 p-3 rounded-lg transition
-                  ${location.pathname === "/messages"
-                                        ? "bg-blue-50 text-blue-600"
-                                        : "hover:bg-gray-100 text-gray-700"}`}
-                            >
-                                <HiOutlineChat size={22} />
-                                {sidebarOpen && <span className="font-medium">Messages</span>}
-                            </Link>
-                        </li>
-
-                        <li>
-                            <button
-                                onClick={() => handleToggleMenu("apps")}
-                                className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-gray-100 text-gray-700 transition"
-                            >
-                                <div className="flex items-center gap-4">
-                                    <HiOutlineCollection size={22} />
-                                    {sidebarOpen && <span className="font-medium">Apps</span>}
-                                </div>
-
-                                {sidebarOpen && (
-                                    openMenu === "apps" ? <HiChevronDown /> : <HiChevronRight />
-                                )}
-                            </button>
-
-                            {openMenu === "apps" && sidebarOpen && (
-                                <ul className="ml-12 mt-2 space-y-2">
-                                    <li><Link to="/calendar" className="text-sm text-gray-600 hover:text-blue-600">Calendar</Link></li>
-                                    <li><Link to="/todo" className="text-sm text-gray-600 hover:text-blue-600">To-Do</Link></li>
-                                    <li><Link to="/email" className="text-sm text-gray-600 hover:text-blue-600">Email</Link></li>
-                                </ul>
-                            )}
-                        </li>
-
-                        <li>
-                            <Link
-                                to="/charts"
-                                className={`flex items-center gap-4 p-3 rounded-lg transition
-                  ${location.pathname === "/charts"
-                                        ? "bg-blue-50 text-blue-600"
-                                        : "hover:bg-gray-100 text-gray-700"}`}
-                            >
-                                <HiOutlineChartBar size={22} />
-                                {sidebarOpen && <span className="font-medium">Charts</span>}
-                            </Link>
-                        </li>
-
-
-                        <li className="pt-4 border-t">
-                            <Link
-                                to="/settings"
-                                className={`flex items-center gap-4 p-3 rounded-lg transition
-                  ${location.pathname === "/settings"
-                                        ? "bg-blue-50 text-blue-600"
-                                        : "hover:bg-gray-100 text-gray-700"}`}
-                            >
-                                <HiOutlineCog size={22} />
-                                {sidebarOpen && <span className="font-medium">Settings</span>}
-                            </Link>
-                        </li>
-
-                    </ul>
-                </div>
-                <div className="mt-auto p-4 border-t border-gray-200">
-                    <button
-                        onClick={() => {
-                            localStorage.removeItem("token");
-                            localStorage.removeItem("user");
-                            window.location.href = "/login";
-                        }}
-                        className="w-full flex items-center gap-3 text-red-600 font-medium px-3 py-2 rounded-lg hover:bg-red-50 transition"
-                    >
-                        <HiOutlineLogout className="text-xl" />
-                        Logout
-                    </button>
-                </div>
-
-            </aside>
-
-            <div className="flex flex-col flex-1">
-
-                <header className="h-16 bg-white shadow flex items-center justify-between px-6">
-                    <div className="flex items-center gap-4">
-                        <button className="lg:hidden block" onClick={() => setSidebarOpen(!sidebarOpen)}>
-                            <HiMenu size={28} />
-                        </button>
-                        <h2 className="text-xl font-semibold">Dashboard</h2>
-                    </div>
-
-                    <div className="flex items-center gap-6">
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            className="hidden md:block px-4 py-2 bg-gray-100 rounded-lg text-sm outline-none"
-                        />
-                        <img
-                            src="https://i.pravatar.cc/40"
-                            className="w-10 h-10 rounded-full cursor-pointer"
-                        />
-                    </div>
-                </header>
-
-                <main className="p-6">{children}</main>
-            </div>
+  return (
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+      <aside className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ${ sidebarOpen ? "w-64" : "w-20"}`}>
+        <div className="flex h-16 items-center justify-between border-b border-gray-200 px-5">
+          <h1 className={`font-bold text-2xl text-[#27B9BA] transition-all duration-300 whitespace-nowrap ${ sidebarOpen ? "opacity-100" : "w-0 opacity-0 overflow-hidden"}`}>AutoFix.</h1>
+          <div className="size-11 rounded-xl bg-[#27B9BA] flex items-center justify-center text-white font-bold text-xl shrink-0"> A </div>
         </div>
-    );
+
+        <nav className="flex-1 space-y-2 overflow-y-auto px-3 py-6">
+          <Link to="/dashboard" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
+              location.pathname === "/dashboard"
+                ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <HiOutlineHome size={iconSize} />
+            <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Dashboard</span>
+            {!sidebarOpen && (
+              <span className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 z-50">
+                Dashboard
+              </span>
+            )}
+          </Link>
+
+          <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
+              isActive("/dashboard/partners")
+                ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <HiOutlineUsers size={iconSize} />
+            <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Partners</span>
+            {!sidebarOpen && (
+              <span className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 z-50">
+                Partners
+              </span>
+            )}
+          </Link>
+
+          <div>
+            <button onClick={() => toggleMenu("projects")}
+              className={`w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
+                openMenu === "projects" || isActive("/projects")
+                  ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold"
+                  : "text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              <HiOutlineClipboardList size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Projects</span>
+              {sidebarOpen && (
+                <span className="ml-auto">
+                  {openMenu === "projects" ? <HiOutlineChevronDown size={18} /> : <HiOutlineChevronRight size={18} />}
+                </span>
+              )}
+              {!sidebarOpen && (
+                <span className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 z-50">
+                  Projects
+                </span>
+              )}
+            </button>
+            {sidebarOpen && openMenu === "projects" && (
+              <div className="mt-2 space-y-1 pl-10">
+                <Link to="/projects/list" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">
+                  Project List
+                </Link>
+                <Link to="/projects/create" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">
+                  Create Project
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <Link to="/clients" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
+              isActive("/clients")
+                ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <HiOutlineUserGroup size={iconSize} />
+            <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Clients</span>
+            {!sidebarOpen && (
+              <span className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 z-50">
+                Clients
+              </span>
+            )}
+          </Link>
+
+          <div>
+            <button onClick={() => toggleMenu("apps")} className={`w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
+                openMenu === "apps" ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold" : "text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              <HiOutlineCollection size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Apps</span>
+              {sidebarOpen && (
+                <span className="ml-auto">
+                  {openMenu === "apps" ? <HiOutlineChevronDown size={18} /> : <HiOutlineChevronRight size={18} />}
+                </span>
+              )}
+              {!sidebarOpen && (
+                <span className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 z-50">
+                  Apps
+                </span>
+              )}
+            </button>
+            {sidebarOpen && openMenu === "apps" && (
+              <div className="mt-2 space-y-1 pl-10">
+                <Link to="/calendar" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA]">Calendar</Link>
+                <Link to="/todo" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA]">To-Do</Link>
+                <Link to="/email" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA]">Email</Link>
+              </div>
+            )}
+          </div>
+
+          <Link to="/settings" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all mt-6 ${
+              isActive("/settings")
+                ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <HiOutlineCog size={iconSize} />
+            <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Settings</span>
+            {!sidebarOpen && (
+              <span className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 z-50">
+                Settings
+              </span>
+            )}
+          </Link>
+        </nav>
+
+        <div className="border-t border-gray-200 px-3 pt-5 pb-6">
+          <button onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "/login";
+            }}
+            className="w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 text-red-600 transition hover:bg-red-50"
+          >
+            <HiOutlineLogout size={iconSize} className="shrink-0" />
+            <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Logout</span>
+            {!sidebarOpen && (
+              <span className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 z-50">
+                Logout
+              </span>
+            )}
+          </button>
+        </div>
+      </aside>
+
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-20"}`}>
+        <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-2.5 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-gray-800 transition">
+              <HiOutlineMenu size={26} />
+            </button>
+
+            <button onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="hidden lg:block p-2.5 rounded-lg hover:bg-gray-100 text-gray-600 hover:text-gray-800 transition">
+              <HiOutlineMenu size={26} />
+            </button>
+            <h2 className="text-xl font-semibold text-gray-800">Dashboard</h2>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="relative hidden md:block">
+              <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <input type="text" placeholder="Search..."
+                className="w-64 rounded-xl bg-gray-100 py-2 pl-10 pr-4 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#27B9BA] transition"
+              />
+            </div>
+
+            <button className="relative rounded-xl p-2 text-gray-600 transition hover:bg-gray-100">
+              <HiOutlineBell size={22} />
+              <span className="absolute right-1 top-1 size-2 rounded-full bg-red-500" />
+            </button>
+
+            <img
+              src="https://i.pravatar.cc/40"
+              alt="User avatar"
+              className="size-10 cursor-pointer rounded-full ring-2 ring-gray-200"
+            />
+          </div>
+        </header>
+        <main className="min-h-full bg-gray-50 p-8">{children}</main>
+      </div>
+    </div>
+  );
 }
