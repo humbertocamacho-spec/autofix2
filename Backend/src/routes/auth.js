@@ -149,17 +149,18 @@ router.post('/register', async (req, res) => {
 
 router.get("/me", authMiddleware, async (req, res) => {
   try {
-    const [rows] = await pool.query(
+    const [users] = await pool.query(
       "SELECT id, name, email, role_id FROM users WHERE id = ?",
       [req.user.user_id]
     );
 
-    if (rows.length === 0) {
+    if (users.length === 0) {
       return res.status(404).json({ ok: false, message: "Usuario no encontrado" });
     }
 
-    const user = rows[0];
+    const user = users[0];
 
+    // Permisos
     const [permissions] = await pool.query(
       `SELECT p.name 
        FROM roles_permissions rp
@@ -168,10 +169,29 @@ router.get("/me", authMiddleware, async (req, res) => {
       [user.role_id]
     );
 
+    // Obtener client_id si es cliente
+    let client_id = null;
+    if (user.role_id === 3) {
+      const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
+      client_id = c.length ? c[0].id : null;
+    }
+
+    // Obtener partner_id si es partner
+    let partner_id = null;
+    if (user.role_id === 2) {
+      const [p] = await pool.query("SELECT id FROM partners WHERE user_id = ?", [user.id]);
+      partner_id = p.length ? p[0].id : null;
+    }
+
     res.json({
       ok: true,
       user: {
-        ...user,
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role_id: user.role_id,
+        client_id,
+        partner_id,
         permissions: permissions.map(p => p.name)
       }
     });
@@ -181,6 +201,7 @@ router.get("/me", authMiddleware, async (req, res) => {
     res.status(500).json({ ok: false, message: "Error en /me" });
   }
 });
+
 
 
 export default router;

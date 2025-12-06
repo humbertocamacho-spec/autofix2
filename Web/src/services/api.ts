@@ -20,12 +20,16 @@ export async function register(name: string,phone: string, email: string, passwo
 
 async function me(token: string) {
   const res = await fetch(`${API_URL}/api/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
+
+  if (!res.ok) {
+    throw new Error("Token inválido");
+  }
+
   return res.json();
 }
+
 
 // ⬇️ ESTA ES LA PARTE IMPORTANTE
 export const api = {
