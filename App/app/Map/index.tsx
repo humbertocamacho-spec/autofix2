@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
   subMenuButton: { paddingVertical: 10, paddingHorizontal: 10, borderRadius: 8, marginBottom: 5, backgroundColor: "#e0f7f7" },
   subMenuText: { fontSize: 16, color: "#000", },
   gpsButton: { position: "absolute", top: 50, right: 10, zIndex: 999, width: 48, height: 48, backgroundColor: "#fff", borderRadius: 30, justifyContent: "center", alignItems: "center", elevation: 10, },
-  distanceButtonContainer: { position: "absolute", top: 10, right: 60, zIndex: 1, },
+  distanceButtonContainer: { position: "absolute", top: 10, left: 10, zIndex: 1, },
   distanceButton: { flexDirection: "row", backgroundColor: "#27B9BA", paddingVertical: 6, paddingHorizontal: 12, borderRadius: 12, alignItems: "center", elevation: 6, },
   distanceButtonText: { color: "#fff", fontSize: 14, fontWeight: "bold", marginRight: 5, },
   distanceModalOverlay: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.4)", },
