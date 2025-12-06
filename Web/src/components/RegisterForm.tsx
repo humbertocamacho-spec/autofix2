@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { register } from "../services/api";
+import { api } from "../services/api"; 
 import { useNavigate } from "react-router-dom";
 import type { AuthResponse } from "../types";
 
@@ -15,7 +15,7 @@ export default function RegisterForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const data: AuthResponse = await register(name, phone, email, password);
+    const data: AuthResponse = await api.register(name, phone, email, password);
 
     if (!data.ok) {
       setError(data.message || "Error al registrarte");

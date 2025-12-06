@@ -17,3 +17,19 @@ export async function register(name: string,phone: string, email: string, passwo
   });
   return res.json();
 }
+
+async function me(token: string) {
+  const res = await fetch(`${API_URL}/api/auth/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.json();
+}
+
+// ⬇️ ESTA ES LA PARTE IMPORTANTE
+export const api = {
+  login,
+  register,
+  me,
+};

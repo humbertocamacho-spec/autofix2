@@ -4,7 +4,7 @@ import RegisterPage from "../pages/auth/RegisterPage";
 import Overview from "../pages/dashboard/pages/Overview";
 import ProtectedRoute from "./ProtectedRoute";
 
-export default function AppRoutes() {
+export default function WebRoutes() {
   return (
     <Routes>
       <Route path="/" element={<LoginPage />} />
