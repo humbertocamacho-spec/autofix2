@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { api } from "../services/api"; 
+import { login } from "../services/api";
 import type { AuthResponse } from "../types";
 
 interface Props {
@@ -14,7 +14,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const data: AuthResponse = await api.login(email, password);
+    const data: AuthResponse = await login(email, password);
 
     if (data.ok && data.user) {
       localStorage.setItem("user", JSON.stringify(data.user));

@@ -7,25 +7,6 @@ const router = express.Router();
 const emailvalidate = /^[^\s@]+@gmail\.com$/;
 const phonevalidate = /^[0-9]{10}$/;
 
-function authMiddleware(req, res, next) {
-  const header = req.headers.authorization;
-
-  if (!header) {
-    return res.status(401).json({ ok: false, message: "No token" });
-  }
-
-  const token = header.split(" ")[1];
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ ok: false, message: "Token inválido" });
-  }
-}
-
-
 // LOGIN
 router.post('/login', async (req, res) => {
   try {
@@ -145,63 +126,5 @@ router.post('/register', async (req, res) => {
     res.status(500).json({ ok: false, message: 'Error al registrar usuario' });
   }
 });
-
-
-router.get("/me", authMiddleware, async (req, res) => {
-  try {
-    const [users] = await pool.query(
-      "SELECT id, name, email, role_id FROM users WHERE id = ?",
-      [req.user.user_id]
-    );
-
-    if (users.length === 0) {
-      return res.status(404).json({ ok: false, message: "Usuario no encontrado" });
-    }
-
-    const user = users[0];
-
-    // Permisos
-    const [permissions] = await pool.query(
-      `SELECT p.name 
-       FROM roles_permissions rp
-       JOIN permissions p ON rp.permission_id = p.id
-       WHERE rp.role_id = ?`,
-      [user.role_id]
-    );
-
-    // Obtener client_id si es cliente
-    let client_id = null;
-    if (user.role_id === 3) {
-      const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
-      client_id = c.length ? c[0].id : null;
-    }
-
-    // Obtener partner_id si es partner
-    let partner_id = null;
-    if (user.role_id === 2) {
-      const [p] = await pool.query("SELECT id FROM partners WHERE user_id = ?", [user.id]);
-      partner_id = p.length ? p[0].id : null;
-    }
-
-    res.json({
-      ok: true,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role_id: user.role_id,
-        client_id,
-        partner_id,
-        permissions: permissions.map(p => p.name)
-      }
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ ok: false, message: "Error en /me" });
-  }
-});
-
-
 
 export default router;
