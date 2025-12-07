@@ -9,7 +9,7 @@ export async function login(email: string, password: string) {
   return res.json();
 }
 
-export async function register(name: string,phone: string, email: string, password: string) {
+export async function register(name: string, phone: string, email: string, password: string) {
   const res = await fetch(`${API_URL}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -17,3 +17,12 @@ export async function register(name: string,phone: string, email: string, passwo
   });
   return res.json();
 }
+
+export async function me(token: string) {
+  const res = await fetch(`${API_URL}/api/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.json();
+}
+
+export const api = { login, register, me };
