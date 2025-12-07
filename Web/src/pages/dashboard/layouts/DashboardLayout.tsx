@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import type { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useRole } from "../../../hooks/useRole";           // ← AÑADIDO
-import { useAuthContext } from "../../../context/AuthContext"; // ← AÑADIDO
+import { useAuthContext } from "../../../context/AuthContext";
 import {
   HiOutlineHome, HiOutlineUsers, HiOutlineClipboardList,
   HiOutlineCollection, HiOutlineUserGroup, HiOutlineCog,
@@ -20,33 +19,46 @@ export default function DashboardLayout({ children }: Props) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // ← AQUÍ ESTÁ LA MAGIA
-  const { isAdmin, isPartner, isClient } = useRole();
-  const { logout, user } = useAuthContext(); // ← logout del contexto + user para el badge
-  console.log("USER ACTUAL:", user);
+  // ✅ Llamada única
+  const { user, loading, ready, logout } = useAuthContext();
 
-  const toggleMenu = (menu: string) => {
-    setOpenMenu(openMenu === menu ? null : menu);
-  };
+  // Forzamos remount si cambia el user
+  const layoutKey = user?.id || "guest";
 
+  // Flags de roles
+  const roleFlags = useMemo(() => ({
+    isAdmin: user?.role_id === 1,
+    isPartner: user?.role_id === 2,
+    isClient: user?.role_id === 3
+  }), [user]);
+
+  const toggleMenu = (menu: string) => setOpenMenu(openMenu === menu ? null : menu);
   const isActive = (path: string) => location.pathname.startsWith(path);
   const iconSize = sidebarOpen ? 23 : 28;
 
   const handleLogout = () => {
     logout();
+    setOpenMenu(null);
     navigate("/login", { replace: true });
   };
 
-  // Badge de rol (opcional pero queda brutal)
   const roleBadge = () => {
-    if (isAdmin) return <span className="ml-3 px-2.5 py-1 text-xs font-semibold text-white bg-purple-600 rounded-full">Admin</span>;
-    if (isPartner) return <span className="ml-3 px-2.5 py-1 text-xs font-semibold text-white bg-blue-600 rounded-full">Partner</span>;
-    if (isClient) return <span className="ml-3 px-2.5 py-1 text-xs font-semibold text-white bg-green-600 rounded-full">Cliente</span>;
+    if (roleFlags.isAdmin) return <span className="ml-3 px-2.5 py-1 text-xs font-semibold text-white bg-purple-600 rounded-full">Admin</span>;
+    if (roleFlags.isPartner) return <span className="ml-3 px-2.5 py-1 text-xs font-semibold text-white bg-blue-600 rounded-full">Partner</span>;
+    if (roleFlags.isClient) return <span className="ml-3 px-2.5 py-1 text-xs font-semibold text-white bg-green-600 rounded-full">Cliente</span>;
     return null;
   };
 
+  if (!ready || loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <span className="text-gray-500 text-lg">Cargando...</span>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div key={layoutKey} className="flex h-screen bg-gray-50 overflow-hidden">
       {/* SIDEBAR */}
       <aside className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
         <div className="flex h-16 items-center justify-between border-b border-gray-200 px-5">
@@ -59,39 +71,30 @@ export default function DashboardLayout({ children }: Props) {
         </div>
 
         <nav className="flex-1 space-y-2 overflow-y-auto px-3 py-6">
-
-          {/* Dashboard - Todos */}
-          <Link to="/dashboard" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
-            location.pathname === "/dashboard" ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"
-          }`}>
+          {/* Dashboard */}
+          <Link to="/dashboard" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
             <HiOutlineHome size={iconSize} />
             <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Dashboard</span>
             {!sidebarOpen && <Tooltip>Dashboard</Tooltip>}
           </Link>
 
-          {/* Partners - Solo Admin y Partner */}
-          {(isAdmin || isPartner) && (
-            <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
-              isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"
-            }`}>
+          {/* Partners */}
+          {(roleFlags.isAdmin || roleFlags.isPartner) && (
+            <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
               <HiOutlineUsers size={iconSize} />
               <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Partners</span>
               {!sidebarOpen && <Tooltip>Partners</Tooltip>}
             </Link>
           )}
 
-          {/* Projects - Solo Admin */}
-          {isAdmin && (
+          {/* Projects */}
+          {roleFlags.isAdmin && (
             <div>
-              <button onClick={() => toggleMenu("projects")} className={`w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
-                openMenu === "projects" || isActive("/projects") ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold" : "text-gray-700 hover:bg-gray-100"
-              }`}>
+              <button onClick={() => toggleMenu("projects")} className={`w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${openMenu === "projects" || isActive("/projects") ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold" : "text-gray-700 hover:bg-gray-100"}`}>
                 <HiOutlineClipboardList size={iconSize} />
                 <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Projects</span>
                 {sidebarOpen && (
-                  <span className="ml-auto">
-                    {openMenu === "projects" ? <HiOutlineChevronDown size={18} /> : <HiOutlineChevronRight size={18} />}
-                  </span>
+                  <span className="ml-auto">{openMenu === "projects" ? <HiOutlineChevronDown size={18} /> : <HiOutlineChevronRight size={18} />}</span>
                 )}
                 {!sidebarOpen && <Tooltip>Projects</Tooltip>}
               </button>
@@ -104,29 +107,23 @@ export default function DashboardLayout({ children }: Props) {
             </div>
           )}
 
-          {/* Clients - Solo Admin y Client */}
-          {(isAdmin || isClient) && (
-            <Link to="/clients" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
-              isActive("/clients") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"
-            }`}>
+          {/* Clients */}
+          {(roleFlags.isAdmin || roleFlags.isClient) && (
+            <Link to="/clients" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/clients") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
               <HiOutlineUserGroup size={iconSize} />
               <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Clients</span>
               {!sidebarOpen && <Tooltip>Clients</Tooltip>}
             </Link>
           )}
 
-          {/* Apps - Solo Admin y Partner */}
-          {(isAdmin || isPartner) && (
+          {/* Apps */}
+          {(roleFlags.isAdmin || roleFlags.isPartner) && (
             <div>
-              <button onClick={() => toggleMenu("apps")} className={`w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
-                openMenu === "apps" ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold" : "text-gray-700 hover:bg-gray-100"
-              }`}>
+              <button onClick={() => toggleMenu("apps")} className={`w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${openMenu === "apps" ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold" : "text-gray-700 hover:bg-gray-100"}`}>
                 <HiOutlineCollection size={iconSize} />
                 <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Apps</span>
                 {sidebarOpen && (
-                  <span className="ml-auto">
-                    {openMenu === "apps" ? <HiOutlineChevronDown size={18} /> : <HiOutlineChevronRight size={18} />}
-                  </span>
+                  <span className="ml-auto">{openMenu === "apps" ? <HiOutlineChevronDown size={18} /> : <HiOutlineChevronRight size={18} />}</span>
                 )}
                 {!sidebarOpen && <Tooltip>Apps</Tooltip>}
               </button>
@@ -140,11 +137,9 @@ export default function DashboardLayout({ children }: Props) {
             </div>
           )}
 
-          {/* Settings - Solo Admin */}
-          {isAdmin && (
-            <Link to="/settings" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all mt-6 ${
-              isActive("/settings") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"
-            }`}>
+          {/* Settings */}
+          {roleFlags.isAdmin && (
+            <Link to="/settings" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all mt-6 ${isActive("/settings") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
               <HiOutlineCog size={iconSize} />
               <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Settings</span>
               {!sidebarOpen && <Tooltip>Settings</Tooltip>}
@@ -170,7 +165,7 @@ export default function DashboardLayout({ children }: Props) {
               <HiOutlineMenu size={26} />
             </button>
             <h2 className="text-xl font-semibold text-gray-800">Dashboard</h2>
-            {roleBadge()} {/* ← Badge de rol */}
+            {roleBadge()}
           </div>
 
           <div className="flex items-center gap-4">
@@ -195,7 +190,7 @@ export default function DashboardLayout({ children }: Props) {
   );
 }
 
-// Tooltip reutilizable
+// Tooltip para sidebar minimizado
 const Tooltip = ({ children }: { children: string }) => (
   <span className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 z-50">
     {children}
