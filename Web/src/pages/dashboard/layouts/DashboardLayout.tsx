@@ -18,14 +18,9 @@ export default function DashboardLayout({ children }: Props) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, loading, logout } = useAuthContext();
+  const layoutKey = user?.id ? `user-${user.id}` : "guest";
 
-  // ✅ Llamada única
-  const { user, loading, ready, logout } = useAuthContext();
-
-  // Forzamos remount si cambia el user
-  const layoutKey = user?.id || "guest";
-
-  // Flags de roles
   const roleFlags = useMemo(() => ({
     isAdmin: user?.role_id === 1,
     isPartner: user?.role_id === 2,
@@ -49,7 +44,7 @@ export default function DashboardLayout({ children }: Props) {
     return null;
   };
 
-  if (!ready || loading) {
+  if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <span className="text-gray-500 text-lg">Cargando...</span>
@@ -59,26 +54,21 @@ export default function DashboardLayout({ children }: Props) {
 
   return (
     <div key={layoutKey} className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* SIDEBAR */}
       <aside className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ${sidebarOpen ? "w-64" : "w-20"}`}>
         <div className="flex h-16 items-center justify-between border-b border-gray-200 px-5">
           <h1 className={`font-bold text-2xl text-[#27B9BA] transition-all duration-300 whitespace-nowrap ${sidebarOpen ? "opacity-100" : "w-0 opacity-0 overflow-hidden"}`}>
             AutoFix.
           </h1>
-          <div className="size-11 rounded-xl bg-[#27B9BA] flex items-center justify-center text-white font-bold text-xl shrink-0">
-            A
-          </div>
+          <div className="size-11 rounded-xl bg-[#27B9BA] flex items-center justify-center text-white font-bold text-xl shrink-0">A</div>
         </div>
 
         <nav className="flex-1 space-y-2 overflow-y-auto px-3 py-6">
-          {/* Dashboard */}
           <Link to="/dashboard" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
             <HiOutlineHome size={iconSize} />
             <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Dashboard</span>
             {!sidebarOpen && <Tooltip>Dashboard</Tooltip>}
           </Link>
 
-          {/* Partners */}
           {(roleFlags.isAdmin || roleFlags.isPartner) && (
             <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
               <HiOutlineUsers size={iconSize} />
@@ -87,7 +77,6 @@ export default function DashboardLayout({ children }: Props) {
             </Link>
           )}
 
-          {/* Projects */}
           {roleFlags.isAdmin && (
             <div>
               <button onClick={() => toggleMenu("projects")} className={`w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${openMenu === "projects" || isActive("/projects") ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold" : "text-gray-700 hover:bg-gray-100"}`}>
@@ -107,7 +96,6 @@ export default function DashboardLayout({ children }: Props) {
             </div>
           )}
 
-          {/* Clients */}
           {(roleFlags.isAdmin || roleFlags.isClient) && (
             <Link to="/clients" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/clients") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
               <HiOutlineUserGroup size={iconSize} />
@@ -116,7 +104,6 @@ export default function DashboardLayout({ children }: Props) {
             </Link>
           )}
 
-          {/* Apps */}
           {(roleFlags.isAdmin || roleFlags.isPartner) && (
             <div>
               <button onClick={() => toggleMenu("apps")} className={`w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${openMenu === "apps" ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold" : "text-gray-700 hover:bg-gray-100"}`}>
@@ -137,7 +124,6 @@ export default function DashboardLayout({ children }: Props) {
             </div>
           )}
 
-          {/* Settings */}
           {roleFlags.isAdmin && (
             <Link to="/settings" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all mt-6 ${isActive("/settings") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
               <HiOutlineCog size={iconSize} />
@@ -147,7 +133,6 @@ export default function DashboardLayout({ children }: Props) {
           )}
         </nav>
 
-        {/* LOGOUT */}
         <div className="border-t border-gray-200 px-3 pt-5 pb-6">
           <button onClick={handleLogout} className="w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 text-red-600 transition hover:bg-red-50">
             <HiOutlineLogout size={iconSize} className="shrink-0" />
@@ -157,7 +142,6 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       </aside>
 
-      {/* MAIN CONTENT */}
       <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-20"}`}>
         <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
           <div className="flex items-center gap-4">
@@ -190,7 +174,6 @@ export default function DashboardLayout({ children }: Props) {
   );
 }
 
-// Tooltip para sidebar minimizado
 const Tooltip = ({ children }: { children: string }) => (
   <span className="pointer-events-none absolute left-full ml-4 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 transition-opacity group-hover:opacity-100 z-50">
     {children}

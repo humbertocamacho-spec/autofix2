@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { login } from "../services/api";
-import type { AuthResponse } from "../types";
+import { useAuthContext } from "../context/AuthContext";
 
 interface Props {
   onLoginSuccess?: () => void;
 }
 
 export default function LoginForm({ onLoginSuccess }: Props) {
+  const { login } = useAuthContext();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -14,16 +15,12 @@ export default function LoginForm({ onLoginSuccess }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const data: AuthResponse = await login(email, password);
+    const ok = await login(email, password);
 
-    if (data.ok && data.user) {
-      localStorage.setItem("user", JSON.stringify(data.user));
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-    }
-      onLoginSuccess && onLoginSuccess();
-    }else {
-      setError(data.message || "Error en login");
+    if (ok) {
+      onLoginSuccess?.();
+    } else {
+      setError("Credenciales incorrectas");
     }
   };
 
@@ -31,7 +28,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
     <form onSubmit={handleSubmit} className="space-y-5">
 
       <div>
-        <label className="block mb-1 font-semibold text-gray-800"> Correo</label>
+        <label className="block mb-1 font-semibold text-gray-800">Correo</label>
         <input
           type="email"
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:bg-[#ffffff]"
@@ -43,7 +40,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
       </div>
 
       <div>
-        <label className="block mb-1 font-semibold text-gray-800"> Contraseña </label>
+        <label className="block mb-1 font-semibold text-gray-800">Contraseña</label>
         <input
           type="password"
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:bg-[#ffffff]"
@@ -62,7 +59,10 @@ export default function LoginForm({ onLoginSuccess }: Props) {
           />
           <span className="text-gray-700">Recordar</span>
         </label>
-        <button type="button" className="text-blue-600 hover:underline"> Olvidaste tu contraseña? </button>
+
+        <button type="button" className="text-blue-600 hover:underline">
+          ¿Olvidaste tu contraseña?
+        </button>
       </div>
 
       {error && (
@@ -70,10 +70,14 @@ export default function LoginForm({ onLoginSuccess }: Props) {
       )}
 
       <div className="text-center">
-        <button type="submit" className="w-full bg-[#27B9BA] text-white py-3 rounded-lg font-semibold hover:bg-[#25afaf] transition">
+        <button
+          type="submit"
+          className="w-full bg-[#27B9BA] text-white py-3 rounded-lg font-semibold hover:bg-[#25afaf] transition"
+        >
           Iniciar Sesión
         </button>
       </div>
+
     </form>
   );
 }

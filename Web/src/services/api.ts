@@ -7,7 +7,6 @@ export async function login(email: string, password: string) {
     body: JSON.stringify({ email, password }),
   });
   const data = await res.json();
-  console.log("Respuesta cruda de login:", data);
   return data;
 }
 
@@ -30,7 +29,6 @@ export async function me(token: string) {
   });
 
   const data = await res.json();
-  console.log("Respuesta cruda de /me:", data);
 
   if (!res.ok) {
     throw new Error(`Error ${res.status}: ${data.message || "Token inválido"}`);

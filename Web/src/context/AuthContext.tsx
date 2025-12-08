@@ -1,23 +1,13 @@
-// src/context/AuthContext.tsx
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import type { ReactNode } from "react";
 import { api } from "../services/api";
-
-export interface User {
-  id: number;
-  name?: string | null;
-  email: string;
-  role_id: number;
-  client_id?: number | null;
-  partner_id?: number | null;
-  permissions: string[];
-}
+import type { User } from "../types";
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  loading: boolean;
-  ready: boolean;               // 🔹 indica que el contexto ya cargó user/token
+  loading: boolean;  
+  ready: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   reloadUser: () => Promise<void>;
@@ -27,91 +17,97 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
-  const [loading, setLoading] = useState(true);
-  const [ready, setReady] = useState(false);
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
+  const [loading, setLoading] = useState<boolean>(true);
+  const [ready, setReady] = useState<boolean>(false);
 
-  // Logout
   const logout = useCallback(() => {
-    console.log("[AuthContext] logout");
     localStorage.removeItem("token");
     setToken(null);
     setUser(null);
     setLoading(false);
+    setReady(false);
   }, []);
 
-  // Cargar usuario desde token
-  const loadUserFromToken = useCallback(async (tok?: string) => {
-    const actualToken = tok || token;
-    if (!actualToken) {
-      logout();
-      return;
-    }
-
-    try {
-      console.log("[AuthContext] loadUserFromToken called, token:", actualToken);
-      const data = await api.me(actualToken);
-      console.log("[AuthContext] Respuesta cruda de /me:", data);
-
-      if (data?.ok && data?.user) {
-        const u = data.user;
-        setUser({
-          id: u.id,
-          name: u.name || null,
-          email: u.email,
-          role_id: u.role_id,
-          client_id: u.client_id ?? null,
-          partner_id: u.partner_id ?? null,
-          permissions: u.permissions || [],
-        });
-        console.log("[AuthContext] setting user:", u);
-      } else {
-        logout();
+  const loadUserFromToken = useCallback(
+    async (tok?: string) => {
+      const actualToken = tok ?? token;
+      if (!actualToken) {
+        setUser(null);
+        setLoading(false);
+        setReady(true);
+        return false;
       }
-    } catch (err) {
-      console.error("[AuthContext] Error loadUserFromToken:", err);
-      logout();
-    } finally {
-      setLoading(false);
-      setReady(true);
-    }
-  }, [logout, token]);
 
-  // Login
+      try {
+        setLoading(true);
+        const data = await api.me(actualToken);
+
+        if (data?.user) {
+          setUser({
+            id: data.user.id,
+            name: data.user.name ?? null,
+            email: data.user.email,
+            role_id: data.user.role_id,
+            client_id: data.user.client_id ?? null,
+            partner_id: data.user.partner_id ?? null,
+            permissions: data.user.permissions ?? [],
+          });
+          setLoading(false);
+          setReady(true);
+          return true;
+        } else {
+          logout();
+          return false;
+        }
+      } catch (err) {
+        logout();
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [token, logout]
+  );
+
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
+      setLoading(true);
       const response = await api.login(email, password);
-      console.log("[AuthContext] Respuesta cruda de login:", response);
-      if (!response?.token) return false;
+
+      if (!response || !response.token) {
+        setLoading(false);
+        return false;
+      }
 
       localStorage.setItem("token", response.token);
       setToken(response.token);
-      setLoading(true);
-      await loadUserFromToken(response.token); // 🔹 asegurar user actualizado
-      return true;
+
+      const ok = await loadUserFromToken(response.token);
+      setLoading(false);
+      return ok;
     } catch (err) {
-      console.error("[AuthContext] Error login:", err);
+      setLoading(false);
       return false;
     }
   };
 
-  // Reload user
   const reloadUser = async () => {
     setLoading(true);
     await loadUserFromToken();
+    setLoading(false);
   };
 
-  // Al iniciar app
   useEffect(() => {
-    const init = async () => {
+    (async () => {
       if (token) {
         await loadUserFromToken(token);
       } else {
+        setUser(null);
         setLoading(false);
         setReady(true);
       }
-    };
-    init();
+    })();
   }, [token, loadUserFromToken]);
 
   return (
@@ -122,7 +118,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuthContext must be used inside AuthProvider");
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuthContext must be used inside AuthProvider");
+  return ctx;
 };

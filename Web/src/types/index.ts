@@ -1,20 +1,16 @@
 export interface User {
   id: number;
-  name: string;
+  name?: string | null;
   email: string;
+  role_id: number;
+  client_id?: number | null;
+  partner_id?: number | null;
+  permissions: string[];
 }
 
 export interface AuthResponse {
   ok: boolean;
   message?: string;
   token?: string;
-  user?: {
-    id: number;
-    email: string;
-    role_id: number;
-    client_id?: number;
-    partner_id?: number;
-    permissions?: string[];
-  };
+  user?: User;
 }
-
