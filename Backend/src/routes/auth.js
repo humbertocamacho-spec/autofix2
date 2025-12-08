@@ -1,4 +1,3 @@
-// src/routes/auth.js (o donde tengas el router)
 import express from 'express';
 import pool from '../config/db.js';
 import bcrypt from 'bcryptjs';
@@ -6,11 +5,9 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
-// Validaciones
 const emailvalidate = /^[^\s@]+@gmail\.com$/;
 const phonevalidate = /^[0-9]{10}$/;
 
-// Middleware de autenticación
 export function authMiddleware(req, res, next) {
   const header = req.headers.authorization;
   if (!header) return res.status(401).json({ ok: false, message: "No token" });
@@ -18,14 +15,13 @@ export function authMiddleware(req, res, next) {
   const token = header.split(" ")[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { user_id: 1, role_id: 1 }
-    next();
+    req.user = decoded; 
   } catch (error) {
     return res.status(401).json({ ok: false, message: "Token inválido" });
   }
 }
 
-// ==================== LOGIN ====================
+//Login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -44,7 +40,6 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ ok: false, message: 'Contraseña incorrecta' });
     }
 
-    // Obtener permisos
     const [permissions] = await pool.query(
       `SELECT p.name
        FROM roles_permissions rp
@@ -53,7 +48,6 @@ router.post('/login', async (req, res) => {
       [user.role_id]
     );
 
-    // Obtener client_id / partner_id
     let client_id = null, partner_id = null;
     if (user.role_id === 3) {
       const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
@@ -64,14 +58,13 @@ router.post('/login', async (req, res) => {
       partner_id = p.length > 0 ? p[0].id : null;
     }
 
-    // Generar token
+    //Token
     const token = jwt.sign(
       { user_id: user.id, role_id: user.role_id },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
-    // RESPUESTA FINAL
     res.json({
       ok: true,
       message: 'Login exitoso',
@@ -93,7 +86,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// ==================== REGISTER ====================
+// Register
 router.post('/register', async (req, res) => {
   try {
     const { name, phone, email, password } = req.body;
@@ -125,7 +118,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// ==================== /ME (USUARIO ACTUAL) ====================
+// Usuario actual
 router.get("/me", authMiddleware, async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [req.user.user_id]);
@@ -136,7 +129,6 @@ router.get("/me", authMiddleware, async (req, res) => {
 
     const user = rows[0];
 
-    // Calcular client_id y partner_id (igual que en login)
     let client_id = null, partner_id = null;
     if (user.role_id === 3) {
       const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
@@ -147,16 +139,12 @@ router.get("/me", authMiddleware, async (req, res) => {
       partner_id = p.length > 0 ? p[0].id : null;
     }
 
-    // Obtener permisos
     const [permissions] = await pool.query(
-      `SELECT p.name 
-       FROM roles_permissions rp
-       JOIN permissions p ON rp.permission_id = p.id
-       WHERE rp.role_id = ?`,
+      `SELECT p.name FROM roles_permissions rp
+       JOIN permissions p ON rp.permission_id = p.id WHERE rp.role_id = ?`,
       [user.role_id]
     );
 
-    // RESPUESTA FINAL (igual que login)
     res.json({
       ok: true,
       user: {

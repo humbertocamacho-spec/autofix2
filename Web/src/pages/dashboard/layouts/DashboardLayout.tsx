@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
 import {
-  HiOutlineHome, HiOutlineUsers, HiOutlineTicket,HiOutlineCog,
+  HiOutlineHome, HiOutlineUser,HiOutlineUsers, HiOutlineTicket,HiOutlineCog,
   HiOutlineLogout, HiOutlineChevronDown, HiOutlineChevronRight,
-  HiOutlineMenu, HiOutlineSearch, HiOutlineBell,HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck
+  HiOutlineMenu, HiOutlineSearch, HiOutlineBell,HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, HiOutlineShieldCheck
 } from "react-icons/hi";
 
 interface Props {
@@ -70,9 +70,17 @@ export default function DashboardLayout({ children }: Props) {
 
           {roleFlags.isAdmin && (
             <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
-              <HiOutlineUsers size={iconSize} />
+              <HiOutlineUser size={iconSize} />
               <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Users</span>
               {!sidebarOpen && <Tooltip>Users</Tooltip>}
+            </Link>
+          )}
+
+          {roleFlags.isAdmin && (
+            <Link to="/clients" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/clients") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
+              <HiOutlineUsers size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Admins</span>
+              {!sidebarOpen && <Tooltip>Admins</Tooltip>}
             </Link>
           )}
 
@@ -85,29 +93,53 @@ export default function DashboardLayout({ children }: Props) {
           )}
 
           {roleFlags.isAdmin && (
+            <Link to="/clients" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/clients") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
+              <HiOutlineUserGroup size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Clients</span>
+              {!sidebarOpen && <Tooltip>Clients</Tooltip>}
+            </Link>
+          )}
+
+          {roleFlags.isAdmin && (
             <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
               <HiOutlineBriefcase size={iconSize} />
-              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Especialidades</span>
-              {!sidebarOpen && <Tooltip>Especialidades</Tooltip>}
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Specialities</span>
+              {!sidebarOpen && <Tooltip>Specialities</Tooltip>}
             </Link>
           )}
 
           {roleFlags.isAdmin && (
             <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
               <HiOutlineTruck size={iconSize} />
-              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Marcas</span>
-              {!sidebarOpen && <Tooltip>Marcas</Tooltip>}
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Brands</span>
+              {!sidebarOpen && <Tooltip>Brands</Tooltip>}
             </Link>
           )}
 
           {roleFlags.isAdmin && (
+            <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
+              <HiOutlineShieldCheck size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Certifications</span>
+              {!sidebarOpen && <Tooltip>Certifications</Tooltip>}
+            </Link>
+          )}
+
+          {roleFlags.isAdmin && (
+            <Link to="/settings" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all mt-6 ${isActive("/settings") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
+              <HiOutlineCog size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Settings</span>
+              {!sidebarOpen && <Tooltip>Settings</Tooltip>}
+            </Link>
+          )}
+
+          {roleFlags.isPartner && (
             <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
               <HiOutlineTicket size={iconSize} />
               <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Tickets</span>
               {!sidebarOpen && <Tooltip>Tickets</Tooltip>}
             </Link>
           )}
-
+        
           {roleFlags.isClient && (
             <div>
               <button onClick={() => toggleMenu("tickets")} className={`w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${openMenu === "tickets" || isActive("/tickets") ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold" : "text-gray-700 hover:bg-gray-100"}`}>
@@ -127,29 +159,14 @@ export default function DashboardLayout({ children }: Props) {
             </div>
           )}
 
-          {roleFlags.isPartner && (
+          {roleFlags.isClient && (
             <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
-              <HiOutlineTicket size={iconSize} />
-              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Tickets</span>
-              {!sidebarOpen && <Tooltip>Tickets</Tooltip>}
+              <HiOutlineTruck size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>My Cars</span>
+              {!sidebarOpen && <Tooltip>My Cars</Tooltip>}
             </Link>
           )}
 
-          {(roleFlags.isAdmin || roleFlags.isClient) && (
-            <Link to="/clients" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/clients") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
-              <HiOutlineUserGroup size={iconSize} />
-              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Clients</span>
-              {!sidebarOpen && <Tooltip>Clients</Tooltip>}
-            </Link>
-          )}
-
-          {roleFlags.isAdmin && (
-            <Link to="/settings" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all mt-6 ${isActive("/settings") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
-              <HiOutlineCog size={iconSize} />
-              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Settings</span>
-              {!sidebarOpen && <Tooltip>Settings</Tooltip>}
-            </Link>
-          )}
         </nav>
 
         <div className="border-t border-gray-200 px-3 pt-5 pb-6">
