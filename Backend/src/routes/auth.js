@@ -1,3 +1,4 @@
+
 import express from 'express';
 import pool from '../config/db.js';
 import bcrypt from 'bcryptjs';
@@ -15,13 +16,13 @@ export function authMiddleware(req, res, next) {
   const token = header.split(" ")[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; 
+    req.user = decoded;
+    next();
   } catch (error) {
     return res.status(401).json({ ok: false, message: "Token inválido" });
   }
 }
 
-//Login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -58,7 +59,6 @@ router.post('/login', async (req, res) => {
       partner_id = p.length > 0 ? p[0].id : null;
     }
 
-    //Token
     const token = jwt.sign(
       { user_id: user.id, role_id: user.role_id },
       process.env.JWT_SECRET,
@@ -86,7 +86,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Register
 router.post('/register', async (req, res) => {
   try {
     const { name, phone, email, password } = req.body;
@@ -118,7 +117,6 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Usuario actual
 router.get("/me", authMiddleware, async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [req.user.user_id]);
@@ -140,8 +138,10 @@ router.get("/me", authMiddleware, async (req, res) => {
     }
 
     const [permissions] = await pool.query(
-      `SELECT p.name FROM roles_permissions rp
-       JOIN permissions p ON rp.permission_id = p.id WHERE rp.role_id = ?`,
+      `SELECT p.name 
+       FROM roles_permissions rp
+       JOIN permissions p ON rp.permission_id = p.id
+       WHERE rp.role_id = ?`,
       [user.role_id]
     );
 
