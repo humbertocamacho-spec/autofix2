@@ -57,7 +57,6 @@ router.post("/", async (req, res) => {
     }
 });
 
-
 router.put("/:id", async (req, res) => {
     const { id } = req.params;
     const { name, car_brand_id, model, year, type, plate } = req.body;

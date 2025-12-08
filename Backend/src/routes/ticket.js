@@ -169,5 +169,4 @@ router.get("/occupied", async (req, res) => {
     }
 });
 
-
 export default router;
