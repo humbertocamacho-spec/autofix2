@@ -73,8 +73,8 @@ export default function LoginScreen() {
       const userId = data.user.id;
       const clientId = data.user.client_id;
 
-      await AsyncStorage.setItem("user_id", userId.toString());
-      await AsyncStorage.setItem("client_id", clientId.toString());
+      await AsyncStorage.setItem("user_id", String(userId ?? ""));
+      await AsyncStorage.setItem("client_id", String(clientId ?? ""));
       await AsyncStorage.removeItem("appointments");
       const verifyClientId = await AsyncStorage.getItem("client_id");
 
