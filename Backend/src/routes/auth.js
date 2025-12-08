@@ -26,65 +26,48 @@ export function authMiddleware(req, res, next) {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ ok: false, message: 'Email y password son requeridos' });
-    }
+    if (!email || !password) return res.status(400).json({ ok: false, message: 'Email y password son requeridos' });
 
     const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
-    if (rows.length === 0) {
-      return res.status(401).json({ ok: false, message: 'Usuario no encontrado' });
-    }
+    if (!rows.length) return res.status(401).json({ ok: false, message: 'Usuario no encontrado' });
 
     const user = rows[0];
     const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-      return res.status(401).json({ ok: false, message: 'Contraseña incorrecta' });
-    }
+    if (!validPassword) return res.status(401).json({ ok: false, message: 'Contraseña incorrecta' });
 
-    const [permissions] = await pool.query(
-      `SELECT p.name
-       FROM roles_permissions rp
-       JOIN permissions p ON rp.permission_id = p.id
-       WHERE rp.role_id = ?`,
-      [user.role_id]
-    );
+    // Obtener client_id si existe
+    const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
+    const client_id = c.length > 0 ? c[0].id : null;
 
-    let client_id = null, partner_id = null;
-    if (user.role_id === 3) {
-      const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
-      client_id = c.length > 0 ? c[0].id : null;
-    }
-    if (user.role_id === 2) {
-      const [p] = await pool.query("SELECT id FROM partners WHERE user_id = ?", [user.id]);
-      partner_id = p.length > 0 ? p[0].id : null;
-    }
+    // Obtener partner_id si existe (para roles distintos a cliente)
+    const [p] = await pool.query("SELECT id FROM partners WHERE user_id = ?", [user.id]);
+    const partner_id = p.length > 0 ? p[0].id : null;
 
-    const token = jwt.sign(
-      { user_id: user.id, role_id: user.role_id },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    // Si la petición viene de la web, se puede agregar JWT
+    let token = null;
+    if (req.body.web) {
+      token = jwt.sign({ user_id: user.id, role_id: user.role_id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    }
 
     res.json({
       ok: true,
       message: 'Login exitoso',
-      token,
+      token, // será null para app móvil
       user: {
         id: user.id,
-        name: user.name || null,
         email: user.email,
         role_id: user.role_id,
         client_id,
-        partner_id,
-        permissions: permissions.map(p => p.name)
+        partner_id
       }
     });
 
   } catch (error) {
-    console.error("Error en login:", error);
+    console.error(error);
     res.status(500).json({ ok: false, message: 'Error al iniciar sesión' });
   }
 });
+
 
 router.post('/register', async (req, res) => {
   try {
