@@ -3,10 +3,9 @@ import type { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
 import {
-  HiOutlineHome, HiOutlineUsers, HiOutlineClipboardList,
-  HiOutlineCollection, HiOutlineUserGroup, HiOutlineCog,
+  HiOutlineHome, HiOutlineUsers, HiOutlineTicket,HiOutlineCog,
   HiOutlineLogout, HiOutlineChevronDown, HiOutlineChevronRight,
-  HiOutlineMenu, HiOutlineSearch, HiOutlineBell
+  HiOutlineMenu, HiOutlineSearch, HiOutlineBell,HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck
 } from "react-icons/hi";
 
 interface Props {
@@ -69,31 +68,71 @@ export default function DashboardLayout({ children }: Props) {
             {!sidebarOpen && <Tooltip>Dashboard</Tooltip>}
           </Link>
 
-          {(roleFlags.isAdmin || roleFlags.isPartner) && (
+          {roleFlags.isAdmin && (
             <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
               <HiOutlineUsers size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Users</span>
+              {!sidebarOpen && <Tooltip>Users</Tooltip>}
+            </Link>
+          )}
+
+          {roleFlags.isAdmin && (
+            <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
+              <HiOutlineUserGroup size={iconSize} />
               <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Partners</span>
               {!sidebarOpen && <Tooltip>Partners</Tooltip>}
             </Link>
           )}
 
           {roleFlags.isAdmin && (
+            <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
+              <HiOutlineBriefcase size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Especialidades</span>
+              {!sidebarOpen && <Tooltip>Especialidades</Tooltip>}
+            </Link>
+          )}
+
+          {roleFlags.isAdmin && (
+            <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
+              <HiOutlineTruck size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Marcas</span>
+              {!sidebarOpen && <Tooltip>Marcas</Tooltip>}
+            </Link>
+          )}
+
+          {roleFlags.isAdmin && (
+            <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
+              <HiOutlineTicket size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Tickets</span>
+              {!sidebarOpen && <Tooltip>Tickets</Tooltip>}
+            </Link>
+          )}
+
+          {roleFlags.isClient && (
             <div>
-              <button onClick={() => toggleMenu("projects")} className={`w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${openMenu === "projects" || isActive("/projects") ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold" : "text-gray-700 hover:bg-gray-100"}`}>
-                <HiOutlineClipboardList size={iconSize} />
-                <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Projects</span>
+              <button onClick={() => toggleMenu("tickets")} className={`w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${openMenu === "tickets" || isActive("/tickets") ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold" : "text-gray-700 hover:bg-gray-100"}`}>
+                <HiOutlineTicket size={iconSize} />
+                <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Tickets</span>
                 {sidebarOpen && (
-                  <span className="ml-auto">{openMenu === "projects" ? <HiOutlineChevronDown size={18} /> : <HiOutlineChevronRight size={18} />}</span>
+                  <span className="ml-auto">{openMenu === "tickets" ? <HiOutlineChevronDown size={18} /> : <HiOutlineChevronRight size={18} />}</span>
                 )}
-                {!sidebarOpen && <Tooltip>Projects</Tooltip>}
+                {!sidebarOpen && <Tooltip>Tickets</Tooltip>}
               </button>
-              {sidebarOpen && openMenu === "projects" && (
+              {sidebarOpen && openMenu === "tickets" && (
                 <div className="mt-2 space-y-1 pl-10">
-                  <Link to="/projects/list" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">Project List</Link>
-                  <Link to="/projects/create" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">Create Project</Link>
+                  <Link to="/tickets/list" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">Pendientes</Link>
+                  <Link to="/tickets/create" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">Confirmados</Link>
                 </div>
               )}
             </div>
+          )}
+
+          {roleFlags.isPartner && (
+            <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
+              <HiOutlineTicket size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Tickets</span>
+              {!sidebarOpen && <Tooltip>Tickets</Tooltip>}
+            </Link>
           )}
 
           {(roleFlags.isAdmin || roleFlags.isClient) && (
@@ -102,26 +141,6 @@ export default function DashboardLayout({ children }: Props) {
               <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Clients</span>
               {!sidebarOpen && <Tooltip>Clients</Tooltip>}
             </Link>
-          )}
-
-          {(roleFlags.isAdmin || roleFlags.isPartner) && (
-            <div>
-              <button onClick={() => toggleMenu("apps")} className={`w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${openMenu === "apps" ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold" : "text-gray-700 hover:bg-gray-100"}`}>
-                <HiOutlineCollection size={iconSize} />
-                <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Apps</span>
-                {sidebarOpen && (
-                  <span className="ml-auto">{openMenu === "apps" ? <HiOutlineChevronDown size={18} /> : <HiOutlineChevronRight size={18} />}</span>
-                )}
-                {!sidebarOpen && <Tooltip>Apps</Tooltip>}
-              </button>
-              {sidebarOpen && openMenu === "apps" && (
-                <div className="mt-2 space-y-1 pl-10">
-                  <Link to="/calendar" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA]">Calendar</Link>
-                  <Link to="/todo" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA]">To-Do</Link>
-                  <Link to="/email" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA]">Email</Link>
-                </div>
-              )}
-            </div>
           )}
 
           {roleFlags.isAdmin && (

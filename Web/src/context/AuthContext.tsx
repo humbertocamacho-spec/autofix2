@@ -72,6 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
+
       setLoading(true);
       const response = await api.login(email, password);
 
