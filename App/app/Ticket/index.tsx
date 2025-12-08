@@ -90,7 +90,6 @@ export default function ConfirmTickets() {
 
         setAppointments(list.filter(Boolean)); // ← elimina cualquier null
       } catch (err) {
-        console.log("Error inicializando pantalla:", err);
         setAppointments([]);
       }
     };

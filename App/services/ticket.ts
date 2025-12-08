@@ -5,7 +5,6 @@ const BASE_URL = `${API_URL}/api/ticket`;
 
 export async function getTickets(car_id: number, partner_id: number, client_id: number) {
     try {
-        console.log("getTickets -> IDs recibidos:", { car_id, partner_id, client_id, });
 
         if (!car_id || !partner_id || !client_id) {
             console.error("IDs inválidos en getTickets:", { car_id, partner_id, client_id, });
@@ -13,7 +12,6 @@ export async function getTickets(car_id: number, partner_id: number, client_id: 
         }
 
         const url = `${BASE_URL}/${car_id}/${partner_id}/${client_id}`;
-        console.log("URL solicitada:", url);
 
         const res = await fetch(url);
 
@@ -25,7 +23,6 @@ export async function getTickets(car_id: number, partner_id: number, client_id: 
         }
 
         const data = await res.json();
-        console.log("Ticket obtenido correctamente:", data);
 
         return data;
     } catch (e) {
@@ -36,7 +33,6 @@ export async function getTickets(car_id: number, partner_id: number, client_id: 
 
 export async function createTicket(ticketData: Ticket) {
     try {
-        console.log("Enviando ticket:", ticketData);
 
         const res = await fetch(BASE_URL, {
             method: "POST",
@@ -52,7 +48,6 @@ export async function createTicket(ticketData: Ticket) {
         }
 
         const data = await res.json();
-        console.log("Ticket creado correctamente:", data);
 
         return { ok: true, data };
     } catch (error) {

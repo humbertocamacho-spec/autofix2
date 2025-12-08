@@ -39,12 +39,10 @@ export async function deletePendingTicket(id: number) {
 
     if (!res.ok) {
       const text = await res.text();
-      console.log(`Error en DELETE (status ${res.status}):`, text);
       return false;
     }
 
     const data = await res.json();
-    console.log("DELETE response:", data);
     return true;
   } catch (error) {
     console.error("Error eliminando pending_ticket:", error);

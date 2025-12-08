@@ -62,8 +62,6 @@ router.put("/:id", async (req, res) => {
     const { id } = req.params;
     const { name, car_brand_id, model, year, type, plate } = req.body;
 
-    console.log("Datos recibidos en updateCar:", req.body);
-
     if (!/^\d{4}$/.test(year)) {
         return res.status(400).json({ message: "El año debe tener 4 dígitos numéricos" });
     }
