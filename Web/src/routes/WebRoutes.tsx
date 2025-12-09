@@ -4,7 +4,6 @@ import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
 import Overview from "../pages/dashboard/pages/Overview";
 import ProtectedRoute from "./ProtectedRoute";
-import RolesTable from "../pages/dashboard/pages/Roles";
 
 export default function WebRoutes() {
   return (
@@ -18,14 +17,6 @@ export default function WebRoutes() {
         element={
           <ProtectedRoute>
             <Overview />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/dashboard/roles"
-        element={
-          <ProtectedRoute>
-            <RolesTable />
           </ProtectedRoute>
         }
       />
