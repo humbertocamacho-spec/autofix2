@@ -33,16 +33,15 @@ export default function DashboardLayout({ children }: Props) {
 
   const modulesPermissions: Record<string, string[]> = {
     dashboard: [], // siempre visible
-    users: ["read_1"], // Admin
-    admins: ["read_11"], // Admin
-    partners: ["read_2"], // Admin
-    clients: ["read_6"], // Admin
-    specialities: ["read_3"], // Admin
-    certifications: ["read_4"], // Admin
-    brands: ["read_8"], // Admin
-    tickets: ["read_9", "read_10"], // Partner y Cliente
-    myCars: ["read_7"], // Cliente
-    settings: ["read_12"], // Admin
+    users: ["read_users"], // Admin
+    admins: ["read_admins"], // Admin
+    partners: ["read_partners"], // Admin
+    clients: ["read_clients"], // Admin
+    specialities: ["read_specialities"], // Admin
+    certifications: ["read_certifications"], // Admin
+    brands: ["read_brands"], // Admin
+    tickets: ["read_tickets", "read_pending_tickets"], // Partner y Cliente
+    myCars: ["read_my_cars"], // Cliente
     roles: ["read_roles"], // Admin
   };
 
@@ -188,14 +187,6 @@ export default function DashboardLayout({ children }: Props) {
               <HiOutlineShieldCheck size={iconSize} />
               <span className={textClass()}>Certifications</span>
               {!sidebarOpen && <Tooltip>Certifications</Tooltip>}
-            </Link>
-          )}
-
-          {CheckPermissionForModule("settings") && (
-            <Link to="/settings" className={`${linkClass("/settings")} mt-6`}>
-              <HiOutlineCog size={iconSize} />
-              <span className={textClass()}>Settings</span>
-              {!sidebarOpen && <Tooltip>Settings</Tooltip>}
             </Link>
           )}
 
