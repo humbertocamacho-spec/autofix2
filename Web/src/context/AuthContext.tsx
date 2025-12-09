@@ -11,6 +11,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   reloadUser: () => Promise<void>;
+  hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -72,7 +73,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-
       setLoading(true);
       const response = await api.login(email, password);
 
@@ -99,6 +99,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false);
   };
 
+  const hasPermission = useCallback(
+    (permission: string) => {
+      if (!user) return false;
+      return user.permissions.includes(permission);
+    },
+    [user]
+  );
+
   useEffect(() => {
     (async () => {
       if (token) {
@@ -112,7 +120,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [token, loadUserFromToken]);
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, ready, login, logout, reloadUser }}>
+    <AuthContext.Provider value={{ user, token, loading, ready, login, logout, reloadUser, hasPermission }}>
       {children}
     </AuthContext.Provider>
   );
