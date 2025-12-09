@@ -1,19 +1,19 @@
 export async function seed(knex) {
   await knex("permissions").del();
 
-  const crudModules = [1,2,3,4,5,6,7,8,9,10];
-  const readOnlyModules = [11,12,13];
+  const modules = await knex("modules");
+  const functions = await knex("functions");
 
   const permissions = [];
 
-  crudModules.forEach(moduleId => {
-    ["create", "read", "update", "delete"].forEach(action => {
-      permissions.push({ name: `${action}_${moduleId}`, module_id: moduleId });
+  modules.forEach((m) => {
+    functions.forEach((f) => {
+      permissions.push({
+        name: `${f.name}_${m.id}`,
+        module_id: m.id,
+        function_id: f.id,
+      });
     });
-  });
-
-  readOnlyModules.forEach(moduleId => {
-    permissions.push({ name: `read_${moduleId}`, module_id: moduleId });
   });
 
   await knex("permissions").insert(permissions);

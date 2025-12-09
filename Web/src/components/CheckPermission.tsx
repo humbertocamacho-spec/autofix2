@@ -7,8 +7,7 @@ interface Props {
 }
 
 export const CheckPermission = ({ permission, children }: Props) => {
-  const { user } = useAuthContext();
-  if (!user) return null;
-  if (!user.permissions.includes(permission)) return null;
+  const { hasPermission } = useAuthContext();
+  if (!hasPermission(permission)) return null;
   return <>{children}</>;
 };

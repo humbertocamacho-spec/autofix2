@@ -1,8 +1,23 @@
 export function up(knex) {
   return knex.schema.createTable("roles_permissions", table => {
     table.increments("id");
-    table.integer("role_id").notNullable().references("id").inTable("roles").onDelete("CASCADE");
-    table.integer("permission_id").unsigned().notNullable().references("id").inTable("permissions").onDelete("CASCADE");
+
+    // role_id: roles.id es int normal (no unsigned)
+    table
+      .integer("role_id")
+      .notNullable()
+      .references("id")
+      .inTable("roles")
+      .onDelete("CASCADE");
+
+    // permission_id: permissions.id es int unsigned
+    table
+      .integer("permission_id")
+      .unsigned()
+      .notNullable()
+      .references("id")
+      .inTable("permissions")
+      .onDelete("CASCADE");
   });
 }
 
