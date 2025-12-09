@@ -2,22 +2,8 @@ import { useState} from "react";
 import type { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
-import {
-  HiOutlineHome,
-  HiOutlineUser,
-  HiOutlineUsers,
-  HiOutlineTicket,
-  HiOutlineCog,
-  HiOutlineLogout,
-  HiOutlineChevronDown,
-  HiOutlineChevronRight,
-  HiOutlineMenu,
-  HiOutlineSearch,
-  HiOutlineBell,
-  HiOutlineUserGroup,
-  HiOutlineBriefcase,
-  HiOutlineTruck,
-  HiOutlineShieldCheck,
+import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineCog, HiOutlineLogout, HiOutlineChevronDown,
+  HiOutlineChevronRight, HiOutlineMenu, HiOutlineSearch, HiOutlineBell, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, HiOutlineShieldCheck,
 } from "react-icons/hi";
 
 interface Props {
@@ -45,9 +31,6 @@ export default function DashboardLayout({ children }: Props) {
     navigate("/login", { replace: true });
   };
 
-  // ========================================
-  // Define módulos y sus permisos mínimos
-  // ========================================
   const modulesPermissions: Record<string, string[]> = {
     dashboard: [], // siempre visible
     users: ["read_1"], // Admin
@@ -60,14 +43,12 @@ export default function DashboardLayout({ children }: Props) {
     tickets: ["read_9", "read_10"], // Partner y Cliente
     myCars: ["read_7"], // Cliente
     settings: ["read_12"], // Admin
+    roles: ["read_11"], // Admin
   };
 
-  // ========================================
-  // Función para revisar permisos
-  // ========================================
   const CheckPermissionForModule = (module: string) => {
     const requiredPermissions = modulesPermissions[module] || [];
-    if (requiredPermissions.length === 0) return true; // Dashboard siempre visible
+    if (requiredPermissions.length === 0) return true;
     return requiredPermissions.some((p) => user?.permissions?.includes(p));
   };
 
@@ -101,9 +82,6 @@ export default function DashboardLayout({ children }: Props) {
     );
   }
 
-  // ========================================
-  // Helpers para clases de links y textos
-  // ========================================
   function linkClass(path: string) {
     return `group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
       isActive(path)
@@ -120,12 +98,8 @@ export default function DashboardLayout({ children }: Props) {
     return `w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all text-gray-700 hover:bg-gray-100`;
   }
 
-  // ========================================
-  // Render
-  // ========================================
   return (
     <div key={layoutKey} className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ${
           sidebarOpen ? "w-64" : "w-20"
@@ -145,19 +119,14 @@ export default function DashboardLayout({ children }: Props) {
         </div>
 
         <nav className="flex-1 space-y-2 overflow-y-auto px-3 py-6">
-          {/* Dashboard siempre visible */}
           {CheckPermissionForModule("dashboard") && (
-            <Link
-              to="/dashboard"
-              className={linkClass("/dashboard")}
-            >
+            <Link to="/dashboard" className={linkClass("/dashboard")}>
               <HiOutlineHome size={iconSize} />
               <span className={textClass()}>Dashboard</span>
               {!sidebarOpen && <Tooltip>Dashboard</Tooltip>}
             </Link>
           )}
 
-          {/* Admin Módulos */}
           {CheckPermissionForModule("users") && (
             <Link to="/dashboard/users" className={linkClass("/dashboard/users")}>
               <HiOutlineUser size={iconSize} />
@@ -190,11 +159,16 @@ export default function DashboardLayout({ children }: Props) {
             </Link>
           )}
 
+          {CheckPermissionForModule("roles") && (
+            <Link to="/dashboard/roles" className={linkClass("/dashboard/roles")}>
+              <HiOutlineUserGroup size={iconSize} />
+              <span className={textClass()}>Roles</span>
+              {!sidebarOpen && <Tooltip>Roles</Tooltip>}
+            </Link>
+          )}
+
           {CheckPermissionForModule("specialities") && (
-            <Link
-              to="/dashboard/specialities"
-              className={linkClass("/dashboard/specialities")}
-            >
+            <Link to="/dashboard/specialities" className={linkClass("/dashboard/specialities")}>
               <HiOutlineBriefcase size={iconSize} />
               <span className={textClass()}>Specialities</span>
               {!sidebarOpen && <Tooltip>Specialities</Tooltip>}
@@ -210,10 +184,7 @@ export default function DashboardLayout({ children }: Props) {
           )}
 
           {CheckPermissionForModule("certifications") && (
-            <Link
-              to="/dashboard/certifications"
-              className={linkClass("/dashboard/certifications")}
-            >
+            <Link to="/dashboard/certifications" className={linkClass("/dashboard/certifications")}>
               <HiOutlineShieldCheck size={iconSize} />
               <span className={textClass()}>Certifications</span>
               {!sidebarOpen && <Tooltip>Certifications</Tooltip>}
@@ -228,7 +199,6 @@ export default function DashboardLayout({ children }: Props) {
             </Link>
           )}
 
-          {/* Tickets con submenu */}
           {CheckPermissionForModule("tickets") && (
             <div>
               <button
@@ -255,16 +225,10 @@ export default function DashboardLayout({ children }: Props) {
 
               {sidebarOpen && openMenu === "tickets" && (
                 <div className="mt-2 space-y-1 pl-10">
-                  <Link
-                    to="/tickets/list"
-                    className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition"
-                  >
+                  <Link to="/tickets/list" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">
                     Pendientes
                   </Link>
-                  <Link
-                    to="/tickets/create"
-                    className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition"
-                  >
+                  <Link to="/tickets/create" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">
                     Confirmados
                   </Link>
                 </div>
@@ -272,7 +236,6 @@ export default function DashboardLayout({ children }: Props) {
             </div>
           )}
 
-          {/* My Cars para clientes */}
           {CheckPermissionForModule("myCars") && (
             <Link to="/dashboard/my-cars" className={linkClass("/dashboard/my-cars")}>
               <HiOutlineTruck size={iconSize} />
@@ -282,12 +245,8 @@ export default function DashboardLayout({ children }: Props) {
           )}
         </nav>
 
-        {/* Logout */}
         <div className="border-t border-gray-200 px-3 pt-5 pb-6">
-          <button
-            onClick={handleLogout}
-            className="w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 text-red-600 transition hover:bg-red-50"
-          >
+          <button onClick={handleLogout} className="w-full group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 text-red-600 transition hover:bg-red-50">
             <HiOutlineLogout size={iconSize} className="shrink-0" />
             <span className={textClass()}>Logout</span>
             {!sidebarOpen && <Tooltip>Logout</Tooltip>}
@@ -295,18 +254,10 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       </aside>
 
-      {/* Main content */}
-      <div
-        className={`flex-1 transition-all duration-300 ${
-          sidebarOpen ? "ml-64" : "ml-20"
-        }`}
-      >
+      <div className={`flex-1 transition-all duration-300 ${ sidebarOpen ? "ml-64" : "ml-20" }`}>
         <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2.5 rounded-lg hover:bg-gray-100 text-gray-600"
-            >
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2.5 rounded-lg hover:bg-gray-100 text-gray-600">
               <HiOutlineMenu size={26} />
             </button>
             <h2 className="text-xl font-semibold text-gray-800">Dashboard</h2>
@@ -315,10 +266,7 @@ export default function DashboardLayout({ children }: Props) {
 
           <div className="flex items-center gap-4">
             <div className="relative hidden md:block">
-              <HiOutlineSearch
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                size={20}
-              />
+              <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20}/>
               <input
                 type="text"
                 placeholder="Search..."
@@ -330,11 +278,7 @@ export default function DashboardLayout({ children }: Props) {
               <span className="absolute right-1 top-1 size-2 rounded-full bg-red-500" />
             </button>
             <div className="flex items-center gap-3">
-              <img
-                src="https://i.pravatar.cc/40"
-                alt="User avatar"
-                className="size-10 cursor-pointer rounded-full ring-2 ring-gray-200"
-              />
+              <img src="https://i.pravatar.cc/40" alt="User avatar" className="size-10 cursor-pointer rounded-full ring-2 ring-gray-200"/>
               {sidebarOpen && (
                 <span className="text-sm font-medium text-gray-700">
                   {user?.name || user?.email}

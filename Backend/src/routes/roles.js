@@ -3,6 +3,16 @@ import db from "../config/db.js";
 
 const router = express.Router();
 
+router.get("/", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM roles ORDER BY id ASC");
+    res.json(rows);
+  } catch (error) {
+    console.error("Error al obtener roles:", error);
+    res.status(500).json({ ok: false, message: "Error al obtener roles" });
+  }
+});
+
 router.put('/update-role', async (req, res) => {
   let connection;
 

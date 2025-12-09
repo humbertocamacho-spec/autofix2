@@ -8,9 +8,15 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children, permission }: ProtectedRouteProps) {
-  const { user, hasPermission } = useAuthContext();
+  const { user, loading, ready, hasPermission } = useAuthContext();
 
-  if (!user) return <Navigate to="/login" replace />;
+  if (!ready || loading) {
+    return null;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   if (permission && !hasPermission(permission)) {
     return <Navigate to="/unauthorized" replace />;
