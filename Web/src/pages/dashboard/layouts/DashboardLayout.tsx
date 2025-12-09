@@ -23,7 +23,7 @@ export default function DashboardLayout({ children }: Props) {
   const toggleMenu = (menu: string) =>
     setOpenMenu(openMenu === menu ? null : menu);
 
-  const isActive = (path: string) => location.pathname.startsWith(path);
+  const isActive = (path: string) => location.pathname === path;
 
   const handleLogout = () => {
     logout();
@@ -43,7 +43,7 @@ export default function DashboardLayout({ children }: Props) {
     tickets: ["read_9", "read_10"], // Partner y Cliente
     myCars: ["read_7"], // Cliente
     settings: ["read_12"], // Admin
-    roles: ["read_11"], // Admin
+    roles: ["read_roles"], // Admin
   };
 
   const CheckPermissionForModule = (module: string) => {
@@ -99,7 +99,7 @@ export default function DashboardLayout({ children }: Props) {
   }
 
   return (
-    <div key={layoutKey} className="flex h-screen bg-gray-50 overflow-hidden">
+    <div key={layoutKey} className="flex min-h-screen bg-gray-50">
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ${
           sidebarOpen ? "w-64" : "w-20"
@@ -254,7 +254,7 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       </aside>
 
-      <div className={`flex-1 transition-all duration-300 ${ sidebarOpen ? "ml-64" : "ml-20" }`}>
+      <div className={`flex-1 transition-all duration-300 overflow-y-auto max-h-screen ${sidebarOpen ? "ml-64" : "ml-20"}`}>
         <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
           <div className="flex items-center gap-4">
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2.5 rounded-lg hover:bg-gray-100 text-gray-600">
@@ -288,7 +288,7 @@ export default function DashboardLayout({ children }: Props) {
           </div>
         </header>
 
-        <main className="min-h-full bg-gray-50 p-8">{children}</main>
+        <main className="bg-gray-50 p-8">{children}</main>
       </div>
     </div>
   );

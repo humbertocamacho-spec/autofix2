@@ -131,12 +131,13 @@ export default function RolesTable() {
 
                 {expandedRole === role.id && (
                   <div className="p-6 bg-white rounded-b-xl border-t border-gray-200 animate-fadeIn">
+
                     <h3 className="text-xl font-medium text-gray-700 mb-6">
                       Permisos asignados a{" "}
                       <span className="font-bold text-[#27B9BA]">{role.name}</span>
                     </h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[450px] overflow-y-auto pr-2 custom-scroll">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[450px] overflow-y-auto pr-2 pb-4 custom-scroll">
                       {Object.keys(grouped).map((moduleId) => {
                         const id = Number(moduleId);
                         return (
@@ -158,12 +159,13 @@ export default function RolesTable() {
                                 </label>
                               ))}
                             </div>
+
                           </div>
                         );
                       })}
                     </div>
 
-                    <div className="mt-6 flex justify-end">
+                    <div className="flex justify-end sticky bottom-0 bg-white py-4 border-t border-gray-200">
                       <button
                         onClick={() => savePermissions(role.id)}
                         className="px-6 py-2 bg-[#27B9BA] text-white rounded-xl shadow-md hover:bg-[#1da6a7] transition font-medium"
@@ -171,6 +173,7 @@ export default function RolesTable() {
                         Guardar cambios
                       </button>
                     </div>
+
                   </div>
                 )}
               </div>

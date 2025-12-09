@@ -24,7 +24,7 @@ export default function WebRoutes() {
 
       <Route path="/dashboard/roles"
         element={
-          <ProtectedRoute permission="read_11">
+          <ProtectedRoute permission="read_roles">
             <RolesTable />
           </ProtectedRoute>
         }
