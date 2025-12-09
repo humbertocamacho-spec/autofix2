@@ -3,21 +3,9 @@ import type { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
 import {
-  HiOutlineHome,
-  HiOutlineUser,
-  HiOutlineUsers,
-  HiOutlineTicket,
-  HiOutlineCog,
-  HiOutlineLogout,
-  HiOutlineChevronDown,
-  HiOutlineChevronRight,
-  HiOutlineMenu,
-  HiOutlineSearch,
-  HiOutlineBell,
-  HiOutlineUserGroup,
-  HiOutlineBriefcase,
-  HiOutlineTruck,
-  HiOutlineShieldCheck,
+  HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineCog,
+  HiOutlineLogout, HiOutlineChevronDown, HiOutlineChevronRight,
+  HiOutlineMenu, HiOutlineSearch, HiOutlineBell, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, HiOutlineShieldCheck
 } from "react-icons/hi";
 
 interface Props {
@@ -190,11 +178,17 @@ export default function DashboardLayout({ children }: Props) {
             </Link>
           )}
 
-          {CheckPermissionForModule("specialities") && (
-            <Link
-              to="/dashboard/specialities"
-              className={linkClass("/dashboard/specialities")}
-            >
+
+          {roleFlags.isAdmin && (
+            <Link to="/dashboard/roles" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/roles") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
+              <HiOutlineUserGroup size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Roles</span>
+              {!sidebarOpen && <Tooltip>Roles</Tooltip>}
+            </Link>
+          )}
+
+          {roleFlags.isAdmin && (
+            <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
               <HiOutlineBriefcase size={iconSize} />
               <span className={textClass()}>Specialities</span>
               {!sidebarOpen && <Tooltip>Specialities</Tooltip>}
@@ -228,8 +222,15 @@ export default function DashboardLayout({ children }: Props) {
             </Link>
           )}
 
-          {/* Tickets con submenu */}
-          {CheckPermissionForModule("tickets") && (
+          {roleFlags.isPartner && (
+            <Link to="/dashboard/partners" className={`group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${isActive("/dashboard/partners") ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`}>
+              <HiOutlineTicket size={iconSize} />
+              <span className={`font-medium ${sidebarOpen ? "block" : "hidden"}`}>Tickets</span>
+              {!sidebarOpen && <Tooltip>Tickets</Tooltip>}
+            </Link>
+          )}
+
+          {roleFlags.isClient && (
             <div>
               <button
                 onClick={() => toggleMenu("tickets")}
