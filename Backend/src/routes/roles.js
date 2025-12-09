@@ -13,7 +13,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 router.put('/update-role', async (req, res) => {
   let connection;
 
