@@ -14,6 +14,7 @@ import clientRoutes from "./routes/client.js";
 import pendingTicketsRoutes from "./routes/pending_tickets.js";
 import partnerCertificationsRoutes from "./routes/partner_certifications.js";
 import rolesRoutes from "./routes/roles.js";
+import permissionsRoutes from "./routes/permissions.js";
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use("/api/client", clientRoutes);
 app.use("/api/pending_tickets", pendingTicketsRoutes);
 app.use("/api/partner_certifications", partnerCertificationsRoutes);
 app.use("/api/roles", rolesRoutes);
+app.use("/api/permissions", permissionsRoutes);
 
 app.get('/test-db', async (req, res) => {
   try {

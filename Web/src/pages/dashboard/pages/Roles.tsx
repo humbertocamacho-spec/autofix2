@@ -1,84 +1,218 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
-import type { Roles } from "../../../types/roles";
+
+interface Role {
+  id: number;
+  name: string;
+}
+
+interface Permission {
+  id: number;
+  name: string;
+  module_id: number;
+}
+
+interface PermissionsByRole {
+  [roleId: number]: number[];
+}
+
+interface GroupedPermissions {
+  [moduleId: number]: Permission[];
+}
 
 export default function RolesTable() {
-  const [roles, setRoles] = useState<Roles[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
+  const [expandedRole, setExpandedRole] = useState<number | null>(null);
+  const [selectedPerms, setSelectedPerms] = useState<PermissionsByRole>({});
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchRoles();
+    fetchPermissions();
   }, []);
 
   const fetchRoles = async () => {
-    try {
-      const res = await fetch(`${VITE_API_URL}/api/roles`);
-      const data = await res.json();
-      setRoles(data);
-    } catch (error) {
-      console.error("Error fetching roles:", error);
-    } finally {
-      setLoading(false);
-    }
+    const res = await fetch(`${VITE_API_URL}/api/roles`);
+    const data = await res.json();
+    setRoles(data);
+    setLoading(false);
   };
 
-  const filtered = roles.filter((role) =>
-    role.name.toLowerCase().includes(search.toLowerCase())
+  const fetchPermissions = async () => {
+    const res = await fetch(`${VITE_API_URL}/api/permissions`);
+    const data = await res.json();
+
+    console.log("PERMISOS RECIBIDOS:", data);
+    setPermissions(data.permissions);
+  };
+
+  const loadRolePermissions = async (roleId: number) => {
+    const res = await fetch(`${VITE_API_URL}/api/roles/${roleId}/permissions`);
+    const data = await res.json();
+
+    setSelectedPerms((prev) => ({
+      ...prev,
+      [roleId]: data.permissions,
+    }));
+  };
+
+  const toggleExpand = (roleId: number) => {
+    if (expandedRole === roleId) {
+      setExpandedRole(null);
+      return;
+    }
+
+    setExpandedRole(roleId);
+    loadRolePermissions(roleId);
+  };
+
+  const togglePermission = (roleId: number, permId: number) => {
+    const rolePerms = selectedPerms[roleId] || [];
+
+    const updated = rolePerms.includes(permId)
+      ? rolePerms.filter((p) => p !== permId)
+      : [...rolePerms, permId];
+
+    setSelectedPerms((prev) => ({
+      ...prev,
+      [roleId]: updated,
+    }));
+  };
+
+  const savePermissions = async (roleId: number) => {
+    await fetch(`${VITE_API_URL}/api/roles/${roleId}/permissions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ permissions: selectedPerms[roleId] || [] }),
+    });
+
+    alert("Permisos guardados");
+  };
+
+  const grouped: GroupedPermissions = permissions.reduce(
+    (acc: GroupedPermissions, perm: Permission) => {
+      if (!acc[perm.module_id]) acc[perm.module_id] = [];
+      acc[perm.module_id].push(perm);
+      return acc;
+    },
+    {}
   );
 
   return (
     <DashboardLayout>
-      <h1 className="text-3xl font-bold mb-6">Roles</h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">
+        Gestión de Roles y Permisos
+      </h1>
 
-      <div className="mb-6 flex justify-between">
-        <input type="text" placeholder="Search role..." className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
 
-        <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-          Add Role
-        </button>
-      </div>
-
-      <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
-          <p className="text-center py-10 text-gray-500">Loading...</p>
+          <p className="text-gray-500 text-center py-10">Cargando roles...</p>
         ) : (
-          <table className="w-full table-auto text-left">
-            <thead>
-              <tr className="text-gray-600 border-b">
-                <th className="pb-3">ID</th>
-                <th className="pb-3">Name</th>
-                <th className="pb-3 text-right">Actions</th>
-              </tr>
-            </thead>
+          <div className="space-y-4">
 
-            <tbody>
-              {filtered.map((role) => (
-                <tr key={role.id} className="border-b hover:bg-gray-50 text-gray-700">
-                  <td className="py-3">{role.id}</td>
-                  <td className="py-3">{role.name}</td>
+            {roles.map((role) => (
+              <div
+                key={role.id}
+                className="border border-gray-200 rounded-xl shadow-sm bg-gray-50"
+              >
+                {/* HEADER */}
+                <button
+                  onClick={() => toggleExpand(role.id)}
+                  className="w-full flex justify-between items-center px-4 py-4 text-left
+                             font-semibold text-gray-800 text-lg rounded-xl
+                             hover:bg-gray-100 transition"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#27B9BA]/20 text-[#27B9BA]
+                                    rounded-xl flex items-center justify-center font-bold">
+                      {role.name.charAt(0).toUpperCase()}
+                    </div>
+                    {role.name}
+                  </div>
 
-                  <td className="py-3 text-right space-x-3">
-                    <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">Edit</button>
+                  <span className="text-gray-600 text-xl">
+                    {expandedRole === role.id ? "−" : "+"}
+                  </span>
+                </button>
 
-                    <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">Delete</button>
-                  </td>
-                </tr>
-              ))}
+                {/* CONTENT */}
+                {expandedRole === role.id && (
+                  <div className="p-6 bg-white rounded-b-xl border-t border-gray-200 animate-fadeIn">
 
-              {filtered.length === 0 && (
-                <tr>
-                  <td colSpan={3} className="text-center py-6 text-gray-500">No roles found</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                    <h3 className="text-xl font-medium text-gray-700 mb-6">
+                      Permisos asignados a <span className="font-bold text-[#27B9BA]">{role.name}</span>
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {Object.keys(grouped).map((moduleId) => {
+                        const numericModuleId = Number(moduleId);
+                        return (
+                          <div
+                            key={numericModuleId}
+                            className="border border-gray-200 p-4 rounded-xl bg-gray-50 shadow-sm"
+                          >
+                            <h4 className="text-lg font-semibold text-gray-700 mb-3">
+                              Módulo {numericModuleId}
+                            </h4>
+
+                            <div className="space-y-2">
+                              {grouped[numericModuleId].map((perm) => (
+                                <label
+                                  key={perm.id}
+                                  className="flex items-center gap-3 cursor-pointer"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={
+                                      selectedPerms[role.id]?.includes(perm.id) ||
+                                      false
+                                    }
+                                    onChange={() =>
+                                      togglePermission(role.id, perm.id)
+                                    }
+                                    className="w-5 h-5 accent-[#27B9BA]"
+                                  />
+                                  <span className="text-gray-700">{perm.name}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="mt-6 flex justify-end">
+                      <button
+                        onClick={() => savePermissions(role.id)}
+                        className="px-6 py-2 bg-[#27B9BA] text-white rounded-xl shadow-md 
+                                   hover:bg-[#1da6a7] transition font-medium"
+                      >
+                        Guardar cambios
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+
+          </div>
         )}
       </div>
+
+      <style>
+        {`
+          .animate-fadeIn {
+            animation: fadeIn 0.25s ease-in-out;
+          }
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}
+      </style>
     </DashboardLayout>
   );
 }
