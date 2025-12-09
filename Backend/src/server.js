@@ -13,14 +13,18 @@ import carClientsRoutes from "./routes/car_clients.js";
 import clientRoutes from "./routes/client.js";
 import pendingTicketsRoutes from "./routes/pending_tickets.js";
 import partnerCertificationsRoutes from "./routes/partner_certifications.js";
+
+//Web
 import rolesRoutes from "./routes/roles.js";
 import permissionsRoutes from "./routes/permissions.js";
+import modulesRoutes from "./routes/modules.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+//App
 app.use('/api/auth', authRoutes);
 app.use("/api/partners", partnerRoutes);
 app.use('/api/specialities', specialitiesRoutes);
@@ -32,8 +36,11 @@ app.use("/api/car_clients", carClientsRoutes);
 app.use("/api/client", clientRoutes);
 app.use("/api/pending_tickets", pendingTicketsRoutes);
 app.use("/api/partner_certifications", partnerCertificationsRoutes);
+
+//Web
 app.use("/api/roles", rolesRoutes);
 app.use("/api/permissions", permissionsRoutes);
+app.use("/api/modules", modulesRoutes);
 
 app.get('/test-db', async (req, res) => {
   try {
