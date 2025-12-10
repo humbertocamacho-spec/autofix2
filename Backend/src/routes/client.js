@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
             SELECT 
                 c.id,
                 c.user_id,
-                u.name AS user_name,
+                u.name AS user_name
             FROM clients c
             LEFT JOIN users u ON u.id = c.user_id
         `);
