@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
-
-export interface Certification {
-    id: number;
-    partner_id: number | null;
-    name: string;
-}
+import  type { Certification } from "../../../types/certification";
 
 export default function CertificationsTable() {
     const [certifications, setCertifications] = useState<Certification[]>([]);

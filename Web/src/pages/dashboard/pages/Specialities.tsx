@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
-
-export interface Specialities {
-  id: number;
-  name: string;
-}
+import type { Specialities } from "../../../types/specialities";
 
 export default function SpecialitiesTable() {
   const [specialities, setSpecialities] = useState<Specialities[]>([]);

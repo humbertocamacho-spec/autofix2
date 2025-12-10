@@ -1,20 +1,7 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
-
-export interface Ticket {
-    id: number;
-    client_id: number;
-    client_fullname?: string;
-    car_id: number;
-    car_name?: string;
-    partner_id: number;
-    partner_name?: string;
-    partner_phone?: string;
-    logo_url?: string;
-    date: string;
-    notes?: string;
-}
+import type { Ticket } from "../../../types/ticket";
 
 export default function TicketsTable() {
 

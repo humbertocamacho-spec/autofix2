@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
-
-export interface Module {
-    id: number;
-    name: string;
-    description: string | null;
-}
+import type { Modules } from "../../../types/modules";
 
 export default function ModulesTable() {
-    const [modules, setModules] = useState<Module[]>([]);
+    const [modules, setModules] = useState<Modules[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
 

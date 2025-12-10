@@ -150,59 +150,94 @@ export default function UsersTable() {
             </div>
 
             {openEdit && currentUser && (
-                <div className="fixed inset-0 bg-white/20 backdrop-blur-sm flex justify-center items-center z-50">
-                    <div className="bg-white w-[450px] rounded-xl p-6 shadow-2xl border border-gray-200">
-                        <h2 className="text-xl font-bold mb-4">Edit User</h2>
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
 
-                        <div className="space-y-3">
-                            <input
-                                className="w-full border px-3 py-2 rounded"
-                                value={currentUser.name}
-                                onChange={(e) => setCurrentUser({ ...currentUser, name: e.target.value })}
-                                placeholder="Name"
-                            />
+        <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
 
-                            <input
-                                className="w-full border px-3 py-2 rounded"
-                                value={currentUser.email}
-                                onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })}
-                                placeholder="Email"
-                            />
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">Edit User</h2>
 
-                            <input
-                                className="w-full border px-3 py-2 rounded"
-                                value={currentUser.phone || ""}
-                                onChange={(e) => setCurrentUser({ ...currentUser, phone: e.target.value })}
-                                placeholder="Phone"
-                            />
+            <div className="space-y-4">
 
-                            <select className="w-full border px-3 py-2 rounded" value={currentUser.role_id} onChange={(e) => setCurrentUser({ ...currentUser, role_id: Number(e.target.value) })}>
-                                <option value="" disabled>Select role</option>
-                                <option value={1}>Admin</option>
-                                <option value={2}>Partner</option>
-                                <option value={3}>Client</option>
-                            </select>
-
-                            <select className="w-full border px-3 py-2 rounded" value={currentUser.gender_id || ""} onChange={(e) => setCurrentUser({ ...currentUser, gender_id: Number(e.target.value) })}>
-                                <option value="">Gender</option>
-                                <option value={1}>Femenino</option>
-                                <option value={2}>Masculino</option>
-                            </select>
-
-                        </div>
-
-                        <div className="flex justify-end gap-3 mt-5">
-                            <button className="px-4 py-2 bg-gray-400 text-white rounded-lg" onClick={() => setOpenEdit(false)}>
-                                Cancel
-                            </button>
-
-                            <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg" onClick={handleUpdateUser}>
-                                Save
-                            </button>
-                        </div>
-                    </div>
+                <div>
+                    <label className="text-sm font-semibold text-gray-600">Name</label>
+                    <input
+                        className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                        value={currentUser.name}
+                        onChange={(e) => setCurrentUser({ ...currentUser, name: e.target.value })}
+                    />
                 </div>
-            )}
+
+                <div>
+                    <label className="text-sm font-semibold text-gray-600">Email</label>
+                    <input
+                        className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                        value={currentUser.email}
+                        onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })}
+                    />
+                </div>
+
+                <div>
+                    <label className="text-sm font-semibold text-gray-600">Phone</label>
+                    <input
+                        className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                        value={currentUser.phone || ""}
+                        onChange={(e) => setCurrentUser({ ...currentUser, phone: e.target.value })}
+                    />
+                </div>
+
+                <div>
+                    <label className="text-sm font-semibold text-gray-600">Role</label>
+                    <select
+                        className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                        value={currentUser.role_id}
+                        onChange={(e) =>
+                            setCurrentUser({ ...currentUser, role_id: Number(e.target.value) })
+                        }
+                    >
+                        <option value="" disabled>Select role</option>
+                        <option value={1}>Admin</option>
+                        <option value={2}>Partner</option>
+                        <option value={3}>Client</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label className="text-sm font-semibold text-gray-600">Gender</label>
+                    <select
+                        className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                        value={currentUser.gender_id || ""}
+                        onChange={(e) =>
+                            setCurrentUser({ ...currentUser, gender_id: Number(e.target.value) })
+                        }
+                    >
+                        <option value="">Gender</option>
+                        <option value={1}>Femenino</option>
+                        <option value={2}>Masculino</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+                <button
+                    className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+                    onClick={() => setOpenEdit(false)}
+                >
+                    Cancel
+                </button>
+
+                <button
+                    className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
+                    onClick={handleUpdateUser}
+                >
+                    Save
+                </button>
+            </div>
+
+        </div>
+    </div>
+)}
+
 
         </DashboardLayout>
     );

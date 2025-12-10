@@ -1,24 +1,7 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
-
-export interface Partner {
-    id: number;
-    user_id: number;
-    name: string;
-    whatsapp: string;
-    phone: string;
-    location: string;
-    latitude: string;
-    longitude: string;
-    land_use_permit: boolean;
-    scanner_handling: boolean;
-    logo_url: string;
-    description?: string;
-    priority: number;
-    distance?: number;
-    services?: string[];
-}
+import type { Partner } from "../../../types/partner";
 
 export default function PartnersTable() {
     const [partners, setPartners] = useState<Partner[]>([]);
@@ -88,7 +71,7 @@ export default function PartnersTable() {
                                         <td className="py-3 font-semibold">{item.name}</td>
                                         <td className="py-3">{item.phone}</td>
                                         <td className="py-3">{item.whatsapp}</td>
-                                        <td className="py-3 max-w-xs whitespace-normal break-words">
+                                        <td className="py-3 max-w-xs whitespace-normal">
                                             {item.location}
                                         </td>
                                         <td className="py-3 text-center">{item.priority}</td>

@@ -3,11 +3,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Permission } from "../../../types/permission";
 import type { Roles } from "../../../types/roles";
-
-interface Module {
-  id: number;
-  name: string;
-}
+import type { Modules } from "../../../types/modules";
 
 interface PermissionsByRole {
   [roleId: number]: number[];
@@ -20,7 +16,7 @@ interface GroupedPermissions {
 export default function RolesTable() {
   const [roles, setRoles] = useState<Roles[]>([]);
   const [permissions, setPermissions] = useState<Permission[]>([]);
-  const [modules, setModules] = useState<Module[]>([]);
+  const [modules, setModules] = useState<Modules[]>([]);
   const [expandedRole, setExpandedRole] = useState<number | null>(null);
   const [selectedPerms, setSelectedPerms] = useState<PermissionsByRole>({});
   const [loading, setLoading] = useState(true);

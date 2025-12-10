@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
+import type { CarBrands } from "../../../types/car_brands";
 
-export interface CarBrands{
-    id: number;
-    name: string;
-}
 export default function CarBrands() {
   const [carBrands, setCarBrands] = useState<CarBrands[]>([]);
   const [loading, setLoading] = useState(true);

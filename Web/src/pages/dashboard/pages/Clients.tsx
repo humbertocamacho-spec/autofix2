@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
-
-export interface Client {
-    id: number;
-    user_id: number;
-}
+import type { Client } from "../../../types/client";
 
 export default function ClientsTable() {
   const [clients, setClients] = useState<Client[]>([]);

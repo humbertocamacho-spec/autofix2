@@ -1,21 +1,12 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
-
-export interface Permission {
-    id: number;
-    name: string;
-    module_id: number;
-}
-
-export interface Module {
-    id: number;
-    name: string;
-}
+import type { Modules } from "../../../types/modules";
+import type { Permission } from "../../../types/permission";
 
 export default function PermissionsTable() {
     const [permissions, setPermissions] = useState<Permission[]>([]);
-    const [modules, setModules] = useState<Module[]>([]);
+    const [modules, setModules] = useState<Modules[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
 

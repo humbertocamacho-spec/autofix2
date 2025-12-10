@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
-
-export interface Admin {
-    id: number;
-    user_id: number;
-}
+import type { Admin } from "../../../types/admin";
 
 export default function AdminsTable() {
     const [admins, setAdmins] = useState<Admin[]>([]);
