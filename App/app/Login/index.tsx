@@ -58,25 +58,24 @@ export default function LoginScreen() {
 
     try {
       const res = await fetch(`${API_URL}/api/auth/login`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password }),
-});
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-const data = await res.json().catch(() => ({}));
+      const data = await res.json();
 
-if (!res.ok || !data.ok) {
-  setError(data.message || 'Error al iniciar sesión');
-  return;
-}
-
+      if (!data.ok || !data.user) {
+        setError(data.message || "Error en el login");
+        return;
+      }
 
       const userId = data.user.id;
       const clientId = data.user.client_id;
 
       await AsyncStorage.setItem("user_id", userId.toString());
       await AsyncStorage.setItem("client_id", clientId.toString());
-      await AsyncStorage.removeItem("appointments");
+      await AsyncStorage.setItem("client_id", clientId ? clientId.toString() : "");
       const verifyClientId = await AsyncStorage.getItem("client_id");
 
       if (remember) {
@@ -89,10 +88,11 @@ if (!res.ok || !data.ok) {
 
       router.replace('/Map');
 
-    } catch (err) {
-      console.error(err);
-      setError('No se pudo conectar al servidor');
-    }
+    } catch (err: any) {
+  console.log("ERROR LOGIN APP:", err?.response?.data || err.message || err);
+  setError(err?.response?.data?.message || "Error desconocido");
+}
+
   };
 
 
