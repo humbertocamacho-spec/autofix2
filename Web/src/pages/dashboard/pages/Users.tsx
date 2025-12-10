@@ -20,6 +20,10 @@ export default function UsersTable() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
 
+
+    const [openEdit, setOpenEdit] = useState(false);
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+
     useEffect(() => {
         fetchUsers();
     }, []);
@@ -36,6 +40,45 @@ export default function UsersTable() {
         }
     };
 
+
+
+
+    const handleOpenEdit = (user: User) => {
+        setCurrentUser(user);
+        setOpenEdit(true);
+    };
+
+    const handleUpdateUser = async () => {
+        if (!currentUser) return;
+
+        try {
+            const res = await fetch(`${VITE_API_URL}/api/users/${currentUser.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(currentUser),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.message || "Error updating user");
+                return;
+            }
+
+            alert("Usuario actualizado correctamente");
+            setOpenEdit(false);
+            fetchUsers();
+
+        } catch (error) {
+            console.error("Error updating user:", error);
+        }
+    };
+
+
+
+
+
+    
     const filtered = users.filter(
         (u) =>
             u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -45,8 +88,6 @@ export default function UsersTable() {
     return (
         <DashboardLayout>
             <h1 className="text-3xl font-bold mb-6">Users</h1>
-
-            {/* SEARCH + ADD */}
             <div className="mb-6 flex justify-between">
                 <input
                     type="text"
@@ -60,8 +101,6 @@ export default function UsersTable() {
                     Add User
                 </button>
             </div>
-
-            {/* TABLE */}
             <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
                 {loading ? (
                     <p className="text-center py-10 text-gray-500">Loading users...</p>
@@ -115,6 +154,84 @@ export default function UsersTable() {
                     </table>
                 )}
             </div>
+        
+
+        
+            {openEdit && currentUser && (
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
+                    <div className="bg-white w-[450px] rounded-xl p-6 shadow-xl">
+                        <h2 className="text-xl font-bold mb-4">Edit User</h2>
+
+                        <div className="space-y-3">
+                            <input
+                                className="w-full border px-3 py-2 rounded"
+                                value={currentUser.name}
+                                onChange={(e) =>
+                                    setCurrentUser({ ...currentUser, name: e.target.value })
+                                }
+                                placeholder="Name"
+                            />
+
+                            <input
+                                className="w-full border px-3 py-2 rounded"
+                                value={currentUser.email}
+                                onChange={(e) =>
+                                    setCurrentUser({ ...currentUser, email: e.target.value })
+                                }
+                                placeholder="Email"
+                            />
+
+                            <input
+                                className="w-full border px-3 py-2 rounded"
+                                value={currentUser.phone || ""}
+                                onChange={(e) =>
+                                    setCurrentUser({ ...currentUser, phone: e.target.value })
+                                }
+                                placeholder="Phone"
+                            />
+
+                            <input
+                                type="number"
+                                className="w-full border px-3 py-2 rounded"
+                                value={currentUser.role_id}
+                                onChange={(e) =>
+                                    setCurrentUser({ ...currentUser, role_id: Number(e.target.value) })
+                                }
+                                placeholder="Role ID"
+                            />
+
+                            <input
+                                type="number"
+                                className="w-full border px-3 py-2 rounded"
+                                value={currentUser.gender_id || ""}
+                                onChange={(e) =>
+                                    setCurrentUser({
+                                        ...currentUser,
+                                        gender_id: Number(e.target.value),
+                                    })
+                                }
+                                placeholder="Gender ID"
+                            />
+                        </div>
+
+                        <div className="flex justify-end gap-3 mt-5">
+                            <button
+                                className="px-4 py-2 bg-gray-400 text-white rounded-lg"
+                                onClick={() => setOpenEdit(false)}
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+                                onClick={handleUpdateUser}
+                            >
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </DashboardLayout>
     );
 }
