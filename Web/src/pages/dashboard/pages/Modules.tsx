@@ -50,46 +50,48 @@ export default function ModulesTable() {
                 {loading ? (
                     <p className="text-center py-10 text-gray-500">Loading modules...</p>
                 ) : (
-                    <table className="w-full table-auto text-left">
-                        <thead>
-                            <tr className="text-gray-600 border-b">
-                                <th className="pb-3">ID</th>
-                                <th className="pb-3">Name</th>
-                                <th className="pb-3">Description</th>
-                                <th className="pb-3 text-right">Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {filtered.map((mod) => (
-                                <tr
-                                    key={mod.id}
-                                    className="border-b hover:bg-gray-50 text-gray-700"
-                                >
-                                    <td className="py-3">{mod.id}</td>
-                                    <td className="py-3">{mod.name}</td>
-                                    <td className="py-3">{mod.description ?? "—"}</td>
-
-                                    <td className="py-3 text-right space-x-3">
-                                        <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                                            Edit
-                                        </button>
-                                        <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                                            Delete
-                                        </button>
-                                    </td>
+                    <div className="max-h-[600px] overflow-y-auto">
+                        <table className="w-full table-auto text-left">
+                            <thead>
+                                <tr className="text-gray-600 border-b">
+                                    <th className="pb-3">ID</th>
+                                    <th className="pb-3">Name</th>
+                                    <th className="pb-3">Description</th>
+                                    <th className="pb-3 text-right">Actions</th>
                                 </tr>
-                            ))}
+                            </thead>
 
-                            {filtered.length === 0 && (
-                                <tr>
-                                    <td colSpan={4} className="text-center py-6 text-gray-500">
-                                        No modules found
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            <tbody>
+                                {filtered.map((mod) => (
+                                    <tr
+                                        key={mod.id}
+                                        className="border-b hover:bg-gray-50 text-gray-700"
+                                    >
+                                        <td className="py-3">{mod.id}</td>
+                                        <td className="py-3">{mod.name}</td>
+                                        <td className="py-3">{mod.description ?? "—"}</td>
+
+                                        <td className="py-3 text-right space-x-3">
+                                            <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                                                Edit
+                                            </button>
+                                            <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+
+                                {filtered.length === 0 && (
+                                    <tr>
+                                        <td colSpan={4} className="text-center py-6 text-gray-500">
+                                            No modules found
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
         </DashboardLayout>

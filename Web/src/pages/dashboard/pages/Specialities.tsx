@@ -44,47 +44,49 @@ export default function SpecialitiesTable() {
           Add Speciality
         </button>
       </div>
-      
+
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">Loading...</p>
         ) : (
-          <table className="w-full table-auto text-left">
-            <thead>
-              <tr className="text-gray-600 border-b">
-                <th className="pb-3">ID</th>
-                <th className="pb-3">Name</th>
-                <th className="pb-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((item) => (
-                <tr
-                  key={item.id}
-                  className="border-b hover:bg-gray-50 text-gray-700"
-                >
-                  <td className="py-3">{item.id}</td>
-                  <td className="py-3">{item.name}</td>
-                  <td className="py-3 text-right space-x-3">
-                    <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                      Edit
-                    </button>
-                    <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                      Delete
-                    </button>
-                  </td>
+          <div className="max-h-[600px] overflow-y-auto">
+            <table className="w-full table-auto text-left">
+              <thead>
+                <tr className="text-gray-600 border-b">
+                  <th className="pb-3">ID</th>
+                  <th className="pb-3">Name</th>
+                  <th className="pb-3 text-right">Actions</th>
                 </tr>
-              ))}
+              </thead>
+              <tbody>
+                {filtered.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="border-b hover:bg-gray-50 text-gray-700"
+                  >
+                    <td className="py-3">{item.id}</td>
+                    <td className="py-3">{item.name}</td>
+                    <td className="py-3 text-right space-x-3">
+                      <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                        Edit
+                      </button>
+                      <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
 
-              {filtered.length === 0 && (
-                <tr>
-                  <td colSpan={3} className="text-center py-6 text-gray-500">
-                    No specialities found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                {filtered.length === 0 && (
+                  <tr>
+                    <td colSpan={3} className="text-center py-6 text-gray-500">
+                      No specialities found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </DashboardLayout>
