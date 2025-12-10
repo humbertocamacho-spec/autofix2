@@ -238,7 +238,7 @@ export default function DashboardLayout({ children }: Props) {
           )}
 
           {CheckPermissionForModule("modules") && (
-            <Link to="/dashboard/my-cars" className={linkClass("/dashboard/my-cars")}>
+            <Link to="/dashboard/modules" className={linkClass("/dashboard/modules")}>
               <HiOutlineDocumentDuplicate size={iconSize} />
               <span className={textClass()}>Modules</span>
               {!sidebarOpen && <Tooltip>Modules</Tooltip>}
@@ -246,7 +246,7 @@ export default function DashboardLayout({ children }: Props) {
           )}
 
           {CheckPermissionForModule("permissions") && (
-            <Link to="/dashboard/my-cars" className={linkClass("/dashboard/my-cars")}>
+            <Link to="/dashboard/permissions" className={linkClass("/dashboard/permissions")}>
               <HiOutlineKey size={iconSize} />
               <span className={textClass()}>Permissions</span>
               {!sidebarOpen && <Tooltip>Permissions</Tooltip>}
