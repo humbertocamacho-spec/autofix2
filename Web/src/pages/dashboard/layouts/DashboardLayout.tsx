@@ -2,7 +2,7 @@ import { useState} from "react";
 import type { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
-import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineLogout, HiOutlineChevronDown, HiOutlineKey,
+import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineLogout, HiOutlineChevronDown, HiOutlineKey,HiOutlineDocumentDuplicate,HiOutlineEye,
   HiOutlineChevronRight, HiOutlineMenu, HiOutlineSearch, HiOutlineBell, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, HiOutlineShieldCheck,HiOutlineIdentification
 } from "react-icons/hi";
 
@@ -42,7 +42,9 @@ export default function DashboardLayout({ children }: Props) {
     brands: ["read_brands"], // Admin
     tickets: ["read_tickets", "read_pending_tickets"], // Partner y Cliente
     myCars: ["read_cars_clients"], // Cliente
-    roles: ["read_roles"], // Admin
+    roles: ["read_roles"],
+    modules: ["read_modules"],// Admin
+    permissions: ["read_permissions"],// Admin
   };
 
   const CheckPermissionForModule = (module: string) => {
@@ -160,7 +162,7 @@ export default function DashboardLayout({ children }: Props) {
 
           {CheckPermissionForModule("roles") && (
             <Link to="/dashboard/roles" className={linkClass("/dashboard/roles")}>
-              <HiOutlineKey size={iconSize} />
+              <HiOutlineEye size={iconSize} />
               <span className={textClass()}>Roles y Permisos</span>
               {!sidebarOpen && <Tooltip>Roles y Permisos</Tooltip>}
             </Link>
@@ -232,6 +234,22 @@ export default function DashboardLayout({ children }: Props) {
               <HiOutlineTruck size={iconSize} />
               <span className={textClass()}>My Cars</span>
               {!sidebarOpen && <Tooltip>My Cars</Tooltip>}
+            </Link>
+          )}
+
+          {CheckPermissionForModule("modules") && (
+            <Link to="/dashboard/my-cars" className={linkClass("/dashboard/my-cars")}>
+              <HiOutlineDocumentDuplicate size={iconSize} />
+              <span className={textClass()}>Modules</span>
+              {!sidebarOpen && <Tooltip>Modules</Tooltip>}
+            </Link>
+          )}
+
+          {CheckPermissionForModule("permissions") && (
+            <Link to="/dashboard/my-cars" className={linkClass("/dashboard/my-cars")}>
+              <HiOutlineKey size={iconSize} />
+              <span className={textClass()}>Permissions</span>
+              {!sidebarOpen && <Tooltip>Permissions</Tooltip>}
             </Link>
           )}
         </nav>
