@@ -27,7 +27,7 @@ export default function TicketsTable() {
 
     const filtered = tickets
         .filter((t) =>
-            (t.client_fullname?.toLowerCase() || "").includes(search.toLowerCase()) ||
+            (t.client_name?.toLowerCase() || "").includes(search.toLowerCase()) ||
             (t.partner_name?.toLowerCase() || "").includes(search.toLowerCase()) ||
             t.id.toString().includes(search)
         )
@@ -73,7 +73,7 @@ export default function TicketsTable() {
 
                                         <td className="py-3">{item.id}</td>
 
-                                        <td className="py-3">{item.client_fullname}</td>
+                                        <td className="py-3">{item.client_name}</td>
 
                                         <td className="py-3">{item.car_name}</td>
 

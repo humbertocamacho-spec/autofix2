@@ -1,7 +1,7 @@
 export interface Ticket {
     id: number;
     client_id: number;
-    client_fullname?: string;
+    client_name?: string;
     car_id: number;
     car_name?: string;
     partner_id: number;
