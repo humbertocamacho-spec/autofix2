@@ -24,9 +24,10 @@ export default function ClientsTable() {
     }
   };
 
-  const filtered = clients.filter((s) =>
-    s.user_id.toString().toLowerCase().includes(search.toLowerCase())
+  const filtered = clients.filter((c) =>
+    c.user_name.toLowerCase().includes(search.toLowerCase())
   );
+
 
   return (
     <DashboardLayout>
@@ -34,7 +35,7 @@ export default function ClientsTable() {
       <div className="mb-6 flex justify-between">
         <input
           type="text"
-          placeholder="Search client..."
+          placeholder="Search clients by name..."
           className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -44,7 +45,7 @@ export default function ClientsTable() {
           Add Client
         </button>
       </div>
-      
+
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">Loading...</p>
@@ -53,7 +54,7 @@ export default function ClientsTable() {
             <thead>
               <tr className="text-gray-600 border-b">
                 <th className="pb-3">ID</th>
-                <th className="pb-3">User ID</th>
+                <th className="pb-3">Name</th>
                 <th className="pb-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -64,7 +65,7 @@ export default function ClientsTable() {
                   className="border-b hover:bg-gray-50 text-gray-700"
                 >
                   <td className="py-3">{item.id}</td>
-                  <td className="py-3">{item.user_id}</td>
+                  <td className="py-3">{item.user_name}</td>
                   <td className="py-3 text-right space-x-3">
                     <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
                       Edit

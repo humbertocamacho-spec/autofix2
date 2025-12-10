@@ -26,7 +26,7 @@ export default function AdminsTable() {
     };
 
     const filtered = admins.filter((a) =>
-        a.user_id.toString().includes(search)
+        a.user_name.toLowerCase().includes(search.toLowerCase())
     );
 
     return (
@@ -36,7 +36,7 @@ export default function AdminsTable() {
             <div className="mb-6 flex justify-between">
                 <input
                     type="text"
-                    placeholder="Search admin by user_id..."
+                    placeholder="Search admins by name..."
                     className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
