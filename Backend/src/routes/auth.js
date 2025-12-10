@@ -50,16 +50,15 @@ router.post('/login', async (req, res) => {
 
     let client_id = null, partner_id = null;
 
-// obtener siempre client_id
-const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
-client_id = c.length > 0 ? c[0].id : null;
+    // obtener siempre client_id
+    const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
+    client_id = c.length > 0 ? c[0].id : null;
 
-// si es partner
-if (user.role_id === 2) {
-  const [p] = await pool.query("SELECT id FROM partners WHERE user_id = ?", [user.id]);
-  partner_id = p.length > 0 ? p[0].id : null;
-}
-
+    // si es partner
+    if (user.role_id === 2) {
+      const [p] = await pool.query("SELECT id FROM partners WHERE user_id = ?", [user.id]);
+      partner_id = p.length > 0 ? p[0].id : null;
+    }
 
     const token = jwt.sign(
       { user_id: user.id, role_id: user.role_id },
@@ -127,18 +126,19 @@ router.get("/me", authMiddleware, async (req, res) => {
       return res.status(404).json({ ok: false, message: "Usuario no encontrado" });
     }
 
+    const user = rows[0];
+
     let client_id = null, partner_id = null;
 
-// obtener siempre client_id
-const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
-client_id = c.length > 0 ? c[0].id : null;
+    // obtener siempre client_id
+    const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
+    client_id = c.length > 0 ? c[0].id : null;
 
-// si es partner
-if (user.role_id === 2) {
-  const [p] = await pool.query("SELECT id FROM partners WHERE user_id = ?", [user.id]);
-  partner_id = p.length > 0 ? p[0].id : null;
-}
-
+    // si es partner
+    if (user.role_id === 2) {
+      const [p] = await pool.query("SELECT id FROM partners WHERE user_id = ?", [user.id]);
+      partner_id = p.length > 0 ? p[0].id : null;
+    }
 
     const [permissions] = await pool.query(
       `SELECT p.name 
@@ -166,5 +166,6 @@ if (user.role_id === 2) {
     res.status(500).json({ ok: false, message: "Error en /me" });
   }
 });
+
 
 export default router;
