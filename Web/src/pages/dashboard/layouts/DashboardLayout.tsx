@@ -2,8 +2,8 @@ import { useState} from "react";
 import type { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
-import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineCog, HiOutlineLogout, HiOutlineChevronDown,
-  HiOutlineChevronRight, HiOutlineMenu, HiOutlineSearch, HiOutlineBell, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, HiOutlineShieldCheck,
+import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineLogout, HiOutlineChevronDown, HiOutlineKey,
+  HiOutlineChevronRight, HiOutlineMenu, HiOutlineSearch, HiOutlineBell, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, HiOutlineShieldCheck,HiOutlineIdentification
 } from "react-icons/hi";
 
 interface Props {
@@ -41,7 +41,7 @@ export default function DashboardLayout({ children }: Props) {
     certifications: ["read_certifications"], // Admin
     brands: ["read_brands"], // Admin
     tickets: ["read_tickets", "read_pending_tickets"], // Partner y Cliente
-    myCars: ["read_my_cars"], // Cliente
+    myCars: ["read_cars_clients"], // Cliente
     roles: ["read_roles"], // Admin
   };
 
@@ -136,7 +136,7 @@ export default function DashboardLayout({ children }: Props) {
 
           {CheckPermissionForModule("admins") && (
             <Link to="/dashboard/admins" className={linkClass("/dashboard/admins")}>
-              <HiOutlineUsers size={iconSize} />
+              <HiOutlineIdentification size={iconSize} />
               <span className={textClass()}>Admins</span>
               {!sidebarOpen && <Tooltip>Admins</Tooltip>}
             </Link>
@@ -144,7 +144,7 @@ export default function DashboardLayout({ children }: Props) {
 
           {CheckPermissionForModule("partners") && (
             <Link to="/dashboard/partners" className={linkClass("/dashboard/partners")}>
-              <HiOutlineUserGroup size={iconSize} />
+              <HiOutlineUsers size={iconSize} />
               <span className={textClass()}>Partners</span>
               {!sidebarOpen && <Tooltip>Partners</Tooltip>}
             </Link>
@@ -160,9 +160,9 @@ export default function DashboardLayout({ children }: Props) {
 
           {CheckPermissionForModule("roles") && (
             <Link to="/dashboard/roles" className={linkClass("/dashboard/roles")}>
-              <HiOutlineUserGroup size={iconSize} />
-              <span className={textClass()}>Roles</span>
-              {!sidebarOpen && <Tooltip>Roles</Tooltip>}
+              <HiOutlineKey size={iconSize} />
+              <span className={textClass()}>Roles y Permisos</span>
+              {!sidebarOpen && <Tooltip>Roles y Permisos</Tooltip>}
             </Link>
           )}
 
