@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/", async (req, res) => {
     try {
         const [certifications] = await pool.query(
-            "SELECT id, partner_id, name FROM certifications"
+            "SELECT id,name FROM certifications"
         );
 
         res.json({ ok: true, certifications });

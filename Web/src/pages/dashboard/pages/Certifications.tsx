@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
-import  type { Certification } from "../../../types/certification";
+import type { Certification } from "../../../types/certification";
 
 export default function CertificationsTable() {
     const [certifications, setCertifications] = useState<Certification[]>([]);
@@ -14,7 +14,7 @@ export default function CertificationsTable() {
 
     const fetchCertifications = async () => {
         try {
-            const res = await fetch(`${VITE_API_URL}/api/partner_certifications`);
+            const res = await fetch(`${VITE_API_URL}/api/certifications`);
             const data = await res.json();
 
             setCertifications(data.certifications || []);
@@ -32,8 +32,6 @@ export default function CertificationsTable() {
     return (
         <DashboardLayout>
             <h1 className="text-3xl font-bold mb-6">Certifications</h1>
-
-            {/* SEARCH + ADD BUTTON */}
             <div className="mb-6 flex justify-between">
                 <input
                     type="text"
@@ -47,8 +45,6 @@ export default function CertificationsTable() {
                     Add Certification
                 </button>
             </div>
-
-            {/* TABLE */}
             <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
                 {loading ? (
                     <p className="text-center py-10 text-gray-500">Loading...</p>
@@ -57,7 +53,6 @@ export default function CertificationsTable() {
                         <thead>
                             <tr className="text-gray-600 border-b">
                                 <th className="pb-3">ID</th>
-                                <th className="pb-3">Partner ID</th>
                                 <th className="pb-3">Name</th>
                                 <th className="pb-3 text-right">Actions</th>
                             </tr>
@@ -67,7 +62,6 @@ export default function CertificationsTable() {
                             {filtered.map((item) => (
                                 <tr key={item.id} className="border-b hover:bg-gray-50">
                                     <td className="py-2">{item.id}</td>
-                                    <td className="py-2">{item.partner_id ?? "—"}</td>
                                     <td className="py-2">{item.name}</td>
 
                                     <td className="py-2 text-right space-x-4">
