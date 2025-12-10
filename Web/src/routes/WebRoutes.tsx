@@ -79,7 +79,7 @@ export default function WebRoutes() {
 
       <Route path="/tickets/list"
         element={
-          <ProtectedRoute permission="read_ticketspending">
+          <ProtectedRoute permission="read_tickets_pending">
             <PendingTicketsTable />
           </ProtectedRoute>
         }

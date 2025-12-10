@@ -55,7 +55,7 @@ export default function AdminsTable() {
                         <thead>
                             <tr className="text-gray-600 border-b">
                                 <th className="pb-3">ID</th>
-                                <th className="pb-3">User ID</th>
+                                <th className="pb-3">Name</th>
                                 <th className="pb-3 text-right">Actions</th>
                             </tr>
                         </thead>
@@ -64,7 +64,7 @@ export default function AdminsTable() {
                             {filtered.map((item) => (
                                 <tr key={item.id} className="border-b hover:bg-gray-50">
                                     <td className="py-2">{item.id}</td>
-                                    <td className="py-2">{item.user_id}</td>
+                                    <td className="py-2">{item.user_name}</td>
 
                                     <td className="py-2 text-right space-x-4">
                                         <button className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">

@@ -4,9 +4,14 @@ import pool from "../config/db.js";
 const router = express.Router();
 router.get("/", async (req, res) => {
     try {
-        const [admins] = await pool.query(
-            "SELECT id, user_id FROM admins"
-        );
+        const [admins] = await pool.query(`
+            SELECT 
+                a.id, 
+                a.user_id,
+                u.name AS user_name
+            FROM admins a
+            LEFT JOIN users u ON u.id = a.user_id
+            `);
 
         res.json({ ok: true, admins });
     } catch (error) {
