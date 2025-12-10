@@ -12,6 +12,10 @@ import SpecialitiesTable from "../pages/dashboard/pages/Specialities";
 import TicketsTable from "../pages/dashboard/pages/TicketsCreate";
 import PendingTicketsTable from "../pages/dashboard/pages/TicketsList";
 import CarBrands from "../pages/dashboard/pages/Brands";
+import ClientsTable from "../pages/dashboard/pages/Clients";
+import PartnersTable from "../pages/dashboard/pages/Partners";
+import AdminsTable from "../pages/dashboard/pages/Admins";
+import CertificationsTable from "../pages/dashboard/pages/Certifications";
 
 export default function WebRoutes() {
   return (
@@ -84,6 +88,35 @@ export default function WebRoutes() {
         element={
           <ProtectedRoute permission="read_brands">
             <CarBrands />
+          </ProtectedRoute>
+        }
+      />
+       <Route path="/dashboard/clients"
+        element={
+          <ProtectedRoute permission="read_clients">
+            <ClientsTable />
+          </ProtectedRoute>
+        }
+      />
+        <Route path="/dashboard/partners"
+        element={
+          <ProtectedRoute permission="read_partners">
+            <PartnersTable />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route path="/dashboard/admins"
+        element={
+          <ProtectedRoute permission="read_admins">
+            <AdminsTable />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/dashboard/certifications"
+        element={
+          <ProtectedRoute permission="read_certifications">
+            <CertificationsTable />
           </ProtectedRoute>
         }
       />

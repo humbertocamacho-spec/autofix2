@@ -13,12 +13,15 @@ import carClientsRoutes from "./routes/car_clients.js";
 import clientRoutes from "./routes/client.js";
 import pendingTicketsRoutes from "./routes/pending_tickets.js";
 import partnerCertificationsRoutes from "./routes/partner_certifications.js";
+import certificationsRoutes from './routes/certifications.js';
 
 //Web
 import rolesRoutes from "./routes/roles.js";
 import permissionsRoutes from "./routes/permissions.js";
 import modulesRoutes from "./routes/modules.js";
 import usersRoutes from "./routes/users.js";
+import adminsRoutes from "./routes/admins.js";
+
 const app = express();
 
 app.use(cors());
@@ -42,7 +45,8 @@ app.use("/api/roles", rolesRoutes);
 app.use("/api/permissions", permissionsRoutes);
 app.use("/api/modules", modulesRoutes);
 app.use("/api/users", usersRoutes);
-
+app.use('/api/certifications', certificationsRoutes);
+app.use('/api/admins', adminsRoutes);
 app.get('/test-db', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT NOW() AS fecha');

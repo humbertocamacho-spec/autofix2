@@ -2,67 +2,67 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 
-export interface Ticket {
+export interface Partner {
     id: number;
-    client_id: number;
-    client_fullname?: string;
-    car_id: number;
-    car_name?: string;
-    partner_id: number;
-    partner_name?: string;
-    partner_phone?: string;
-    logo_url?: string;
-    date: string;
-    notes?: string;
+    user_id: number;
+    name: string;
+    whatsapp: string;
+    phone: string;
+    location: string;
+    latitude: string;
+    longitude: string;
+    land_use_permit: boolean;
+    scanner_handling: boolean;
+    logo_url: string;
+    description?: string;
+    priority: number;
+    distance?: number;
+    services?: string[];
 }
 
-export default function TicketsTable() {
-
-    const [tickets, setTickets] = useState<Ticket[]>([]);
+export default function PartnersTable() {
+    const [partners, setPartners] = useState<Partner[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
 
     useEffect(() => {
-        fetchTickets();
+        fetchPartners();
     }, []);
 
-    const fetchTickets = async () => {
+    const fetchPartners = async () => {
         try {
-            const res = await fetch(`${VITE_API_URL}/api/ticket`);
+            const res = await fetch(`${VITE_API_URL}/api/partners`);
             const data = await res.json();
-            setTickets(data);
+            setPartners(data);
         } catch (error) {
-            console.error("Error fetching tickets:", error);
+            console.error("Error fetching partners:", error);
         } finally {
             setLoading(false);
         }
     };
 
-    const filtered = tickets
-        .filter((t) =>
-            (t.client_fullname?.toLowerCase() || "").includes(search.toLowerCase()) ||
-            (t.partner_name?.toLowerCase() || "").includes(search.toLowerCase()) ||
-            t.id.toString().includes(search)
-        )
-        .sort((a, b) => a.id - b.id);
+    const filtered = partners.filter((p) =>
+        p.name.toLowerCase().includes(search.toLowerCase())
+    ).sort((a, b) => a.id - b.id);;
 
     return (
         <DashboardLayout>
-            <h1 className="text-3xl font-bold mb-6">Tickets</h1>
+            <h1 className="text-3xl font-bold mb-6">Partners</h1>
 
-            {/* SEARCH */}
             <div className="mb-6 flex justify-between">
                 <input
                     type="text"
-                    placeholder="Search ticket..."
+                    placeholder="Search partner..."
                     className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
+
+                <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                    + Add Partner
+                </button>
             </div>
-
             <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
-
                 {loading ? (
                     <p className="text-center py-10 text-gray-500">Loading...</p>
                 ) : (
@@ -70,45 +70,34 @@ export default function TicketsTable() {
                         <table className="w-full table-auto text-left border-collapse">
                             <thead>
                                 <tr className="text-gray-600 border-b">
-                                    <th className="pb-3 w-14">ID</th>
-                                    <th className="pb-3 w-48">Client</th>
-                                    <th className="pb-3 w-40">Car</th>
-                                    <th className="pb-3 w-48">Partner</th>
-                                    <th className="pb-3 w-40">Date</th>
-                                    <th className="pb-3">Notes</th>
+                                    <th className="pb-3 w-12">ID</th>
+                                    <th className="pb-3 w-64">Name</th>
+                                    <th className="pb-3 w-40">Phone</th>
+                                    <th className="pb-3 w-40">WhatsApp</th>
+                                    <th className="pb-3">Location</th>
+                                    <th className="pb-3 w-20 text-center">Priority</th>
                                     <th className="pb-3 w-32 text-right">Actions</th>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 {filtered.map((item) => (
-                                    <tr key={item.id} className="border-b hover:bg-gray-50">
+                                    <tr key={item.id} className="border-b hover:bg-gray-50 text-gray-700">
 
                                         <td className="py-3">{item.id}</td>
-
-                                        <td className="py-3">{item.client_fullname}</td>
-
-                                        <td className="py-3">{item.car_name}</td>
-
-                                        <td className="py-3 flex items-center gap-3">
-                                            <img
-                                                src={item.logo_url || "/images/no-logo.png"}
-                                                className="h-8 w-8 rounded-full border"
-                                            />
-                                            <span>{item.partner_name}</span>
-                                        </td>
-
-                                        <td className="py-3">{new Date(item.date).toLocaleString()}</td>
-
+                                        <td className="py-3 font-semibold">{item.name}</td>
+                                        <td className="py-3">{item.phone}</td>
+                                        <td className="py-3">{item.whatsapp}</td>
                                         <td className="py-3 max-w-xs whitespace-normal break-words">
-                                            {item.notes || "—"}
+                                            {item.location}
                                         </td>
+                                        <td className="py-3 text-center">{item.priority}</td>
 
                                         <td className="py-3 text-right space-x-3">
-                                            <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm">
+                                            <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
                                                 Edit
                                             </button>
-                                            <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm">
+                                            <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                                                 Delete
                                             </button>
                                         </td>
@@ -118,7 +107,7 @@ export default function TicketsTable() {
                                 {filtered.length === 0 && (
                                     <tr>
                                         <td colSpan={7} className="text-center py-6 text-gray-500">
-                                            No tickets found
+                                            No partners found
                                         </td>
                                     </tr>
                                 )}
@@ -126,8 +115,8 @@ export default function TicketsTable() {
                         </table>
                     </div>
                 )}
-
             </div>
+
         </DashboardLayout>
     );
 }
