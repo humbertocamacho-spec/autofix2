@@ -48,6 +48,15 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Error en el servidor" });
   }
 });
+router.get("/", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM pending_tickets");
+    res.json(rows);
+  } catch (error) {
+    console.error("Error obteniendo pending tickets:", error);
+    res.status(500).json({ error: "Error al obtener pending tickets" });
+  }
+});
 
 router.get("/:client_id", async (req, res) => {
   try {
