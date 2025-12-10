@@ -19,8 +19,6 @@ export default function UsersTable() {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
-
-
     const [openEdit, setOpenEdit] = useState(false);
     const [currentUser, setCurrentUser] = useState<User | null>(null);
 
@@ -39,9 +37,6 @@ export default function UsersTable() {
             setLoading(false);
         }
     };
-
-
-
 
     const handleOpenEdit = (user: User) => {
         setCurrentUser(user);
@@ -74,11 +69,6 @@ export default function UsersTable() {
         }
     };
 
-
-
-
-
-    
     const filtered = users.filter(
         (u) =>
             u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -132,9 +122,13 @@ export default function UsersTable() {
                                     <td className="py-3">{user.gender_name || "—"}</td>
 
                                     <td className="py-3 text-right space-x-3">
-                                        <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                                        <button
+                                            className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
+                                            onClick={() => handleOpenEdit(user)}
+                                        >
                                             Edit
                                         </button>
+
 
                                         <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                                             Delete
@@ -154,64 +148,59 @@ export default function UsersTable() {
                     </table>
                 )}
             </div>
-        
 
-        
             {openEdit && currentUser && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
-                    <div className="bg-white w-[450px] rounded-xl p-6 shadow-xl">
+                <div className="fixed inset-0 bg-white/20 backdrop-blur-sm flex justify-center items-center z-50">
+                    <div className="bg-white w-[450px] rounded-xl p-6 shadow-2xl border border-gray-200">
                         <h2 className="text-xl font-bold mb-4">Edit User</h2>
 
                         <div className="space-y-3">
                             <input
                                 className="w-full border px-3 py-2 rounded"
                                 value={currentUser.name}
-                                onChange={(e) =>
-                                    setCurrentUser({ ...currentUser, name: e.target.value })
-                                }
+                                onChange={(e) => setCurrentUser({ ...currentUser, name: e.target.value })}
                                 placeholder="Name"
                             />
 
                             <input
                                 className="w-full border px-3 py-2 rounded"
                                 value={currentUser.email}
-                                onChange={(e) =>
-                                    setCurrentUser({ ...currentUser, email: e.target.value })
-                                }
+                                onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })}
                                 placeholder="Email"
                             />
 
                             <input
                                 className="w-full border px-3 py-2 rounded"
                                 value={currentUser.phone || ""}
-                                onChange={(e) =>
-                                    setCurrentUser({ ...currentUser, phone: e.target.value })
-                                }
+                                onChange={(e) => setCurrentUser({ ...currentUser, phone: e.target.value })}
                                 placeholder="Phone"
                             />
 
-                            <input
-                                type="number"
+                            <select
                                 className="w-full border px-3 py-2 rounded"
                                 value={currentUser.role_id}
                                 onChange={(e) =>
                                     setCurrentUser({ ...currentUser, role_id: Number(e.target.value) })
                                 }
-                                placeholder="Role ID"
-                            />
+                            >
+                                <option value="" disabled>Select role</option>
+                                <option value={1}>Admin</option>
+                                <option value={2}>Partner</option>
+                                <option value={3}>Client</option>
+                            </select>
 
-                            <input
-                                type="number"
+                            <select
                                 className="w-full border px-3 py-2 rounded"
                                 value={currentUser.gender_id || ""}
                                 onChange={(e) =>
-                                    setCurrentUser({
-                                        ...currentUser,
-                                        gender_id: Number(e.target.value),
-                                    })
+                                    setCurrentUser({ ...currentUser, gender_id: Number(e.target.value) })
                                 }
-                                placeholder="Gender ID"
-                            />
+                            >
+                                <option value="">Gender</option>
+                                <option value={1}>Femenino</option>
+                                <option value={2}>Masculino</option>
+                            </select>
+
                         </div>
 
                         <div className="flex justify-end gap-3 mt-5">
@@ -232,6 +221,7 @@ export default function UsersTable() {
                     </div>
                 </div>
             )}
+
         </DashboardLayout>
     );
 }

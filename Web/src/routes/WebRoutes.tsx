@@ -8,6 +8,10 @@ import UnauthorizedPage from "../pages/dashboard/pages/UnauthorizedPage";
 import ModulesTable from "../pages/dashboard/pages/Modules";
 import PermissionsTable from "../pages/dashboard/pages/Permissions";
 import UsersTable from "../pages/dashboard/pages/Users";
+import SpecialitiesTable from "../pages/dashboard/pages/Specialities";
+import TicketsTable from "../pages/dashboard/pages/TicketsCreate";
+import PendingTicketsTable from "../pages/dashboard/pages/TicketsList";
+import CarBrands from "../pages/dashboard/pages/Brands";
 
 export default function WebRoutes() {
   return (
@@ -50,6 +54,36 @@ export default function WebRoutes() {
         element={
           <ProtectedRoute permission="read_users">
             <UsersTable />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route path="/dashboard/specialities"
+        element={
+          <ProtectedRoute permission="read_specialities">
+            <SpecialitiesTable />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/tickets/created"
+        element={
+          <ProtectedRoute permission="read_tickets">
+            <TicketsTable />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route path="/tickets/list"
+        element={
+          <ProtectedRoute permission="read_ticketspending">
+            <PendingTicketsTable />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/dashboard/brands"
+        element={
+          <ProtectedRoute permission="read_brands">
+            <CarBrands />
           </ProtectedRoute>
         }
       />

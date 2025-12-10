@@ -221,7 +221,7 @@ export default function DashboardLayout({ children }: Props) {
                   <Link to="/tickets/list" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">
                     Pendientes
                   </Link>
-                  <Link to="/tickets/create" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">
+                  <Link to="/tickets/created" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">
                     Confirmados
                   </Link>
                 </div>
