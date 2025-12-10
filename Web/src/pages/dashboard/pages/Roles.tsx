@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Permission } from "../../../types/permission";
@@ -14,6 +15,7 @@ interface GroupedPermissions {
 }
 
 export default function RolesTable() {
+  const { t } = useTranslation();
   const [roles, setRoles] = useState<Roles[]>([]);
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [modules, setModules] = useState<Modules[]>([]);
@@ -80,7 +82,7 @@ export default function RolesTable() {
       body: JSON.stringify({ permissions: selectedPerms[roleId] || [] }),
     });
 
-    alert("Permisos guardados");
+    alert(t("roles_screen.saved_alert"));
   };
 
   const grouped: GroupedPermissions = permissions.reduce(
@@ -93,18 +95,18 @@ export default function RolesTable() {
   );
 
   const getModuleName = (moduleId: number) => {
-    return modules.find((m) => m.id === moduleId)?.name || `Módulo ${moduleId}`;
+    return modules.find((m) => m.id === moduleId)?.name || t("roles_screen.unknown_module");
   };
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6 text-gray-800">
-        Gestión de Roles y Permisos
+        {t("roles_screen.title")}
       </h1>
 
       <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
         {loading ? (
-          <p className="text-gray-500 text-center py-10">Loading roles...</p>
+          <p className="text-gray-500 text-center py-10">{t("roles_screen.loading_roles")}</p>
         ) : (
           <div className="space-y-4">
             {roles.map((role) => (
@@ -127,9 +129,8 @@ export default function RolesTable() {
 
                 {expandedRole === role.id && (
                   <div className="p-6 bg-white rounded-b-xl border-t border-gray-200 animate-fadeIn">
-
                     <h3 className="text-xl font-medium text-gray-700 mb-6">
-                      Permisos asignados a{" "}
+                      {t("roles_screen.assigned_permissions")}{" "}
                       <span className="font-bold text-[#27B9BA]">{role.name}</span>
                     </h3>
 
@@ -155,7 +156,6 @@ export default function RolesTable() {
                                 </label>
                               ))}
                             </div>
-
                           </div>
                         );
                       })}
@@ -166,10 +166,9 @@ export default function RolesTable() {
                         onClick={() => savePermissions(role.id)}
                         className="px-6 py-2 bg-[#27B9BA] text-white rounded-xl shadow-md hover:bg-[#1da6a7] transition font-medium"
                       >
-                        Save Changes
+                        {t("roles_screen.save_button")}
                       </button>
                     </div>
-
                   </div>
                 )}
               </div>

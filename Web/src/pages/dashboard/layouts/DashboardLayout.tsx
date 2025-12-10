@@ -1,14 +1,11 @@
 import { useState} from "react";
-import type { ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
-import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineLogout, HiOutlineChevronDown, HiOutlineKey,HiOutlineDocumentDuplicate,HiOutlineEye,
+import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineLogout, HiOutlineChevronDown, HiOutlineKey,HiOutlineDocumentDuplicate,HiOutlineEye,HiOutlineTranslate,
   HiOutlineChevronRight, HiOutlineMenu, HiOutlineSearch, HiOutlineBell, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, HiOutlineShieldCheck,HiOutlineIdentification
 } from "react-icons/hi";
-
-interface Props {
-  children: ReactNode;
-}
+import { useTranslation } from "react-i18next";
+import type { Props } from "../../../types/props";
 
 export default function DashboardLayout({ children }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -19,6 +16,13 @@ export default function DashboardLayout({ children }: Props) {
   const layoutKey = user?.id ? `user-${user.id}` : "guest";
 
   const iconSize = sidebarOpen ? 23 : 28;
+  const { t } = useTranslation();
+  const { i18n } = useTranslation();
+
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem("lang", lang);
+  };
 
   const toggleMenu = (menu: string) =>
     setOpenMenu(openMenu === menu ? null : menu);
@@ -123,72 +127,72 @@ export default function DashboardLayout({ children }: Props) {
           {CheckPermissionForModule("dashboard") && (
             <Link to="/dashboard" className={linkClass("/dashboard")}>
               <HiOutlineHome size={iconSize} />
-              <span className={textClass()}>Dashboard</span>
-              {!sidebarOpen && <Tooltip>Dashboard</Tooltip>}
+              <span className={textClass()}>{t("dashboard")}</span>
+              {!sidebarOpen && <Tooltip>{t("dashboard")}</Tooltip>}
             </Link>
           )}
 
           {CheckPermissionForModule("users") && (
             <Link to="/dashboard/users" className={linkClass("/dashboard/users")}>
               <HiOutlineUser size={iconSize} />
-              <span className={textClass()}>Users</span>
-              {!sidebarOpen && <Tooltip>Users</Tooltip>}
+              <span className={textClass()}>{t("users")}</span>
+              {!sidebarOpen && <Tooltip>{t("users")}</Tooltip>}
             </Link>
           )}
 
           {CheckPermissionForModule("admins") && (
             <Link to="/dashboard/admins" className={linkClass("/dashboard/admins")}>
               <HiOutlineIdentification size={iconSize} />
-              <span className={textClass()}>Admins</span>
-              {!sidebarOpen && <Tooltip>Admins</Tooltip>}
+              <span className={textClass()}>{t("admins")}</span>
+              {!sidebarOpen && <Tooltip>{t("admins")}</Tooltip>}
             </Link>
           )}
 
           {CheckPermissionForModule("partners") && (
             <Link to="/dashboard/partners" className={linkClass("/dashboard/partners")}>
               <HiOutlineUsers size={iconSize} />
-              <span className={textClass()}>Partners</span>
-              {!sidebarOpen && <Tooltip>Partners</Tooltip>}
+              <span className={textClass()}>{t("partners")}</span>
+              {!sidebarOpen && <Tooltip>{t("partners")}</Tooltip>}
             </Link>
           )}
 
           {CheckPermissionForModule("clients") && (
             <Link to="/dashboard/clients" className={linkClass("/dashboard/clients")}>
               <HiOutlineUserGroup size={iconSize} />
-              <span className={textClass()}>Clients</span>
-              {!sidebarOpen && <Tooltip>Clients</Tooltip>}
+              <span className={textClass()}>{t("clients")}</span>
+              {!sidebarOpen && <Tooltip>{t("clients")}</Tooltip>}
             </Link>
           )}
 
           {CheckPermissionForModule("roles") && (
             <Link to="/dashboard/roles" className={linkClass("/dashboard/roles")}>
               <HiOutlineEye size={iconSize} />
-              <span className={textClass()}>Roles</span>
-              {!sidebarOpen && <Tooltip>Roles</Tooltip>}
+              <span className={textClass()}>{t("roles")}</span>
+              {!sidebarOpen && <Tooltip>{t("roles")}</Tooltip>}
             </Link>
           )}
 
           {CheckPermissionForModule("specialities") && (
             <Link to="/dashboard/specialities" className={linkClass("/dashboard/specialities")}>
               <HiOutlineBriefcase size={iconSize} />
-              <span className={textClass()}>Specialities</span>
-              {!sidebarOpen && <Tooltip>Specialities</Tooltip>}
+              <span className={textClass()}>{t("specialities")}</span>
+              {!sidebarOpen && <Tooltip>{t("specialities")}</Tooltip>}
             </Link>
           )}
 
           {CheckPermissionForModule("brands") && (
             <Link to="/dashboard/brands" className={linkClass("/dashboard/brands")}>
               <HiOutlineTruck size={iconSize} />
-              <span className={textClass()}>Car Brands</span>
-              {!sidebarOpen && <Tooltip>Car Brands</Tooltip>}
+              <span className={textClass()}>{t("brands")}</span>
+              {!sidebarOpen && <Tooltip>{t("brands")}</Tooltip>}
             </Link>
           )}
 
           {CheckPermissionForModule("certifications") && (
             <Link to="/dashboard/certifications" className={linkClass("/dashboard/certifications")}>
               <HiOutlineShieldCheck size={iconSize} />
-              <span className={textClass()}>Certifications</span>
-              {!sidebarOpen && <Tooltip>Certifications</Tooltip>}
+              <span className={textClass()}>{t("certifications")}</span>
+              {!sidebarOpen && <Tooltip>{t("certifications")}</Tooltip>}
             </Link>
           )}
 
@@ -203,7 +207,7 @@ export default function DashboardLayout({ children }: Props) {
                 }`}
               >
                 <HiOutlineTicket size={iconSize} />
-                <span className={textClass()}>Tickets</span>
+                <span className={textClass()}>{t("tickets")}</span>
                 {sidebarOpen && (
                   <span className="ml-auto">
                     {openMenu === "tickets" ? (
@@ -213,7 +217,7 @@ export default function DashboardLayout({ children }: Props) {
                     )}
                   </span>
                 )}
-                {!sidebarOpen && <Tooltip>Tickets</Tooltip>}
+                {!sidebarOpen && <Tooltip>{t("tickets")}</Tooltip>}
               </button>
 
               {sidebarOpen && openMenu === "tickets" && (
@@ -232,24 +236,24 @@ export default function DashboardLayout({ children }: Props) {
           {CheckPermissionForModule("myCars") && (
             <Link to="/dashboard/my-cars" className={linkClass("/dashboard/my-cars")}>
               <HiOutlineTruck size={iconSize} />
-              <span className={textClass()}>My Cars</span>
-              {!sidebarOpen && <Tooltip>My Cars</Tooltip>}
+              <span className={textClass()}>{t("myCars")}</span>
+              {!sidebarOpen && <Tooltip>{t("myCars")}</Tooltip>}
             </Link>
           )}
 
           {CheckPermissionForModule("modules") && (
             <Link to="/dashboard/modules" className={linkClass("/dashboard/modules")}>
               <HiOutlineDocumentDuplicate size={iconSize} />
-              <span className={textClass()}>Modules</span>
-              {!sidebarOpen && <Tooltip>Modules</Tooltip>}
+              <span className={textClass()}>{t("modules")}</span>
+              {!sidebarOpen && <Tooltip>{t("modules")}</Tooltip>}
             </Link>
           )}
 
           {CheckPermissionForModule("permissions") && (
             <Link to="/dashboard/permissions" className={linkClass("/dashboard/permissions")}>
               <HiOutlineKey size={iconSize} />
-              <span className={textClass()}>Permissions</span>
-              {!sidebarOpen && <Tooltip>Permissions</Tooltip>}
+              <span className={textClass()}>{t("permissions")}</span>
+              {!sidebarOpen && <Tooltip>{t("permissions")}</Tooltip>}
             </Link>
           )}
         </nav>
@@ -266,28 +270,59 @@ export default function DashboardLayout({ children }: Props) {
       <div className={`flex-1 transition-all duration-300 overflow-y-auto max-h-screen ${sidebarOpen ? "ml-64" : "ml-20"}`}>
         <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
           <div className="flex items-center gap-4">
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2.5 rounded-lg hover:bg-gray-100 text-gray-600">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2.5 rounded-lg hover:bg-gray-100 text-gray-600"
+            >
               <HiOutlineMenu size={26} />
             </button>
-            <h2 className="text-xl font-semibold text-gray-800">Dashboard</h2>
+
+            <h2 className="text-xl font-semibold text-gray-800">
+              {t("dashboard")}
+            </h2>
+
             {roleBadge()}
           </div>
 
           <div className="flex items-center gap-4">
             <div className="relative hidden md:block">
-              <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20}/>
+              <HiOutlineSearch
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
-                placeholder="Search..."
+                placeholder={t("search")}
                 className="w-64 rounded-xl bg-gray-100 py-2 pl-10 pr-4 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#27B9BA] transition"
               />
             </div>
+
+            <div className="relative inline-block">
+              <HiOutlineTranslate
+                size={20}
+                className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700"
+              />
+              <select
+                value={i18n.language}
+                onChange={(e) => changeLanguage(e.target.value)}
+                className="pl-8 rounded-xl bg-gray-100 px-3 py-2 text-sm text-gray-700 focus:ring-[#27B9BA] focus:outline-none"
+              >
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+              </select>
+            </div>
+
             <button className="relative rounded-xl p-2 text-gray-600 transition hover:bg-gray-100">
               <HiOutlineBell size={22} />
               <span className="absolute right-1 top-1 size-2 rounded-full bg-red-500" />
             </button>
+
             <div className="flex items-center gap-3">
-              <img src="https://i.pravatar.cc/40" alt="User avatar" className="size-10 cursor-pointer rounded-full ring-2 ring-gray-200"/>
+              <img
+                src="https://i.pravatar.cc/40"
+                alt="User avatar"
+                className="size-10 cursor-pointer rounded-full ring-2 ring-gray-200"
+              />
               {sidebarOpen && (
                 <span className="text-sm font-medium text-gray-700">
                   {user?.name || user?.email}
@@ -296,7 +331,6 @@ export default function DashboardLayout({ children }: Props) {
             </div>
           </div>
         </header>
-
         <main className="bg-gray-50 p-8">{children}</main>
       </div>
     </div>
