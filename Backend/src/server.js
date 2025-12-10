@@ -18,7 +18,7 @@ import partnerCertificationsRoutes from "./routes/partner_certifications.js";
 import rolesRoutes from "./routes/roles.js";
 import permissionsRoutes from "./routes/permissions.js";
 import modulesRoutes from "./routes/modules.js";
-
+import usersRoutes from "./routes/users.js";
 const app = express();
 
 app.use(cors());
@@ -41,6 +41,7 @@ app.use("/api/partner_certifications", partnerCertificationsRoutes);
 app.use("/api/roles", rolesRoutes);
 app.use("/api/permissions", permissionsRoutes);
 app.use("/api/modules", modulesRoutes);
+app.use("/api/users", usersRoutes);
 
 app.get('/test-db', async (req, res) => {
   try {
