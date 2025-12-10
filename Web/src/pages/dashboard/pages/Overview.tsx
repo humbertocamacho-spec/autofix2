@@ -36,7 +36,7 @@ export default function Overview() {
     <DashboardLayout>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
-        <p className="text-gray-600 mt-2">Bienvenido de nuevo! Aquí está lo que está pasando con tus proyectos hoy.</p>
+        <p className="text-gray-600 mt-2">Welcome to your dashboard overview.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">

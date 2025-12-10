@@ -108,7 +108,7 @@ export default function RolesTable() {
 
       <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
         {loading ? (
-          <p className="text-gray-500 text-center py-10">Cargando roles...</p>
+          <p className="text-gray-500 text-center py-10">Loading roles...</p>
         ) : (
           <div className="space-y-4">
             {roles.map((role) => (
@@ -170,7 +170,7 @@ export default function RolesTable() {
                         onClick={() => savePermissions(role.id)}
                         className="px-6 py-2 bg-[#27B9BA] text-white rounded-xl shadow-md hover:bg-[#1da6a7] transition font-medium"
                       >
-                        Guardar cambios
+                        Save Changes
                       </button>
                     </div>
 

@@ -58,17 +58,18 @@ export default function LoginScreen() {
 
     try {
       const res = await fetch(`${API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password }),
+});
 
-      const data = await res.json();
+const data = await res.json().catch(() => ({}));
 
-      if (!data.ok || !data.user) {
-        setError(data.message || "Error en el login");
-        return;
-      }
+if (!res.ok || !data.ok) {
+  setError(data.message || 'Error al iniciar sesión');
+  return;
+}
+
 
       const userId = data.user.id;
       const clientId = data.user.client_id;

@@ -176,26 +176,14 @@ export default function UsersTable() {
                                 placeholder="Phone"
                             />
 
-                            <select
-                                className="w-full border px-3 py-2 rounded"
-                                value={currentUser.role_id}
-                                onChange={(e) =>
-                                    setCurrentUser({ ...currentUser, role_id: Number(e.target.value) })
-                                }
-                            >
+                            <select className="w-full border px-3 py-2 rounded" value={currentUser.role_id} onChange={(e) => setCurrentUser({ ...currentUser, role_id: Number(e.target.value) })}>
                                 <option value="" disabled>Select role</option>
                                 <option value={1}>Admin</option>
                                 <option value={2}>Partner</option>
                                 <option value={3}>Client</option>
                             </select>
 
-                            <select
-                                className="w-full border px-3 py-2 rounded"
-                                value={currentUser.gender_id || ""}
-                                onChange={(e) =>
-                                    setCurrentUser({ ...currentUser, gender_id: Number(e.target.value) })
-                                }
-                            >
+                            <select className="w-full border px-3 py-2 rounded" value={currentUser.gender_id || ""} onChange={(e) => setCurrentUser({ ...currentUser, gender_id: Number(e.target.value) })}>
                                 <option value="">Gender</option>
                                 <option value={1}>Femenino</option>
                                 <option value={2}>Masculino</option>
@@ -204,17 +192,11 @@ export default function UsersTable() {
                         </div>
 
                         <div className="flex justify-end gap-3 mt-5">
-                            <button
-                                className="px-4 py-2 bg-gray-400 text-white rounded-lg"
-                                onClick={() => setOpenEdit(false)}
-                            >
+                            <button className="px-4 py-2 bg-gray-400 text-white rounded-lg" onClick={() => setOpenEdit(false)}>
                                 Cancel
                             </button>
 
-                            <button
-                                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
-                                onClick={handleUpdateUser}
-                            >
+                            <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg" onClick={handleUpdateUser}>
                                 Save
                             </button>
                         </div>

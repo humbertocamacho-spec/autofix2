@@ -1,25 +1,7 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
-
-export interface PendingTicket {
-    id: number;
-
-    client_id: number;
-    client_name?: string;
-
-    car_id: number;
-    car_name?: string;
-
-    partner_id: number;
-    partner_name?: string;
-    partner_phone?: string;
-    logo_url?: string;
-
-    date: string;
-    time?: string;
-    notes?: string;
-}
+import type { PendingTicket } from "../../../types/pending_ticket";
 
 export default function PendingTicketsTable() {
 
@@ -55,7 +37,6 @@ export default function PendingTicketsTable() {
         <DashboardLayout>
             <h1 className="text-3xl font-bold mb-6">Pending Tickets</h1>
 
-            {/* SEARCH BAR */}
             <div className="mb-6 flex justify-between">
                 <input
                     type="text"
@@ -116,7 +97,7 @@ export default function PendingTicketsTable() {
                                             {item.time || "—"}
                                         </td>
 
-                                        <td className="py-3 max-w-xs whitespace-normal break-words">
+                                        <td className="py-3 max-w-xs whitespace-normal">
                                             {item.notes || "—"}
                                         </td>
 

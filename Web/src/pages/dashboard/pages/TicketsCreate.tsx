@@ -103,7 +103,7 @@ export default function TicketsTable() {
 
                                         <td className="py-3">{new Date(item.date).toLocaleString()}</td>
 
-                                        <td className="py-3 max-w-xs whitespace-normal break-words">
+                                        <td className="py-3 max-w-xs whitespace-normal">
                                             {item.notes || "—"}
                                         </td>
 

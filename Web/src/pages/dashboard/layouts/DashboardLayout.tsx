@@ -78,7 +78,7 @@ export default function DashboardLayout({ children }: Props) {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <span className="text-gray-500 text-lg">Cargando...</span>
+        <span className="text-gray-500 text-lg">Loading...</span>
       </div>
     );
   }
@@ -163,8 +163,8 @@ export default function DashboardLayout({ children }: Props) {
           {CheckPermissionForModule("roles") && (
             <Link to="/dashboard/roles" className={linkClass("/dashboard/roles")}>
               <HiOutlineEye size={iconSize} />
-              <span className={textClass()}>Roles y Permisos</span>
-              {!sidebarOpen && <Tooltip>Roles y Permisos</Tooltip>}
+              <span className={textClass()}>Roles</span>
+              {!sidebarOpen && <Tooltip>Roles</Tooltip>}
             </Link>
           )}
 
@@ -179,8 +179,8 @@ export default function DashboardLayout({ children }: Props) {
           {CheckPermissionForModule("brands") && (
             <Link to="/dashboard/brands" className={linkClass("/dashboard/brands")}>
               <HiOutlineTruck size={iconSize} />
-              <span className={textClass()}>Brands</span>
-              {!sidebarOpen && <Tooltip>Brands</Tooltip>}
+              <span className={textClass()}>Car Brands</span>
+              {!sidebarOpen && <Tooltip>Car Brands</Tooltip>}
             </Link>
           )}
 
