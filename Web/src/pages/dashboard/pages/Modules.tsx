@@ -10,6 +10,13 @@ export default function ModulesTable() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
+  const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentModule, setCurrentModule] = useState<Modules | null>(null);
+
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+
   useEffect(() => {
     fetchModules();
   }, []);
@@ -25,6 +32,72 @@ export default function ModulesTable() {
       setLoading(false);
     }
   };
+
+  const handleSave = async () => {
+    if (!name.trim()) return alert("El nombre es obligatorio");
+
+    const method = isEditing ? "PUT" : "POST";
+    const url = isEditing
+      ? `${VITE_API_URL}/api/modules/${currentModule!.id}`
+      : `${VITE_API_URL}/api/modules`;
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, description }),
+      });
+
+      const data = await res.json();
+      if (data.ok) {
+        fetchModules();
+        closeModal();
+      } else {
+        alert(data.message || "Error");
+      }
+    } catch (error) {
+      console.error("Error saving module:", error);
+    }
+  };
+  const handleDelete = async (id: number) => {
+    if (!confirm("¿Seguro que quieres eliminar este módulo?")) return;
+
+    try {
+      const res = await fetch(`${VITE_API_URL}/api/modules/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (data.ok) {
+        fetchModules();
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting module:", error);
+    }
+  };
+
+  const openCreateModal = () => {
+    setIsEditing(false);
+    setCurrentModule(null);
+    setName("");
+    setDescription("");
+    setOpenModal(true);
+  };
+
+  const openEditModal = (mod: Modules) => {
+    setIsEditing(true);
+    setCurrentModule(mod);
+    setName(mod.name);
+    setDescription(mod.description || "");
+    setOpenModal(true);
+  };
+
+  const closeModal = () => {
+    setOpenModal(false);
+  };
+
 
   const filtered = modules.filter((m) =>
     m.name.toLowerCase().includes(search.toLowerCase())
@@ -43,7 +116,10 @@ export default function ModulesTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+        <button
+          onClick={openCreateModal}
+          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
+        >
           {t("modules_screen.add_button")}
         </button>
       </div>
@@ -74,10 +150,16 @@ export default function ModulesTable() {
                     <td className="py-3">{mod.name}</td>
                     <td className="py-3">{mod.description ?? "—"}</td>
                     <td className="py-3 text-right space-x-3">
-                      <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                      <button
+                        onClick={() => openEditModal(mod)}
+                        className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
+                      >
                         {t("modules_screen.edit")}
                       </button>
-                      <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                      <button
+                        onClick={() => handleDelete(mod.id)}
+                        className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
+                      >
                         {t("modules_screen.delete")}
                       </button>
                     </td>
@@ -96,6 +178,58 @@ export default function ModulesTable() {
           </div>
         )}
       </div>
+      {openModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white w-96 p-6 rounded-xl shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">
+              {isEditing
+                ? t("modules_screen.edit_module")
+                : t("modules_screen.create_module")}
+            </h2>
+
+            <div className="mb-4">
+              <label className="block mb-1">{t("modules_screen.table.name")}</label>
+              <input
+                className="w-full border px-3 py-2 rounded"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Module name"
+              />
+            </div>
+
+            <div className="mb-6">
+              <label className="block mb-1">
+                {t("modules_screen.table.description")}
+              </label>
+              <textarea
+                className="w-full border px-3 py-2 rounded"
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Description"
+              ></textarea>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 bg-gray-300 rounded-lg"
+              >
+                {t("modules_screen.cancel")}
+              </button>
+
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+              >
+                {isEditing
+                  ? t("modules_screen.save")
+                  : t("modules_screen.create")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
