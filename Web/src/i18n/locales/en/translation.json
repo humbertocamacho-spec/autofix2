@@ -133,6 +133,7 @@
   },
   "view_all": "View all",
   "welcome_dashboard": "Welcome to your dashboard overview.",
+  
   "specialities_screen": {
     "title": "Specialities",
     "search_placeholder": "Search speciality...",
@@ -145,15 +146,9 @@
       "id": "ID",
       "name": "Name",
       "actions": "Actions"
-    },
-    "modal": {
-      "create_title": "Create Speciality",
-      "edit_title": "Edit Speciality",
-      "name": "Speciality name",
-      "cancel": "Cancel",
-      "save": "Save"
     }
   },
+
   "car_brands_screen": {
     "title": "Car Brands",
     "search_placeholder": "Search car brand...",
@@ -168,6 +163,7 @@
       "actions": "Actions"
     }
   },
+
   "certifications_screen": {
     "title": "Certifications",
     "search_placeholder": "Search certification...",
@@ -182,6 +178,7 @@
       "actions": "Actions"
     }
   },
+
   "modules_screen": {
     "title": "Modules",
     "search_placeholder": "Search module...",
@@ -197,6 +194,7 @@
       "actions": "Actions"
     }
   },
+
   "permissions_screen": {
     "title": "Permissions",
     "search_placeholder": "Search permission...",
@@ -213,6 +211,7 @@
       "actions": "Actions"
     }
   },
+
   "roles_screen": {
     "title": "Role and Permissions Management",
     "loading_roles": "Loading roles...",
@@ -221,6 +220,7 @@
     "saved_alert": "Permissions saved",
     "unknown_module": "Unknown"
   },
+
   "tickets_screen": {
     "title": "Tickets",
     "search_placeholder": "Search ticket...",
@@ -238,6 +238,7 @@
       "actions": "Actions"
     }
   },
+  
   "pending_tickets_table": {
     "title": "Pending Tickets",
     "search_placeholder": "Search pending ticket...",
@@ -259,3 +260,4 @@
     }
   }
 }
+
