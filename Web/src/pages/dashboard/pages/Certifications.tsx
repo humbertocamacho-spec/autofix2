@@ -9,6 +9,11 @@ export default function CertificationsTable() {
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [current, setCurrent] = useState<Certification | null>(null);
+
+  const [name, setName] = useState("");
 
   useEffect(() => {
     fetchCertifications();
@@ -25,6 +30,45 @@ export default function CertificationsTable() {
       setLoading(false);
     }
   };
+  const openCreate = () => {
+    setIsEditing(false);
+    setCurrent(null);
+    setName("");
+    setOpenModal(true);
+  };
+
+  const openEdit = (item: Certification) => {
+    setIsEditing(true);
+    setCurrent(item);
+    setName(item.name);
+    setOpenModal(true);
+  };
+
+  const saveCertification = async () => {
+    if (!name || name.trim() === "") return alert("El nombre es obligatorio");
+
+    const method = isEditing ? "PUT" : "POST";
+    const url = isEditing
+      ? `${VITE_API_URL}/api/certifications/${current?.id}`
+      : `${VITE_API_URL}/api/certifications`;
+
+    await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    });
+
+    setOpenModal(false);
+    fetchCertifications();
+  };
+
+  const deleteCertification = async (id: number) => {
+    if (!confirm("¿Eliminar esta certificación?")) return;
+
+    await fetch(`${VITE_API_URL}/api/certifications/${id}`, { method: "DELETE" });
+
+    fetchCertifications();
+  };
 
   const filtered = certifications.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase())
@@ -33,7 +77,7 @@ export default function CertificationsTable() {
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("certifications_screen.title")}</h1>
-      
+
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -43,7 +87,10 @@ export default function CertificationsTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+        <button
+          onClick={openCreate}
+          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
+        >
           {t("certifications_screen.add_button")}
         </button>
       </div>
@@ -67,10 +114,17 @@ export default function CertificationsTable() {
                     <td className="py-2">{item.id}</td>
                     <td className="py-2">{item.name}</td>
                     <td className="py-2 text-right space-x-4">
-                      <button className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                      <button
+                        onClick={() => openEdit(item)}
+                        className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
+                      >
                         {t("certifications_screen.edit")}
                       </button>
-                      <button className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+
+                      <button
+                        onClick={() => deleteCertification(item.id)}
+                        className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
+                      >
                         {t("certifications_screen.delete")}
                       </button>
                     </td>
@@ -89,6 +143,41 @@ export default function CertificationsTable() {
           </div>
         )}
       </div>
+      {openModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[2000]">
+          <div className="bg-white w-[400px] p-6 rounded-xl shadow-xl">
+            <h2 className="text-xl font-semibold mb-4">
+              {isEditing
+                ? t("certifications_screen.edit_title")
+                : t("certifications_screen.create_title")}
+            </h2>
+
+            <label className="block text-sm font-medium">Name</label>
+            <input
+              type="text"
+              className="w-full mt-1 mb-4 px-3 py-2 border rounded-lg"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setOpenModal(false)}
+                className="px-4 py-2 bg-gray-300 rounded-lg"
+              >
+                {t("cancel")}
+              </button>
+
+              <button
+                onClick={saveCertification}
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+              >
+                {isEditing ? t("save") : t("create")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
