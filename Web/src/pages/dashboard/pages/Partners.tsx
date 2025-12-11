@@ -3,14 +3,26 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Partner } from "../../../types/partner";
 import { useTranslation } from "react-i18next";
+import type { User } from "../../../types/users";
 
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentPartner, setCurrentPartner] = useState<Partner | null>(null);
+  const [name, setName] = useState("");
+  const [userId, setUserId] = useState<number | null>(null);
+  const [phone, setPhone] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [location, setLocation] = useState("");
+  const [priority, setPriority] = useState(1);
+
   const { t } = useTranslation();
 
-  useEffect(() => { fetchPartners(); }, []);
+  useEffect(() => { fetchPartners(); fetchUsers(); }, []);
 
   const fetchPartners = async () => {
     try {
@@ -22,6 +34,80 @@ export default function PartnersTable() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch(`${VITE_API_URL}/api/users`);
+      const data = await res.json();
+      setUsers(data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const openCreate = () => {
+    setIsEditing(false);
+    setCurrentPartner(null);
+
+    setName("");
+    setUserId(null);
+    setPhone("");
+    setWhatsapp("");
+    setLocation("");
+    setPriority(1);
+
+    setOpenModal(true);
+  };
+
+  const openEdit = (partner: Partner) => {
+    setIsEditing(true);
+    setCurrentPartner(partner);
+
+    setName(partner.name);
+    setUserId(partner.user_id);
+    setPhone(partner.phone);
+    setWhatsapp(partner.whatsapp);
+    setLocation(partner.location);
+    setPriority(partner.priority);
+
+    setOpenModal(true);
+  };
+
+  const savePartner = async () => {
+    if (!name || !userId) return alert("Name y User son requeridos");
+
+    const body = {
+      name,
+      user_id: userId,
+      phone,
+      whatsapp,
+      location,
+      priority,
+    };
+
+    const url = isEditing
+      ? `${VITE_API_URL}/api/partners/${currentPartner?.id}`
+      : `${VITE_API_URL}/api/partners`;
+
+    const method = isEditing ? "PUT" : "POST";
+
+    await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    setOpenModal(false);
+    fetchPartners();
+  };
+
+  const deletePartner = async (id: number) => {
+    if (!confirm("¿Eliminar Partner?")) return;
+
+    await fetch(`${VITE_API_URL}/api/partners/${id}`, { method: "DELETE" });
+
+    fetchPartners();
   };
 
   const filtered = partners
@@ -40,8 +126,10 @@ export default function PartnersTable() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-
-        <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+        <button
+          onClick={openCreate}
+          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6]"
+        >
           {t("partners_screen.add_button")}
         </button>
       </div>
@@ -75,10 +163,16 @@ export default function PartnersTable() {
                     <td className="py-3 text-center">{item.priority}</td>
 
                     <td className="py-3 text-right space-x-3">
-                      <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                      <button
+                        onClick={() => openEdit(item)}
+                        className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm"
+                      >
                         {t("partners_screen.edit")}
                       </button>
-                      <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                      <button
+                        onClick={() => deletePartner(item.id)}
+                        className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm"
+                      >
                         {t("partners_screen.delete")}
                       </button>
                     </td>
@@ -97,6 +191,81 @@ export default function PartnersTable() {
           </div>
         )}
       </div>
+      {openModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[2000]">
+          <div className="bg-white w-[450px] p-6 rounded-xl shadow-xl">
+            <h2 className="text-xl font-semibold mb-4">
+              {isEditing ? "Edit Partner" : "Create Partner"}
+            </h2>
+
+            {/* NAME */}
+            <input
+              className="w-full px-3 py-2 border rounded mb-3"
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+
+            {/* USER SELECT */}
+            <select
+              className="w-full px-3 py-2 border rounded mb-3"
+              value={userId || ""}
+              onChange={(e) => setUserId(Number(e.target.value))}
+            >
+              <option value="">Select User</option>
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name}
+                </option>
+              ))}
+            </select>
+
+            <input
+              className="w-full px-3 py-2 border rounded mb-3"
+              placeholder="Phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+
+            <input
+              className="w-full px-3 py-2 border rounded mb-3"
+              placeholder="WhatsApp"
+              value={whatsapp}
+              onChange={(e) => setWhatsapp(e.target.value)}
+            />
+
+            <textarea
+              className="w-full px-3 py-2 border rounded mb-3"
+              placeholder="Location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
+
+            <input
+              type="number"
+              className="w-full px-3 py-2 border rounded mb-3"
+              placeholder="Priority"
+              value={priority}
+              onChange={(e) => setPriority(Number(e.target.value))}
+            />
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setOpenModal(false)}
+                className="px-4 py-2 bg-gray-300 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={savePartner}
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded"
+              >
+                {isEditing ? "Save" : "Create"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }

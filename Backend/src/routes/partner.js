@@ -31,4 +31,121 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.post("/", async (req, res) => {
+  try {
+    const {
+      name,
+      user_id,
+      whatsapp,
+      phone,
+      location,
+      latitude,
+      longitude,
+      land_use_permit,
+      scanner_handling,
+      logo_url,
+      description,
+      priority
+    } = req.body;
+
+    const sql = `
+      INSERT INTO partners 
+      (name, user_id, whatsapp, phone, location, latitude, longitude, land_use_permit, scanner_handling, logo_url, description, priority)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    await db.query(sql, [
+      name,
+      user_id,
+      whatsapp,
+      phone,
+      location,
+      latitude,
+      longitude,
+      land_use_permit,
+      scanner_handling,
+      logo_url,
+      description,
+      priority
+    ]);
+
+    res.json({ message: "Partner creado correctamente" });
+  } catch (error) {
+    console.error("Error al crear partner:", error);
+    res.status(500).json({ message: "Error al crear partner" });
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      name,
+      user_id,
+      whatsapp,
+      phone,
+      location,
+      latitude,
+      longitude,
+      land_use_permit,
+      scanner_handling,
+      logo_url,
+      description,
+      priority
+    } = req.body;
+
+    const sql = `
+      UPDATE partners SET
+        name = ?, 
+        user_id = ?, 
+        whatsapp = ?, 
+        phone = ?, 
+        location = ?, 
+        latitude = ?, 
+        longitude = ?, 
+        land_use_permit = ?, 
+        scanner_handling = ?, 
+        logo_url = ?, 
+        description = ?, 
+        priority = ?
+      WHERE id = ?
+    `;
+
+    await db.query(sql, [
+      name,
+      user_id,
+      whatsapp,
+      phone,
+      location,
+      latitude,
+      longitude,
+      land_use_permit,
+      scanner_handling,
+      logo_url,
+      description,
+      priority,
+      id
+    ]);
+
+    res.json({ message: "Partner actualizado correctamente" });
+  } catch (error) {
+    console.error("Error al actualizar partner:", error);
+    res.status(500).json({ message: "Error al actualizar partner" });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await db.query("DELETE FROM partners WHERE id = ?", [id]);
+
+    res.json({ message: "Partner eliminado correctamente" });
+  } catch (error) {
+    console.error("Error al eliminar partner:", error);
+    res.status(500).json({ message: "Error al eliminar partner" });
+  }
+});
+
 export default router;
