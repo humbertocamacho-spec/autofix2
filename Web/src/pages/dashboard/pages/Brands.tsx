@@ -9,6 +9,10 @@ export default function CarBrands() {
   const [carBrands, setCarBrands] = useState<CarBrands[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentBrand, setCurrentBrand] = useState<CarBrands | null>(null);
+  const [name, setName] = useState("");
 
   useEffect(() => {
     fetchCarBrands();
@@ -23,6 +27,58 @@ export default function CarBrands() {
       console.error("Error fetching car brands:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCreate = () => {
+    setIsEditing(false);
+    setCurrentBrand(null);
+    setName("");
+    setOpenModal(true);
+  };
+
+  const handleEdit = (brand: CarBrands) => {
+    setIsEditing(true);
+    setCurrentBrand(brand);
+    setName(brand.name);
+    setOpenModal(true);
+  };
+
+  const saveBrand = async () => {
+    try {
+      const url = isEditing
+        ? `${VITE_API_URL}/api/car_brands/${currentBrand?.id}`
+        : `${VITE_API_URL}/api/car_brands`;
+
+      const method = isEditing ? "PUT" : "POST";
+
+      await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      setOpenModal(false);
+      fetchCarBrands();
+    } catch (error) {
+      console.error("Error saving car brand:", error);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    const confirmDelete = window.confirm("¿Eliminar marca?");
+    if (!confirmDelete) return;
+
+    try {
+      await fetch(`${VITE_API_URL}/api/car_brands/${id}`, {
+        method: "DELETE",
+      });
+
+      fetchCarBrands();
+    } catch (error) {
+      console.error("Error deleting brand:", error);
     }
   };
 
@@ -42,7 +98,10 @@ export default function CarBrands() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+        <button
+          onClick={handleCreate}
+          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
+        >
           {t("car_brands_screen.add_button")}
         </button>
       </div>
@@ -69,10 +128,17 @@ export default function CarBrands() {
                     <td className="py-2">{item.id}</td>
                     <td className="py-2">{item.name}</td>
                     <td className="py-2 text-right space-x-5">
-                      <button className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                      <button
+                        onClick={() => handleEdit(item)}
+                        className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
+                      >
                         {t("car_brands_screen.edit")}
                       </button>
-                      <button className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
+                      >
                         {t("car_brands_screen.delete")}
                       </button>
                     </td>
@@ -91,6 +157,44 @@ export default function CarBrands() {
           </div>
         )}
       </div>
+      {openModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[2000]">
+          <div className="bg-white w-[400px] p-6 rounded-xl shadow-xl">
+            <h2 className="text-xl font-semibold mb-4">
+              {isEditing
+                ? t("car_brands_screen.edit_title")
+                : t("car_brands_screen.create_title")}
+            </h2>
+
+            <label className="block text-sm font-medium text-gray-700">
+              {t("car_brands_screen.table.name")}
+            </label>
+
+            <input
+              type="text"
+              className="w-full mt-2 mb-4 px-3 py-2 border rounded-lg"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setOpenModal(false)}
+                className="px-4 py-2 bg-gray-300 rounded-lg"
+              >
+                {t("cancel")}
+              </button>
+
+              <button
+                onClick={saveBrand}
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+              >
+                {isEditing ? t("save") : t("create")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
