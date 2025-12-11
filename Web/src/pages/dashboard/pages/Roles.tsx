@@ -5,10 +5,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Permission } from "../../../types/permission";
 import type { Roles } from "../../../types/roles";
 import type { Modules } from "../../../types/modules";
-
-interface PermissionsByRole {
-  [roleId: number]: number[];
-}
+import type { PermissionsByRole } from "../../../types/permissionbyrole";
 
 interface GroupedPermissions {
   [moduleId: number]: Permission[];
