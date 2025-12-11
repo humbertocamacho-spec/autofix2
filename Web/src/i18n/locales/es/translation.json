@@ -133,7 +133,6 @@
   },
   "view_all": "Ver todo",
   "welcome_dashboard": "Bienvenido a tu panel general.",
-
   "specialities_screen": {
     "title": "Especialidades",
     "search_placeholder": "Buscar especialidad...",
@@ -146,9 +145,15 @@
       "id": "ID",
       "name": "Nombre",
       "actions": "Acciones"
+    },
+    "modal": {
+      "create_title": "Crear Especialidad",
+      "edit_title": "Editar Especialidad",
+      "name": "Nombre de la especialidad",
+      "cancel": "Cancelar",
+      "save": "Guardar"
     }
   },
-
   "car_brands_screen": {
     "title": "Marcas de Autos",
     "search_placeholder": "Buscar marca de auto...",
@@ -163,7 +168,6 @@
       "actions": "Acciones"
     }
   },
-
   "certifications_screen": {
     "title": "Certificaciones",
     "search_placeholder": "Buscar certificación...",
@@ -178,7 +182,6 @@
       "actions": "Acciones"
     }
   },
-
   "modules_screen": {
     "title": "Módulos",
     "search_placeholder": "Buscar módulo...",
@@ -194,7 +197,6 @@
       "actions": "Acciones"
     }
   },
-
   "permissions_screen": {
     "title": "Permisos",
     "search_placeholder": "Buscar permiso...",
@@ -211,8 +213,7 @@
       "actions": "Acciones"
     }
   },
-
-   "roles_screen": {
+  "roles_screen": {
     "title": "Gestión de Roles y Permisos",
     "loading_roles": "Cargando roles...",
     "assigned_permissions": "Permisos asignados a",
@@ -220,7 +221,6 @@
     "saved_alert": "Permisos guardados",
     "unknown_module": "Desconocido"
   },
-
   "tickets_screen": {
     "title": "Tickets",
     "search_placeholder": "Buscar ticket...",
@@ -238,7 +238,6 @@
       "actions": "Acciones"
     }
   },
-
   "pending_tickets_table": {
     "title": "Tickets Pendientes",
     "search_placeholder": "Buscar ticket pendiente...",
