@@ -10,13 +10,6 @@ export default function ModulesTable() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  const [openModal, setOpenModal] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentModule, setCurrentModule] = useState<Modules | null>(null);
-
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
   useEffect(() => {
     fetchModules();
   }, []);
@@ -31,71 +24,6 @@ export default function ModulesTable() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCreate = async () => {
-    try {
-      await fetch(`${VITE_API_URL}/api/modules`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description }),
-      });
-
-      setOpenModal(false);
-      fetchModules();
-    } catch (error) {
-      console.error("Error creating module:", error);
-    }
-  };
-
-  const handleUpdate = async () => {
-    if (!currentModule) return;
-
-    try {
-      await fetch(`${VITE_API_URL}/api/modules/${currentModule.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, description }),
-      });
-
-      setOpenModal(false);
-      fetchModules();
-    } catch (error) {
-      console.error("Error updating module:", error);
-    }
-  };
-
-  const handleDelete = async (id: number) => {
-    if (!confirm("¿Seguro que deseas eliminar este módulo?")) return;
-
-    try {
-      await fetch(`${VITE_API_URL}/api/modules/${id}`, {
-        method: "DELETE",
-      });
-
-      fetchModules();
-    } catch (error) {
-      console.error("Error deleting module:", error);
-    }
-  };
-
-  // --------------------------
-  // MODAL ACTIONS
-  // --------------------------
-  const openCreateModal = () => {
-    setIsEditing(false);
-    setName("");
-    setDescription("");
-    setCurrentModule(null);
-    setOpenModal(true);
-  };
-
-  const openEditModal = (mod: Modules) => {
-    setIsEditing(true);
-    setCurrentModule(mod);
-    setName(mod.name);
-    setDescription(mod.description ?? "");
-    setOpenModal(true);
   };
 
   const filtered = modules.filter((m) =>
@@ -115,10 +43,7 @@ export default function ModulesTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button
-          onClick={openCreateModal}
-          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-        >
+        <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
           {t("modules_screen.add_button")}
         </button>
       </div>
@@ -130,13 +55,13 @@ export default function ModulesTable() {
           </p>
         ) : (
           <div className="max-h-[600px] overflow-y-auto">
-            <table className="w-full table-fixed text-left">
+            <table className="w-full table-auto text-left">
               <thead>
                 <tr className="text-gray-600 border-b">
-                  <th className="w-20 pb-3">{t("modules_screen.table.id")}</th>
+                  <th className="pb-3">{t("modules_screen.table.id")}</th>
                   <th className="pb-3">{t("modules_screen.table.name")}</th>
                   <th className="pb-3">{t("modules_screen.table.description")}</th>
-                  <th className="pb-3 text-right w-48 pr-6">{t("modules_screen.table.actions")}</th>
+                  <th className="pb-3 text-right">{t("modules_screen.table.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -146,23 +71,15 @@ export default function ModulesTable() {
                     className="border-b hover:bg-gray-50 text-gray-700"
                   >
                     <td className="py-3">{mod.id}</td>
-                    <td className="py-3 truncate">{mod.name}</td>
-                    <td className="py-3 truncate">{mod.description ?? "—"}</td>
-                    <td className="py-3 text-right pr-6">
-                      <div className="flex justify-end space-x-2">
-                        <button
-                          onClick={() => openEditModal(mod)}
-                          className="px-3 py-1 bg-yellow-500 text-white rounded-md text-sm hover:bg-yellow-600 min-w-[70px]"
-                        >
-                          {t("modules_screen.edit")}
-                        </button>
-                        <button
-                          onClick={() => handleDelete(mod.id)}
-                          className="px-3 py-1 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 min-w-[70px]"
-                        >
-                          {t("modules_screen.delete")}
-                        </button>
-                      </div>
+                    <td className="py-3">{mod.name}</td>
+                    <td className="py-3">{mod.description ?? "—"}</td>
+                    <td className="py-3 text-right space-x-3">
+                      <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                        {t("modules_screen.edit")}
+                      </button>
+                      <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                        {t("modules_screen.delete")}
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -179,62 +96,6 @@ export default function ModulesTable() {
           </div>
         )}
       </div>
-      {openModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
-          <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
-
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              {isEditing
-                ? t("modules_screen.edit")
-                : t("modules_screen.add_button")}
-            </h2>
-
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("modules_screen.table.name")}
-                </label>
-                <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("modules_screen.table.description")}
-                </label>
-                <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => setOpenModal(false)}
-                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
-              >
-                {t("modules_screen.cancel")}
-              </button>
-
-              <button
-                onClick={isEditing ? handleUpdate : handleCreate}
-                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-              >
-                {isEditing
-                  ? t("modules_screen.save")
-                  : t("modules_screen.create")}
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
-
     </DashboardLayout>
   );
 }
