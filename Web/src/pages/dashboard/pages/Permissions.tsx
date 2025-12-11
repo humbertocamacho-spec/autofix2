@@ -11,6 +11,11 @@ export default function PermissionsTable() {
   const [modules, setModules] = useState<Modules[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [current, setCurrent] = useState<Permission | null>(null);
+  const [name, setName] = useState("");
+  const [moduleId, setModuleId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchModules();
@@ -42,6 +47,51 @@ export default function PermissionsTable() {
   const getModuleName = (id: number) =>
     modules.find((m) => m.id === id)?.name || t("permissions_screen.unknown_module");
 
+  const openCreate = () => {
+    setIsEditing(false);
+    setCurrent(null);
+    setName("");
+    setModuleId(null);
+    setOpenModal(true);
+  };
+
+  const openEdit = (perm: Permission) => {
+    setIsEditing(true);
+    setCurrent(perm);
+    setName(perm.name);
+    setModuleId(perm.module_id);
+    setOpenModal(true);
+  };
+
+  const savePermission = async () => {
+    if (!name || !moduleId) return alert("Todos los campos son obligatorios.");
+
+    const method = isEditing ? "PUT" : "POST";
+    const url = isEditing
+      ? `${VITE_API_URL}/api/permissions/${current?.id}`
+      : `${VITE_API_URL}/api/permissions`;
+
+    await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, module_id: moduleId }),
+    });
+
+    setOpenModal(false);
+    fetchPermissions();
+  };
+
+  const deletePermission = async (id: number) => {
+    if (!confirm("¿Eliminar permiso?")) return;
+
+    await fetch(`${VITE_API_URL}/api/permissions/${id}`, {
+      method: "DELETE",
+    });
+
+    fetchPermissions();
+  };
+
+
   const filtered = permissions.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -59,7 +109,10 @@ export default function PermissionsTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+        <button
+          onClick={openCreate}
+          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
+        >
           {t("permissions_screen.add_button")}
         </button>
       </div>
@@ -85,10 +138,17 @@ export default function PermissionsTable() {
                     <td className="py-3">{perm.name}</td>
                     <td className="py-3">{getModuleName(perm.module_id)}</td>
                     <td className="py-3 text-right space-x-3">
-                      <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                      <button
+                        onClick={() => openEdit(perm)}
+                        className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
+                      >
                         {t("permissions_screen.edit")}
                       </button>
-                      <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+
+                      <button
+                        onClick={() => deletePermission(perm.id)}
+                        className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
+                      >
                         {t("permissions_screen.delete")}
                       </button>
                     </td>
@@ -106,6 +166,55 @@ export default function PermissionsTable() {
           </div>
         )}
       </div>
+      {openModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[2000]">
+          <div className="bg-white w-[450px] p-6 rounded-xl shadow-xl">
+            <h2 className="text-xl font-semibold mb-4">
+              {isEditing
+                ? t("permissions_screen.edit_title")
+                : t("permissions_screen.create_title")}
+            </h2>
+
+            <label className="block text-sm font-medium">Name</label>
+            <input
+              className="w-full mt-1 mb-4 px-3 py-2 border rounded-lg"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              type="text"
+            />
+
+            <label className="block text-sm font-medium">Module</label>
+            <select
+              className="w-full mt-1 mb-4 px-3 py-2 border rounded-lg"
+              value={moduleId || ""}
+              onChange={(e) => setModuleId(Number(e.target.value))}
+            >
+              <option value="">Selecciona un módulo</option>
+              {modules.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setOpenModal(false)}
+                className="px-4 py-2 bg-gray-300 rounded-lg"
+              >
+                {t("cancel")}
+              </button>
+
+              <button
+                onClick={savePermission}
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+              >
+                {isEditing ? t("save") : t("create")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
