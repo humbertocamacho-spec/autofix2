@@ -88,4 +88,22 @@ router.put("/:id", async (req, res) => {
     }
 });
 
+router.delete("/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+
+        await db.query("DELETE FROM cars_clients WHERE car_id = ?", [id]);
+
+        await db.query("DELETE FROM cars WHERE id = ?", [id]);
+
+        res.json({ ok: true, message: "Vehículo eliminado" });
+
+    } catch (error) {
+        console.error("Error al eliminar vehículo:", error);
+        res.status(500).json({ message: "Error al eliminar vehículo" });
+    }
+});
+
+
 export default router;
