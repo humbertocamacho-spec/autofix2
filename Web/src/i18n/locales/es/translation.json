@@ -7,6 +7,10 @@
     "loading": "Cargando...",
     "no_results": "No se encontraron administradores",
     "search_placeholder": "Buscar administradores por nombre...",
+    "create_title": "Crear Administrador",
+    "select_user": "Seleccionar usuario",
+    "choose_user": "Elige usuario",
+    "edit_title": "Editar Administrador",
     "table": {
       "actions": "Acciones",
       "id": "ID",
@@ -14,8 +18,10 @@
     },
     "title": "Administradores"
   },
+
   "brands": "Marcas de Autos",
   "certifications": "Certificaciones",
+
   "clients": "Clientes",
   "clients_screen": {
     "add_button": "Agregar Cliente",
@@ -24,6 +30,10 @@
     "loading": "Cargando...",
     "no_results": "No se encontraron clientes",
     "search_placeholder": "Buscar clientes por nombre...",
+    "create_title": "Crear Cliente",
+    "select_user": "Seleccionar usuario",
+    "choose_user": "Elige usuario",    
+    "edit_title": "Editar Cliente",
     "table": {
       "actions": "Acciones",
       "id": "ID",
@@ -36,7 +46,30 @@
   "dashboard_overview": "Resumen del Panel",
   "logout": "Cerrar sesión",
   "modules": "Módulos",
+
   "myCars": "Mis Autos",
+  "myCars_screen": {
+    "title": "Mis Autos",
+    "search_placeholder": "Buscar autos...",
+    "add_button": "Agregar Auto",
+    "loading": "Cargando...",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "no_results": "No se encontraron autos",
+    "cancel": "Cancelar",
+    "create_title": "Crear Auto",
+    "table": {
+      "name": "Nombre",
+      "brand": "Marca de Auto",
+      "model": "Modelo",
+      "year": "Año",
+      "type": "Tipo",
+      "plate": "Placa",
+      "actions": "Acciones",
+      "select_brand": "Seleccionar marca"
+    }
+  },
+
   "overview": {
     "buttons": {
       "seeAll": "Ver más",
@@ -142,6 +175,7 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron especialidades",
+    "create_title": "Crear Especialidad",
     "table": {
       "id": "ID",
       "name": "Nombre",
@@ -157,6 +191,9 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron marcas de autos",
+    "create_title": "Crear Marca de Auto",
+    "edit_title": "Editar Marca de Auto",
+    "name": "Nombre",
     "table": {
       "id": "ID",
       "name": "Nombre",
@@ -172,6 +209,9 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron certificaciones",
+    "create_title": "Crear Certificación",
+    "edit_title": "Editar Certificación",
+    "name": "Nombre",
     "table": {
       "id": "ID",
       "name": "Nombre",
@@ -187,6 +227,11 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron módulos",
+    "create_module": "Crear Módulo",
+    "edit_module": "Editar Módulo",
+    "cancel": "Cancelar",
+    "create": "Crear",
+    "save": "Guardar",
     "table": {
       "id": "ID",
       "name": "Nombre",
@@ -204,6 +249,11 @@
     "delete": "Eliminar",
     "no_results": "No se encontraron permisos",
     "unknown_module": "Desconocido",
+    "create_title": "Crear Permiso",
+    "edit_title": "Editar Permiso",
+    "name": "Nombre",
+    "module": "Módulo",
+    "select_module": "Seleccionar módulo",
     "table": {
       "id": "ID",
       "permission": "Permiso",

@@ -4,9 +4,11 @@ import { VITE_API_URL } from "../../../config/env";
 import { useAuthContext } from "../../../context/AuthContext";
 import type { Cars } from "../../../types/cars";
 import type { CarBrands } from "../../../types/car_brands";
+import { useTranslation } from "react-i18next";
 
 export default function MyCarsTable() {
     const { user } = useAuthContext();
+    const { t } = useTranslation();
 
     const [cars, setCars] = useState<Cars[]>([]);
     const [brands, setBrands] = useState<CarBrands[]>([]);
@@ -213,10 +215,10 @@ export default function MyCarsTable() {
     return (
         <DashboardLayout>
             {!user ? (
-                <p className="text-center py-10">Cargando usuario...</p>
+                <p className="text-center py-10">{t("myCars_screen.loading")}</p>
             ) : (
                 <>
-                    <h1 className="text-3xl font-bold mb-6">My Cars</h1>
+                    <h1 className="text-3xl font-bold mb-6">{t("myCars_screen.title")}</h1>
 
                     <div className="mb-6 flex justify-between">
                         <input
@@ -231,25 +233,25 @@ export default function MyCarsTable() {
                             onClick={openCreateModal}
                             className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
                         >
-                            Add Car
+                            {t("myCars_screen.add_button")}
                         </button>
                     </div>
 
                     <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
                         {loading ? (
-                            <p className="text-center py-10 text-gray-500">Cargando...</p>
+                            <p className="text-center py-10 text-gray-500">{t("myCars_screen.loading")}</p>
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
                                     <thead>
                                         <tr className="text-gray-600 border-b">
-                                            <th className="pb-3">Name</th>
-                                            <th className="pb-3">Brand</th>
-                                            <th className="pb-3">Model</th>
-                                            <th className="pb-3">Year</th>
-                                            <th className="pb-3">Type</th>
-                                            <th className="pb-3">Plate</th>
-                                            <th className="pb-3 text-right w-40 pr-6">Actions</th>
+                                            <th className="pb-3">{t("myCars_screen.table.name")}</th>
+                                            <th className="pb-3">{t("myCars_screen.table.brand")}</th>
+                                            <th className="pb-3">{t("myCars_screen.table.model")}</th>
+                                            <th className="pb-3">{t("myCars_screen.table.year")}</th>
+                                            <th className="pb-3">{t("myCars_screen.table.type")}</th>
+                                            <th className="pb-3">{t("myCars_screen.table.plate")}</th>
+                                            <th className="pb-3 text-right w-40 pr-6">{t("myCars_screen.table.actions")}</th>
                                         </tr>
                                     </thead>
 
@@ -286,7 +288,7 @@ export default function MyCarsTable() {
                                 </table>
 
                                 {filtered.length === 0 && (
-                                    <p className="text-center py-6 text-gray-500">No cars found</p>
+                                    <p className="text-center py-6 text-gray-500">{t("myCars_screen.no_results")}</p>
                                 )}
                             </div>
                         )}
@@ -296,13 +298,13 @@ export default function MyCarsTable() {
                         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
                             <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
                                 <h2 className="text-2xl font-bold mb-4 text-gray-800">
-                                    {isEditing ? "Edit Car" : "Add Car"}
+                                    {isEditing ? t("myCars_screen.edit_title") : t("myCars_screen.create_title")}
                                 </h2>
 
                                 <div className="space-y-4">
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-600">Name</label>
+                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.name")}</label>
                                         <input
                                             className="w-full border px-3 py-2 rounded-lg"
                                             value={name}
@@ -311,13 +313,13 @@ export default function MyCarsTable() {
                                     </div>
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-600">Brand</label>
+                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.brand")}</label>
                                         <select
                                             className="w-full border px-3 py-2 rounded-lg"
                                             value={car_brand_id}
                                             onChange={(e) => setCarBrandId(Number(e.target.value))}
                                         >
-                                            <option value="0">Select brand</option>
+                                            <option value="0">{t("myCars_screen.table.select_brand")}</option>
                                             {brands.map((b) => (
                                                 <option key={b.id} value={b.id}>
                                                     {b.name}
@@ -327,7 +329,7 @@ export default function MyCarsTable() {
                                     </div>
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-600">Model</label>
+                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.model")}</label>
                                         <input
                                             className="w-full border px-3 py-2 rounded-lg"
                                             value={model}
@@ -336,7 +338,7 @@ export default function MyCarsTable() {
                                     </div>
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-600">Year</label>
+                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.year")}</label>
                                         <input
                                             type="number"
                                             className="w-full border px-3 py-2 rounded-lg"
@@ -348,7 +350,7 @@ export default function MyCarsTable() {
                                     </div>
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-600">Type</label>
+                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.type")}</label>
                                         <input
                                             className="w-full border px-3 py-2 rounded-lg"
                                             value={type}
@@ -357,7 +359,7 @@ export default function MyCarsTable() {
                                     </div>
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-600">Plate</label>
+                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.plate")}</label>
                                         <input
                                             className="w-full border px-3 py-2 rounded-lg"
                                             value={plate}
@@ -372,7 +374,7 @@ export default function MyCarsTable() {
                                         className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
                                         onClick={() => setOpenModal(false)}
                                     >
-                                        Cancel
+                                            {t("myCars_screen.cancel")}
                                     </button>
 
                                     <button

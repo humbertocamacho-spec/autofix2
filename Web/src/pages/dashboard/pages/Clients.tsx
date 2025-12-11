@@ -164,16 +164,11 @@ export default function ClientsTable() {
         )}
       </div>
       {openModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[2000]">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-2000">
           <div className="bg-white w-[400px] p-6 rounded-xl shadow-xl">
             <h2 className="text-xl font-semibold mb-4">
               {isEditing ? t("clients_screen.edit_title") : t("clients_screen.create_title")}
             </h2>
-
-            {/* Select User */}
-            <label className="block text-sm font-medium mb-1">
-              {t("clients_screen.select_user")}
-            </label>
 
             <select
               className="w-full px-3 py-2 border rounded-lg mb-4"

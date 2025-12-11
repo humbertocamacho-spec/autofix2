@@ -167,7 +167,7 @@ export default function PermissionsTable() {
         )}
       </div>
       {openModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[2000]">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-2000">
           <div className="bg-white w-[450px] p-6 rounded-xl shadow-xl">
             <h2 className="text-xl font-semibold mb-4">
               {isEditing
@@ -175,7 +175,7 @@ export default function PermissionsTable() {
                 : t("permissions_screen.create_title")}
             </h2>
 
-            <label className="block text-sm font-medium">Name</label>
+            <label className="block text-sm font-medium">{t("permissions_screen.name")}</label>
             <input
               className="w-full mt-1 mb-4 px-3 py-2 border rounded-lg"
               value={name}
@@ -183,13 +183,13 @@ export default function PermissionsTable() {
               type="text"
             />
 
-            <label className="block text-sm font-medium">Module</label>
+            <label className="block text-sm font-medium">{t("permissions_screen.module")}</label>
             <select
               className="w-full mt-1 mb-4 px-3 py-2 border rounded-lg"
               value={moduleId || ""}
               onChange={(e) => setModuleId(Number(e.target.value))}
             >
-              <option value="">Selecciona un módulo</option>
+              <option value="">{t("permissions_screen.select_module")}</option>
               {modules.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.name}

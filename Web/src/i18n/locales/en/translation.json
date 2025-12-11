@@ -7,11 +7,17 @@
     "loading": "Loading...",
     "no_results": "No admins found",
     "search_placeholder": "Search admins by name...",
+    "create_title": "Create Admin",
+    "select_user": "Select user",
+    "choose_user": "Choose user",
+    "edit_title": "Edit Admin",
     "table": {
       "actions": "Actions",
       "id": "ID",
       "name": "Name"
     },
+
+
     "title": "Administrators"
   },
   "brands": "Car Brands",
@@ -24,6 +30,10 @@
     "loading": "Loading...",
     "no_results": "No clients found",
     "search_placeholder": "Search clients by name...",
+    "create_title": "Create Client",
+    "select_user": "Select user",
+    "choose_user": "Choose user",
+    "edit_title": "Edit Client",
     "table": {
       "actions": "Actions",
       "id": "ID",
@@ -36,7 +46,32 @@
   "dashboard_overview": "Dashboard Overview",
   "logout": "Logout",
   "modules": "Modules",
+
   "myCars": "My Cars",
+
+  "myCars_screen": {
+    "title": "My Cars",
+    "search_placeholder": "Search cars...",
+    "add_button": "Add Car",
+    "loading": "Loading...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "no_results": "No cars found",
+    "cancel": "Cancel",
+    "create_title": "Create Car",
+    "table": {
+      "name": "Name",
+      "brand": "Car Brand",
+      "model": "Model",
+      "year": "Year",
+      "type": "Type",
+      "plate": "Plate",
+      "actions": "Actions",
+      "select_brand": "Select brand"
+    }
+  },
+
+  
   "overview": {
     "buttons": {
       "seeAll": "See all",
@@ -142,6 +177,9 @@
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No specialities found",
+    "cancel": "Cancel",
+    "create": "Create",
+    "save": "Save",
     "table": {
       "id": "ID",
       "name": "Name",
@@ -157,6 +195,8 @@
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No car brands found",
+    "create_title": "Create Car Brand",
+    "edit_title": "Edit Car Brand",
     "table": {
       "id": "ID",
       "name": "Name",
@@ -172,6 +212,9 @@
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No certifications found",
+    "create_title": "Create Certification",
+    "edit_title": "Edit Certification",
+    "name": "Name",
     "table": {
       "id": "ID",
       "name": "Name",
@@ -187,6 +230,11 @@
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No modules found",
+    "create_module": "Create Module",
+    "edit_module": "Edit Module",
+    "cancel": "Cancel",
+    "create": "Create",
+    "save": "Save",
     "table": {
       "id": "ID",
       "name": "Name",
@@ -204,6 +252,11 @@
     "delete": "Delete",
     "no_results": "No permissions found",
     "unknown_module": "Unknown",
+    "create_title": "Create Permission",
+    "edit_title": "Edit Permission",
+    "name": "Name",
+    "module": "Module",
+    "select_module": "Select module",
     "table": {
       "id": "ID",
       "permission": "Permission",

@@ -160,16 +160,12 @@ export default function AdminsTable() {
                 )}
             </div>
             {openModal && (
-                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[2000]">
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-2000">
                     <div className="bg-white w-[400px] p-6 rounded-xl shadow-xl">
                         <h2 className="text-xl font-semibold mb-4">
                             {isEditing ? t("admin_screen.edit_title") : t("admin_screen.create_title")}
                         </h2>
 
-                        {/* SELECT USER */}
-                        <label className="block text-sm mb-1">
-                            {t("admin_screen.select_user")}
-                        </label>
                         <select
                             className="w-full px-3 py-2 border rounded-lg mb-4"
                             value={userId || ""}
