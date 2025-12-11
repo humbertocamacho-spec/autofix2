@@ -11,9 +11,9 @@ export default function SpecialitiesTable() {
   const [search, setSearch] = useState("");
 
   const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [current, setCurrent] = useState<Specialities | null>(null);
   const [name, setName] = useState("");
-
 
   useEffect(() => {
     fetchSpecialities();
@@ -31,7 +31,7 @@ export default function SpecialitiesTable() {
     }
   };
 
-  const createSpeciality = async () => {
+  const handleCreate = async () => {
     try {
       await fetch(`${VITE_API_URL}/api/specialities`, {
         method: "POST",
@@ -42,14 +42,14 @@ export default function SpecialitiesTable() {
       setOpenModal(false);
       fetchSpecialities();
     } catch (error) {
-      console.error("Error creating speciality:", error);
+      console.error("Error creating specialities:", error);
     }
   };
 
-  const updateSpeciality = async () => {
-    try {
-      if (!current) return;
+  const handleUpdate = async () => {
+    if (!current) return;
 
+    try {
       await fetch(`${VITE_API_URL}/api/specialities/${current.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -57,14 +57,13 @@ export default function SpecialitiesTable() {
       });
 
       setOpenModal(false);
-      setCurrent(null);
       fetchSpecialities();
     } catch (error) {
       console.error("Error updating speciality:", error);
     }
   };
 
-  const deleteSpeciality = async (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!confirm("¿Seguro que deseas eliminar esta especialidad?")) return;
 
     try {
@@ -79,12 +78,14 @@ export default function SpecialitiesTable() {
   };
 
   const openCreateModal = () => {
-    setCurrent(null);
+    setIsEditing(false);
     setName("");
+    setCurrent(null);
     setOpenModal(true);
   };
 
   const openEditModal = (item: Specialities) => {
+    setIsEditing(true);
     setCurrent(item);
     setName(item.name);
     setOpenModal(true);
@@ -97,7 +98,6 @@ export default function SpecialitiesTable() {
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("specialities_screen.title")}</h1>
-
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -120,14 +120,15 @@ export default function SpecialitiesTable() {
           <p className="text-center py-10 text-gray-500">{t("specialities_screen.loading")}</p>
         ) : (
           <div className="max-h-[600px] overflow-y-auto">
-            <table className="w-full table-auto text-left">
+            <table className="w-full table-fixed text-left">
               <thead>
                 <tr className="text-gray-600 border-b">
-                  <th className="pb-3">{t("specialities_screen.table.id")}</th>
+                  <th className="pb-3 w-20">{t("specialities_screen.table.id")}</th>
                   <th className="pb-3">{t("specialities_screen.table.name")}</th>
-                  <th className="pb-3 text-right">{t("specialities_screen.table.actions")}</th>
+                  <th className="pb-3 text-right w-48 pr-6">{t("specialities_screen.table.actions")}</th>
                 </tr>
               </thead>
+
               <tbody>
                 {filtered.map((item) => (
                   <tr
@@ -135,8 +136,9 @@ export default function SpecialitiesTable() {
                     className="border-b hover:bg-gray-50 text-gray-700"
                   >
                     <td className="py-3">{item.id}</td>
-                    <td className="py-3">{item.name}</td>
-                    <td className="py-3 text-right space-x-3">
+                    <td className="py-3 truncate">{item.name}</td>
+                    <td className="py-3 text-right pr-6">
+                      <div className="flex justify-end space-x-2">
                       <button
                         onClick={() => openEditModal(item)}
                         className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
@@ -144,11 +146,12 @@ export default function SpecialitiesTable() {
                         {t("specialities_screen.edit")}
                       </button>
                       <button
-                        onClick={() => deleteSpeciality(item.id)}
+                        onClick={() => handleDelete(item.id)}
                         className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
                       >
                         {t("specialities_screen.delete")}
                       </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -165,36 +168,43 @@ export default function SpecialitiesTable() {
           </div>
         )}
       </div>
+
       {openModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg w-96">
-            <h2 className="text-xl font-semibold mb-4">
-              {current
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
+          <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+              {isEditing
                 ? t("specialities_screen.edit")
                 : t("specialities_screen.add_button")}
             </h2>
 
-            <input
-              type="text"
-              className="w-full px-4 py-2 border rounded-lg mb-4"
-              placeholder="Nombre"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-600">
+                  {t("specialities_screen.table.name")}
+                </label>
 
-            <div className="flex justify-end space-x-3">
+                <input
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
               <button
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
                 onClick={() => setOpenModal(false)}
-                className="px-4 py-2 rounded-lg border"
               >
                 {t("specialities_screen.cancel")}
               </button>
 
               <button
-                onClick={current ? updateSpeciality : createSpeciality}
-                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+                onClick={isEditing ? handleUpdate : handleCreate}
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
               >
-                {current
+                {isEditing
                   ? t("specialities_screen.save")
                   : t("specialities_screen.create")}
               </button>
