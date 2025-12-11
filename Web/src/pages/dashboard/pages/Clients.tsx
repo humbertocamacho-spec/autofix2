@@ -2,16 +2,25 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Client } from "../../../types/client";
+import type { User } from "../../../types/users"
 import { useTranslation } from "react-i18next";
 
 export default function ClientsTable() {
   const [clients, setClients] = useState<Client[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const { t } = useTranslation();
+  const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentClient, setCurrentClient] = useState<Client | null>(null);
+
+  const [userId, setUserId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchClients();
+    fetchUsers();
+
   }, []);
 
   const fetchClients = async () => {
@@ -25,6 +34,58 @@ export default function ClientsTable() {
       setLoading(false);
     }
   };
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch(`${VITE_API_URL}/api/users`);
+      const data = await res.json();
+      setUsers(data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const openCreate = () => {
+    setIsEditing(false);
+    setCurrentClient(null);
+    setUserId(null);
+    setOpenModal(true);
+  };
+
+  const openEdit = (client: Client) => {
+    setIsEditing(true);
+    setCurrentClient(client);
+    setUserId(client.user_id);
+    setOpenModal(true);
+  };
+
+  const saveClient = async () => {
+    if (!userId) return alert("Debes seleccionar un usuario");
+
+    const method = isEditing ? "PUT" : "POST";
+    const url = isEditing
+      ? `${VITE_API_URL}/api/client/${currentClient?.id}`
+      : `${VITE_API_URL}/api/client`;
+
+    await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId }),
+    });
+
+    setOpenModal(false);
+    fetchClients();
+  };
+
+  const deleteClient = async (id: number) => {
+    if (!confirm("¿Eliminar cliente?")) return;
+
+    await fetch(`${VITE_API_URL}/api/client/${id}`, {
+      method: "DELETE",
+    });
+
+    fetchClients();
+  };
+
 
   const filtered = clients.filter((c) =>
     c.user_name.toLowerCase().includes(search.toLowerCase())
@@ -43,7 +104,10 @@ export default function ClientsTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+        <button
+          onClick={openCreate}
+          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
+        >
           {t("clients_screen.add_button")}
         </button>
       </div>
@@ -71,10 +135,17 @@ export default function ClientsTable() {
                   <td className="py-3">{item.id}</td>
                   <td className="py-3">{item.user_name}</td>
                   <td className="py-3 text-right space-x-3">
-                    <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                    <button
+                      onClick={() => openEdit(item)}
+                      className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
+                    >
                       {t("clients_screen.edit")}
                     </button>
-                    <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+
+                    <button
+                      onClick={() => deleteClient(item.id)}
+                      className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
+                    >
                       {t("clients_screen.delete")}
                     </button>
                   </td>
@@ -92,6 +163,48 @@ export default function ClientsTable() {
           </table>
         )}
       </div>
+      {openModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[2000]">
+          <div className="bg-white w-[400px] p-6 rounded-xl shadow-xl">
+            <h2 className="text-xl font-semibold mb-4">
+              {isEditing ? t("clients_screen.edit_title") : t("clients_screen.create_title")}
+            </h2>
+
+            {/* Select User */}
+            <label className="block text-sm font-medium mb-1">
+              {t("clients_screen.select_user")}
+            </label>
+
+            <select
+              className="w-full px-3 py-2 border rounded-lg mb-4"
+              value={userId || ""}
+              onChange={(e) => setUserId(Number(e.target.value))}
+            >
+              <option value="">{t("clients_screen.choose_user")}</option>
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name}
+                </option>
+              ))}
+            </select>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setOpenModal(false)}
+                className="px-4 py-2 bg-gray-300 rounded-lg"
+              >
+                {t("cancel")}
+              </button>
+              <button
+                onClick={saveClient}
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+              >
+                {isEditing ? t("save") : t("create")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
