@@ -16,6 +16,7 @@ import ClientsTable from "../pages/dashboard/pages/Clients";
 import PartnersTable from "../pages/dashboard/pages/Partners";
 import AdminsTable from "../pages/dashboard/pages/Admins";
 import CertificationsTable from "../pages/dashboard/pages/Certifications";
+import CarsTable from "../pages/dashboard/pages/Cars";
 
 export default function WebRoutes() {
   return (
@@ -120,6 +121,14 @@ export default function WebRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route path="/dashboard/my-cars"
+        element={
+          <ProtectedRoute permission="read_my-cars">
+            <CarsTable />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
+    
   );
 }
