@@ -2,16 +2,24 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Admin } from "../../../types/admin";
+import type { User } from "../../../types/users";
+
 import { useTranslation } from "react-i18next";
 
 export default function AdminsTable() {
     const [admins, setAdmins] = useState<Admin[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
+    const [openModal, setOpenModal] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [currentAdmin, setCurrentAdmin] = useState<Admin | null>(null);
+    const [userId, setUserId] = useState<number | null>(null);
     const { t } = useTranslation();
 
     useEffect(() => {
         fetchAdmins();
+        fetchUsers();
     }, []);
 
     const fetchAdmins = async () => {
@@ -24,6 +32,58 @@ export default function AdminsTable() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const fetchUsers = async () => {
+        try {
+            const res = await fetch(`${VITE_API_URL}/api/users`);
+            const data = await res.json();
+            setUsers(data);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
+    };
+
+    const openCreate = () => {
+        setIsEditing(false);
+        setCurrentAdmin(null);
+        setUserId(null);
+        setOpenModal(true);
+    };
+
+    const openEdit = (admin: Admin) => {
+        setIsEditing(true);
+        setCurrentAdmin(admin);
+        setUserId(admin.user_id);
+        setOpenModal(true);
+    };
+
+    const saveAdmin = async () => {
+        if (!userId) return alert("Debes seleccionar un usuario.");
+
+        const method = isEditing ? "PUT" : "POST";
+        const url = isEditing
+            ? `${VITE_API_URL}/api/admins/${currentAdmin?.id}`
+            : `${VITE_API_URL}/api/admins`;
+
+        await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId }),
+        });
+
+        setOpenModal(false);
+        fetchAdmins();
+    };
+
+    const deleteAdmin = async (id: number) => {
+        if (!confirm("¿Eliminar administrador?")) return;
+
+        await fetch(`${VITE_API_URL}/api/admins/${id}`, {
+            method: "DELETE",
+        });
+
+        fetchAdmins();
     };
 
     const filtered = admins.filter((a) =>
@@ -43,7 +103,10 @@ export default function AdminsTable() {
                     onChange={(e) => setSearch(e.target.value)}
                 />
 
-                <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                <button
+                    onClick={openCreate}
+                    className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6]"
+                >
                     {t("admin_screen.add_button")}
                 </button>
             </div>
@@ -68,10 +131,17 @@ export default function AdminsTable() {
                                     <td className="py-2">{item.user_name}</td>
 
                                     <td className="py-2 text-right space-x-4">
-                                        <button className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                                        <button
+                                            onClick={() => openEdit(item)}
+                                            className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
+                                        >
                                             {t("admin_screen.edit")}
                                         </button>
-                                        <button className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+
+                                        <button
+                                            onClick={() => deleteAdmin(item.id)}
+                                            className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
+                                        >
                                             {t("admin_screen.delete")}
                                         </button>
                                     </td>
@@ -89,6 +159,47 @@ export default function AdminsTable() {
                     </table>
                 )}
             </div>
+            {openModal && (
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[2000]">
+                    <div className="bg-white w-[400px] p-6 rounded-xl shadow-xl">
+                        <h2 className="text-xl font-semibold mb-4">
+                            {isEditing ? t("admin_screen.edit_title") : t("admin_screen.create_title")}
+                        </h2>
+
+                        {/* SELECT USER */}
+                        <label className="block text-sm mb-1">
+                            {t("admin_screen.select_user")}
+                        </label>
+                        <select
+                            className="w-full px-3 py-2 border rounded-lg mb-4"
+                            value={userId || ""}
+                            onChange={(e) => setUserId(Number(e.target.value))}
+                        >
+                            <option value="">{t("admin_screen.choose_user")}</option>
+                            {users.map((u) => (
+                                <option key={u.id} value={u.id}>
+                                    {u.name}
+                                </option>
+                            ))}
+                        </select>
+
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                onClick={() => setOpenModal(false)}
+                                className="px-4 py-2 bg-gray-300 rounded-lg"
+                            >
+                                {t("cancel")}
+                            </button>
+                            <button
+                                onClick={saveAdmin}
+                                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+                            >
+                                {isEditing ? t("save") : t("create")}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </DashboardLayout>
     );
 }
