@@ -21,7 +21,18 @@ export default function UsersTable() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [openEdit, setOpenEdit] = useState(false);
+    const [openCreate, setOpenCreate] = useState(false);
+
     const [currentUser, setCurrentUser] = useState<User | null>(null);
+     const [newUser, setNewUser] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+        role_id: 3,
+        gender_id: null,
+        photo_url: ""
+    });
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -37,6 +48,29 @@ export default function UsersTable() {
             console.error("Error fetching users:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteUser = async (id: number) => {
+        if (!confirm("¿Seguro que deseas eliminar este usuario?")) return;
+
+        try {
+            const res = await fetch(`${VITE_API_URL}/api/users/${id}`, {
+                method: "DELETE",
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.message || "Error eliminando usuario");
+                return;
+            }
+
+            alert("Usuario eliminado");
+            fetchUsers();
+
+        } catch (error) {
+            console.error("Error deleting user:", error);
         }
     };
 
@@ -69,6 +103,41 @@ export default function UsersTable() {
         }
     };
 
+     const handleCreateUser = async () => {
+        try {
+            const res = await fetch(`${VITE_API_URL}/api/users`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newUser),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.message || "Error creando usuario");
+                return;
+            }
+
+            alert("Usuario creado correctamente");
+            setOpenCreate(false);
+
+            setNewUser({
+                name: "",
+                email: "",
+                phone: "",
+                address: "",
+                role_id: 3,
+                gender_id: null,
+                photo_url: ""
+            });
+
+            fetchUsers();
+
+        } catch (error) {
+            console.error("Error creating user:", error);
+        }
+    };
+
     const filtered = users.filter(
         (u) =>
             u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -88,7 +157,10 @@ export default function UsersTable() {
                     onChange={(e) => setSearch(e.target.value)}
                 />
 
-                <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                <button
+                    onClick={() => setOpenCreate(true)}
+                    className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
+                >
                     {t("users_screen.add_button")}
                 </button>
             </div>
@@ -124,14 +196,17 @@ export default function UsersTable() {
                                     <td className="py-3">{user.gender_name || "—"}</td>
 
                                     <td className="py-3 text-right space-x-3">
-                                        <button
+                                         <button
                                             className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
                                             onClick={() => handleOpenEdit(user)}
                                         >
                                             {t("users_screen.edit")}
                                         </button>
 
-                                        <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                                        <button
+                                            className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
+                                            onClick={() => handleDeleteUser(user.id)}
+                                        >
                                             {t("users_screen.delete")}
                                         </button>
                                     </td>
@@ -149,6 +224,63 @@ export default function UsersTable() {
                     </table>
                 )}
             </div>
+
+            {openCreate && (
+                <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex justify-center items-center z-50">
+                    <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
+                        <h2 className="text-2xl font-bold mb-4">Crear Usuario</h2>
+
+                        <div className="space-y-4">
+                            <input
+                                className="w-full border px-3 py-2 rounded-lg"
+                                placeholder="Nombre"
+                                value={newUser.name}
+                                onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                            />
+
+                            <input
+                                className="w-full border px-3 py-2 rounded-lg"
+                                placeholder="Email"
+                                value={newUser.email}
+                                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                            />
+
+                            <input
+                                className="w-full border px-3 py-2 rounded-lg"
+                                placeholder="Teléfono"
+                                value={newUser.phone}
+                                onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+                            />
+
+                            <select
+                                className="w-full border px-3 py-2 rounded-lg"
+                                value={newUser.role_id}
+                                onChange={(e) => setNewUser({ ...newUser, role_id: Number(e.target.value) })}
+                            >
+                                <option value={1}>Admin</option>
+                                <option value={2}>Partner</option>
+                                <option value={3}>Client</option>
+                            </select>
+                        </div>
+
+                        <div className="flex justify-end gap-3 mt-6">
+                            <button
+                                onClick={() => setOpenCreate(false)}
+                                className="px-4 py-2 bg-gray-400 text-white rounded-lg"
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                onClick={handleCreateUser}
+                                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+                            >
+                                Crear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {openEdit && currentUser && (
                 <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
