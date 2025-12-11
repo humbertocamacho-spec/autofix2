@@ -10,6 +10,11 @@ export default function SpecialitiesTable() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
+  const [openModal, setOpenModal] = useState(false);
+  const [current, setCurrent] = useState<Specialities | null>(null);
+  const [name, setName] = useState("");
+
+
   useEffect(() => {
     fetchSpecialities();
   }, []);
@@ -24,6 +29,65 @@ export default function SpecialitiesTable() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const createSpeciality = async () => {
+    try {
+      await fetch(`${VITE_API_URL}/api/specialities`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+
+      setOpenModal(false);
+      fetchSpecialities();
+    } catch (error) {
+      console.error("Error creating speciality:", error);
+    }
+  };
+
+  const updateSpeciality = async () => {
+    try {
+      if (!current) return;
+
+      await fetch(`${VITE_API_URL}/api/specialities/${current.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+
+      setOpenModal(false);
+      setCurrent(null);
+      fetchSpecialities();
+    } catch (error) {
+      console.error("Error updating speciality:", error);
+    }
+  };
+
+  const deleteSpeciality = async (id: number) => {
+    if (!confirm("¿Seguro que deseas eliminar esta especialidad?")) return;
+
+    try {
+      await fetch(`${VITE_API_URL}/api/specialities/${id}`, {
+        method: "DELETE",
+      });
+
+      fetchSpecialities();
+    } catch (error) {
+      console.error("Error deleting speciality:", error);
+    }
+  };
+
+  const openCreateModal = () => {
+    setCurrent(null);
+    setName("");
+    setOpenModal(true);
+  };
+
+  const openEditModal = (item: Specialities) => {
+    setCurrent(item);
+    setName(item.name);
+    setOpenModal(true);
   };
 
   const filtered = specialities.filter((s) =>
@@ -43,7 +107,10 @@ export default function SpecialitiesTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+        <button
+          onClick={openCreateModal}
+          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
+        >
           {t("specialities_screen.add_button")}
         </button>
       </div>
@@ -70,10 +137,16 @@ export default function SpecialitiesTable() {
                     <td className="py-3">{item.id}</td>
                     <td className="py-3">{item.name}</td>
                     <td className="py-3 text-right space-x-3">
-                      <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                      <button
+                        onClick={() => openEditModal(item)}
+                        className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
+                      >
                         {t("specialities_screen.edit")}
                       </button>
-                      <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                      <button
+                        onClick={() => deleteSpeciality(item.id)}
+                        className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
+                      >
                         {t("specialities_screen.delete")}
                       </button>
                     </td>
@@ -92,6 +165,43 @@ export default function SpecialitiesTable() {
           </div>
         )}
       </div>
+      {openModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-96">
+            <h2 className="text-xl font-semibold mb-4">
+              {current
+                ? t("specialities_screen.edit")
+                : t("specialities_screen.add_button")}
+            </h2>
+
+            <input
+              type="text"
+              className="w-full px-4 py-2 border rounded-lg mb-4"
+              placeholder="Nombre"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setOpenModal(false)}
+                className="px-4 py-2 rounded-lg border"
+              >
+                {t("specialities_screen.cancel")}
+              </button>
+
+              <button
+                onClick={current ? updateSpeciality : createSpeciality}
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+              >
+                {current
+                  ? t("specialities_screen.save")
+                  : t("specialities_screen.create")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
