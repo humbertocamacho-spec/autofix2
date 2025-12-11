@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT id, name, description FROM modules ORDER BY id ASC");
+    const [rows] = await pool.query("SELECT id, name FROM modules");
     res.json({ modules: rows });
   } catch (error) {
     res.status(500).json({ error: error.message });
