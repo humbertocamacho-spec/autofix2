@@ -166,6 +166,7 @@ export default function AdminsTable() {
                             {isEditing ? t("admin_screen.edit_title") : t("admin_screen.create_title")}
                         </h2>
 
+                        {/* SELECT USER */}
                         <label className="block text-sm mb-1">
                             {t("admin_screen.select_user")}
                         </label>
