@@ -16,6 +16,7 @@ export default function ClientsTable() {
   const [currentClient, setCurrentClient] = useState<Client | null>(null);
 
   const [userId, setUserId] = useState<number | null>(null);
+  const usedUserIds = clients.map((c) => c.user_id);
 
   useEffect(() => {
     fetchClients();
@@ -66,11 +67,18 @@ export default function ClientsTable() {
       ? `${VITE_API_URL}/api/client/${currentClient?.id}`
       : `${VITE_API_URL}/api/client`;
 
-    await fetch(url, {
+    const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId }),
     });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message);
+      return;
+    }
 
     setOpenModal(false);
     fetchClients();
@@ -85,6 +93,14 @@ export default function ClientsTable() {
 
     fetchClients();
   };
+
+  const availableUsers = users.filter((u) => {
+    if (isEditing && u.id === currentClient?.user_id) {
+      return true;
+    }
+    return !usedUserIds.includes(u.id);
+  });
+
 
   const filtered = clients.filter((c) =>
     c.user_name.toLowerCase().includes(search.toLowerCase())
@@ -190,7 +206,7 @@ export default function ClientsTable() {
                     {t("clients_screen.choose_user")}
                   </option>
 
-                  {users.map((u) => (
+                  {availableUsers.map((u) => (
                     <option key={u.id} value={u.id}>
                       {u.name}
                     </option>

@@ -12,6 +12,7 @@ router.get("/", async (req, res) => {
                 u.name AS user_name
             FROM clients c
             LEFT JOIN users u ON u.id = c.user_id
+            ORDER BY c.id ASC
         `);
     res.json(rows);
   } catch (error) {
