@@ -2,14 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
-
-interface PartnerCertification {
-  id: number;
-  partner_id: number;
-  certification_id: number;
-  partner_name: string;
-  certification_name: string;
-}
+import type { PartnerCertification } from "../../../types/partner_certification";
 
 export default function PartnersCertificationsTable() {
   const { t } = useTranslation();
@@ -31,7 +24,6 @@ export default function PartnersCertificationsTable() {
     fetchAllCertifications();
   }, []);
 
-  // Fetch todas las certificaciones de partners
   const fetchCertifications = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/partner_certifications/all`);
@@ -44,7 +36,6 @@ export default function PartnersCertificationsTable() {
     }
   };
 
-  // Fetch lista de partners
   const fetchPartners = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/partners`);
@@ -55,7 +46,6 @@ export default function PartnersCertificationsTable() {
     }
   };
 
-  // Fetch lista de todas las certificaciones
   const fetchAllCertifications = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/certifications`);
@@ -66,7 +56,6 @@ export default function PartnersCertificationsTable() {
     }
   };
 
-  // Abrir modal para crear
   const openCreateModal = () => {
     setIsEditing(false);
     setCurrent(null);
@@ -75,7 +64,6 @@ export default function PartnersCertificationsTable() {
     setOpenModal(true);
   };
 
-  // Abrir modal para editar
   const openEditModal = (item: PartnerCertification) => {
     setIsEditing(true);
     setCurrent(item);
@@ -84,7 +72,6 @@ export default function PartnersCertificationsTable() {
     setOpenModal(true);
   };
 
-  // Guardar o actualizar
   const handleSave = async () => {
     if (!partnerId || !certificationId) {
       alert("Selecciona partner y certificación");
@@ -93,14 +80,12 @@ export default function PartnersCertificationsTable() {
 
     try {
       if (isEditing && current) {
-        // UPDATE
         await fetch(`${VITE_API_URL}/api/partner_certifications/${current.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ partner_id: partnerId, certification_id: certificationId }),
         });
       } else {
-        // CREATE
         await fetch(`${VITE_API_URL}/api/partner_certifications`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -109,24 +94,22 @@ export default function PartnersCertificationsTable() {
       }
 
       setOpenModal(false);
-      fetchCertifications(); // recarga la tabla
+      fetchCertifications();
     } catch (error) {
       console.error("Error saving certification:", error);
     }
   };
 
-  // Eliminar
   const handleDelete = async (id: number) => {
     if (!confirm("¿Deseas eliminar este registro?")) return;
     try {
       await fetch(`${VITE_API_URL}/api/partner_certifications/${id}`, { method: "DELETE" });
-      fetchCertifications(); // recarga la tabla
+      fetchCertifications();
     } catch (error) {
       console.error("Error deleting certification:", error);
     }
   };
 
-  // Filtrar por búsqueda
   const filtered = certifications.filter((c) =>
     c.partner_name.toLowerCase().includes(search.toLowerCase()) ||
     c.certification_name.toLowerCase().includes(search.toLowerCase())
