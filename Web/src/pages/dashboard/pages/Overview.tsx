@@ -9,7 +9,7 @@ export default function Overview() {
       <div className="relative min-h-[70vh]">
         <div className="absolute inset-0  flex justify-center items-center pointer-events-none select-none  opacity-10">
           <img
-            src="../../../public/assets/images/Logo.jpg"
+            src="/assets/images/Logo.jpg"
             className="w-[50%] max-w-[500px] grayscale object-contain"
             alt="watermark"
           />

@@ -160,11 +160,19 @@ export default function PartnerDetailScreen() {
             <Text style={styles.valueText}>{phone}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.detailItem} onPress={handleWhatsapp}>
-            <Ionicons name="logo-whatsapp" size={20} color="#27B9BA" style={styles.icon} />
-            <Text style={styles.labelText}>WhatsApp: </Text>
-            <Text style={styles.valueText}>{whatsapp}</Text>
-          </TouchableOpacity>
+          {whatsapp ? (
+            <TouchableOpacity style={styles.detailItem} onPress={handleWhatsapp}>
+              <Ionicons name="logo-whatsapp" size={20} color="#27B9BA" style={styles.icon} />
+              <Text style={styles.labelText}>WhatsApp: </Text>
+              <Text style={styles.valueText}>{whatsapp}</Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.detailItem}>
+              <Ionicons name="close-circle-outline" size={20} color="gray" style={styles.icon} />
+              <Text style={[styles.labelText, { color: "gray" }]}>WhatsApp:</Text>
+              <Text style={[styles.valueText, { color: "gray" }]}>No disponible</Text>
+            </View>
+          )}
 
           <Text style={styles.sectionTitle}>Acerca de nosotros </Text>
           <Text style={styles.descriptionText}>{description}</Text>
