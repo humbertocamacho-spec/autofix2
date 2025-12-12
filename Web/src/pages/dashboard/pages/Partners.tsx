@@ -13,6 +13,7 @@ export default function PartnersTable() {
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentPartner, setCurrentPartner] = useState<Partner | null>(null);
+
   const [name, setName] = useState("");
   const [userId, setUserId] = useState<number | null>(null);
   const [phone, setPhone] = useState("");
@@ -22,7 +23,10 @@ export default function PartnersTable() {
 
   const { t } = useTranslation();
 
-  useEffect(() => { fetchPartners(); fetchUsers(); }, []);
+  useEffect(() => {
+    fetchPartners();
+    fetchUsers();
+  }, []);
 
   const fetchPartners = async () => {
     try {
@@ -49,42 +53,31 @@ export default function PartnersTable() {
   const openCreate = () => {
     setIsEditing(false);
     setCurrentPartner(null);
-
     setName("");
     setUserId(null);
     setPhone("");
     setWhatsapp("");
     setLocation("");
-    setPriority(1);
-
+    setPriority(10);
     setOpenModal(true);
   };
 
   const openEdit = (partner: Partner) => {
     setIsEditing(true);
     setCurrentPartner(partner);
-
     setName(partner.name);
     setUserId(partner.user_id);
     setPhone(partner.phone);
     setWhatsapp(partner.whatsapp);
     setLocation(partner.location);
     setPriority(partner.priority);
-
     setOpenModal(true);
   };
 
   const savePartner = async () => {
     if (!name || !userId) return alert("Name y User son requeridos");
 
-    const body = {
-      name,
-      user_id: userId,
-      phone,
-      whatsapp,
-      location,
-      priority,
-    };
+    const body = { name, user_id: userId, phone, whatsapp, location, priority };
 
     const url = isEditing
       ? `${VITE_API_URL}/api/partners/${currentPartner?.id}`
@@ -104,9 +97,7 @@ export default function PartnersTable() {
 
   const deletePartner = async (id: number) => {
     if (!confirm("¿Eliminar Partner?")) return;
-
     await fetch(`${VITE_API_URL}/api/partners/${id}`, { method: "DELETE" });
-
     fetchPartners();
   };
 
@@ -165,13 +156,13 @@ export default function PartnersTable() {
                     <td className="py-3 text-right space-x-3">
                       <button
                         onClick={() => openEdit(item)}
-                        className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm"
+                        className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
                       >
                         {t("partners_screen.edit")}
                       </button>
                       <button
                         onClick={() => deletePartner(item.id)}
-                        className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm"
+                        className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
                       >
                         {t("partners_screen.delete")}
                       </button>
@@ -191,76 +182,75 @@ export default function PartnersTable() {
           </div>
         )}
       </div>
+
       {openModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[2000]">
-          <div className="bg-white w-[450px] p-6 rounded-xl shadow-xl">
-            <h2 className="text-xl font-semibold mb-4">
-              {isEditing ? "Edit Partner" : "Create Partner"}
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
+          <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+              {isEditing ? t("partners_screen.edit_title") : t("partners_screen.create_title")}
             </h2>
 
-            {/* NAME */}
-            <input
-              className="w-full px-3 py-2 border rounded mb-3"
-              placeholder="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <div className="space-y-3">
+              <input
+                className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
 
-            {/* USER SELECT */}
-            <select
-              className="w-full px-3 py-2 border rounded mb-3"
-              value={userId || ""}
-              onChange={(e) => setUserId(Number(e.target.value))}
-            >
-              <option value="">Select User</option>
-              {users.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.name}
-                </option>
-              ))}
-            </select>
+              <select
+                className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                value={userId || ""}
+                onChange={(e) => setUserId(Number(e.target.value))}
+              >
+                <option value="">Select User</option>
+                {users.map((u) => (
+                  <option key={u.id} value={u.id}>{u.name}</option>
+                ))}
+              </select>
 
-            <input
-              className="w-full px-3 py-2 border rounded mb-3"
-              placeholder="Phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
+              <input
+                className="w-full border border-gray-300 px-3 py-2 rounded-lg"
+                placeholder="Phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
 
-            <input
-              className="w-full px-3 py-2 border rounded mb-3"
-              placeholder="WhatsApp"
-              value={whatsapp}
-              onChange={(e) => setWhatsapp(e.target.value)}
-            />
+              <input
+                className="w-full border border-gray-300 px-3 py-2 rounded-lg"
+                placeholder="WhatsApp"
+                value={whatsapp}
+                onChange={(e) => setWhatsapp(e.target.value)}
+              />
 
-            <textarea
-              className="w-full px-3 py-2 border rounded mb-3"
-              placeholder="Location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-            />
+              <textarea
+                className="w-full border border-gray-300 px-3 py-2 rounded-lg"
+                placeholder="Location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+              />
 
-            <input
-              type="number"
-              className="w-full px-3 py-2 border rounded mb-3"
-              placeholder="Priority"
-              value={priority}
-              onChange={(e) => setPriority(Number(e.target.value))}
-            />
+              <input
+                type="number"
+                className="w-full border border-gray-300 px-3 py-2 rounded-lg"
+                placeholder="Priority"
+                value={priority}
+                onChange={(e) => setPriority(Number(e.target.value))}
+              />
+            </div>
 
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => setOpenModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded"
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
               >
-                Cancel
+                {t("partners_screen.cancel")}
               </button>
               <button
                 onClick={savePartner}
-                className="px-4 py-2 bg-[#27B9BA] text-white rounded"
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
               >
-                {isEditing ? "Save" : "Create"}
+                {isEditing ? t("partners_screen.save") : t("partners_screen.create")}
               </button>
             </div>
           </div>

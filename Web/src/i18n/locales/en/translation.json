@@ -7,10 +7,13 @@
     "loading": "Loading...",
     "no_results": "No admins found",
     "search_placeholder": "Search admins by name...",
-    "create_title": "Create Admin",
+    "create_title": "Add Admin",
     "select_user": "Select user",
     "choose_user": "Choose user",
     "edit_title": "Edit Admin",
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
     "table": {
       "actions": "Actions",
       "id": "ID",
@@ -20,8 +23,10 @@
 
     "title": "Administrators"
   },
+
   "brands": "Car Brands",
   "certifications": "Certifications",
+
   "clients": "Clients",
   "clients_screen": {
     "add_button": "Add Client",
@@ -30,10 +35,13 @@
     "loading": "Loading...",
     "no_results": "No clients found",
     "search_placeholder": "Search clients by name...",
-    "create_title": "Create Client",
+    "create_title": "Add Client",
     "select_user": "Select user",
     "choose_user": "Choose user",
     "edit_title": "Edit Client",
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
     "table": {
       "actions": "Actions",
       "id": "ID",
@@ -41,6 +49,7 @@
     },
     "title": "Clients"
   },
+
   "confirmed_tickets": "Confirmed",
   "dashboard": "Dashboard",
   "dashboard_overview": "Dashboard Overview",
@@ -48,7 +57,6 @@
   "modules": "Modules",
 
   "myCars": "My Cars",
-
   "myCars_screen": {
     "title": "My Cars",
     "search_placeholder": "Search cars...",
@@ -57,8 +65,11 @@
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No cars found",
+    "create": "Create",
     "cancel": "Cancel",
-    "create_title": "Create Car",
+    "save": "Save",
+    "create_title": "Add Car",
+    "edit_title": "Edit Car",
     "table": {
       "name": "Name",
       "brand": "Car Brand",
@@ -71,7 +82,6 @@
     }
   },
 
-  
   "overview": {
     "buttons": {
       "seeAll": "See all",
@@ -109,6 +119,7 @@
       "weeks4": "4 weeks left"
     }
   },
+
   "partners": "Partners",
   "partners_screen": {
     "add_button": "Add Partner",
@@ -117,6 +128,11 @@
     "loading": "Loading...",
     "no_results": "No partners found",
     "search_placeholder": "Search partner...",
+    "create_title": "Add Partner",
+    "edit_title": "Edit Partner",
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
     "table": {
       "actions": "Actions",
       "id": "ID",
@@ -128,6 +144,7 @@
     },
     "title": "Partners"
   },
+
   "pending_tickets": "Pending",
   "permissions": "Permissions",
   "roles": "Roles",
@@ -135,6 +152,7 @@
   "see_all": "See all",
   "specialities": "Specialities",
   "tickets": "Tickets",
+
   "users": "Users",
   "users_screen": {
     "add_button": "Add User",
@@ -195,8 +213,11 @@
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No car brands found",
-    "create_title": "Create Car Brand",
+    "create_title": "Add Car Brand",
     "edit_title": "Edit Car Brand",
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
     "table": {
       "id": "ID",
       "name": "Name",
@@ -212,8 +233,11 @@
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No certifications found",
-    "create_title": "Create Certification",
+    "create_title": "Add Certification",
     "edit_title": "Edit Certification",
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
     "name": "Name",
     "table": {
       "id": "ID",
@@ -230,7 +254,7 @@
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No modules found",
-    "create_module": "Create Module",
+    "create_module": "Add Module",
     "edit_module": "Edit Module",
     "cancel": "Cancel",
     "create": "Create",
@@ -252,11 +276,14 @@
     "delete": "Delete",
     "no_results": "No permissions found",
     "unknown_module": "Unknown",
-    "create_title": "Create Permission",
+    "create_title": "Add Permission",
     "edit_title": "Edit Permission",
     "name": "Name",
     "module": "Module",
     "select_module": "Select module",
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
     "table": {
       "id": "ID",
       "permission": "Permission",

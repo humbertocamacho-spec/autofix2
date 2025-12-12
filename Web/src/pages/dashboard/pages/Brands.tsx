@@ -89,6 +89,7 @@ export default function CarBrands() {
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("car_brands_screen.title")}</h1>
+
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -108,7 +109,9 @@ export default function CarBrands() {
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
-          <p className="text-center py-10 text-gray-500">{t("car_brands_screen.loading")}</p>
+          <p className="text-center py-10 text-gray-500">
+            {t("car_brands_screen.loading")}
+          </p>
         ) : (
           <div className="max-h-[600px] overflow-y-auto">
             <table className="w-full table-auto text-left">
@@ -116,9 +119,12 @@ export default function CarBrands() {
                 <tr className="text-gray-600 border-b">
                   <th className="pb-3">{t("car_brands_screen.table.id")}</th>
                   <th className="pb-3">{t("car_brands_screen.table.name")}</th>
-                  <th className="pb-3 text-right">{t("car_brands_screen.table.actions")}</th>
+                  <th className="pb-3 text-right">
+                    {t("car_brands_screen.table.actions")}
+                  </th>
                 </tr>
               </thead>
+
               <tbody>
                 {filtered.map((item) => (
                   <tr
@@ -157,39 +163,44 @@ export default function CarBrands() {
           </div>
         )}
       </div>
+
       {openModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[2000]">
-          <div className="bg-white w-[400px] p-6 rounded-xl shadow-xl">
-            <h2 className="text-xl font-semibold mb-4">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
+          <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
               {isEditing
                 ? t("car_brands_screen.edit_title")
                 : t("car_brands_screen.create_title")}
             </h2>
 
-            <label className="block text-sm font-medium text-gray-700">
-              {t("car_brands_screen.table.name")}
-            </label>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-600">
+                  {t("car_brands_screen.table.name")}
+                </label>
 
-            <input
-              type="text"
-              className="w-full mt-2 mb-4 px-3 py-2 border rounded-lg"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+                <input
+                  type="text"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+            </div>
 
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => setOpenModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded-lg"
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
               >
-                {t("cancel")}
+                {t("car_brands_screen.cancel")}
               </button>
 
               <button
                 onClick={saveBrand}
-                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
               >
-                {isEditing ? t("save") : t("create")}
+                {isEditing ? t("car_brands_screen.save") : t("car_brands_screen.create")}
               </button>
             </div>
           </div>

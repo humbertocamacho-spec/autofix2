@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Client } from "../../../types/client";
-import type { User } from "../../../types/users"
+import type { User } from "../../../types/users";
 import { useTranslation } from "react-i18next";
 
 export default function ClientsTable() {
@@ -20,7 +20,6 @@ export default function ClientsTable() {
   useEffect(() => {
     fetchClients();
     fetchUsers();
-
   }, []);
 
   const fetchClients = async () => {
@@ -34,6 +33,7 @@ export default function ClientsTable() {
       setLoading(false);
     }
   };
+
   const fetchUsers = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/users`);
@@ -86,7 +86,6 @@ export default function ClientsTable() {
     fetchClients();
   };
 
-
   const filtered = clients.filter((c) =>
     c.user_name.toLowerCase().includes(search.toLowerCase())
   );
@@ -131,7 +130,10 @@ export default function ClientsTable() {
 
             <tbody>
               {filtered.map((item) => (
-                <tr key={item.id} className="border-b hover:bg-gray-50 text-gray-700">
+                <tr
+                  key={item.id}
+                  className="border-b hover:bg-gray-50 text-gray-700"
+                >
                   <td className="py-3">{item.id}</td>
                   <td className="py-3">{item.user_name}</td>
                   <td className="py-3 text-right space-x-3">
@@ -163,38 +165,53 @@ export default function ClientsTable() {
           </table>
         )}
       </div>
+
       {openModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-2000">
-          <div className="bg-white w-[400px] p-6 rounded-xl shadow-xl">
-            <h2 className="text-xl font-semibold mb-4">
-              {isEditing ? t("clients_screen.edit_title") : t("clients_screen.create_title")}
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white w-[450px] p-6 rounded-2xl shadow-xl border border-gray-200">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+              {isEditing
+                ? t("clients_screen.edit_title")
+                : t("clients_screen.create_title")}
             </h2>
 
-            <select
-              className="w-full px-3 py-2 border rounded-lg mb-4"
-              value={userId || ""}
-              onChange={(e) => setUserId(Number(e.target.value))}
-            >
-              <option value="">{t("clients_screen.choose_user")}</option>
-              {users.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.name}
-                </option>
-              ))}
-            </select>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-600">
+                  {t("clients_screen.choose_user")}
+                </label>
 
-            <div className="flex justify-end space-x-3">
+                <select
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg bg-white focus:ring-2 focus:ring-[#27B9BA] focus:outline-none"
+                  value={userId || ""}
+                  onChange={(e) => setUserId(Number(e.target.value))}
+                >
+                  <option value="">
+                    {t("clients_screen.choose_user")}
+                  </option>
+
+                  {users.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => setOpenModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded-lg"
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
               >
-                {t("cancel")}
+                {t("clients_screen.cancel")}
               </button>
+
               <button
                 onClick={saveClient}
-                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
               >
-                {isEditing ? t("save") : t("create")}
+                {isEditing ? t("clients_screen.save") : t("clients_screen.create")}
               </button>
             </div>
           </div>

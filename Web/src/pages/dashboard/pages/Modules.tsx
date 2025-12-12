@@ -179,48 +179,57 @@ export default function ModulesTable() {
         )}
       </div>
       {openModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white w-96 p-6 rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
+          <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
               {isEditing
                 ? t("modules_screen.edit_module")
                 : t("modules_screen.create_module")}
             </h2>
 
-            <div className="mb-4">
-              <label className="block mb-1">{t("modules_screen.table.name")}</label>
-              <input
-                className="w-full border px-3 py-2 rounded"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Module name"
-              />
+            <div className="space-y-4">
+
+              <div>
+                <label className="text-sm font-semibold text-gray-600">
+                  {t("modules_screen.table.name")}
+                </label>
+                <input
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg 
+                            focus:ring-2 focus:ring-[#27B9BA]"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Module name"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-600">
+                  {t("modules_screen.table.description")}
+                </label>
+                <textarea
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg 
+                            focus:ring-2 focus:ring-[#27B9BA]"
+                  rows={3}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Description"
+                ></textarea>
+              </div>
+
             </div>
 
-            <div className="mb-6">
-              <label className="block mb-1">
-                {t("modules_screen.table.description")}
-              </label>
-              <textarea
-                className="w-full border px-3 py-2 rounded"
-                rows={3}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Description"
-              ></textarea>
-            </div>
-
-            <div className="flex justify-end space-x-3">
+            <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={closeModal}
-                className="px-4 py-2 bg-gray-300 rounded-lg"
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
               >
                 {t("modules_screen.cancel")}
               </button>
 
               <button
                 onClick={handleSave}
-                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg"
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow 
+                          hover:bg-[#1da5a6] transition"
               >
                 {isEditing
                   ? t("modules_screen.save")
