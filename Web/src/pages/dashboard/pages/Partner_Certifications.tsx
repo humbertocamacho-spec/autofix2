@@ -31,11 +31,11 @@ export default function PartnersCertificationsTable() {
     fetchAllCertifications();
   }, []);
 
+  // Fetch todas las certificaciones de partners
   const fetchCertifications = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/partner_certifications/all`);
       const data = await res.json();
-      // Aseguramos que siempre sea array
       setCertifications(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching certifications:", error);
@@ -44,6 +44,7 @@ export default function PartnersCertificationsTable() {
     }
   };
 
+  // Fetch lista de partners
   const fetchPartners = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/partners`);
@@ -54,17 +55,18 @@ export default function PartnersCertificationsTable() {
     }
   };
 
+  // Fetch lista de todas las certificaciones
   const fetchAllCertifications = async () => {
     try {
-        const res = await fetch(`${VITE_API_URL}/api/certifications`);
-        const data = await res.json();
-        // Aquí usamos data.certifications
-        setAllCertifications(Array.isArray(data.certifications) ? data.certifications : []);
+      const res = await fetch(`${VITE_API_URL}/api/certifications`);
+      const data = await res.json();
+      setAllCertifications(Array.isArray(data.certifications) ? data.certifications : []);
     } catch (error) {
-        console.error("Error fetching certifications list:", error);
+      console.error("Error fetching certifications list:", error);
     }
-    };
+  };
 
+  // Abrir modal para crear
   const openCreateModal = () => {
     setIsEditing(false);
     setCurrent(null);
@@ -73,6 +75,7 @@ export default function PartnersCertificationsTable() {
     setOpenModal(true);
   };
 
+  // Abrir modal para editar
   const openEditModal = (item: PartnerCertification) => {
     setIsEditing(true);
     setCurrent(item);
@@ -81,6 +84,7 @@ export default function PartnersCertificationsTable() {
     setOpenModal(true);
   };
 
+  // Guardar o actualizar
   const handleSave = async () => {
     if (!partnerId || !certificationId) {
       alert("Selecciona partner y certificación");
@@ -89,12 +93,14 @@ export default function PartnersCertificationsTable() {
 
     try {
       if (isEditing && current) {
+        // UPDATE
         await fetch(`${VITE_API_URL}/api/partner_certifications/${current.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ partner_id: partnerId, certification_id: certificationId }),
         });
       } else {
+        // CREATE
         await fetch(`${VITE_API_URL}/api/partner_certifications`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -103,22 +109,24 @@ export default function PartnersCertificationsTable() {
       }
 
       setOpenModal(false);
-      fetchCertifications();
+      fetchCertifications(); // recarga la tabla
     } catch (error) {
       console.error("Error saving certification:", error);
     }
   };
 
+  // Eliminar
   const handleDelete = async (id: number) => {
     if (!confirm("¿Deseas eliminar este registro?")) return;
     try {
       await fetch(`${VITE_API_URL}/api/partner_certifications/${id}`, { method: "DELETE" });
-      fetchCertifications();
+      fetchCertifications(); // recarga la tabla
     } catch (error) {
       console.error("Error deleting certification:", error);
     }
   };
 
+  // Filtrar por búsqueda
   const filtered = certifications.filter((c) =>
     c.partner_name.toLowerCase().includes(search.toLowerCase()) ||
     c.certification_name.toLowerCase().includes(search.toLowerCase())
@@ -212,9 +220,7 @@ export default function PartnersCertificationsTable() {
                 >
                   <option value="">{t("partner_certifications_screen.table.select_partner")}</option>
                   {partners.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
+                    <option key={p.id} value={p.id}>{p.name}</option>
                   ))}
                 </select>
               </div>
@@ -230,9 +236,7 @@ export default function PartnersCertificationsTable() {
                 >
                   <option value="">{t("partner_certifications_screen.table.select_certification")}</option>
                   {allCertifications.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
+                    <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
                 </select>
               </div>
