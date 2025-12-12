@@ -15,6 +15,7 @@ export default function AdminsTable() {
   const [currentAdmin, setCurrentAdmin] = useState<Admin | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const { t } = useTranslation();
+  const usedUserIds = admins.map((a) => a.user_id);
 
   useEffect(() => {
     fetchAdmins();
@@ -65,11 +66,19 @@ export default function AdminsTable() {
       ? `${VITE_API_URL}/api/admins/${currentAdmin?.id}`
       : `${VITE_API_URL}/api/admins`;
 
-    await fetch(url, {
+    const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId }),
     });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message);
+      return;
+    }
+
 
     setOpenModal(false);
     fetchAdmins();
@@ -80,6 +89,14 @@ export default function AdminsTable() {
     await fetch(`${VITE_API_URL}/api/admins/${id}`, { method: "DELETE" });
     fetchAdmins();
   };
+
+  const availableUsers = users.filter((u) => {
+    if (isEditing && u.id === currentAdmin?.user_id) {
+      return true;
+    }
+    return !usedUserIds.includes(u.id);
+  });
+
 
   const filtered = admins.filter((a) =>
     a.user_name.toLowerCase().includes(search.toLowerCase())
@@ -179,7 +196,7 @@ export default function AdminsTable() {
                   onChange={(e) => setUserId(Number(e.target.value))}
                 >
                   <option value="">{t("admin_screen.choose_user")}</option>
-                  {users.map((u) => (
+                  {availableUsers.map((u) => (
                     <option key={u.id} value={u.id}>
                       {u.name}
                     </option>

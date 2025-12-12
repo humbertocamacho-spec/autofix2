@@ -11,6 +11,7 @@ router.get("/", async (req, res) => {
                 u.name AS user_name
             FROM admins a
             LEFT JOIN users u ON u.id = a.user_id
+             ORDER BY a.id ASC
             `);
 
         res.json({ ok: true, admins });
@@ -25,6 +26,17 @@ router.post("/", async (req, res) => {
         const { user_id } = req.body;
 
         if (!user_id) return res.status(400).json({ error: "user_id es requerido" });
+
+        const [exists] = await pool.query(
+            "SELECT id FROM admins WHERE user_id = ?",
+            [user_id]
+        );
+
+        if (exists.length > 0) {
+            return res.status(400).json({
+                message: "Este usuario ya es administrador",
+            });
+        }
 
         await pool.query(`INSERT INTO admins (user_id) VALUES (?)`, [user_id]);
 
@@ -41,6 +53,17 @@ router.put("/:id", async (req, res) => {
         const { user_id } = req.body;
 
         if (!user_id) return res.status(400).json({ error: "user_id es requerido" });
+
+        const [exists] = await pool.query(
+            "SELECT id FROM admins WHERE user_id = ? AND id != ?",
+            [user_id, id]
+        );
+
+        if (exists.length > 0) {
+            return res.status(400).json({
+                message: "Este usuario ya está asignado a otro admin",
+            });
+        }
 
         await pool.query(`UPDATE admins SET user_id = ? WHERE id = ?`, [user_id, id]);
 
