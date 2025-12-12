@@ -154,12 +154,20 @@ export default function PartnerDetailScreen() {
             <Text style={styles.valueText}>{location}</Text>
           </TouchableOpacity>
 
+          {phone ? (
           <TouchableOpacity style={styles.detailItem} onPress={handleCall}>
             <Ionicons name="call-outline" size={20} color="#27B9BA" style={styles.icon} />
             <Text style={styles.labelText}>Teléfono: </Text>
             <Text style={styles.valueText}>{phone}</Text>
           </TouchableOpacity>
-
+          ) : (
+            <View style={styles.detailItem}>
+              <Ionicons name="close-circle-outline" size={20} color="gray" style={styles.icon} />
+              <Text style={[styles.labelText, { color: "gray" }]}>Teléfono:</Text>
+              <Text style={[styles.valueText, { color: "gray" }]}>No disponible</Text>
+            </View>
+          )}
+          
           {whatsapp ? (
             <TouchableOpacity style={styles.detailItem} onPress={handleWhatsapp}>
               <Ionicons name="logo-whatsapp" size={20} color="#27B9BA" style={styles.icon} />

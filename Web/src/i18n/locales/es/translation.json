@@ -333,5 +333,11 @@
       "notes": "Notas",
       "actions": "Acciones"
     }
-  }
+  },
+
+  "dashboard_layout": {
+    "admin": "Administrador",
+    "client": "Cliente",
+    "partner": "Partner"
+  } 
 }

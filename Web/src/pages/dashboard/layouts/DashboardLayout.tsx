@@ -61,19 +61,19 @@ export default function DashboardLayout({ children }: Props) {
     if (user?.role_id === 1)
       return (
         <span className="ml-3 px-2.5 py-1 text-xs font-semibold text-white bg-purple-600 rounded-full">
-          Admin
+          {t("dashboard_layout.admin")}
         </span>
       );
     if (user?.role_id === 2)
       return (
         <span className="ml-3 px-2.5 py-1 text-xs font-semibold text-white bg-blue-600 rounded-full">
-          Partner
+          {t("dashboard_layout.partner")}
         </span>
       );
     if (user?.role_id === 3)
       return (
         <span className="ml-3 px-2.5 py-1 text-xs font-semibold text-white bg-green-600 rounded-full">
-          Cliente
+          {t("dashboard_layout.client")}
         </span>
       );
     return null;

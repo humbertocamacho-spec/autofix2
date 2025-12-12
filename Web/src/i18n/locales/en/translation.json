@@ -338,6 +338,12 @@
       "notes": "Notes",
       "actions": "Actions"
     }
-  }
+  },
+
+  "dashboard_layout": {
+    "admin": "Admin",
+    "client": "Client",
+    "partner": "Partner"
+  } 
 }
 
