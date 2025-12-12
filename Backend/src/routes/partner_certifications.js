@@ -32,4 +32,23 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/partner_certifications", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        id,
+        partner_id,
+        certification_id,
+        created_at
+      FROM partner_certifications
+      ORDER BY created_at DESC
+    `);
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error al obtener certificaciones:", error);
+    res.status(500).json({ message: "Error al obtener certificaciones" });
+  }
+});
+
 export default router;
