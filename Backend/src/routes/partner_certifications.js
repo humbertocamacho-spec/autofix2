@@ -2,13 +2,11 @@ import express from "express";
 import db from "../config/db.js";
 
 const router = express.Router();
+
 router.get("/", async (req, res) => {
   try {
     const { partner_id } = req.query;
-
-    if (!partner_id) {
-      return res.status(400).json({ message: "partner_id es requerido" });
-    }
+    if (!partner_id) return res.status(400).json({ message: "partner_id es requerido" });
 
     const [rows] = await db.query(
       `
@@ -32,22 +30,42 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/partner_certifications", async (req, res) => {
+router.get("/all", async (req, res) => {
   try {
-    const [rows] = await db.query(`
+    const [rows] = await db.query(
+      `
       SELECT 
-        id,
-        partner_id,
-        certification_id,
-        created_at
-      FROM partner_certifications
-      ORDER BY created_at DESC
-    `);
+        p.id AS partner_id,
+        p.name AS partner_name,
+        c.name AS certification_name
+      FROM partners p
+      LEFT JOIN partners_certifications pc
+        ON p.id = pc.partner_id
+      LEFT JOIN certifications c
+        ON pc.certification_id = c.id
+      ORDER BY p.id
+      `
+    );
 
-    res.json(rows);
+    const partnersMap = new Map();
+
+    rows.forEach(row => {
+      if (!partnersMap.has(row.partner_id)) {
+        partnersMap.set(row.partner_id, {
+          id: row.partner_id,
+          name: row.partner_name,
+          certifications: [],
+        });
+      }
+      if (row.certification_name) {
+        partnersMap.get(row.partner_id).certifications.push(row.certification_name);
+      }
+    });
+
+    res.json(Array.from(partnersMap.values()));
   } catch (error) {
-    console.error("Error al obtener certificaciones:", error);
-    res.status(500).json({ message: "Error al obtener certificaciones" });
+    console.error("Error al obtener partners con certificaciones:", error);
+    res.status(500).json({ message: "Error al obtener partners con certificaciones" });
   }
 });
 
