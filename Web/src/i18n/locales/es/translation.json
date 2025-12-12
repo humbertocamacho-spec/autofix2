@@ -118,6 +118,7 @@
   },
 
   "partners": "Partners",
+  "partner_certifications": "Certificaciones de Partners",
   "partners_screen": {
     "add_button": "Agregar Partner",
     "delete": "Eliminar",

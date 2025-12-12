@@ -1,8 +1,9 @@
 import { useState} from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
-import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineLogout, HiOutlineChevronDown, HiOutlineKey,HiOutlineDocumentDuplicate,HiOutlineEye,HiOutlineTranslate,
-  HiOutlineChevronRight, HiOutlineMenu, HiOutlineSearch, HiOutlineBell, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, HiOutlineShieldCheck,HiOutlineIdentification
+import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineLogout, HiOutlineChevronDown, HiOutlineKey,HiOutlineDocumentDuplicate,
+  HiOutlineEye,HiOutlineTranslate,HiOutlineChevronRight, HiOutlineMenu, HiOutlineSearch, HiOutlineBell, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, 
+  HiOutlineShieldCheck,HiOutlineIdentification,HiOutlineThumbUp
 } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import type { Props } from "../../../types/props";
@@ -40,15 +41,16 @@ export default function DashboardLayout({ children }: Props) {
     users: ["read_users"], // Admin
     admins: ["read_admins"], // Admin
     partners: ["read_partners"], // Admin
+    partner_certifications: ["read_partner_certifications"], // Admin
     clients: ["read_clients"], // Admin
     specialities: ["read_specialities"], // Admin
     certifications: ["read_certifications"], // Admin
     brands: ["read_brands"], // Admin
+    roles: ["read_roles"], // Admin
+    modules: ["read_modules"], // Admin
+    permissions: ["read_permissions"], // Admin
     tickets: ["read_tickets", "read_pending_tickets"], // Partner y Cliente
     myCars: ["read_cars_clients"], // Cliente
-    roles: ["read_roles"],
-    modules: ["read_modules"],// Admin
-    permissions: ["read_permissions"],// Admin
   };
 
   const CheckPermissionForModule = (module: string) => {
@@ -153,6 +155,14 @@ export default function DashboardLayout({ children }: Props) {
               <HiOutlineUsers size={iconSize} />
               <span className={textClass()}>{t("partners")}</span>
               {!sidebarOpen && <Tooltip>{t("partners")}</Tooltip>}
+            </Link>
+          )}
+
+          {CheckPermissionForModule("partner_certifications") && (
+            <Link to="/dashboard/partner_certifications" className={linkClass("/dashboard/partner_certifications")}>
+              <HiOutlineThumbUp size={iconSize} />
+              <span className={textClass()}>{t("partner_certifications")}</span>
+              {!sidebarOpen && <Tooltip>{t("partner_certifications")}</Tooltip>}
             </Link>
           )}
 

@@ -121,6 +121,7 @@
   },
 
   "partners": "Partners",
+  "partner_certifications": "Partners Certifications",
   "partners_screen": {
     "add_button": "Add Partner",
     "delete": "Delete",
