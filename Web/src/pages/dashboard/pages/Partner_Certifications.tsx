@@ -35,6 +35,7 @@ export default function PartnersCertificationsTable() {
     try {
       const res = await fetch(`${VITE_API_URL}/api/partner_certifications/all`);
       const data = await res.json();
+      // Aseguramos que siempre sea array
       setCertifications(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching certifications:", error);
@@ -43,24 +44,25 @@ export default function PartnersCertificationsTable() {
     }
   };
 
-  const fetchAllCertifications = async () => {
-    try {
-         const res = await fetch(`${VITE_API_URL}/api/certifications`);
-         const data = await res.json();
-         setAllCertifications(Array.isArray(data) ? data : []);
-        } catch (error) {
-         console.error("Error fetching certifications list:", error);
-        }
-    };
-
   const fetchPartners = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/partners`);
       const data = await res.json();
       setPartners(Array.isArray(data) ? data : []);
-     } catch (error) {
+    } catch (error) {
       console.error("Error fetching partners:", error);
-     }
+    }
+  };
+
+  const fetchAllCertifications = async () => {
+    try {
+        const res = await fetch(`${VITE_API_URL}/api/certifications`);
+        const data = await res.json();
+        // Aquí usamos data.certifications
+        setAllCertifications(Array.isArray(data.certifications) ? data.certifications : []);
+    } catch (error) {
+        console.error("Error fetching certifications list:", error);
+    }
     };
 
   const openCreateModal = () => {
@@ -183,7 +185,7 @@ export default function PartnersCertificationsTable() {
                 {filtered.length === 0 && (
                   <tr>
                     <td colSpan={4} className="text-center py-6 text-gray-500">
-                      {t("partner_certifications_screen.no_results")}{" "}
+                      {t("partner_certifications_screen.no_results")}
                     </td>
                   </tr>
                 )}
@@ -210,13 +212,17 @@ export default function PartnersCertificationsTable() {
                 >
                   <option value="">{t("partner_certifications_screen.table.select_partner")}</option>
                   {partners.map((p) => (
-                    <option key={p.id} value={p.id}>{p.name}</option>
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("partner_certifications_screen.table.certification_name")}</label>{" "}
+                <label className="text-sm font-semibold text-gray-600">
+                  {t("partner_certifications_screen.table.certification_name")}
+                </label>
                 <select
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={certificationId}
@@ -224,7 +230,9 @@ export default function PartnersCertificationsTable() {
                 >
                   <option value="">{t("partner_certifications_screen.table.select_certification")}</option>
                   {allCertifications.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -235,14 +243,14 @@ export default function PartnersCertificationsTable() {
                 className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
                 onClick={() => setOpenModal(false)}
               >
-                {t("partner_certifications_screen.cancel")}{" "}
+                {t("partner_certifications_screen.cancel")}
               </button>
 
               <button
                 onClick={handleSave}
                 className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
               >
-                {isEditing ? t("partner_certifications_screen.save") : t("partner_certifications_screen.create")}{" "}
+                {isEditing ? t("partner_certifications_screen.save") : t("partner_certifications_screen.create")}
               </button>
             </div>
           </div>

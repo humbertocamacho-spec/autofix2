@@ -167,7 +167,8 @@
         "partner_id": "Partner ID",
         "partner_name": "Partner Name",
         "certification_name": "Certification Name",
-        "select_partner": "Select Partner"
+        "select_partner": "Select Partner",
+        "select_certification": "Select Certification"
       }
     },
 
