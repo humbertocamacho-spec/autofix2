@@ -4,8 +4,8 @@ import db from "../config/db.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  try {
-    const [rows] = await db.query(`
+    try {
+        const [rows] = await db.query(`
             SELECT 
                 c.id,
                 c.user_id,
@@ -13,11 +13,11 @@ router.get("/", async (req, res) => {
             FROM clients c
             LEFT JOIN users u ON u.id = c.user_id
         `);
-    res.json(rows);
-  } catch (error) {
-    console.error("Error al obtener clients:", error);
-    res.status(500).json({ message: "Error al obtener clients" });
-  }
+        res.json(rows);
+    } catch (error) {
+        console.error("Error al obtener clients:", error);
+        res.status(500).json({ message: "Error al obtener clients" });
+    }
 });
 
 router.post("/", async (req, res) => {
@@ -26,17 +26,6 @@ router.post("/", async (req, res) => {
 
     if (!user_id)
       return res.status(400).json({ message: "user_id es requerido" });
-
-    const [exists] = await db.query(
-      "SELECT id FROM clients WHERE user_id = ?",
-      [user_id]
-    );
-
-    if (exists.length > 0) {
-      return res.status(400).json({
-        message: "Este usuario ya está asignado a un cliente",
-      });
-    }
 
     await db.query(
       "INSERT INTO clients (user_id) VALUES (?)",
@@ -54,21 +43,6 @@ router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { user_id } = req.body;
-
-    if (!user_id) {
-      return res.status(400).json({ message: "user_id es requerido" });
-    }
-
-    const [exists] = await db.query(
-      "SELECT id FROM clients WHERE user_id = ? AND id != ?",
-      [user_id, id]
-    );
-
-    if (exists.length > 0) {
-      return res.status(400).json({
-        message: "Este usuario ya está asignado a otro cliente",
-      });
-    }
 
     await db.query(
       "UPDATE clients SET user_id = ? WHERE id = ?",
