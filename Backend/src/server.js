@@ -47,6 +47,7 @@ app.use("/api/modules", modulesRoutes);
 app.use("/api/users", usersRoutes);
 app.use('/api/certifications', certificationsRoutes);
 app.use('/api/admins', adminsRoutes);
+
 app.get('/test-db', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT NOW() AS fecha');

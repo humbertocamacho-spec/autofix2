@@ -121,7 +121,7 @@
   },
 
   "partners": "Partners",
-  "partner_certifications": "Partners Certifications",
+  
   "partners_screen": {
     "add_button": "Add Partner",
     "delete": "Delete",
@@ -145,6 +145,28 @@
     },
     "title": "Partners"
   },
+
+  "partner_certifications": "Partners Certifications",
+    "partner_certifications_screen": {
+      "title": "Partners Certifications",
+      "search_placeholder": "Search partner certification...",
+      "add_button": "Add Partner Certification",
+      "loading": "Loading...",
+      "edit": "Edit",
+      "delete": "Delete",
+      "no_results": "No partner certifications found",
+      "create_title": "Add Partner Certification",
+      "edit_title": "Edit Partner Certification",
+      "create": "Create",
+      "save": "Save",
+      "cancel": "Cancel",
+      "table": {
+        "actions": "Actions",
+        "id": "ID",
+        "name": "Name",
+        "partner_id": "Partner ID"
+      }
+    },
 
   "pending_tickets": "Pending",
   "permissions": "Permissions",

@@ -118,7 +118,7 @@
   },
 
   "partners": "Partners",
-  "partner_certifications": "Certificaciones de Partners",
+  
   "partners_screen": {
     "add_button": "Agregar Partner",
     "delete": "Eliminar",
@@ -141,6 +141,11 @@
       "whatsapp": "WhatsApp"
     },
     "title": "Partners"
+  },
+
+    "partner_certifications": "Certificaciones de Partners",
+    "partner_certifications_screen": {
+    "title": "Certificaciones de Partners"
   },
 
   "pending_tickets": "Pendientes",

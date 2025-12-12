@@ -17,6 +17,7 @@ import PartnersTable from "../pages/dashboard/pages/Partners";
 import AdminsTable from "../pages/dashboard/pages/Admins";
 import CertificationsTable from "../pages/dashboard/pages/Certifications";
 import MyCarsTable from "../pages/dashboard/pages/MyCars";
+import PartnersCertificationsTable from "../pages/dashboard/pages/Partner_Certifications";
 
 export default function WebRoutes() {
   return (
@@ -126,6 +127,14 @@ export default function WebRoutes() {
         element={
           <ProtectedRoute permission="read_cars_clients">
             <MyCarsTable />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route path="/dashboard/partner_certifications"
+        element={
+          <ProtectedRoute permission="read_partner_certifications">
+            <PartnersCertificationsTable />
           </ProtectedRoute>
         }
       />
