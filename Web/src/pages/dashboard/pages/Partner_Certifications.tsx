@@ -3,161 +3,183 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 
-type Partner = { id: number; name: string };
-type Certification = { id: number; name: string };
-type PartnerCertification = {
+interface PartnerCertification {
   id: number;
   partner_id: number;
   certification_id: number;
   partner_name: string;
   certification_name: string;
-};
+}
 
 export default function PartnersCertificationsTable() {
   const { t } = useTranslation();
 
-  const [partnerCertifications, setPartnerCertifications] = useState<PartnerCertification[]>([]);
-  const [partners, setPartners] = useState<Partner[]>([]);
-  const [certifications, setCertifications] = useState<Certification[]>([]);
+  const [certifications, setCertifications] = useState<PartnerCertification[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-
   const [openModal, setOpenModal] = useState(false);
-  const [editing, setEditing] = useState<PartnerCertification | null>(null);
-  const [selectedPartner, setSelectedPartner] = useState<number | null>(null);
-  const [selectedCertification, setSelectedCertification] = useState<number | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [current, setCurrent] = useState<PartnerCertification | null>(null);
+  const [partnerId, setPartnerId] = useState<number | "">("");
+  const [certificationId, setCertificationId] = useState<number | "">("");
+  const [partners, setPartners] = useState<{ id: number; name: string }[]>([]);
+  const [allCertifications, setAllCertifications] = useState<{ id: number; name: string }[]>([]);
 
   useEffect(() => {
-    fetchAllData();
+    fetchCertifications();
+    fetchPartners();
+    fetchAllCertifications();
   }, []);
 
-  const fetchAllData = async () => {
-    setLoading(true);
+  // Obtener todos los registros
+  const fetchCertifications = async () => {
     try {
-      const [pcRes, partnersRes, certsRes] = await Promise.all([
-        fetch(`${VITE_API_URL}/api/partner_certifications`).then(r => r.json()),
-        fetch(`${VITE_API_URL}/api/partners`).then(r => r.json()),
-        fetch(`${VITE_API_URL}/api/certifications`).then(r => r.json()),
-      ]);
-      setPartnerCertifications(Array.isArray(pcRes) ? pcRes : []);
-      setPartners(Array.isArray(partnersRes) ? partnersRes : []);
-      setCertifications(Array.isArray(certsRes) ? certsRes : []);
+      const res = await fetch(`${VITE_API_URL}/api/partner_certifications/all`);
+      const data = await res.json();
+      setCertifications(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching certifications:", error);
     } finally {
       setLoading(false);
     }
   };
 
+  // Obtener todos los partners
+  const fetchPartners = async () => {
+    try {
+      const res = await fetch(`${VITE_API_URL}/api/partners`);
+      const data = await res.json();
+      setPartners(data);
+    } catch (error) {
+      console.error("Error fetching partners:", error);
+    }
+  };
+
+  // Obtener todas las certificaciones
+  const fetchAllCertifications = async () => {
+    try {
+      const res = await fetch(`${VITE_API_URL}/api/certifications`);
+      const data = await res.json();
+      setAllCertifications(data);
+    } catch (error) {
+      console.error("Error fetching certifications list:", error);
+    }
+  };
+
   const openCreateModal = () => {
-    setEditing(null);
-    setSelectedPartner(null);
-    setSelectedCertification(null);
+    setIsEditing(false);
+    setCurrent(null);
+    setPartnerId("");
+    setCertificationId("");
     setOpenModal(true);
   };
 
   const openEditModal = (item: PartnerCertification) => {
-    setEditing(item);
-    setSelectedPartner(item.partner_id);
-    setSelectedCertification(item.certification_id);
+    setIsEditing(true);
+    setCurrent(item);
+    setPartnerId(item.partner_id);
+    setCertificationId(item.certification_id);
     setOpenModal(true);
   };
 
   const handleSave = async () => {
-    if (!selectedPartner || !selectedCertification) return alert("Selecciona partner y certificación");
+    if (!partnerId || !certificationId) {
+      alert("Selecciona partner y certificación");
+      return;
+    }
 
     try {
-      if (editing) {
-        await fetch(`${VITE_API_URL}/api/partner_certifications/${editing.id}`, {
+      if (isEditing && current) {
+        // Editar
+        await fetch(`${VITE_API_URL}/api/partner_certifications/${current.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ partner_id: selectedPartner, certification_id: selectedCertification }),
+          body: JSON.stringify({ partner_id: partnerId, certification_id: certificationId }),
         });
       } else {
+        // Crear
         await fetch(`${VITE_API_URL}/api/partner_certifications`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ partner_id: selectedPartner, certification_id: selectedCertification }),
+          body: JSON.stringify({ partner_id: partnerId, certification_id: certificationId }),
         });
       }
-      fetchAllData();
+
       setOpenModal(false);
+      fetchCertifications();
     } catch (error) {
-      console.error("Error saving:", error);
+      console.error("Error saving certification:", error);
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("¿Eliminar esta certificación del partner?")) return;
-
+    if (!confirm("¿Deseas eliminar este registro?")) return;
     try {
       await fetch(`${VITE_API_URL}/api/partner_certifications/${id}`, { method: "DELETE" });
-      fetchAllData();
+      fetchCertifications();
     } catch (error) {
-      console.error("Error deleting:", error);
+      console.error("Error deleting certification:", error);
     }
   };
 
-  const filtered = partnerCertifications.filter(
-    pc =>
-      pc.partner_name.toLowerCase().includes(search.toLowerCase()) ||
-      pc.certification_name.toLowerCase().includes(search.toLowerCase())
+  const filtered = certifications.filter((c) =>
+    c.partner_name.toLowerCase().includes(search.toLowerCase()) ||
+    c.certification_name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <DashboardLayout>
-      <h1 className="text-3xl font-bold mb-6">{t("partner_certifications_screen.title")}</h1>
+      <h1 className="text-3xl font-bold mb-6">Partners Certifications</h1>
 
       <div className="mb-6 flex justify-between">
         <input
           type="text"
-          placeholder={t("partner_certifications_screen.search_placeholder")}
+          placeholder="Buscar..."
           className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-
         <button
           onClick={openCreateModal}
           className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
         >
-          {t("partner_certifications_screen.add_button")}
+          Agregar
         </button>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
-          <p className="text-center py-10 text-gray-500">{t("partner_certifications_screen.loading")}</p>
+          <p className="text-center py-10 text-gray-500">Cargando...</p>
         ) : (
           <div className="max-h-[600px] overflow-y-auto">
             <table className="w-full table-fixed text-left">
               <thead>
                 <tr className="text-gray-600 border-b">
-                  <th className="pb-3 w-20">{t("partner_certifications_screen.table.id")}</th>
-                  <th className="pb-3">{t("partner_certifications_screen.table.partner_name")}</th>
-                  <th className="pb-3">{t("partner_certifications_screen.table.certification_name")}</th>
-                  <th className="pb-3 text-right w-48 pr-6">{t("partner_certifications_screen.table.actions")}</th>
+                  <th className="pb-3 w-20">ID</th>
+                  <th className="pb-3">Partner</th>
+                  <th className="pb-3">Certificación</th>
+                  <th className="pb-3 text-right w-48 pr-6">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((item) => (
                   <tr key={item.id} className="border-b hover:bg-gray-50 text-gray-700">
                     <td className="py-3">{item.id}</td>
-                    <td className="py-3 truncate">{item.partner_name}</td>
-                    <td className="py-3 truncate">{item.certification_name}</td>
+                    <td className="py-3">{item.partner_name}</td>
+                    <td className="py-3">{item.certification_name}</td>
                     <td className="py-3 text-right pr-6">
                       <div className="flex justify-end space-x-2">
                         <button
                           onClick={() => openEditModal(item)}
                           className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
                         >
-                          {t("partner_certifications_screen.edit")}
+                          Editar
                         </button>
                         <button
                           onClick={() => handleDelete(item.id)}
                           className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
                         >
-                          {t("partner_certifications_screen.delete")}
+                          Eliminar
                         </button>
                       </div>
                     </td>
@@ -166,7 +188,7 @@ export default function PartnersCertificationsTable() {
                 {filtered.length === 0 && (
                   <tr>
                     <td colSpan={4} className="text-center py-6 text-gray-500">
-                      {t("partner_certifications_screen.no_results")}
+                      No hay registros
                     </td>
                   </tr>
                 )}
@@ -176,46 +198,56 @@ export default function PartnersCertificationsTable() {
         )}
       </div>
 
-      {/* Modal */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
             <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              {editing ? t("partner_certifications_screen.edit") : t("partner_certifications_screen.add_button")}
+              {isEditing ? "Editar" : "Agregar"}
             </h2>
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("partner_certifications_screen.table.partner_name")}</label>
+                <label className="text-sm font-semibold text-gray-600">Partner</label>
                 <select
-                  value={selectedPartner || ""}
-                  onChange={(e) => setSelectedPartner(Number(e.target.value))}
-                  className="w-full border rounded-lg px-3 py-2"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  value={partnerId}
+                  onChange={(e) => setPartnerId(Number(e.target.value))}
                 >
-                  <option value="">Select Partner</option>
-                  {partners.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  <option value="">Selecciona partner</option>
+                  {partners.map((p) => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
                 </select>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("partner_certifications_screen.table.certification_name")}</label>
+                <label className="text-sm font-semibold text-gray-600">Certificación</label>
                 <select
-                  value={selectedCertification || ""}
-                  onChange={(e) => setSelectedCertification(Number(e.target.value))}
-                  className="w-full border rounded-lg px-3 py-2"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  value={certificationId}
+                  onChange={(e) => setCertificationId(Number(e.target.value))}
                 >
-                  <option value="">Select Certification</option>
-                  {certifications.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  <option value="">Selecciona certificación</option>
+                  {allCertifications.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
                 </select>
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenModal(false)}>
-                {t("partner_certifications_screen.cancel")}
+              <button
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+                onClick={() => setOpenModal(false)}
+              >
+                Cancelar
               </button>
-              <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition" onClick={handleSave}>
-                {editing ? t("partner_certifications_screen.save") : t("partner_certifications_screen.create")}
+
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
+              >
+                Guardar
               </button>
             </div>
           </div>
