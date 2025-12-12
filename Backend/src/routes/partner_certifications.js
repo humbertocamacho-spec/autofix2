@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
 router.get("/all", async (req, res) => {
   try {
     const [rows] = await db.query(`
-      SELECT 
+      SELECT
         pc.id,
         pc.partner_id,
         pc.certification_id,
@@ -44,11 +44,11 @@ router.get("/all", async (req, res) => {
       FROM partners_certifications pc
       INNER JOIN partners p ON pc.partner_id = p.id
       INNER JOIN certifications c ON pc.certification_id = c.id
-      ORDER BY pc.id DESC
+      ORDER BY pc.id ASC
     `);
     res.json(rows);
   } catch (error) {
-    console.error("Error al obtener certificaciones:", error);
+    console.error(error);
     res.status(500).json({ message: "Error al obtener certificaciones" });
   }
 });

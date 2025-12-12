@@ -31,7 +31,6 @@ export default function PartnersCertificationsTable() {
     fetchAllCertifications();
   }, []);
 
-  // Obtener todos los registros
   const fetchCertifications = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/partner_certifications/all`);
@@ -44,27 +43,25 @@ export default function PartnersCertificationsTable() {
     }
   };
 
-  // Obtener todos los partners
+  const fetchAllCertifications = async () => {
+    try {
+         const res = await fetch(`${VITE_API_URL}/api/certifications`);
+         const data = await res.json();
+         setAllCertifications(Array.isArray(data) ? data : []);
+        } catch (error) {
+         console.error("Error fetching certifications list:", error);
+        }
+    };
+
   const fetchPartners = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/partners`);
       const data = await res.json();
-      setPartners(data);
-    } catch (error) {
+      setPartners(Array.isArray(data) ? data : []);
+     } catch (error) {
       console.error("Error fetching partners:", error);
-    }
-  };
-
-  // Obtener todas las certificaciones
-  const fetchAllCertifications = async () => {
-    try {
-      const res = await fetch(`${VITE_API_URL}/api/certifications`);
-      const data = await res.json();
-      setAllCertifications(data);
-    } catch (error) {
-      console.error("Error fetching certifications list:", error);
-    }
-  };
+     }
+    };
 
   const openCreateModal = () => {
     setIsEditing(false);
@@ -90,14 +87,12 @@ export default function PartnersCertificationsTable() {
 
     try {
       if (isEditing && current) {
-        // Editar
         await fetch(`${VITE_API_URL}/api/partner_certifications/${current.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ partner_id: partnerId, certification_id: certificationId }),
         });
       } else {
-        // Crear
         await fetch(`${VITE_API_URL}/api/partner_certifications`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -129,7 +124,7 @@ export default function PartnersCertificationsTable() {
 
   return (
     <DashboardLayout>
-      <h1 className="text-3xl font-bold mb-6">Partners Certifications</h1>
+      <h1 className="text-3xl font-bold mb-6">{t("partner_certifications_screen.title")}</h1>
 
       <div className="mb-6 flex justify-between">
         <input
@@ -143,22 +138,22 @@ export default function PartnersCertificationsTable() {
           onClick={openCreateModal}
           className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
         >
-          Agregar
+          {t("partner_certifications_screen.add_button")}
         </button>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
-          <p className="text-center py-10 text-gray-500">Cargando...</p>
+          <p className="text-center py-10 text-gray-500">{t("partner_certifications_screen.loading")}</p>
         ) : (
           <div className="max-h-[600px] overflow-y-auto">
             <table className="w-full table-fixed text-left">
               <thead>
                 <tr className="text-gray-600 border-b">
-                  <th className="pb-3 w-20">ID</th>
-                  <th className="pb-3">Partner</th>
-                  <th className="pb-3">Certificación</th>
-                  <th className="pb-3 text-right w-48 pr-6">Acciones</th>
+                  <th className="pb-3 w-20">{t("partner_certifications_screen.table.id")}</th>
+                  <th className="pb-3">{t("partner_certifications_screen.table.partner_name")}</th>
+                  <th className="pb-3">{t("partner_certifications_screen.table.certification_name")}</th>
+                  <th className="pb-3 text-right w-48 pr-6">{t("partner_certifications_screen.table.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -173,13 +168,13 @@ export default function PartnersCertificationsTable() {
                           onClick={() => openEditModal(item)}
                           className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
                         >
-                          Editar
+                          {t("partner_certifications_screen.edit")}
                         </button>
                         <button
                           onClick={() => handleDelete(item.id)}
                           className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
                         >
-                          Eliminar
+                          {t("partner_certifications_screen.delete")}
                         </button>
                       </div>
                     </td>
@@ -188,7 +183,7 @@ export default function PartnersCertificationsTable() {
                 {filtered.length === 0 && (
                   <tr>
                     <td colSpan={4} className="text-center py-6 text-gray-500">
-                      No hay registros
+                      {t("partner_certifications_screen.no_results")}{" "}
                     </td>
                   </tr>
                 )}
@@ -213,7 +208,7 @@ export default function PartnersCertificationsTable() {
                   value={partnerId}
                   onChange={(e) => setPartnerId(Number(e.target.value))}
                 >
-                  <option value="">Selecciona partner</option>
+                  <option value="">{t("partner_certifications_screen.table.select_partner")}</option>
                   {partners.map((p) => (
                     <option key={p.id} value={p.id}>{p.name}</option>
                   ))}
@@ -221,13 +216,13 @@ export default function PartnersCertificationsTable() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">Certificación</label>
+                <label className="text-sm font-semibold text-gray-600">{t("partner_certifications_screen.table.certification_name")}</label>{" "}
                 <select
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={certificationId}
                   onChange={(e) => setCertificationId(Number(e.target.value))}
                 >
-                  <option value="">Selecciona certificación</option>
+                  <option value="">{t("partner_certifications_screen.table.select_certification")}</option>
                   {allCertifications.map((c) => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
@@ -240,14 +235,14 @@ export default function PartnersCertificationsTable() {
                 className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
                 onClick={() => setOpenModal(false)}
               >
-                Cancelar
+                {t("partner_certifications_screen.cancel")}{" "}
               </button>
 
               <button
                 onClick={handleSave}
                 className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
               >
-                Guardar
+                {isEditing ? t("partner_certifications_screen.save") : t("partner_certifications_screen.create")}{" "}
               </button>
             </div>
           </div>

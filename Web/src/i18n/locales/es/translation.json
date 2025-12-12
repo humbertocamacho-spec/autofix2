@@ -145,7 +145,27 @@
 
     "partner_certifications": "Certificaciones de Partners",
     "partner_certifications_screen": {
-    "title": "Certificaciones de Partners"
+    "title": "Certicicaciones de Partners",
+      "search_placeholder": "Buscar certificación...",
+      "add_button": "Agregar Certificación",
+      "loading": "Cargando...",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "no_results": "No se encontraron certificaciones",
+      "create_title": "Agregar Certificación",
+      "edit_title": "Editar Certificación",
+      "create": "Crear",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "table": {
+        "actions": "Acciones",
+        "id": "ID",
+        "name": "Nombre",
+        "partner_id": "Partner ID",
+        "partner_name": "Nombre del Partner",
+        "certification_name": "Nombre de la Certificación",
+        "select_partner": "Seleccionar Partner"
+      }
   },
 
   "pending_tickets": "Pendientes",
