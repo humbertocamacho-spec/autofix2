@@ -9,6 +9,7 @@ router.get("/", async (req, res) => {
       SELECT 
         p.id,
         p.name,
+        p.user_id,
         p.whatsapp,
         p.phone,
         p.location,

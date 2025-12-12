@@ -4,6 +4,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Partner } from "../../../types/partner";
 import { useTranslation } from "react-i18next";
 import type { User } from "../../../types/users";
+import { useAuthContext } from "../../../context/AuthContext";
 
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -21,6 +22,7 @@ export default function PartnersTable() {
   const [location, setLocation] = useState("");
   const [priority, setPriority] = useState(1);
 
+  const { user } = useAuthContext();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -29,16 +31,21 @@ export default function PartnersTable() {
   }, []);
 
   const fetchPartners = async () => {
-    try {
-      const res = await fetch(`${VITE_API_URL}/api/partners`);
-      const data = await res.json();
-      setPartners(data);
-    } catch (error) {
-      console.error("Error fetching partners:", error);
-    } finally {
-      setLoading(false);
+  try {
+    const res = await fetch(`${VITE_API_URL}/api/partners`);
+    let data: Partner[] = await res.json();
+
+    if (user?.role_id === 2) {
+      data = data.filter(p => p.user_id === user.id);
     }
-  };
+
+    setPartners(data);
+  } catch (error) {
+    console.error("Error fetching partners:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const fetchUsers = async () => {
     try {
