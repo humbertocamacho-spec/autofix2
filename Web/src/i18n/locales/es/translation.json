@@ -11,7 +11,7 @@
     "select_user": "Seleccionar usuario",
     "choose_user": "Elige usuario",
     "edit_title": "Editar Administrador",
-    "create": "Crear",
+    "create": "Agregar",
     "save": "Guardar",
     "cancel": "Cancelar",
     "table": {
@@ -37,7 +37,7 @@
     "select_user": "Seleccionar usuario",
     "choose_user": "Elige usuario",    
     "edit_title": "Editar Cliente",
-    "create": "Crear",
+    "create": "Agregar",
     "save": "Guardar",
     "cancel": "Cancelar",
     "table": {
@@ -63,7 +63,7 @@
     "delete": "Eliminar",
     "no_results": "No se encontraron autos",
     "cancel": "Cancelar",
-    "create": "Crear",
+    "create": "Agregar",
     "save": "Guardar",
     "create_title": "Agregar Auto",
     "edit_title": "Editar Auto",
@@ -127,7 +127,7 @@
     "search_placeholder": "Buscar partner...",
     "create_title": "Agregar Partner",
     "edit_title": "Editar Partner",
-    "create": "Crear",
+    "create": "Agregar",
     "save": "Guardar",
     "cancel": "Cancelar",
     "table": {
@@ -191,7 +191,7 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron especialidades",
-    "create_title": "Crear Especialidad",
+    "create_title": "Agregar Especialidad",
     "table": {
       "id": "ID",
       "name": "Nombre",
@@ -209,7 +209,7 @@
     "no_results": "No se encontraron marcas de autos",
     "create_title": "Agregar Marca de Auto",
     "edit_title": "Editar Marca de Auto",
-    "create": "Crear",
+    "create": "Agregar",
     "save": "Guardar",
     "cancel": "Cancelar",
     "name": "Nombre",
@@ -231,7 +231,7 @@
     "create_title": "Agregar Certificación",
     "edit_title": "Editar Certificación",
     "name": "Nombre",
-    "create": "Crear",
+    "create": "Agregar",
     "save": "Guardar",
     "cancel": "Cancelar",
     "table": {
@@ -252,7 +252,7 @@
     "create_module": "Agregar Módulo",
     "edit_module": "Editar Módulo",
     "cancel": "Cancelar",
-    "create": "Crear",
+    "create": "Agregar",
     "save": "Guardar",
     "table": {
       "id": "ID",
@@ -276,7 +276,7 @@
     "name": "Nombre",
     "module": "Módulo",
     "select_module": "Seleccionar módulo",
-    "create": "Crear",
+    "create": "Agregar",
     "save": "Guardar",
     "cancel": "Cancelar",
     "table": {

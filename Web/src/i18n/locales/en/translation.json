@@ -11,7 +11,7 @@
     "select_user": "Select user",
     "choose_user": "Choose user",
     "edit_title": "Edit Admin",
-    "create": "Create",
+    "create": "Add",
     "save": "Save",
     "cancel": "Cancel",
     "table": {
@@ -39,7 +39,7 @@
     "select_user": "Select user",
     "choose_user": "Choose user",
     "edit_title": "Edit Client",
-    "create": "Create",
+    "create": "Add",
     "save": "Save",
     "cancel": "Cancel",
     "table": {
@@ -65,7 +65,7 @@
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No cars found",
-    "create": "Create",
+    "create": "Add",
     "cancel": "Cancel",
     "save": "Save",
     "create_title": "Add Car",
@@ -130,7 +130,7 @@
     "search_placeholder": "Search partner...",
     "create_title": "Add Partner",
     "edit_title": "Edit Partner",
-    "create": "Create",
+    "create": "Add",
     "save": "Save",
     "cancel": "Cancel",
     "table": {
@@ -196,7 +196,7 @@
     "delete": "Delete",
     "no_results": "No specialities found",
     "cancel": "Cancel",
-    "create": "Create",
+    "create": "Add",
     "save": "Save",
     "table": {
       "id": "ID",
@@ -215,7 +215,7 @@
     "no_results": "No car brands found",
     "create_title": "Add Car Brand",
     "edit_title": "Edit Car Brand",
-    "create": "Create",
+    "create": "Add",
     "save": "Save",
     "cancel": "Cancel",
     "table": {
@@ -235,7 +235,7 @@
     "no_results": "No certifications found",
     "create_title": "Add Certification",
     "edit_title": "Edit Certification",
-    "create": "Create",
+    "create": "Add",
     "save": "Save",
     "cancel": "Cancel",
     "name": "Name",
@@ -257,7 +257,7 @@
     "create_module": "Add Module",
     "edit_module": "Edit Module",
     "cancel": "Cancel",
-    "create": "Create",
+    "create": "Add",
     "save": "Save",
     "table": {
       "id": "ID",
@@ -281,7 +281,7 @@
     "name": "Name",
     "module": "Module",
     "select_module": "Select module",
-    "create": "Create",
+    "create": "Add",
     "save": "Save",
     "cancel": "Cancel",
     "table": {
