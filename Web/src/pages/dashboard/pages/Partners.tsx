@@ -6,6 +6,10 @@ import { useTranslation } from "react-i18next";
 import type { User } from "../../../types/users";
 import { useAuthContext } from "../../../context/AuthContext";
 
+const ROLES = {
+  PARTNER: 'partner'
+}
+
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -35,7 +39,7 @@ export default function PartnersTable() {
     const res = await fetch(`${VITE_API_URL}/api/partners`);
     let data: Partner[] = await res.json();
 
-    if (user?.role_id === 2) {
+    if (user?.role_name === ROLES.PARTNER) {
       data = data.filter(p => p.user_id === user.id);
     }
 
