@@ -50,8 +50,6 @@ export default function MapScreen() {
   const [distanceRadius, setDistanceRadius] = useState(10);
   const [distanceModalVisible, setDistanceModalVisible] = useState(false);
 
-
-
   useEffect(() => {
     const fetchData = async () => {
       try {
