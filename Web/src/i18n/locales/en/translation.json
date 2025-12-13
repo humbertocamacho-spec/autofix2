@@ -134,6 +134,7 @@
     "create": "Add",
     "save": "Save",
     "cancel": "Cancel",
+    "select_user": "Select User",
     "table": {
       "actions": "Actions",
       "id": "ID",

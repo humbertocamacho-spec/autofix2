@@ -4,6 +4,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Partner } from "../../../types/partner";
 import { useTranslation } from "react-i18next";
 import type { User } from "../../../types/users";
+import { useAuthContext } from "../../../context/AuthContext";
 
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -20,6 +21,7 @@ export default function PartnersTable() {
   const [whatsapp, setWhatsapp] = useState("");
   const [location, setLocation] = useState("");
   const [priority, setPriority] = useState(1);
+  const { user } = useAuthContext();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -28,17 +30,23 @@ export default function PartnersTable() {
   }, []);
 
   const fetchPartners = async () => {
-  try {
-    const res = await fetch(`${VITE_API_URL}/api/partners`);
-    let data: Partner[] = await res.json();
+    try {
+      const token = localStorage.getItem("token");
 
-    setPartners(data);
-  } catch (error) {
-    console.error("Error fetching partners:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+      const res = await fetch(`${VITE_API_URL}/api/partners`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data: Partner[] = await res.json();
+      setPartners(data);
+    } catch (error) {
+      console.error("Error fetching partners:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchUsers = async () => {
     try {
@@ -200,13 +208,21 @@ export default function PartnersTable() {
               />
 
               <select
-                className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
-                value={userId || ""}
+                className={`w-full border px-3 py-2 rounded-lg
+                  ${user?.role_name === "partner"
+                    ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                    : "focus:ring-2 focus:ring-[#27B9BA]"
+                  }`}
+                value={user?.role_name === "partner" ? user.id : userId || ""}
+                disabled={user?.role_name === "partner"}
                 onChange={(e) => setUserId(Number(e.target.value))}
               >
-                <option value="">Select User</option>
+                <option value="">{t("partners_screen.select_user")}</option>
+
                 {users.map((u) => (
-                  <option key={u.id} value={u.id}>{u.name}</option>
+                  <option key={u.id} value={u.id}>
+                    {u.name}
+                  </option>
                 ))}
               </select>
 

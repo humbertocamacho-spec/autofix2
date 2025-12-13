@@ -131,6 +131,7 @@
     "create": "Agregar",
     "save": "Guardar",
     "cancel": "Cancelar",
+    "select_user": "Seleccionar Usuario",
     "table": {
       "actions": "Acciones",
       "id": "ID",
