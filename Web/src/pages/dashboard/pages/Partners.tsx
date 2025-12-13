@@ -199,7 +199,11 @@ export default function PartnersTable() {
               {isEditing ? t("partners_screen.edit_title") : t("partners_screen.create_title")}
             </h2>
 
+            
             <div className="space-y-3">
+              <label className="text-sm font-semibold text-gray-600">
+                {t("partners_screen.table.name")}
+              </label>
               <input
                 className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                 placeholder="Name"
@@ -207,6 +211,9 @@ export default function PartnersTable() {
                 onChange={(e) => setName(e.target.value)}
               />
 
+              <label className="text-sm font-semibold text-gray-600">
+                {t("partners_screen.table.user")}
+              </label>
               <select
                 className={`w-full border px-3 py-2 rounded-lg
                   ${user?.role_name === "partner"
@@ -226,13 +233,19 @@ export default function PartnersTable() {
                 ))}
               </select>
 
+              <label className="text-sm font-semibold text-gray-600">
+                {t("partners_screen.table.phone")}
+              </label>
               <input
                 className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                 placeholder="Phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
-
+            
+              <label className="text-sm font-semibold text-gray-600">
+                {t("partners_screen.table.whatsapp")}
+              </label>
               <input
                 className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                 placeholder="WhatsApp"
@@ -240,6 +253,9 @@ export default function PartnersTable() {
                 onChange={(e) => setWhatsapp(e.target.value)}
               />
 
+              <label className="text-sm font-semibold text-gray-600">
+                {t("partners_screen.table.location")}
+              </label>
               <textarea
                 className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                 placeholder="Location"
@@ -247,6 +263,9 @@ export default function PartnersTable() {
                 onChange={(e) => setLocation(e.target.value)}
               />
 
+              <label className="text-sm font-semibold text-gray-600">
+                {t("partners_screen.table.priority")}
+              </label>
               <input
                 type="number"
                 min={1}

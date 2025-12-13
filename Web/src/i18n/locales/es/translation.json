@@ -137,6 +137,7 @@
       "id": "ID",
       "location": "Ubicación",
       "name": "Nombre",
+      "user": "Usuario",
       "phone": "Teléfono",
       "priority": "Prioridad",
       "whatsapp": "WhatsApp"

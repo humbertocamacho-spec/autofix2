@@ -139,6 +139,7 @@
       "actions": "Actions",
       "id": "ID",
       "location": "Location",
+      "user": "User",
       "name": "Name",
       "phone": "Phone",
       "priority": "Priority",
