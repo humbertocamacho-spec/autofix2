@@ -1,18 +1,20 @@
-import express from 'express';
-import pool from '../config/db.js';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import express from "express";
+import pool from "../config/db.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
-
 const emailvalidate = /^[^\s@]+@gmail\.com$/;
 const phonevalidate = /^[0-9]{10}$/;
 
 export function authMiddleware(req, res, next) {
   const header = req.headers.authorization;
-  if (!header) return res.status(401).json({ ok: false, message: "No token" });
+  if (!header) {
+    return res.status(401).json({ ok: false, message: "No token" });
+  }
 
   const token = header.split(" ")[1];
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
@@ -22,129 +24,222 @@ export function authMiddleware(req, res, next) {
   }
 }
 
-router.post('/login', async (req, res) => {
+// Login
+router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+
     if (!email || !password) {
-      return res.status(400).json({ ok: false, message: 'Email y password son requeridos' });
+      return res.status(400).json({
+        ok: false,
+        message: "Email y password son requeridos",
+      });
     }
 
-    const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+    const [rows] = await pool.query(
+      `
+      SELECT 
+        u.*,
+        r.name AS role_name
+      FROM users u
+      JOIN roles r ON u.role_id = r.id
+      WHERE u.email = ?
+      `,
+      [email]
+    );
+
     if (rows.length === 0) {
-      return res.status(401).json({ ok: false, message: 'Usuario no encontrado' });
+      return res.status(401).json({
+        ok: false,
+        message: "Usuario no encontrado",
+      });
     }
 
     const user = rows[0];
+
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
-      return res.status(401).json({ ok: false, message: 'Contraseña incorrecta' });
+      return res.status(401).json({
+        ok: false,
+        message: "Contraseña incorrecta",
+      });
     }
 
     const [permissions] = await pool.query(
-      `SELECT p.name
-       FROM roles_permissions rp
-       JOIN permissions p ON rp.permission_id = p.id
-       WHERE rp.role_id = ?`,
+      `
+      SELECT p.name
+      FROM roles_permissions rp
+      JOIN permissions p ON rp.permission_id = p.id
+      WHERE rp.role_id = ?
+      `,
       [user.role_id]
     );
 
-    let client_id = null, partner_id = null;
+    let client_id = null;
+    let partner_id = null;
 
-    // obtener siempre client_id
-    const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
-    client_id = c.length > 0 ? c[0].id : null;
+    const [c] = await pool.query(
+      "SELECT id FROM clients WHERE user_id = ?",
+      [user.id]
+    );
+    client_id = c.length ? c[0].id : null;
 
-    // si es partner
-    if (user.role_id === 2) {
-      const [p] = await pool.query("SELECT id FROM partners WHERE user_id = ?", [user.id]);
-      partner_id = p.length > 0 ? p[0].id : null;
+    if (user.role_name === "partner") {
+      const [p] = await pool.query(
+        "SELECT id FROM partners WHERE user_id = ?",
+        [user.id]
+      );
+      partner_id = p.length ? p[0].id : null;
     }
 
+// Token
     const token = jwt.sign(
-      { user_id: user.id, role_id: user.role_id },
+      {
+        user_id: user.id,
+        role: user.role_name,
+      },
       process.env.JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: "7d" }
     );
 
     res.json({
       ok: true,
-      message: 'Login exitoso',
+      message: "Login exitoso",
       token,
       user: {
         id: user.id,
         name: user.name || null,
         email: user.email,
-        role_id: user.role_id,
+        role: user.role_name,
         client_id,
         partner_id,
-        permissions: permissions.map(p => p.name)
-      }
+        permissions: permissions.map((p) => p.name),
+      },
     });
-
   } catch (error) {
     console.error("Error en login:", error);
-    res.status(500).json({ ok: false, message: 'Error al iniciar sesión' });
+    res.status(500).json({
+      ok: false,
+      message: "Error al iniciar sesión",
+    });
   }
 });
 
-router.post('/register', async (req, res) => {
+// Register
+router.post("/register", async (req, res) => {
   try {
     const { name, phone, email, password } = req.body;
 
     if (!name || !phone || !email || !password) {
-      return res.status(400).json({ ok: false, message: 'Todos los campos son obligatorios' });
+      return res.status(400).json({
+        ok: false,
+        message: "Todos los campos son obligatorios",
+      });
     }
-    if (!emailvalidate.test(email)) return res.status(400).json({ ok: false, message: "Correo inválido" });
-    if (!phonevalidate.test(phone)) return res.status(400).json({ ok: false, message: "Teléfono inválido" });
-    if (password.length < 8) return res.status(400).json({ ok: false, message: "Contraseña mínima de 8 caracteres" });
 
-    const [existing] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
-    if (existing.length > 0) return res.status(400).json({ ok: false, message: 'Email ya registrado' });
+    if (!emailvalidate.test(email)) {
+      return res.status(400).json({ ok: false, message: "Correo inválido" });
+    }
+
+    if (!phonevalidate.test(phone)) {
+      return res.status(400).json({ ok: false, message: "Teléfono inválido" });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({
+        ok: false,
+        message: "Contraseña mínima de 8 caracteres",
+      });
+    }
+
+    const [existing] = await pool.query(
+      "SELECT id FROM users WHERE email = ?",
+      [email]
+    );
+
+    if (existing.length > 0) {
+      return res.status(400).json({
+        ok: false,
+        message: "Email ya registrado",
+      });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const [result] = await pool.query(
-      'INSERT INTO users (name, phone, email, password, role_id) VALUES (?, ?, ?, ?, 3)',
+      `
+      INSERT INTO users (name, phone, email, password, role_id)
+      VALUES (?, ?, ?, ?, (SELECT id FROM roles WHERE name = 'client'))
+      `,
       [name, phone, email, hashedPassword]
     );
 
     const userId = result.insertId;
-    await pool.query('INSERT INTO clients (user_id) VALUES (?)', [userId]);
 
-    res.json({ ok: true, message: 'Usuario y cliente creados', userId });
+    await pool.query("INSERT INTO clients (user_id) VALUES (?)", [userId]);
 
+    res.json({
+      ok: true,
+      message: "Usuario y cliente creados",
+      userId,
+    });
   } catch (error) {
     console.error("Error en register:", error);
-    res.status(500).json({ ok: false, message: 'Error al registrar usuario' });
+    res.status(500).json({
+      ok: false,
+      message: "Error al registrar usuario",
+    });
   }
 });
 
+// me
 router.get("/me", authMiddleware, async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [req.user.user_id]);
+    const [rows] = await pool.query(
+      `
+      SELECT 
+        u.*,
+        r.name AS role_name
+      FROM users u
+      JOIN roles r ON u.role_id = r.id
+      WHERE u.id = ?
+      `,
+      [req.user.user_id]
+    );
 
     if (rows.length === 0) {
-      return res.status(404).json({ ok: false, message: "Usuario no encontrado" });
+      return res.status(404).json({
+        ok: false,
+        message: "Usuario no encontrado",
+      });
     }
 
     const user = rows[0];
 
-    let client_id = null, partner_id = null;
+    let client_id = null;
+    let partner_id = null;
 
-    // obtener siempre client_id
-    const [c] = await pool.query("SELECT id FROM clients WHERE user_id = ?", [user.id]);
-    client_id = c.length > 0 ? c[0].id : null;
+    const [c] = await pool.query(
+      "SELECT id FROM clients WHERE user_id = ?",
+      [user.id]
+    );
+    client_id = c.length ? c[0].id : null;
 
-    // si es partner
-    if (user.role_id === 2) {
-      const [p] = await pool.query("SELECT id FROM partners WHERE user_id = ?", [user.id]);
-      partner_id = p.length > 0 ? p[0].id : null;
+    if (user.role_name === "partner") {
+      const [p] = await pool.query(
+        "SELECT id FROM partners WHERE user_id = ?",
+        [user.id]
+      );
+      partner_id = p.length ? p[0].id : null;
     }
 
     const [permissions] = await pool.query(
-      `SELECT p.name 
-       FROM roles_permissions rp
-       JOIN permissions p ON rp.permission_id = p.id
-       WHERE rp.role_id = ?`,
+      `
+      SELECT p.name
+      FROM roles_permissions rp
+      JOIN permissions p ON rp.permission_id = p.id
+      WHERE rp.role_id = ?
+      `,
       [user.role_id]
     );
 
@@ -154,18 +249,19 @@ router.get("/me", authMiddleware, async (req, res) => {
         id: user.id,
         name: user.name || null,
         email: user.email,
-        role_id: user.role_id,
+        role: user.role_name,
         client_id,
         partner_id,
-        permissions: permissions.map(p => p.name)
-      }
+        permissions: permissions.map((p) => p.name),
+      },
     });
-
   } catch (error) {
     console.error("Error en /me:", error);
-    res.status(500).json({ ok: false, message: "Error en /me" });
+    res.status(500).json({
+      ok: false,
+      message: "Error en /me",
+    });
   }
 });
-
 
 export default router;
