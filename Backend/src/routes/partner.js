@@ -19,9 +19,18 @@ router.get("/select", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
-    const [rows] = await db.query(`
+    const { user_id, role_id } = req.user;
+
+    const [roleRow] = await db.query(
+      "SELECT name FROM roles WHERE id = ?",
+      [role_id]
+    );
+
+    const roleName = roleRow[0]?.name?.toLowerCase();
+
+    let sql = `
       SELECT 
         p.id,
         p.name,
@@ -38,9 +47,18 @@ router.get("/", async (req, res) => {
         p.priority
       FROM partners p
       JOIN users u ON p.user_id = u.id
-      ORDER BY p.priority ASC, p.name ASC;
-    `);
+    `;
 
+    const params = [];
+
+    if (roleName === "partner") {
+      sql += " WHERE p.user_id = ?";
+      params.push(user_id);
+    }
+
+    sql += " ORDER BY p.priority ASC, p.name ASC";
+
+    const [rows] = await db.query(sql, params);
     res.json(rows);
   } catch (error) {
     console.error("Error al obtener los partners:", error);
