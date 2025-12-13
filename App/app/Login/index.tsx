@@ -51,49 +51,51 @@ export default function LoginScreen() {
   }, []);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      setError('Completa todos los campos');
+  if (!email || !password) {
+    setError('Completa todos los campos');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!data.ok || !data.user || !data.token) {
+      setError(data.message || "Error en el login");
       return;
     }
 
-    try {
-      const res = await fetch(`${API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+    const userId = data.user.id;
+    const clientId = data.user.client_id;
+    const token = data.token;
 
-      const data = await res.json();
+    // Guardar token + ids
+    await AsyncStorage.setItem("token", token);
+    await AsyncStorage.setItem("user_id", userId.toString());
+    await AsyncStorage.setItem("client_id", clientId ? clientId.toString() : "");
 
-      if (!data.ok || !data.user) {
-        setError(data.message || "Error en el login");
-        return;
-      }
+    // Guardar credenciales si "Recordar" está activo
+    if (remember) {
+      await AsyncStorage.setItem('savedEmail', email);
+      await AsyncStorage.setItem('savedPassword', password);
+    } else {
+      await AsyncStorage.removeItem('savedEmail');
+      await AsyncStorage.removeItem('savedPassword');
+    }
 
-      const userId = data.user.id;
-      const clientId = data.user.client_id;
+    router.replace('/Map');
 
-      await AsyncStorage.setItem("user_id", userId.toString());
-      await AsyncStorage.setItem("client_id", clientId.toString());
-      await AsyncStorage.setItem("client_id", clientId ? clientId.toString() : "");
-      const verifyClientId = await AsyncStorage.getItem("client_id");
+  } catch (err: any) {
+    console.log("ERROR LOGIN APP:", err?.message || err);
+    setError(err?.message || "Error desconocido");
+  }
+};
 
-      if (remember) {
-        await AsyncStorage.setItem('savedEmail', email);
-        await AsyncStorage.setItem('savedPassword', password);
-      } else {
-        await AsyncStorage.removeItem('savedEmail');
-        await AsyncStorage.removeItem('savedPassword');
-      }
-
-      router.replace('/Map');
-
-    } catch (err: any) {
-  console.log("ERROR LOGIN APP:", err?.response?.data || err.message || err);
-  setError(err?.response?.data?.message || "Error desconocido");
-}
-
-  };
 
 
   const handleForgotPassword = () => {
