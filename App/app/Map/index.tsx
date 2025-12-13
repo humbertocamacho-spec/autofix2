@@ -132,7 +132,8 @@ export default function MapScreen() {
 
     return withinDistance && hasSpeciality && (!searchText || matchesSearch);
   });
-  
+
+
   useEffect(() => {
     if (mapRef.current && region && nearbyPartners.length > 0) {
       const validCoords = nearbyPartners.map((p) => ({

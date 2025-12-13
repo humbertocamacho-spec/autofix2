@@ -19,7 +19,7 @@ router.get("/select", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/", authMiddleware, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const { user_id, role_id } = req.user;
 
