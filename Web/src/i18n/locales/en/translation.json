@@ -143,7 +143,13 @@
       "name": "Name",
       "phone": "Phone",
       "priority": "Priority",
-      "whatsapp": "WhatsApp"
+      "whatsapp": "WhatsApp",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "land_use_permit": "Land use permit",
+      "scanner_handling": "Scanner handling",
+      "logo_url": "Logo",
+      "description": "Description"
     },
     "title": "Partners"
   },
