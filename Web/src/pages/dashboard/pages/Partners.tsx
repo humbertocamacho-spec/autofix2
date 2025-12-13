@@ -4,11 +4,6 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Partner } from "../../../types/partner";
 import { useTranslation } from "react-i18next";
 import type { User } from "../../../types/users";
-import { useAuthContext } from "../../../context/AuthContext";
-
-const ROLES = {
-  PARTNER: 'partner'
-}
 
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -25,8 +20,6 @@ export default function PartnersTable() {
   const [whatsapp, setWhatsapp] = useState("");
   const [location, setLocation] = useState("");
   const [priority, setPriority] = useState(1);
-
-  const { user } = useAuthContext();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -38,10 +31,6 @@ export default function PartnersTable() {
   try {
     const res = await fetch(`${VITE_API_URL}/api/partners`);
     let data: Partner[] = await res.json();
-
-    if (user?.role_name === ROLES.PARTNER) {
-      data = data.filter(p => p.user_id === user.id);
-    }
 
     setPartners(data);
   } catch (error) {
