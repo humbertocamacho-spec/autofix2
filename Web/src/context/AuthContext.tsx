@@ -6,7 +6,7 @@ import type { User } from "../types";
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  loading: boolean;  
+  loading: boolean;
   ready: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             name: data.user.name ?? null,
             email: data.user.email,
             role_id: data.user.role_id,
+            role_name: data.user.role_name,        // ← ¡AÑADIDO AQUÍ!
             client_id: data.user.client_id ?? null,
             partner_id: data.user.partner_id ?? null,
             permissions: data.user.permissions ?? [],
@@ -84,6 +85,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem("token", response.token);
       setToken(response.token);
 
+      // Después del login, loadUserFromToken ya cargará role_name
       const ok = await loadUserFromToken(response.token);
       setLoading(false);
       return ok;

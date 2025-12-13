@@ -6,7 +6,7 @@ export interface User {
   client_id?: number | null;
   partner_id?: number | null;
   permissions: string[];
-  role_name?: string;
+  role_name: string;
 }
 
 export interface AuthResponse {

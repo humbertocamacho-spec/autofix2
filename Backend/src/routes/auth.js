@@ -29,7 +29,7 @@ export function authMiddleware(req, res, next) {
 
 async function getRoleName(roleId) {
   const [rows] = await pool.query('SELECT name FROM roles WHERE id = ?', [roleId]);
-  return rows.length > 0 ? rows[0].name : ROLES.CLIENT;
+  return rows.length > 0 ? rows[0].name.toLowerCase() : 'client';
 }
 
 async function getRoleId(roleName) {
