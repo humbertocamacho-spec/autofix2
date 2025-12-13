@@ -51,50 +51,48 @@ export default function LoginScreen() {
   }, []);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      setError('Completa todos los campos');
+  if (!email || !password) {
+    setError('Completa todos los campos');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.user || !data.token) {
+      setError(data.message || "Error en el login");
       return;
     }
 
-    try {
-      const res = await fetch(`${API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+    // Guardar token
+    await AsyncStorage.setItem('token', data.token);
 
-      const data = await res.json();
+    // Guardar user_id y client_id
+    await AsyncStorage.setItem('user_id', data.user.id.toString());
+    await AsyncStorage.setItem('client_id', data.user.client_id ? data.user.client_id.toString() : '');
 
-      if (!data.ok || !data.user) {
-        setError(data.message || "Error en el login");
-        return;
-      }
+    // Guardar credenciales si se marcó "Recordar"
+    if (remember) {
+      await AsyncStorage.setItem('savedEmail', email);
+      await AsyncStorage.setItem('savedPassword', password);
+    } else {
+      await AsyncStorage.removeItem('savedEmail');
+      await AsyncStorage.removeItem('savedPassword');
+    }
 
-      const userId = data.user.id;
-      const clientId = data.user.client_id;
+    router.replace('/Map');
 
-      await AsyncStorage.setItem("user_id", userId.toString());
-      await AsyncStorage.setItem("client_id", clientId.toString());
-      await AsyncStorage.setItem("client_id", clientId ? clientId.toString() : "");
-      const verifyClientId = await AsyncStorage.getItem("client_id");
-
-      if (remember) {
-        await AsyncStorage.setItem('savedEmail', email);
-        await AsyncStorage.setItem('savedPassword', password);
-      } else {
-        await AsyncStorage.removeItem('savedEmail');
-        await AsyncStorage.removeItem('savedPassword');
-      }
-
-      router.replace('/Map');
-
-    } catch (err: any) {
-  console.log("ERROR LOGIN APP:", err?.response?.data || err.message || err);
-  setError(err?.response?.data?.message || "Error desconocido");
-}
-
-  };
-
+  } catch (err: any) {
+    console.log("ERROR LOGIN APP:", err?.response?.data || err.message || err);
+    setError(err?.response?.data?.message || "Error desconocido");
+  }
+};
 
   const handleForgotPassword = () => {
     router.push('/Register');
