@@ -89,11 +89,7 @@ export default function PartnersTable() {
     if (!name || !userId) return alert("Name y User son requeridos");
 
     const body = { name, user_id: userId, phone, whatsapp, location, priority };
-
-    const url = isEditing
-      ? `${VITE_API_URL}/api/partners/${currentPartner?.id}`
-      : `${VITE_API_URL}/api/partners`;
-
+    const url = isEditing? `${VITE_API_URL}/api/partners/${currentPartner?.id}`: `${VITE_API_URL}/api/partners`;
     const method = isEditing ? "PUT" : "POST";
 
     await fetch(url, {
@@ -115,6 +111,11 @@ export default function PartnersTable() {
   const filtered = partners
     .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => a.id - b.id);
+
+  const handlePriorityChange = (value: number) => {
+    if (Number.isNaN(value)) return;
+    setPriority(Math.min(10, Math.max(1, value)));
+  };
 
   return (
     <DashboardLayout>
@@ -243,10 +244,12 @@ export default function PartnersTable() {
 
               <input
                 type="number"
+                min={1}
+                max={10}
                 className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                 placeholder="Priority"
                 value={priority}
-                onChange={(e) => setPriority(Number(e.target.value))}
+                onChange={(e) => handlePriorityChange(Number(e.target.value))}
               />
             </div>
 

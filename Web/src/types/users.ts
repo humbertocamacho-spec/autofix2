@@ -9,4 +9,5 @@ export interface User {
   photo_url: string | null; 
   gender_id: number | null; 
   role_name: string;
+  gender_name: string | null;
 }

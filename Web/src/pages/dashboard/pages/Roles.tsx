@@ -5,14 +5,8 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Permission } from "../../../types/permission";
 import type { Roles } from "../../../types/roles";
 import type { Modules } from "../../../types/modules";
-
-interface PermissionsByRole {
-  [roleId: number]: number[];
-}
-
-interface GroupedPermissions {
-  [moduleId: number]: Permission[];
-}
+import type { PermissionsByRole } from "../../../types/permissions_by_role";
+import type { GroupedPermissions } from "../../../types/grouped_permissions";
 
 export default function RolesTable() {
   const { t } = useTranslation();
@@ -100,13 +94,10 @@ export default function RolesTable() {
 
   return (
     <DashboardLayout>
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">
-        {t("roles_screen.title")}
-      </h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">{t("roles_screen.title")}</h1>
 
       <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-        {loading ? (
-          <p className="text-gray-500 text-center py-10">{t("roles_screen.loading_roles")}</p>
+        {loading ? (<p className="text-gray-500 text-center py-10">{t("roles_screen.loading_roles")}</p>
         ) : (
           <div className="space-y-4">
             {roles.map((role) => (
@@ -122,9 +113,7 @@ export default function RolesTable() {
                     {role.name}
                   </div>
 
-                  <span className="text-gray-600 text-xl">
-                    {expandedRole === role.id ? "−" : "+"}
-                  </span>
+                  <span className="text-gray-600 text-xl">{expandedRole === role.id ? "−" : "+"}</span>
                 </button>
 
                 {expandedRole === role.id && (
@@ -139,9 +128,7 @@ export default function RolesTable() {
                         const id = Number(moduleId);
                         return (
                           <div key={id} className="border border-gray-200 p-4 rounded-xl bg-gray-50 shadow-sm">
-                            <h4 className="text-lg font-semibold text-gray-700 mb-3">
-                              {getModuleName(id)}
-                            </h4>
+                            <h4 className="text-lg font-semibold text-gray-700 mb-3">{getModuleName(id)}</h4>
 
                             <div className="space-y-2">
                               {grouped[id].map((perm) => (
