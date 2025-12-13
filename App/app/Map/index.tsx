@@ -91,18 +91,21 @@ export default function MapScreen() {
   }, []);
 
   useEffect(() => {
-  const fetchPartners = async () => {
-    try {
-      const data = await getPartners();
-      setPartners(data);
-    } catch (error) {
-      console.error('Error fetching partners:', error);
-    }
-  };
+    const fetchPartners = async () => {
+      try {
+        const data = await getPartners();
+        if (Array.isArray(data)) {
+          setPartners(data);
+        } else if (data) {
+          setPartners([data]);
+        }
+      } catch (error) {
+        console.error('Error fetching partners:', error);
+      }
+    };
 
-  fetchPartners();
-}, []);
-
+    fetchPartners();
+  }, []);
 
   const nearbyPartners = partners.filter((partner) => {
     const lat = parseFloat(partner.latitude);
