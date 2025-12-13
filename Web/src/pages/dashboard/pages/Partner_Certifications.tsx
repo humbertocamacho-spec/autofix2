@@ -38,7 +38,12 @@ export default function PartnersCertificationsTable() {
 
   const fetchPartners = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/partners`);
+      const res = await fetch(`${VITE_API_URL}/api/partners/select`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
       const data = await res.json();
       setPartners(Array.isArray(data) ? data : []);
     } catch (error) {

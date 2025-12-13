@@ -4,6 +4,21 @@ import { authMiddleware } from "./auth.js";
 
 const router = express.Router();
 
+router.get("/select", authMiddleware, async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT id, name
+      FROM partners
+      ORDER BY name ASC
+    `);
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error al obtener partners para select:", error);
+    res.status(500).json({ message: "Error al obtener partners" });
+  }
+});
+
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const { user_id, role_id } = req.user;
