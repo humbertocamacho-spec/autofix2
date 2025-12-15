@@ -64,19 +64,17 @@ export default function PartnerDetailScreen() {
   const handleWhatsapp = () => {
     if (!whatsapp) return;
 
-    const phoneNumber = whatsapp.replace(/\D/g, '');
+    let phoneNumber = whatsapp.replace(/\D/g, '');
 
-    const url = `whatsapp://send?phone=${phoneNumber}`;
+    if (phoneNumber.length === 10) {
+      phoneNumber = `52${phoneNumber}`;
+    }
 
-    Linking.canOpenURL(url)
-      .then((supported) => {
-        if (!supported) {
-          alert('WhatsApp no está instalado');
-        } else {
-          Linking.openURL(url);
-        }
-      })
-      .catch((err) => console.error('Error al abrir WhatsApp', err));
+    const url = `https://wa.me/${phoneNumber}`;
+
+    Linking.openURL(url).catch(() => {
+      alert('No se pudo abrir WhatsApp');
+    });
   };
 
   const handleLocation = () => {
