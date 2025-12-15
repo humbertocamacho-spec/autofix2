@@ -224,17 +224,11 @@ export default function UsersTable() {
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button
-                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
-                onClick={() => setOpenEdit(false)}
-              >
+              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenEdit(false)}>
                 {t("users_screen.modal.cancel")}
               </button>
 
-              <button
-                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-                onClick={handleUpdateUser}
-              >
+              <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition" onClick={handleUpdateUser}>
                 {t("users_screen.modal.save")}
               </button>
             </div>

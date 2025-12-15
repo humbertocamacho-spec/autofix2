@@ -229,10 +229,7 @@ export default function MyCarsTable() {
                             onChange={(e) => setSearch(e.target.value)}
                         />
 
-                        <button
-                            onClick={openCreateModal}
-                            className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-                        >
+                        <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
                             {t("myCars_screen.add_button")}
                         </button>
                     </div>
@@ -267,18 +264,12 @@ export default function MyCarsTable() {
 
                                                 <td className="py-3 text-right pr-6">
                                                     <div className="flex justify-end space-x-2">
-                                                        <button
-                                                            onClick={() => openEditModal(car)}
-                                                            className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
-                                                        >
-                                                            Edit
+                                                        <button onClick={() => openEditModal(car)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                                                            {t("myCars_screen.edit")}
                                                         </button>
 
-                                                        <button
-                                                            onClick={() => handleDelete(car.id)}
-                                                            className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
-                                                        >
-                                                            Delete
+                                                        <button onClick={() => handleDelete(car.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                                                            {t("myCars_screen.delete")}
                                                         </button>
                                                     </div>
                                                 </td>
@@ -295,121 +286,69 @@ export default function MyCarsTable() {
                     </div>
 
                     {openModal && (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
-        <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
-                {isEditing ? t("myCars_screen.edit_title") : t("myCars_screen.create_title")}
-            </h2>
+                        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
+                            <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
+                                <h2 className="text-2xl font-bold mb-4 text-gray-800">
+                                    {isEditing ? t("myCars_screen.edit_title") : t("myCars_screen.create_title")}
+                                </h2>
 
-            <div className="space-y-4">
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.name")}</label>
+                                        <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={name} onChange={(e) => setName(e.target.value)}/>
+                                    </div>
 
-                {/* Name */}
-                <div>
-                    <label className="text-sm font-semibold text-gray-600">
-                        {t("myCars_screen.table.name")}
-                    </label>
-                    <input
-                        className="w-full border border-gray-300 px-3 py-2 rounded-lg 
-                                   focus:ring-2 focus:ring-[#27B9BA]"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                </div>
+                                    <div>
+                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.brand")}</label>
+                                        <select className="w-full border border-gray-300 px-3 py-2 rounded-lgfocus:ring-2 focus:ring-[#27B9BA]" value={car_brand_id} onChange={(e) => setCarBrandId(Number(e.target.value))} >
+                                            <option value="0">{t("myCars_screen.table.select_brand")}</option>
+                                            {brands.map((b) => (
+                                                <option key={b.id} value={b.id}>{b.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
 
-                {/* Brand */}
-                <div>
-                    <label className="text-sm font-semibold text-gray-600">
-                        {t("myCars_screen.table.brand")}
-                    </label>
-                    <select
-                        className="w-full border border-gray-300 px-3 py-2 rounded-lg
-                                   focus:ring-2 focus:ring-[#27B9BA]"
-                        value={car_brand_id}
-                        onChange={(e) => setCarBrandId(Number(e.target.value))}
-                    >
-                        <option value="0">{t("myCars_screen.table.select_brand")}</option>
-                        {brands.map((b) => (
-                            <option key={b.id} value={b.id}>{b.name}</option>
-                        ))}
-                    </select>
-                </div>
+                                    <div>
+                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.model")}</label>
+                                        <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={model} onChange={(e) => setModel(e.target.value)} />
+                                    </div>
 
-                {/* Model */}
-                <div>
-                    <label className="text-sm font-semibold text-gray-600">
-                        {t("myCars_screen.table.model")}
-                    </label>
-                    <input
-                        className="w-full border border-gray-300 px-3 py-2 rounded-lg
-                                   focus:ring-2 focus:ring-[#27B9BA]"
-                        value={model}
-                        onChange={(e) => setModel(e.target.value)}
-                    />
-                </div>
+                                    <div>
+                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.year")}</label>
+                                        <input
+                                            type="number"
+                                            className="w-full border border-gray-300 px-3 py-2 rounded-lg
+                                                    focus:ring-2 focus:ring-[#27B9BA]"
+                                            value={year}
+                                            onChange={(e) => setYear(e.target.value.slice(0, 4))}
+                                            min="1900"
+                                            max="2099"
+                                        />
+                                    </div>
 
-                {/* Year */}
-                <div>
-                    <label className="text-sm font-semibold text-gray-600">
-                        {t("myCars_screen.table.year")}
-                    </label>
-                    <input
-                        type="number"
-                        className="w-full border border-gray-300 px-3 py-2 rounded-lg
-                                   focus:ring-2 focus:ring-[#27B9BA]"
-                        value={year}
-                        onChange={(e) => setYear(e.target.value.slice(0, 4))}
-                        min="1900"
-                        max="2099"
-                    />
-                </div>
+                                    <div>
+                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.type")}</label>
+                                        <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={type} onChange={(e) => setType(e.target.value)}/>
+                                    </div>
 
-                {/* Type */}
-                <div>
-                    <label className="text-sm font-semibold text-gray-600">
-                        {t("myCars_screen.table.type")}
-                    </label>
-                    <input
-                        className="w-full border border-gray-300 px-3 py-2 rounded-lg
-                                   focus:ring-2 focus:ring-[#27B9BA]"
-                        value={type}
-                        onChange={(e) => setType(e.target.value)}
-                    />
-                </div>
+                                    <div>
+                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.plate")}</label>
+                                        <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={plate} onChange={(e) => setPlate(e.target.value)}/>
+                                    </div>
+                                </div>
 
-                {/* Plate */}
-                <div>
-                    <label className="text-sm font-semibold text-gray-600">
-                        {t("myCars_screen.table.plate")}
-                    </label>
-                    <input
-                        className="w-full border border-gray-300 px-3 py-2 rounded-lg
-                                   focus:ring-2 focus:ring-[#27B9BA]"
-                        value={plate}
-                        onChange={(e) => setPlate(e.target.value)}
-                    />
-                </div>
+                                <div className="flex justify-end gap-3 mt-6">
+                                    <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenModal(false)}>
+                                        {t("myCars_screen.cancel")}
+                                    </button>
 
-            </div>
-
-            <div className="flex justify-end gap-3 mt-6">
-                <button
-                    className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
-                    onClick={() => setOpenModal(false)}
-                >
-                    {t("myCars_screen.cancel")}
-                </button>
-
-                <button
-                    onClick={isEditing ? handleUpdate : handleCreate}
-                    className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow 
-                               hover:bg-[#1da5a6] transition"
-                >
-                    {isEditing ? t("myCars_screen.save") : t("myCars_screen.create")}
-                </button>
-            </div>
-        </div>
-    </div>
-)}
+                                    <button onClick={isEditing ? handleUpdate : handleCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                                        {isEditing ? t("myCars_screen.save") : t("myCars_screen.create")}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                 </>
             )}

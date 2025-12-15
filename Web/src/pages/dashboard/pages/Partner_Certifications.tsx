@@ -132,10 +132,7 @@ export default function PartnersCertificationsTable() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button
-          onClick={openCreateModal}
-          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-        >
+        <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
           {t("partner_certifications_screen.add_button")}
         </button>
       </div>
@@ -162,16 +159,10 @@ export default function PartnersCertificationsTable() {
                     <td className="py-3">{item.certification_name}</td>
                     <td className="py-3 text-right pr-6">
                       <div className="flex justify-end space-x-2">
-                        <button
-                          onClick={() => openEditModal(item)}
-                          className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
-                        >
+                        <button onClick={() => openEditModal(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
                           {t("partner_certifications_screen.edit")}
                         </button>
-                        <button
-                          onClick={() => handleDelete(item.id)}
-                          className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
-                        >
+                        <button onClick={() => handleDelete(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                           {t("partner_certifications_screen.delete")}
                         </button>
                       </div>
@@ -231,17 +222,11 @@ export default function PartnersCertificationsTable() {
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button
-                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
-                onClick={() => setOpenModal(false)}
-              >
+              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenModal(false)}>
                 {t("partner_certifications_screen.cancel")}
               </button>
 
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-              >
+              <button onClick={handleSave} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
                 {isEditing ? t("partner_certifications_screen.save") : t("partner_certifications_screen.create")}
               </button>
             </div>

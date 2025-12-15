@@ -109,19 +109,14 @@ export default function PermissionsTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button
-          onClick={openCreate}
-          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-        >
+        <button onClick={openCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
           {t("permissions_screen.add_button")}
         </button>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
-          <p className="text-center py-10 text-gray-500">
-            {t("permissions_screen.loading")}
-          </p>
+          <p className="text-center py-10 text-gray-500">{t("permissions_screen.loading")}</p>
         ) : (
           <div className="max-h-[600px] overflow-y-auto">
             <table className="w-full table-auto text-left">
@@ -130,33 +125,22 @@ export default function PermissionsTable() {
                   <th className="pb-3">{t("permissions_screen.table.id")}</th>
                   <th className="pb-3">{t("permissions_screen.table.permission")}</th>
                   <th className="pb-3">{t("permissions_screen.table.module")}</th>
-                  <th className="pb-3 text-right">
-                    {t("permissions_screen.table.actions")}
-                  </th>
+                  <th className="pb-3 text-right">{t("permissions_screen.table.actions")}</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((perm) => (
-                  <tr
-                    key={perm.id}
-                    className="border-b hover:bg-gray-50 text-gray-700"
-                  >
+                  <tr key={perm.id} className="border-b hover:bg-gray-50 text-gray-700">
                     <td className="py-3">{perm.id}</td>
                     <td className="py-3">{perm.name}</td>
                     <td className="py-3">{getModuleName(perm.module_id)}</td>
 
                     <td className="py-3 text-right space-x-3">
-                      <button
-                        onClick={() => openEdit(perm)}
-                        className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
-                      >
+                      <button onClick={() => openEdit(perm)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
                         {t("permissions_screen.edit")}
                       </button>
 
-                      <button
-                        onClick={() => deletePermission(perm.id)}
-                        className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
-                      >
+                      <button onClick={() => deletePermission(perm.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                         {t("permissions_screen.delete")}
                       </button>
                     </td>
@@ -176,44 +160,30 @@ export default function PermissionsTable() {
         )}
       </div>
 
-      {/* ---------------- MODAL ESTILO UNIFICADO ---------------- */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
 
             <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              {isEditing
-                ? t("permissions_screen.edit_title")
-                : t("permissions_screen.create_title")}
+              {isEditing ? t("permissions_screen.edit_title") : t("permissions_screen.create_title")}
             </h2>
 
             <div className="space-y-4">
-
               <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("permissions_screen.name")}
-                </label>
+                <label className="text-sm font-semibold text-gray-600">{t("permissions_screen.name")}</label>
 
-                <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
+                <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={name} onChange={(e) => setName(e.target.value)}/>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("permissions_screen.module")}
-                </label>
+                <label className="text-sm font-semibold text-gray-600">{t("permissions_screen.module")}</label>
 
                 <select
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg bg-white focus:ring-2 focus:ring-[#27B9BA]"
                   value={moduleId || ""}
                   onChange={(e) => setModuleId(Number(e.target.value))}
                 >
-                  <option value="">
-                    {t("permissions_screen.select_module")}
-                  </option>
+                  <option value="">{t("permissions_screen.select_module")}</option>
 
                   {modules.map((m) => (
                     <option key={m.id} value={m.id}>
@@ -225,21 +195,14 @@ export default function PermissionsTable() {
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button
-                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
-                onClick={() => setOpenModal(false)}
-              >
+              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenModal(false)}>
                 {t("permissions_screen.cancel")}
               </button>
 
-              <button
-                onClick={savePermission}
-                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-              >
+              <button onClick={savePermission} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
                 {isEditing ? t("permissions_screen.save") : t("permissions_screen.create")}
               </button>
             </div>
-
           </div>
         </div>
       )}

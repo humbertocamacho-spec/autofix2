@@ -107,10 +107,7 @@ export default function SpecialitiesTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button
-          onClick={openCreateModal}
-          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-        >
+        <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
           {t("specialities_screen.add_button")}
         </button>
       </div>
@@ -131,24 +128,15 @@ export default function SpecialitiesTable() {
 
               <tbody>
                 {filtered.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="border-b hover:bg-gray-50 text-gray-700"
-                  >
+                  <tr key={item.id} className="border-b hover:bg-gray-50 text-gray-700">
                     <td className="py-3">{item.id}</td>
                     <td className="py-3 truncate">{item.name}</td>
                     <td className="py-3 text-right pr-6">
                       <div className="flex justify-end space-x-2">
-                      <button
-                        onClick={() => openEditModal(item)}
-                        className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
-                      >
+                      <button onClick={() => openEditModal(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
                         {t("specialities_screen.edit")}
                       </button>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
-                      >
+                      <button onClick={() => handleDelete(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                         {t("specialities_screen.delete")}
                       </button>
                       </div>
@@ -180,30 +168,18 @@ export default function SpecialitiesTable() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("specialities_screen.table.name")}
-                </label>
+                <label className="text-sm font-semibold text-gray-600">{t("specialities_screen.table.name")}</label>
 
-                <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
+                <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={name} onChange={(e) => setName(e.target.value)}/>
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button
-                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
-                onClick={() => setOpenModal(false)}
-              >
+              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenModal(false)}>
                 {t("specialities_screen.cancel")}
               </button>
 
-              <button
-                onClick={isEditing ? handleUpdate : handleCreate}
-                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-              >
+              <button onClick={isEditing ? handleUpdate : handleCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
                 {isEditing
                   ? t("specialities_screen.save")
                   : t("specialities_screen.create")}

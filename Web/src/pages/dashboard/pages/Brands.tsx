@@ -99,19 +99,14 @@ export default function CarBrands() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button
-          onClick={handleCreate}
-          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-        >
+        <button onClick={handleCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
           {t("car_brands_screen.add_button")}
         </button>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
-          <p className="text-center py-10 text-gray-500">
-            {t("car_brands_screen.loading")}
-          </p>
+          <p className="text-center py-10 text-gray-500">{t("car_brands_screen.loading")}</p>
         ) : (
           <div className="max-h-[600px] overflow-y-auto">
             <table className="w-full table-auto text-left">
@@ -119,32 +114,21 @@ export default function CarBrands() {
                 <tr className="text-gray-600 border-b">
                   <th className="pb-3">{t("car_brands_screen.table.id")}</th>
                   <th className="pb-3">{t("car_brands_screen.table.name")}</th>
-                  <th className="pb-3 text-right">
-                    {t("car_brands_screen.table.actions")}
-                  </th>
+                  <th className="pb-3 text-right">{t("car_brands_screen.table.actions")}</th>
                 </tr>
               </thead>
 
               <tbody>
                 {filtered.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="border-b hover:bg-gray-50 text-gray-700"
-                  >
+                  <tr key={item.id} className="border-b hover:bg-gray-50 text-gray-700">
                     <td className="py-2">{item.id}</td>
                     <td className="py-2">{item.name}</td>
                     <td className="py-2 text-right space-x-5">
-                      <button
-                        onClick={() => handleEdit(item)}
-                        className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
-                      >
+                      <button onClick={() => handleEdit(item)} className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
                         {t("car_brands_screen.edit")}
                       </button>
 
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
-                      >
+                      <button onClick={() => handleDelete(item.id)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                         {t("car_brands_screen.delete")}
                       </button>
                     </td>
@@ -168,16 +152,12 @@ export default function CarBrands() {
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
             <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              {isEditing
-                ? t("car_brands_screen.edit_title")
-                : t("car_brands_screen.create_title")}
+              {isEditing ? t("car_brands_screen.edit_title") : t("car_brands_screen.create_title")}
             </h2>
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("car_brands_screen.table.name")}
-                </label>
+                <label className="text-sm font-semibold text-gray-600">{t("car_brands_screen.table.name")}</label>
 
                 <input
                   type="text"
@@ -189,17 +169,11 @@ export default function CarBrands() {
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => setOpenModal(false)}
-                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
-              >
+              <button onClick={() => setOpenModal(false)} className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                 {t("car_brands_screen.cancel")}
               </button>
 
-              <button
-                onClick={saveBrand}
-                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-              >
+              <button onClick={saveBrand} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
                 {isEditing ? t("car_brands_screen.save") : t("car_brands_screen.create")}
               </button>
             </div>

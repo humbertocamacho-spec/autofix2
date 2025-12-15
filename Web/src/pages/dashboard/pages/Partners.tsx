@@ -189,16 +189,10 @@ export default function PartnersTable() {
                     <td className="py-3 w-[320px] whitespace-normal wrap-break-words text-sm leading-relaxed">{item.description || "-"}</td>
                     <td className="py-3 w-24 text-center font-semibold">{item.priority}</td>
                     <td className="py-3 text-right space-x-3">
-                      <button
-                        onClick={() => openEdit(item)}
-                        className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
-                      >
+                      <button onClick={() => openEdit(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
                         {t("partners_screen.edit")}
                       </button>
-                      <button
-                        onClick={() => deletePartner(item.id)}
-                        className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
-                      >
+                      <button onClick={() => deletePartner(item.id)}className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                         {t("partners_screen.delete")}
                       </button>
                     </td>
@@ -227,11 +221,8 @@ export default function PartnersTable() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("partners_screen.table.name")}
-                </label>
-                <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.name")}</label>
+                <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   placeholder="Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -261,90 +252,45 @@ export default function PartnersTable() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("partners_screen.table.phone")}
-                </label>
-                <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
-                  placeholder="Phone"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
+                <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.phone")}</label>
+                <input className="w-full border border-gray-300 px-3 py-2 rounded-lg" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)}/>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("partners_screen.table.whatsapp")}
-                </label>
-                <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
-                  placeholder="WhatsApp"
-                  value={whatsapp}
-                  onChange={(e) => setWhatsapp(e.target.value)}
-                />
+                <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.whatsapp")}</label>
+                <input className="w-full border border-gray-300 px-3 py-2 rounded-lg" placeholder="WhatsApp" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)}/>
               </div>
 
               <div className="col-span-2">
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("partners_screen.table.location")}
-                </label>
-                <textarea
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
-                  placeholder="Location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                />
+                <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.location")}</label>
+                <textarea className="w-full border border-gray-300 px-3 py-2 rounded-lg" placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)}/>
               </div>
               <div>
                 <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.latitude")}</label>
-                <input
-                  className="w-full border px-3 py-2 rounded-lg"
-                  value={latitude}
-                  onChange={(e) => setLatitude(e.target.value)}
-                />
+                <input className="w-full border px-3 py-2 rounded-lg" value={latitude} onChange={(e) => setLatitude(e.target.value)}/>
               </div>
 
               <div>
                 <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.longitude")}</label>
-                <input
-                  className="w-full border px-3 py-2 rounded-lg"
-                  value={longitude}
-                  onChange={(e) => setLongitude(e.target.value)}
-                />
+                <input className="w-full border px-3 py-2 rounded-lg" value={longitude} onChange={(e) => setLongitude(e.target.value)}/>
               </div>
 
               <div className="col-span-2">
                 <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.logo_url")}</label>
-                <input
-                  className="w-full border px-3 py-2 rounded-lg"
-                  value={logoUrl}
-                  onChange={(e) => setLogoUrl(e.target.value)}
-                />
+                <input className="w-full border px-3 py-2 rounded-lg" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)}/>
               </div>
               <div className="col-span-2">
                 <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.description")}</label>
-                <input
-                  className="w-full border px-3 py-2 rounded-lg"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
+                <input className="w-full border px-3 py-2 rounded-lg" value={description} onChange={(e) => setDescription(e.target.value)}/>
               </div>
 
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={landUsePermit}
-                  onChange={(e) => setLandUsePermit(e.target.checked)}
-                />
+                <input type="checkbox" checked={landUsePermit} onChange={(e) => setLandUsePermit(e.target.checked)}/>
                 <span className="text-sm">{t("partners_screen.table.land_use_permit")}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={scannerHandling}
-                  onChange={(e) => setScannerHandling(e.target.checked)}
-                />
+                <input type="checkbox" checked={scannerHandling} onChange={(e) => setScannerHandling(e.target.checked)}/>
                 <span className="text-sm">{t("partners_screen.table.scanner_handling")}</span>
               </div>
 
@@ -363,16 +309,10 @@ export default function PartnersTable() {
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => setOpenModal(false)}
-                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
-              >
+              <button onClick={() => setOpenModal(false)} className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                 {t("partners_screen.cancel")}
               </button>
-              <button
-                onClick={savePartner}
-                className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
-              >
+              <button onClick={savePartner} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
                 {isEditing ? t("partners_screen.save") : t("partners_screen.create")}
               </button>
             </div>

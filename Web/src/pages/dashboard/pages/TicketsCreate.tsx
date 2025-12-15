@@ -74,10 +74,7 @@ export default function TicketsTable() {
                     <td className="py-3">{item.client_name}</td>
                     <td className="py-3">{item.car_name}</td>
                     <td className="py-3 flex items-center gap-3">
-                      <img
-                        src={item.logo_url || "/images/no-logo.png"}
-                        className="h-8 w-8 rounded-full border"
-                      />
+                      <img src={item.logo_url || "/images/no-logo.png"} className="h-8 w-8 rounded-full border"/>
                       <span>{item.partner_name}</span>
                     </td>
                     <td className="py-3">{new Date(item.date).toLocaleString()}</td>

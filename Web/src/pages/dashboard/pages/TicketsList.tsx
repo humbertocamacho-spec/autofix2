@@ -71,17 +71,10 @@ export default function PendingTicketsTable() {
                 {filtered.map((item) => (
                   <tr key={item.id} className="border-b hover:bg-gray-50">
                     <td className="py-3">{item.id}</td>
-                    <td className="py-3">
-                      {item.client_name || `${t("pending_tickets_table.client")} #${item.client_id}`}
-                    </td>
-                    <td className="py-3">
-                      {item.car_name || `${t("pending_tickets_table.car")} #${item.car_id}`}
-                    </td>
+                    <td className="py-3">{item.client_name || `${t("pending_tickets_table.client")} #${item.client_id}`}</td>
+                    <td className="py-3">{item.car_name || `${t("pending_tickets_table.car")} #${item.car_id}`}</td>
                     <td className="py-3 flex items-center gap-3">
-                      <img
-                        src={item.logo_url || "/images/no-logo.png"}
-                        className="h-8 w-8 rounded-full border"
-                      />
+                      <img src={item.logo_url || "/images/no-logo.png"} className="h-8 w-8 rounded-full border"/>
                       <span>{item.partner_name}</span>
                     </td>
                     <td className="py-3">{new Date(item.date).toLocaleDateString()}</td>
