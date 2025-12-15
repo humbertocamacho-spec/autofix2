@@ -137,9 +137,7 @@ export default function PartnerDetailScreen() {
               ))}
             </>
           ) : (
-            <Text style={{ fontSize: 15, color: "#555", marginBottom: 10 }}>
-              No cuenta con certificación
-            </Text>
+            <Text style={{ fontSize: 15, color: "#555", marginBottom: 10, marginTop: -10 }}>No cuenta con certificación</Text>
           )}
 
           <View style={{ flexDirection: 'row', marginTop: -5, marginBottom: 10 }}>
