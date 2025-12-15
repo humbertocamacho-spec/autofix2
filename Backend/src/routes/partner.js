@@ -21,14 +21,21 @@ router.get("/select", authMiddleware, async (req, res) => {
 
 router.get("/",authMiddleware, async (req, res) => {
   try {
-    console.log(req.user);
 
     const { user_id, role_id } = req.user;
 
+    const [roleRow] = await db.query(
+      "SELECT name FROM roles WHERE id = ?",
+      [role_id]
+    );
+
+    const roleName = roleRow[0]?.name?.toLowerCase();
+    
     let sql = `
       SELECT 
         p.id,
         p.name,
+        p.user_id,
         p.whatsapp,
         p.phone,
         p.location,
@@ -45,12 +52,12 @@ router.get("/",authMiddleware, async (req, res) => {
 
    const params = [];
 
-    if (role_id === "partner") {
-      sql += ` WHERE p.user_id = ?`;
+    if (roleName === "partner") {
+      sql += " WHERE p.user_id = ?";
       params.push(user_id);
     }
 
-    sql += ` ORDER BY p.priority ASC, p.name ASC`;
+    sql += " ORDER BY p.priority ASC, p.name ASC";
 
     const [rows] = await db.query(sql, params);
     res.json(rows);
