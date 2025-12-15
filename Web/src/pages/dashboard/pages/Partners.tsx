@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Partner } from "../../../types/partner";
-import { useTranslation } from "react-i18next";
 import type { User } from "../../../types/users";
 import { useAuthContext } from "../../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -144,10 +144,7 @@ export default function PartnersTable() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button
-          onClick={openCreate}
-          className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6]"
-        >
+        <button onClick={openCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6]">
           {t("partners_screen.add_button")}
         </button>
       </div>
@@ -188,21 +185,9 @@ export default function PartnersTable() {
                     <td className="py-3 text-sm">{item.longitude || "-"}</td>
                     <td className="py-3 w-40 text-center">{item.land_use_permit ? "✔" : "✖"}</td>
                     <td className="py-3 w-40 text-center">{item.scanner_handling ? "✔" : "✖"}</td>
-                    <td className="py-3 w-32 flex justify-center">
-                      {item.logo_url ? (
-                        <img
-                          src={item.logo_url}
-                          className="h-10 w-10 object-contain"
-                        />
-                      ) : "-"}
-                    </td>
-
-                    <td className="py-3 w-[320px] whitespace-normal wrap-break-words text-sm leading-relaxed">
-                      {item.description || "-"}
-                    </td>
-
+                    <td className="py-3 w-32 flex justify-center">{item.logo_url ? (<img src={item.logo_url} className="h-10 w-10 object-contain"/>) : "-"}</td>
+                    <td className="py-3 w-[320px] whitespace-normal wrap-break-words text-sm leading-relaxed">{item.description || "-"}</td>
                     <td className="py-3 w-24 text-center font-semibold">{item.priority}</td>
-
                     <td className="py-3 text-right space-x-3">
                       <button
                         onClick={() => openEdit(item)}
@@ -240,7 +225,6 @@ export default function PartnersTable() {
               {isEditing ? t("partners_screen.edit_title") : t("partners_screen.create_title")}
             </h2>
 
-
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
                 <label className="text-sm font-semibold text-gray-600">
@@ -255,9 +239,7 @@ export default function PartnersTable() {
               </div>
 
               <div className="col-span-2">
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("partners_screen.table.user")}
-                </label>
+                <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.user")}</label>
                 <select
                   className={`w-full border px-3 py-2 rounded-lg
                   ${user?.role_name === "partner"
@@ -277,6 +259,7 @@ export default function PartnersTable() {
                   ))}
                 </select>
               </div>
+
               <div>
                 <label className="text-sm font-semibold text-gray-600">
                   {t("partners_screen.table.phone")}
@@ -289,7 +272,7 @@ export default function PartnersTable() {
                 />
               </div>
 
-              < div>
+              <div>
                 <label className="text-sm font-semibold text-gray-600">
                   {t("partners_screen.table.whatsapp")}
                 </label>
@@ -313,7 +296,7 @@ export default function PartnersTable() {
                 />
               </div>
               <div>
-                <label className="text-sm font-semibold text-gray-600">Latitude</label>
+                <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.latitude")}</label>
                 <input
                   className="w-full border px-3 py-2 rounded-lg"
                   value={latitude}
@@ -322,7 +305,7 @@ export default function PartnersTable() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">Longitude</label>
+                <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.longitude")}</label>
                 <input
                   className="w-full border px-3 py-2 rounded-lg"
                   value={longitude}
@@ -331,7 +314,7 @@ export default function PartnersTable() {
               </div>
 
               <div className="col-span-2">
-                <label className="text-sm font-semibold text-gray-600">Logo</label>
+                <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.logo_url")}</label>
                 <input
                   className="w-full border px-3 py-2 rounded-lg"
                   value={logoUrl}
@@ -339,7 +322,7 @@ export default function PartnersTable() {
                 />
               </div>
               <div className="col-span-2">
-                <label className="text-sm font-semibold text-gray-600">Descripcion</label>
+                <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.description")}</label>
                 <input
                   className="w-full border px-3 py-2 rounded-lg"
                   value={description}
@@ -353,7 +336,7 @@ export default function PartnersTable() {
                   checked={landUsePermit}
                   onChange={(e) => setLandUsePermit(e.target.checked)}
                 />
-                <span className="text-sm">Land use permit</span>
+                <span className="text-sm">{t("partners_screen.table.land_use_permit")}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -362,13 +345,11 @@ export default function PartnersTable() {
                   checked={scannerHandling}
                   onChange={(e) => setScannerHandling(e.target.checked)}
                 />
-                <span className="text-sm">Scanner handling</span>
+                <span className="text-sm">{t("partners_screen.table.scanner_handling")}</span>
               </div>
 
               <div className="col-span-2">
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("partners_screen.table.priority")}
-                </label>
+                <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.priority")}</label>
                 <input
                   type="number"
                   min={1}
