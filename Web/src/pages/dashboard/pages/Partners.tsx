@@ -183,7 +183,7 @@ export default function PartnersTable() {
                     <td className="py-3 font-semibold">{item.name}</td>
                     <td className="py-3">{item.phone}</td>
                     <td className="py-3">{item.whatsapp}</td>
-                    <td className="py-3  max-w-xs whitespace-normal break-words">{item.location}</td>
+                    <td className="py-3  max-w-xs whitespace-normal wrap-break-words">{item.location}</td>
                     <td className="py-3 text-sm">{item.latitude || "-"}</td>
                     <td className="py-3 text-sm">{item.longitude || "-"}</td>
                     <td className="py-3 w-40 text-center">{item.land_use_permit ? "✔" : "✖"}</td>
@@ -197,7 +197,7 @@ export default function PartnersTable() {
                       ) : "-"}
                     </td>
 
-                    <td className="py-3 w-[320px] whitespace-normal break-words text-sm leading-relaxed">
+                    <td className="py-3 w-[320px] whitespace-normal wrap-break-words text-sm leading-relaxed">
                       {item.description || "-"}
                     </td>
 
