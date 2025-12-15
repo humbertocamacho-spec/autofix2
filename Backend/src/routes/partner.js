@@ -41,7 +41,6 @@ router.get("/",authMiddleware, async (req, res) => {
         p.priority
       FROM partners p
       JOIN users u ON p.user_id = u.id
-      ORDER BY p.priority ASC, p.name ASC;
     `;
 
    const params = [];
