@@ -19,6 +19,33 @@ router.get("/select", authMiddleware, async (req, res) => {
   }
 });
 
+// Mapa de la app (Visible para todos)
+router.get("/map", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        id,
+        name,
+        whatsapp,
+        phone,
+        location,
+        latitude,
+        longitude,
+        logo_url,
+        description,
+        priority
+      FROM partners
+      ORDER BY priority ASC, name ASC
+    `);
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error mapa partners:", error);
+    res.status(500).json({ message: "Error al obtener partners" });
+  }
+});
+
+// Tabla de Partners por usuario (Web)
 router.get("/",authMiddleware, async (req, res) => {
   try {
 

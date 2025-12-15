@@ -214,49 +214,51 @@ export default function MapScreen() {
           </TouchableOpacity>
         </View>
 
-        <MapView ref={mapRef} style={styles.map} region={region} showsUserLocation={true}>
+        <View style={styles.mapWrapper}>
+          <MapView ref={mapRef} style={StyleSheet.absoluteFillObject} region={region} showsUserLocation={true}>
 
-          <Marker coordinate={region} title="Tu ubicación" pinColor="red" />
-          {nearbyPartners.map((partner) => {
-            const lat = parseFloat(partner.latitude);
-            const lon = parseFloat(partner.longitude);
+            <Marker coordinate={region} title="Tu ubicación" pinColor="red" />
+            {nearbyPartners.map((partner) => {
+              const lat = parseFloat(partner.latitude);
+              const lon = parseFloat(partner.longitude);
 
-            const isMatch =
-              searchText.trim().length > 0 &&
-              partner.name.toLowerCase().includes(searchText.toLowerCase());
+              const isMatch =
+                searchText.trim().length > 0 &&
+                partner.name.toLowerCase().includes(searchText.toLowerCase());
 
-            return (
-              <Marker key={partner.id + (isMatch ? '-match' : '-nomatch')}
-                coordinate={{ latitude: lat, longitude: lon }} pinColor={isMatch ? "green" : "blue"}
-                tracksViewChanges={true}
-                onPress={() => {
-                  const specs = partnersSpecialities
-                    .filter((ps) => ps.partner_id === partner.id)
-                    .map((ps) => {
-                      const spec = specialities.find((s) => s.id === ps.speciality_id);
-                      return spec ? spec.name : "";
+              return (
+                <Marker key={partner.id + (isMatch ? '-match' : '-nomatch')}
+                  coordinate={{ latitude: lat, longitude: lon }} pinColor={isMatch ? "green" : "blue"}
+                  tracksViewChanges={true}
+                  onPress={() => {
+                    const specs = partnersSpecialities
+                      .filter((ps) => ps.partner_id === partner.id)
+                      .map((ps) => {
+                        const spec = specialities.find((s) => s.id === ps.speciality_id);
+                        return spec ? spec.name : "";
+                      });
+
+                    router.push({
+                      pathname: "../Map/details",
+                      params: {
+                        id: partner.id.toString(),
+                        name: partner.name,
+                        location: partner.location,
+                        phone: partner.phone || "",
+                        whatsapp: partner.whatsapp || "",
+                        logo_url: partner.logo_url || "",
+                        latitude: partner.latitude,
+                        longitude: partner.longitude,
+                        description: partner.description,
+                        specialities: JSON.stringify(specs),
+                      },
                     });
-
-                  router.push({
-                    pathname: "../Map/details",
-                    params: {
-                      id: partner.id.toString(),
-                      name: partner.name,
-                      location: partner.location,
-                      phone: partner.phone || "",
-                      whatsapp: partner.whatsapp || "",
-                      logo_url: partner.logo_url || "",
-                      latitude: partner.latitude,
-                      longitude: partner.longitude,
-                      description: partner.description,
-                      specialities: JSON.stringify(specs),
-                    },
-                  });
-                }}
-              />
-            );
-          })}
-        </MapView>
+                  }}
+                />
+              );
+            })}
+          </MapView>
+        </View>
 
         <View style={styles.searchContainer}>
           <View style={styles.searchWrapped}>
@@ -402,7 +404,8 @@ export default function MapScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  map: { ...StyleSheet.absoluteFillObject, height: 310 },
+  map: { flex: 1 },
+  mapWrapper: { height: 310, width: '100%'},
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 50, paddingBottom: 10, paddingHorizontal: 15, backgroundColor: '#27B9BA', borderBottomWidth: 1, borderBottomColor: '#eee' },
   menuIcon: { fontSize: 28, fontWeight: 'bold', color: '#ffff' },
@@ -426,7 +429,7 @@ const styles = StyleSheet.create({
   buttonText: { color: '#fff', fontWeight: 'bold' },
   partnerButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#27B9BA', paddingVertical: 12, paddingHorizontal: 15, borderRadius: 10, marginHorizontal: 15, marginTop: 5, justifyContent: 'center', elevation: 3, },
   partnerButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold', },
-  searchContainer: { position: 'absolute', bottom: 0, width: '100%', height: '57%', backgroundColor: '#fff', padding: 10, elevation: 5 },
+  searchContainer: { position: 'absolute', bottom: 0, width: '100%', height: 350, backgroundColor: '#fff', padding: 10, elevation: 5 },
   scrollSpecialities: { maxHeight: "100%", marginTop: 10, marginBottom: 10, },
   scrollContent: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', paddingBottom: 10, },
   specialityContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
