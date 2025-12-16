@@ -1,6 +1,6 @@
 import express from "express";
 import db from "../config/db.js";
-import { ROLES, getRoleId } from "../helpers/roles.js";
+import { ROLES, getRoleId } from "../utils/roles.js";
 
 const router = express.Router();
 
