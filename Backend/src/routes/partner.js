@@ -46,7 +46,7 @@ router.get("/map", async (req, res) => {
 });
 
 // Tabla de Partners por usuario (Web)
-router.get("/",authMiddleware, async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
 
     const { user_id, role_id } = req.user;
@@ -57,7 +57,7 @@ router.get("/",authMiddleware, async (req, res) => {
     );
 
     const roleName = roleRow[0]?.name?.toLowerCase();
-    
+
     let sql = `
       SELECT 
         p.id,
@@ -77,7 +77,7 @@ router.get("/",authMiddleware, async (req, res) => {
       JOIN users u ON p.user_id = u.id
     `;
 
-   const params = [];
+    const params = [];
 
     if (roleName === "partner") {
       sql += " WHERE p.user_id = ?";
@@ -117,7 +117,7 @@ router.post("/", async (req, res) => {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    await db.query(sql, [
+    const [result] = await db.query(sql, [
       name,
       user_id,
       whatsapp,
@@ -132,7 +132,8 @@ router.post("/", async (req, res) => {
       priority
     ]);
 
-    res.json({ message: "Partner creado correctamente" });
+    res.json({ message: "Partner creado correctamente", id: result.insertId });
+
   } catch (error) {
     console.error("Error al crear partner:", error);
     res.status(500).json({ message: "Error al crear partner" });
