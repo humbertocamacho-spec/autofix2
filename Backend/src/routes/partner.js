@@ -46,7 +46,7 @@ router.get("/map", async (req, res) => {
 });
 
 // Tabla de Partners por usuario (Web)
-router.get("/",authMiddleware, async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
 
     const { user_id, role_id } = req.user;
@@ -57,7 +57,7 @@ router.get("/",authMiddleware, async (req, res) => {
     );
 
     const roleName = roleRow[0]?.name?.toLowerCase();
-    
+
     let sql = `
       SELECT 
         p.id,
@@ -77,7 +77,7 @@ router.get("/",authMiddleware, async (req, res) => {
       JOIN users u ON p.user_id = u.id
     `;
 
-   const params = [];
+    const params = [];
 
     if (roleName === "partner") {
       sql += " WHERE p.user_id = ?";
@@ -131,6 +131,17 @@ router.post("/", async (req, res) => {
       description,
       priority
     ]);
+
+    const partnerId = result.insertId;
+
+    if (Array.isArray(specialities) && specialities.length > 0) {
+      const values = specialities.map(sid => [partnerId, sid]);
+
+      await db.query(
+        `INSERT INTO partners_specialities (partner_id, speciality_id) VALUES ?`,
+        [values]
+      );
+    }
 
     res.json({ message: "Partner creado correctamente" });
   } catch (error) {
@@ -191,6 +202,21 @@ router.put("/:id", async (req, res) => {
       id
     ]);
 
+    await db.query(
+      "DELETE FROM partners_specialities WHERE partner_id = ?",
+      [id]
+    );
+
+    if (Array.isArray(specialities) && specialities.length > 0) {
+      const values = specialities.map(sid => [id, sid]);
+
+      await db.query(
+        `INSERT INTO partners_specialities (partner_id, speciality_id) VALUES ?`,
+        [values]
+      );
+    }
+
+
     res.json({ message: "Partner actualizado correctamente" });
   } catch (error) {
     console.error("Error al actualizar partner:", error);
@@ -201,6 +227,11 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
+
+    await db.query(
+      "DELETE FROM partners_specialities WHERE partner_id = ?",
+      [id]
+    );
 
     await db.query("DELETE FROM partners WHERE id = ?", [id]);
 
