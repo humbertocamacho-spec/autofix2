@@ -11,10 +11,7 @@ const roleCache = {};
 export async function getRoleId(roleName) {
   if (roleCache[roleName]) return roleCache[roleName];
 
-  const [rows] = await pool.query(
-    "SELECT id FROM roles WHERE name = ?",
-    [roleName]
-  );
+  const [rows] = await pool.query( "SELECT id FROM roles WHERE name = ?", [roleName]);
 
   if (rows.length === 0) {
     throw new Error(`Rol "${roleName}" no existe`);

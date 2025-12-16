@@ -49,10 +49,7 @@ router.put("/:id", async (req, res) => {
 
     await connection.beginTransaction();
 
-    const [[user]] = await connection.query(
-      "SELECT id, role_id FROM users WHERE id = ?",
-      [id]
-    );
+    const [[user]] = await connection.query( "SELECT id, role_id FROM users WHERE id = ?", [id]);
 
     if (!user) {
       await connection.rollback();
