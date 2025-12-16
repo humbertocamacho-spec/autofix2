@@ -1,10 +1,13 @@
 import express from "express";
 import db from "../config/db.js";
+import { ROLES, getRoleId } from "../helpers/roles.js";
 
 const router = express.Router();
+
+//Get users
 router.get("/", async (req, res) => {
-    try {
-        const [rows] = await db.query(`
+  try {
+    const [rows] = await db.query(`
       SELECT 
         u.id,
         u.name,
@@ -21,53 +24,90 @@ router.get("/", async (req, res) => {
       LEFT JOIN genders g ON g.id = u.gender_id
     `);
 
-        res.json(rows);
-
-    } catch (error) {
-        console.error("Error obteniendo usuarios:", error);
-        res.status(500).json({ message: "Error obteniendo usuarios" });
-    }
+    res.json(rows);
+  } catch (error) {
+    console.error("Error obteniendo usuarios:", error);
+    res.status(500).json({ message: "Error obteniendo usuarios" });
+  }
 });
 
+// Update user
 router.put("/:id", async (req, res) => {
+  const connection = await db.getConnection();
+
+  try {
     const { id } = req.params;
-    const { name, email, phone, address, role_id, gender_id, photo_url } = req.body;
+    const {
+      name,
+      email,
+      phone,
+      address,
+      role_id,
+      gender_id,
+      photo_url
+    } = req.body;
 
-    try {
-        const [existingUser] = await db.query(
-            "SELECT id FROM users WHERE id = ?",
-            [id]
-        );
+    await connection.beginTransaction();
 
-        if (existingUser.length === 0) {
-            return res.status(404).json({ message: "Usuario no encontrado" });
-        }
+    const [[user]] = await connection.query(
+      "SELECT id, role_id FROM users WHERE id = ?",
+      [id]
+    );
 
-        await db.query(
-            `
-            UPDATE users
-            SET 
-                name = ?, 
-                email = ?, 
-                phone = ?, 
-                address = ?, 
-                role_id = ?, 
-                gender_id = ?, 
-                photo_url = ?
-            WHERE id = ?
-            `,
-            [name, email, phone, address, role_id, gender_id, photo_url, id]
-        );
-
-        res.json({
-            ok: true,
-            message: "Usuario actualizado correctamente"
-        });
-
-    } catch (error) {
-        console.error("Error actualizando usuario:", error);
-        res.status(500).json({ message: "Error actualizando usuario" });
+    if (!user) {
+      await connection.rollback();
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
+
+    const adminRoleId = await getRoleId(ROLES.ADMIN);
+
+    await connection.query(
+      `
+      UPDATE users
+      SET 
+        name = ?,
+        email = ?,
+        phone = ?,
+        address = ?,
+        role_id = ?,
+        gender_id = ?,
+        photo_url = ?
+      WHERE id = ?
+      `,
+      [name, email, phone, address, role_id, gender_id, photo_url, id]
+    );
+
+    if (Number(role_id) === Number(adminRoleId)) {
+      const [[exists]] = await connection.query(
+        "SELECT id FROM admins WHERE user_id = ?",
+        [id]
+      );
+
+      if (!exists) {
+        await connection.query(
+          "INSERT INTO admins (user_id) VALUES (?)",
+          [id]
+        );
+      }
+    } 
+    else {
+      await connection.query(
+        "DELETE FROM admins WHERE user_id = ?",
+        [id]
+      );
+    }
+
+    await connection.commit();
+
+    res.json({ ok: true, message: "Usuario actualizado y rol sincronizado correctamente"});
+
+  } catch (error) {
+    await connection.rollback();
+    console.error("Error actualizando usuario:", error);
+    res.status(500).json({ message: "Error actualizando usuario" });
+  } finally {
+    connection.release();
+  }
 });
 
 export default router;

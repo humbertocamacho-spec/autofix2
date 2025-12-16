@@ -146,7 +146,8 @@
       "land_use_permit": "Permiso de uso de suelo",
       "scanner_handling": "Manejo de escáner",
       "logo_url": "Logo",
-      "description": "Descripción"
+      "description": "Descripción",
+      "specialities": "Especialidades"
     },
     "title": "Partners"
   },

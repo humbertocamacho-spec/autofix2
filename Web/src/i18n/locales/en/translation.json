@@ -149,7 +149,8 @@
       "land_use_permit": "Land use permit",
       "scanner_handling": "Scanner handling",
       "logo_url": "Logo",
-      "description": "Description"
+      "description": "Description",
+      "specialities": "Specialities"
     },
     "title": "Partners"
   },
