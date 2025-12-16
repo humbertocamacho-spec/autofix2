@@ -88,7 +88,11 @@ export default function PartnersTable() {
     setCurrentPartner(null);
     setSelectedSpecialities([]);
     setName("");
-    setUserId(null);
+    if (user?.role_name === "partner") {
+      setUserId(user.id); 
+    } else {
+      setUserId(null);
+    }
     setPhone("");
     setWhatsapp("");
     setLocation("");
