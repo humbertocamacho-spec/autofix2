@@ -30,9 +30,14 @@ export default function PartnersTable() {
   const { user } = useAuthContext();
   const { t } = useTranslation();
 
+  const [specialities, setSpecialities] = useState<{ id: number; name: string }[]>([]);
+  const [selectedSpecialities, setSelectedSpecialities] = useState<number[]>([]);
+
+
   useEffect(() => {
     fetchPartners();
     fetchUsers();
+    fetchSpecialities
   }, []);
 
   const fetchPartners = async () => {
@@ -64,6 +69,12 @@ export default function PartnersTable() {
     }
   };
 
+  const fetchSpecialities = async () => {
+    const res = await fetch(`${VITE_API_URL}/api/specialities`);
+    const data = await res.json();
+    setSpecialities(data.specialities || data);
+  };
+
   const openCreate = () => {
     setIsEditing(false);
     setCurrentPartner(null);
@@ -79,10 +90,11 @@ export default function PartnersTable() {
     setLogoUrl("");
     setDescription("");
     setPriority(10);
+    setSelectedSpecialities([]);
     setOpenModal(true);
   };
 
-  const openEdit = (partner: Partner) => {
+  const openEdit = async (partner: Partner) => {
     setIsEditing(true);
     setCurrentPartner(partner);
     setName(partner.name);
@@ -97,25 +109,78 @@ export default function PartnersTable() {
     setLogoUrl(partner.logo_url || "");
     setDescription(partner.description || "");
     setPriority(partner.priority);
+    await fetchPartnerSpecialities(partner.id);
     setOpenModal(true);
   };
+
+  const fetchPartnerSpecialities = async (partnerId: number) => {
+    const res = await fetch(
+      `${VITE_API_URL}/api/partners_specialities/partner/${partnerId}`
+    );
+    const data = await res.json();
+
+    setSelectedSpecialities(data.map((s: any) => s.speciality_id));
+  };
+
 
   const savePartner = async () => {
     if (!name || !userId) return alert("Name y User son requeridos");
 
     const body = { name, user_id: userId, phone, whatsapp, location, latitude, longitude, land_use_permit: landUsePermit, scanner_handling: scannerHandling, logo_url: logoUrl, description, priority };
-    const url = isEditing ? `${VITE_API_URL}/api/partners/${currentPartner?.id}` : `${VITE_API_URL}/api/partners`;
-    const method = isEditing ? "PUT" : "POST";
+
+    try {
+      let partnerId: number;
+
+      if (isEditing && currentPartner) {
+
+        await fetch(`${VITE_API_URL}/api/partners/${currentPartner.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        partnerId = currentPartner.id;
+
+        await savePartnerSpecialities(partnerId, true);
+      } else {
+        const res = await fetch(`${VITE_API_URL}/api/partners`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        const data = await res.json();
+        partnerId = data.id;
+
+        await savePartnerSpecialities(partnerId, false);
+      }
+
+      setOpenModal(false);
+      setSelectedSpecialities([]);
+      fetchPartners();
+    } catch (error) {
+      console.error("Error saving partner:", error);
+    }
+  };
+
+
+  const savePartnerSpecialities = async (
+    partnerId: number,
+    isEdit: boolean
+  ) => {
+    const url = `${VITE_API_URL}/api/partners_specialities/partner/${partnerId}`;
 
     await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      method: isEdit ? "PUT" : "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        specialities: selectedSpecialities,
+      }),
     });
-
-    setOpenModal(false);
-    fetchPartners();
   };
+
 
   const deletePartner = async (id: number) => {
     if (!confirm("¿Eliminar Partner?")) return;
@@ -185,14 +250,14 @@ export default function PartnersTable() {
                     <td className="py-3 text-sm">{item.longitude || "-"}</td>
                     <td className="py-3 w-40 text-center">{item.land_use_permit ? "✔" : "✖"}</td>
                     <td className="py-3 w-40 text-center">{item.scanner_handling ? "✔" : "✖"}</td>
-                    <td className="py-3 w-32 flex justify-center">{item.logo_url ? (<img src={item.logo_url} className="h-10 w-10 object-contain"/>) : "-"}</td>
+                    <td className="py-3 w-32 flex justify-center">{item.logo_url ? (<img src={item.logo_url} className="h-10 w-10 object-contain" />) : "-"}</td>
                     <td className="py-3 w-[320px] whitespace-normal wrap-break-words text-sm leading-relaxed">{item.description || "-"}</td>
                     <td className="py-3 w-24 text-center font-semibold">{item.priority}</td>
                     <td className="py-3 text-right space-x-3">
                       <button onClick={() => openEdit(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
                         {t("partners_screen.edit")}
                       </button>
-                      <button onClick={() => deletePartner(item.id)}className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                      <button onClick={() => deletePartner(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                         {t("partners_screen.delete")}
                       </button>
                     </td>
@@ -253,44 +318,44 @@ export default function PartnersTable() {
 
               <div>
                 <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.phone")}</label>
-                <input className="w-full border border-gray-300 px-3 py-2 rounded-lg" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)}/>
+                <input className="w-full border border-gray-300 px-3 py-2 rounded-lg" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
               </div>
 
               <div>
                 <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.whatsapp")}</label>
-                <input className="w-full border border-gray-300 px-3 py-2 rounded-lg" placeholder="WhatsApp" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)}/>
+                <input className="w-full border border-gray-300 px-3 py-2 rounded-lg" placeholder="WhatsApp" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
               </div>
 
               <div className="col-span-2">
                 <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.location")}</label>
-                <textarea className="w-full border border-gray-300 px-3 py-2 rounded-lg" placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)}/>
+                <textarea className="w-full border border-gray-300 px-3 py-2 rounded-lg" placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
               </div>
               <div>
                 <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.latitude")}</label>
-                <input className="w-full border px-3 py-2 rounded-lg" value={latitude} onChange={(e) => setLatitude(e.target.value)}/>
+                <input className="w-full border px-3 py-2 rounded-lg" value={latitude} onChange={(e) => setLatitude(e.target.value)} />
               </div>
 
               <div>
                 <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.longitude")}</label>
-                <input className="w-full border px-3 py-2 rounded-lg" value={longitude} onChange={(e) => setLongitude(e.target.value)}/>
+                <input className="w-full border px-3 py-2 rounded-lg" value={longitude} onChange={(e) => setLongitude(e.target.value)} />
               </div>
 
               <div className="col-span-2">
                 <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.logo_url")}</label>
-                <input className="w-full border px-3 py-2 rounded-lg" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)}/>
+                <input className="w-full border px-3 py-2 rounded-lg" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} />
               </div>
               <div className="col-span-2">
                 <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.description")}</label>
-                <input className="w-full border px-3 py-2 rounded-lg" value={description} onChange={(e) => setDescription(e.target.value)}/>
+                <input className="w-full border px-3 py-2 rounded-lg" value={description} onChange={(e) => setDescription(e.target.value)} />
               </div>
 
               <div className="flex items-center gap-2">
-                <input type="checkbox" checked={landUsePermit} onChange={(e) => setLandUsePermit(e.target.checked)}/>
+                <input type="checkbox" checked={landUsePermit} onChange={(e) => setLandUsePermit(e.target.checked)} />
                 <span className="text-sm">{t("partners_screen.table.land_use_permit")}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <input type="checkbox" checked={scannerHandling} onChange={(e) => setScannerHandling(e.target.checked)}/>
+                <input type="checkbox" checked={scannerHandling} onChange={(e) => setScannerHandling(e.target.checked)} />
                 <span className="text-sm">{t("partners_screen.table.scanner_handling")}</span>
               </div>
 
@@ -306,6 +371,33 @@ export default function PartnersTable() {
                   onChange={(e) => handlePriorityChange(Number(e.target.value))}
                 />
               </div>
+              <div className="col-span-2">
+                <label className="text-sm font-semibold text-gray-600">
+                  Especialidades
+                </label>
+
+                <div className="border rounded-lg p-3 max-h-[180px] overflow-y-auto grid grid-cols-2 gap-2 mt-1">
+                  {specialities.map((s) => (
+                    <label key={s.id} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={selectedSpecialities.includes(s.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedSpecialities([...selectedSpecialities, s.id]);
+                          } else {
+                            setSelectedSpecialities(
+                              selectedSpecialities.filter((id) => id !== s.id)
+                            );
+                          }
+                        }}
+                      />
+                      {s.name}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
