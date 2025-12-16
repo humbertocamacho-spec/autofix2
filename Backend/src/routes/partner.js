@@ -46,7 +46,7 @@ router.get("/map", async (req, res) => {
 });
 
 // Tabla de Partners por usuario (Web)
-router.get("/",authMiddleware, async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
 
     const { user_id, role_id } = req.user;
@@ -57,7 +57,7 @@ router.get("/",authMiddleware, async (req, res) => {
     );
 
     const roleName = roleRow[0]?.name?.toLowerCase();
-    
+
     let sql = `
       SELECT 
         p.id,
@@ -77,7 +77,7 @@ router.get("/",authMiddleware, async (req, res) => {
       JOIN users u ON p.user_id = u.id
     `;
 
-   const params = [];
+    const params = [];
 
     if (roleName === "partner") {
       sql += " WHERE p.user_id = ?";
@@ -95,6 +95,7 @@ router.get("/",authMiddleware, async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+  const connection = await db.getConnection();
   try {
     const {
       name,
@@ -108,34 +109,61 @@ router.post("/", async (req, res) => {
       scanner_handling,
       logo_url,
       description,
-      priority
+      priority,
+      speciality_ids
     } = req.body;
 
-    const sql = `
+    await connection.beginTransaction();
+
+    //Crear partner
+    const [result] = await connection.query(`
       INSERT INTO partners 
       (name, user_id, whatsapp, phone, location, latitude, longitude, land_use_permit, scanner_handling, logo_url, description, priority)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+    `,
+      [
+        name,
+        user_id,
+        whatsapp,
+        phone,
+        location,
+        latitude,
+        longitude,
+        land_use_permit,
+        scanner_handling,
+        logo_url,
+        description,
+        priority
+      ]
+    );
 
-    await db.query(sql, [
-      name,
-      user_id,
-      whatsapp,
-      phone,
-      location,
-      latitude,
-      longitude,
-      land_use_permit,
-      scanner_handling,
-      logo_url,
-      description,
-      priority
-    ]);
+    const partnerId = result.insertId;
+    if (Array.isArray(speciality_ids) && speciality_ids.length > 0) {
+      const values = speciality_ids.map(id => [partnerId, id]);
 
-    res.json({ message: "Partner creado correctamente" });
+      await connection.query(
+        `
+        INSERT INTO partners_specialities (partner_id, speciality_id)
+        VALUES ?
+        `,
+        [values]
+      );
+    }
+
+    // Confirmar transacción
+    await connection.commit();
+
+    res.json({
+      message: "Partner creado correctamente",
+      id: partnerId
+    });
+
   } catch (error) {
-    console.error("Error al crear partner:", error);
+    await connection.rollback();
+    console.error("Error creando partner:", error);
     res.status(500).json({ message: "Error al crear partner" });
+  } finally {
+    connection.release();
   }
 });
 
