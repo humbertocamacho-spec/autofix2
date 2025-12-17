@@ -17,23 +17,28 @@ export default function TicketsTable() {
     fetchTickets();
   }, [user]);
 
-  const fetchTickets = async () => {
-    try {
-      const res = await fetch(`${VITE_API_URL}/api/ticket`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-          "Content-Type": "application/json",
-        },
-      });
+  console.log("TOKEN:", localStorage.getItem("token"));
 
-      const data = await res.json();
-      setTickets(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error fetching tickets:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchTickets = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(`${VITE_API_URL}/api/ticket`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await res.json();
+    setTickets(Array.isArray(data) ? data : []);
+  } catch (error) {
+    console.error("Error fetching tickets:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const filtered = tickets
     .filter(
