@@ -19,13 +19,13 @@ export default function TicketsTable() {
 
   const fetchTickets = async () => {
     try {
-      let url = `${VITE_API_URL}/api/ticket`;
+      const res = await fetch(`${VITE_API_URL}/api/ticket`, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-      if (user?.role_id === 3 && user?.client_id) {
-        url = `${VITE_API_URL}/api/ticket?client_id=${user.client_id}`;
-      }
-
-      const res = await fetch(url);
       const data = await res.json();
       setTickets(Array.isArray(data) ? data : []);
     } catch (error) {
