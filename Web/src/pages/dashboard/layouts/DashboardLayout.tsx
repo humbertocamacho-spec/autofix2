@@ -21,6 +21,7 @@ export default function DashboardLayout({ children }: Props) {
   const navigate = useNavigate();
   const { user, loading, logout } = useAuthContext();
   const layoutKey = user?.id ? `user-${user.id}` : "guest";
+  const isPartner = user?.role_name === ROLES.PARTNER;
 
   const iconSize = sidebarOpen ? 23 : 28;
   const { t } = useTranslation();
@@ -215,33 +216,44 @@ export default function DashboardLayout({ children }: Props) {
           {CheckPermissionForModule("tickets") && (
             <div>
               <button
-                onClick={() => toggleMenu("tickets")}
+                onClick={() => {
+                  if (isPartner) {
+                    navigate("/tickets/created");
+                  } else {
+                    toggleMenu("tickets");
+                  }
+                }}
                 className={`${menuButtonClass()} ${
-                  openMenu === "tickets" || isActive("/tickets")
-                    ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold"
-                    : ""
-                }`}
-              >
+                  openMenu === "tickets" ||
+                  isActive("/tickets/list") ||
+                  isActive("/tickets/created") ? "bg-[#27B9BA]/10 text-[#27B9BA] font-semibold" : ""}`}>
                 <HiOutlineTicket size={iconSize} />
                 <span className={textClass()}>{t("tickets")}</span>
-                {sidebarOpen && (
+
+                {!isPartner && sidebarOpen && (
                   <span className="ml-auto">
-                    {openMenu === "tickets" ? (
-                      <HiOutlineChevronDown size={18} />
-                    ) : (
-                      <HiOutlineChevronRight size={18} />
-                    )}
+                    {openMenu === "tickets" ? (<HiOutlineChevronDown size={18} />) : (<HiOutlineChevronRight size={18} />)}
                   </span>
                 )}
+
                 {!sidebarOpen && <Tooltip>{t("tickets")}</Tooltip>}
               </button>
 
-              {sidebarOpen && openMenu === "tickets" && (
+              {!isPartner && sidebarOpen && openMenu === "tickets" && (
                 <div className="mt-2 space-y-1 pl-10">
-                  <Link to="/tickets/list" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">
+                  <Link
+                    to="/tickets/list"
+                    className={`block rounded-lg px-4 py-2 text-sm transition ${
+                      isActive("/tickets/list") ? "bg-[#27B9BA]/10 text-[#27B9BA]" : "text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA]"
+                    }`}>
                     Pendientes
                   </Link>
-                  <Link to="/tickets/created" className="block rounded-lg px-4 py-2 text-sm text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA] transition">
+
+                  <Link
+                    to="/tickets/created"
+                    className={`block rounded-lg px-4 py-2 text-sm transition ${
+                      isActive("/tickets/created") ? "bg-[#27B9BA]/10 text-[#27B9BA]" : "text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA]"
+                    }`}>
                     Confirmados
                   </Link>
                 </div>
