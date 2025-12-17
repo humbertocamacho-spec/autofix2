@@ -216,7 +216,8 @@
       "id": "ID",
       "name": "Name",
       "phone": "Phone",
-      "role": "Role"
+      "role": "Role",
+      "status": "Status"
     },
     "title": "Users"
   },

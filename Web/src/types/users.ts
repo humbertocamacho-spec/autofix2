@@ -10,4 +10,5 @@ export interface User {
   gender_id: number | null; 
   role_name: string;
   gender_name: string | null;
+  deleted_at?: string | null;
 }

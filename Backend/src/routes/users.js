@@ -109,51 +109,51 @@ router.put("/:id", async (req, res) => {
 
 // Delete user
 router.delete("/:id", async (req, res) => {
-  const connection = await db.getConnection();
-
   try {
     const { id } = req.params;
 
-    await connection.beginTransaction();
-
-    const [[user]] = await connection.query(
-      "SELECT id, role_id FROM users WHERE id = ?",
+    const [result] = await db.query(
+      "UPDATE users SET deleted_at = NOW() WHERE id = ?",
       [id]
     );
 
-    if (!user) {
-      await connection.rollback();
+    if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    const adminRoleId = await getRoleId(ROLES.ADMIN);
-
-    if (Number(user.role_id) === Number(adminRoleId)) {
-      await connection.query(
-        "DELETE FROM admins WHERE user_id = ?",
-        [id]
-      );
-    }
-
-    await connection.query(
-      "DELETE FROM users WHERE id = ?",
-      [id]
-    );
-
-    await connection.commit();
-
     res.json({
       ok: true,
-      message: "Usuario eliminado correctamente"
+      message: "Usuario desactivado correctamente"
     });
 
   } catch (error) {
-  await connection.rollback();
-  console.error("DELETE USER ERROR =>", error.sqlMessage || error);
-  res.status(500).json({ message: error.sqlMessage || "Error eliminando usuario" });
-}
- finally {
-    connection.release();
+    console.error("Error soft deleting user:", error);
+    res.status(500).json({ message: "Error desactivando usuario" });
+  }
+});
+
+// Restore user
+router.patch("/:id/restore", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [result] = await db.query(
+      "UPDATE users SET deleted_at = NULL WHERE id = ?",
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.json({
+      ok: true,
+      message: "Usuario reactivado correctamente"
+    });
+
+  } catch (error) {
+    console.error("Error restoring user:", error);
+    res.status(500).json({ message: "Error reactivando usuario" });
   }
 });
 

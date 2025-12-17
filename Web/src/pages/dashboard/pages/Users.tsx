@@ -38,13 +38,11 @@ export default function UsersTable() {
     if (!currentUser) return;
 
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users/${currentUser.id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(currentUser),
-        }
-      );
+      const res = await fetch(`${VITE_API_URL}/api/users/${currentUser.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(currentUser),
+      });
 
       const data = await res.json();
 
@@ -63,9 +61,8 @@ export default function UsersTable() {
 
   const handleDeleteUser = async (user: User) => {
     const confirmDelete = window.confirm(
-      `¿Seguro que deseas eliminar al usuario "${user.name}"?`
+      `¿Seguro que deseas desactivar al usuario "${user.name}"?`
     );
-
     if (!confirmDelete) return;
 
     try {
@@ -74,16 +71,34 @@ export default function UsersTable() {
       });
 
       const data = await res.json();
-
       if (!res.ok) {
-        alert(data.message || "Error al eliminar usuario");
+        alert(data.message || "Error al desactivar usuario");
         return;
       }
 
-      alert("Usuario eliminado correctamente");
+      alert("Usuario desactivado correctamente");
       fetchUsers();
     } catch (error) {
       console.error("Error deleting user:", error);
+    }
+  };
+
+  const handleRestoreUser = async (user: User) => {
+    try {
+      const res = await fetch(`${VITE_API_URL}/api/users/${user.id}/restore`, {
+        method: "PATCH",
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || "Error al reactivar usuario");
+        return;
+      }
+
+      alert("Usuario reactivado correctamente");
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -114,7 +129,10 @@ export default function UsersTable() {
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
-        {loading ? (<p className="text-center py-10 text-gray-500">{t("users_screen.loading")}</p>
+        {loading ? (
+          <p className="text-center py-10 text-gray-500">
+            {t("users_screen.loading")}
+          </p>
         ) : (
           <table className="w-full table-auto text-left">
             <thead>
@@ -125,13 +143,19 @@ export default function UsersTable() {
                 <th className="pb-3">{t("users_screen.table.phone")}</th>
                 <th className="pb-3">{t("users_screen.table.role")}</th>
                 <th className="pb-3">{t("users_screen.table.gender")}</th>
+                <th className="pb-3">{t("users_screen.table.status")}</th>
                 <th className="pb-3 text-right">{t("users_screen.table.actions")}</th>
               </tr>
             </thead>
 
             <tbody>
               {filtered.map((user) => (
-                <tr key={user.id}className="border-b hover:bg-gray-50 text-gray-700">
+                <tr
+                  key={user.id}
+                  className={`border-b hover:bg-gray-50 text-gray-700 ${
+                    user.deleted_at ? "bg-gray-100 opacity-70" : ""
+                  }`}
+                >
                   <td className="py-3">{user.id}</td>
                   <td className="py-3">{user.name}</td>
                   <td className="py-3">{user.email}</td>
@@ -139,25 +163,61 @@ export default function UsersTable() {
                   <td className="py-3">{user.role_name || "—"}</td>
                   <td className="py-3">{user.gender_name || "—"}</td>
 
-                  <td className="py-3 text-right space-x-3">
-                    <Can permission="update_users">
-                      <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600" onClick={() => handleOpenEdit(user)}>
-                        {t("users_screen.edit")}
-                      </button>
-                    </Can>
+                  <td className="py-3">
+                    {user.deleted_at ? (
+                      <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                        Inactivo
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                        Activo
+                      </span>
+                    )}
+                  </td>
 
-                    <Can permission="delete_users">
-                      <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700" onClick={() => handleDeleteUser(user)}>
-                        {t("users_screen.delete")}
-                      </button>
-                    </Can>
+                  <td className="py-3 text-right space-x-3">
+                    {!user.deleted_at && (
+                      <Can permission="update_users">
+                        <button
+                          className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
+                          onClick={() => handleOpenEdit(user)}
+                        >
+                          {t("users_screen.edit")}
+                        </button>
+                      </Can>
+                    )}
+
+                    {!user.deleted_at && (
+                      <Can permission="delete_users">
+                        <button
+                          className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700"
+                          onClick={() => handleDeleteUser(user)}
+                        >
+                          {t("users_screen.delete")}
+                        </button>
+                      </Can>
+                    )}
+
+                    {user.deleted_at && (
+                      <Can permission="update_users">
+                        <button
+                          className="px-3 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700"
+                          onClick={() => handleRestoreUser(user)}
+                        >
+                          {t("users_screen.restore")}
+                        </button>
+                      </Can>
+                    )}
                   </td>
                 </tr>
               ))}
 
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7}className="text-center py-6 text-gray-500">
+                  <td
+                    colSpan={8}
+                    className="text-center py-6 text-gray-500"
+                  >
                     {t("users_screen.no_results")}
                   </td>
                 </tr>
@@ -170,53 +230,54 @@ export default function UsersTable() {
       {openEdit && currentUser && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">{t("users_screen.modal.title")}</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+              {t("users_screen.modal.title")}
+            </h2>
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("users_screen.modal.name")}</label>
+                <label className="text-sm font-semibold text-gray-600">
+                  {t("users_screen.modal.name")}
+                </label>
                 <input
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={currentUser.name}
                   onChange={(e) =>
-                    setCurrentUser({
-                      ...currentUser,
-                      name: e.target.value,
-                    })
+                    setCurrentUser({ ...currentUser, name: e.target.value })
                   }
                 />
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("users_screen.modal.email")}</label>
+                <label className="text-sm font-semibold text-gray-600">
+                  {t("users_screen.modal.email")}
+                </label>
                 <input
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={currentUser.email}
                   onChange={(e) =>
-                    setCurrentUser({
-                      ...currentUser,
-                      email: e.target.value,
-                    })
+                    setCurrentUser({ ...currentUser, email: e.target.value })
                   }
                 />
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("users_screen.modal.phone")}</label>
+                <label className="text-sm font-semibold text-gray-600">
+                  {t("users_screen.modal.phone")}
+                </label>
                 <input
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={currentUser.phone || ""}
                   onChange={(e) =>
-                    setCurrentUser({
-                      ...currentUser,
-                      phone: e.target.value,
-                    })
+                    setCurrentUser({ ...currentUser, phone: e.target.value })
                   }
                 />
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("users_screen.modal.role")}</label>
+                <label className="text-sm font-semibold text-gray-600">
+                  {t("users_screen.modal.role")}
+                </label>
                 <select
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={currentUser.role_id}
@@ -227,7 +288,9 @@ export default function UsersTable() {
                     })
                   }
                 >
-                  <option value="" disabled>{t("users_screen.modal.select_role")}</option>
+                  <option value="" disabled>
+                    {t("users_screen.modal.select_role")}
+                  </option>
                   <option value={1}>Admin</option>
                   <option value={2}>Partner</option>
                   <option value={3}>Client</option>
@@ -235,7 +298,9 @@ export default function UsersTable() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("users_screen.modal.gender")}</label>
+                <label className="text-sm font-semibold text-gray-600">
+                  {t("users_screen.modal.gender")}
+                </label>
                 <select
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={currentUser.gender_id || ""}
@@ -246,7 +311,9 @@ export default function UsersTable() {
                     })
                   }
                 >
-                  <option value="">{t("users_screen.modal.select_gender")}</option>
+                  <option value="">
+                    {t("users_screen.modal.select_gender")}
+                  </option>
                   <option value={1}>Femenino</option>
                   <option value={2}>Masculino</option>
                 </select>
@@ -254,12 +321,18 @@ export default function UsersTable() {
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenEdit(false)}>
+              <button
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+                onClick={() => setOpenEdit(false)}
+              >
                 {t("users_screen.modal.cancel")}
               </button>
 
               <Can permission="update_users">
-                <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition" onClick={handleUpdateUser}>
+                <button
+                  className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition"
+                  onClick={handleUpdateUser}
+                >
                   {t("users_screen.modal.save")}
                 </button>
               </Can>

@@ -185,6 +185,7 @@
   "see_all": "Ver todos",
   "specialities": "Especialidades",
   "tickets": "Tickets",
+
   "users": "Usuarios",
   "users_screen": {
     "add_button": "Agregar Usuario",
@@ -212,7 +213,8 @@
       "id": "ID",
       "name": "Nombre",
       "phone": "Teléfono",
-      "role": "Rol"
+      "role": "Rol",
+      "status": "Estado"
     },
     "title": "Usuarios"
   },
