@@ -5,46 +5,48 @@ import { authMiddleware } from "./auth.js";
 const router = express.Router();
 
 router.get("/", authMiddleware, async (req, res) => {
-    try {
-        const { role_name, partner_id, client_id } = req.user;
-        const params = [];
+  try {
+    const { role_name, partner_id, client_id } = req.user;
+    const params = [];
 
-        let query = `
-            SELECT 
-                t.id,
-                t.client_id,
-                u.name AS client_name,
-                t.car_id,
-                c.name AS car_name,
-                t.partner_id,
-                p.name AS partner_name,
-                p.logo_url,       
-                p.phone,
-                t.date,
-                t.notes
-            FROM tickets t
-            LEFT JOIN users u ON u.id = t.client_id
-            LEFT JOIN cars c ON c.id = t.car_id
-            LEFT JOIN partners p ON p.id = t.partner_id
-        `;
+    let query = `
+      SELECT 
+        t.id,
+        t.client_id,
+        u.name AS client_name,
+        t.car_id,
+        c.name AS car_name,
+        t.partner_id,
+        p.name AS partner_name,
+        p.logo_url,
+        p.phone,
+        t.date,
+        t.notes
+      FROM tickets t
+      LEFT JOIN users u ON u.id = t.client_id
+      LEFT JOIN cars c ON c.id = t.car_id
+      LEFT JOIN partners p ON p.id = t.partner_id
+    `;
 
-        if (role_name === "partner") {
-            query += ` WHERE t.partner_id = ?`;
-            params.push(partner_id);
-        } else if (role_name === "client") {
-            query += ` WHERE t.client_id = ?`;
-            params.push(client_id);
-        }
-
-        query += ` ORDER BY t.date DESC`;
-
-        const [rows] = await db.query(query, params);
-        return res.json(rows);
-
-    } catch (error) {
-        console.error("Error obteniendo tickets", error);
-        return res.status(500).json({ message: "Error al obtener tickets" });
+    if (role_name === "partner") {
+      query += ` WHERE t.partner_id = ?`;
+      params.push(partner_id);
     }
+
+    if (role_name === "client") {
+      query += ` WHERE t.client_id = ?`;
+      params.push(client_id);
+    }
+
+    query += ` ORDER BY t.date DESC`;
+
+    const [rows] = await db.query(query, params);
+    res.json(rows);
+
+  } catch (error) {
+    console.error("Error obteniendo tickets:", error);
+    res.status(500).json({ message: "Error al obtener tickets" });
+  }
 });
 
 router.get("/by-id/:id", authMiddleware, async (req, res) => {
