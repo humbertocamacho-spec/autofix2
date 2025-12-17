@@ -57,12 +57,9 @@ router.post("/", async (req, res) => {
     }
 });
 
-
 router.put("/:id", async (req, res) => {
     const { id } = req.params;
     const { name, car_brand_id, model, year, type, plate } = req.body;
-
-    console.log("Datos recibidos en updateCar:", req.body);
 
     if (!/^\d{4}$/.test(year)) {
         return res.status(400).json({ message: "El año debe tener 4 dígitos numéricos" });
@@ -90,5 +87,23 @@ router.put("/:id", async (req, res) => {
         res.status(500).json({ message: "Error al actualizar vehículo" });
     }
 });
+
+router.delete("/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+
+        await db.query("DELETE FROM cars_clients WHERE car_id = ?", [id]);
+
+        await db.query("DELETE FROM cars WHERE id = ?", [id]);
+
+        res.json({ ok: true, message: "Vehículo eliminado" });
+
+    } catch (error) {
+        console.error("Error al eliminar vehículo:", error);
+        res.status(500).json({ message: "Error al eliminar vehículo" });
+    }
+});
+
 
 export default router;

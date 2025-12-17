@@ -66,34 +66,38 @@ export default function LoginScreen() {
       const data = await res.json();
 
       if (!data.ok || !data.user) {
-        setError(data.message || "Error en el login");
-        return;
-      }
+          setError(data.message || "Error en el login");
+          return;
+        }
 
-      const userId = data.user.id;
-      const clientId = data.user.client_id;
+        // 🔐 TOKEN
+        await AsyncStorage.setItem('token', data.token);
 
-      await AsyncStorage.setItem("user_id", userId.toString());
-      await AsyncStorage.setItem("client_id", clientId.toString());
-      await AsyncStorage.removeItem("appointments");
-      const verifyClientId = await AsyncStorage.getItem("client_id");
+        const userId = data.user.id;
+        const clientId = data.user.client_id;
 
-      if (remember) {
-        await AsyncStorage.setItem('savedEmail', email);
-        await AsyncStorage.setItem('savedPassword', password);
-      } else {
-        await AsyncStorage.removeItem('savedEmail');
-        await AsyncStorage.removeItem('savedPassword');
-      }
+        await AsyncStorage.setItem("user_id", userId.toString());
+        await AsyncStorage.setItem("client_id", clientId ? clientId.toString() : "");
 
-      router.replace('/Map');
+        // Recordar credenciales
+        if (remember) {
+          await AsyncStorage.setItem('savedEmail', email);
+          await AsyncStorage.setItem('savedPassword', password);
+        } else {
+          await AsyncStorage.removeItem('savedEmail');
+          await AsyncStorage.removeItem('savedPassword');
+        }
 
-    } catch (err) {
-      console.error(err);
-      setError('No se pudo conectar al servidor');
-    }
+        // 👉 AHORA sí navega
+        router.replace('/Map');
+
+
+      } catch (err: any) {
+    console.log("ERROR LOGIN APP:", err?.response?.data || err.message || err);
+    setError(err?.response?.data?.message || "Error desconocido");
+  }
+
   };
-
 
   const handleForgotPassword = () => {
     router.push('/Register');

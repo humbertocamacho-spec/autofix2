@@ -48,14 +48,69 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Error en el servidor" });
   }
 });
+router.get("/", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        p.id,
+
+        p.client_id,
+        u.name AS client_name,
+
+        p.car_id,
+        c.name AS car_name,
+
+        p.partner_id,
+        p.partner_name,
+        p.partner_phone,
+        p.logo_url,
+
+        p.date,
+        p.time,
+        p.notes
+
+      FROM pending_tickets p
+      LEFT JOIN clients cl ON cl.id = p.client_id
+      LEFT JOIN users u ON u.id = cl.user_id    
+      LEFT JOIN cars c ON c.id = p.car_id
+    `);
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error obteniendo pending tickets:", error);
+    res.status(500).json({ error: "Error al obtener pending tickets" });
+  }
+});
+
 
 router.get("/:client_id", async (req, res) => {
   try {
     const { client_id } = req.params;
-    const [rows] = await db.query(
-      "SELECT * FROM pending_tickets WHERE client_id = ?",
-      [client_id]
-    );
+    const [rows] = await db.query(`
+      SELECT 
+        p.id,
+
+        p.client_id,
+        u.name AS client_name,
+
+        p.car_id,
+        c.name AS car_name,
+
+        p.partner_id,
+        p.partner_name,
+        p.partner_phone,
+        p.logo_url,
+
+        p.date,
+        p.time,
+        p.notes
+
+      FROM pending_tickets p
+      LEFT JOIN clients cl ON cl.id = p.client_id
+      LEFT JOIN users u ON u.id = cl.user_id
+      LEFT JOIN cars c ON c.id = p.car_id
+      WHERE p.client_id = ?
+    `, [client_id]);
 
     res.json(rows);
   } catch (error) {

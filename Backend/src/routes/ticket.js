@@ -1,43 +1,97 @@
 import express from "express";
 import db from "../config/db.js";
+import { authMiddleware } from "./auth.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
-    try {
-        const client_id = req.query.client_id;
-        const params = [];
+// Get all tickets (App)
+router.get("/app", authMiddleware, async (req, res) => {
+  try {
+    const { user_id } = req.user;
 
-        let query = `
-            SELECT 
-                t.id,
-                t.client_id,
-                u.name AS client_name,
-                t.car_id,
-                c.name AS car_name,
-                t.partner_id,
-                p.name AS partner_name,
-                p.logo_url,       
-                p.phone,
-                t.date,
-                t.notes
-            FROM tickets t
-            LEFT JOIN users u ON u.id = t.client_id
-            LEFT JOIN cars c ON c.id = t.car_id
-            LEFT JOIN partners p ON p.id = t.partner_id
-        `;
+    const [clientRows] = await db.query(
+      "SELECT id FROM clients WHERE user_id = ?",
+      [user_id]
+    );
 
-        if (client_id) {
-            query += ` WHERE t.client_id = ?`;
-            params.push(Number(client_id));
-        }
-
-        const [rows] = await db.query(query, params);
-        res.json(rows);
-    } catch (error) {
-        console.error("Error obteniendo tickets", error);
-        res.status(500).json({ message: "Error al obtener tickets" });
+    if (!clientRows.length) {
+      return res.json([]);
     }
+
+    const client_id = clientRows[0].id;
+
+    const [rows] = await db.query(`
+      SELECT 
+        t.id,
+        t.client_id,
+        u.name AS client_name,
+        t.car_id,
+        c.name AS car_name,
+        t.partner_id,
+        p.name AS partner_name,
+        p.logo_url,
+        p.phone,
+        t.date,
+        t.notes
+      FROM tickets t
+      LEFT JOIN users u ON u.id = t.client_id
+      LEFT JOIN cars c ON c.id = t.car_id
+      LEFT JOIN partners p ON p.id = t.partner_id
+      WHERE t.client_id = ?
+      ORDER BY t.date DESC
+    `, [client_id]);
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error obteniendo tickets app:", error);
+    res.status(500).json({ message: "Error al obtener tickets" });
+  }
+});
+
+// Get all tickets (Web)
+router.get("/", authMiddleware, async (req, res) => {
+  try {
+    const { role_name, partner_id, client_id } = req.user;
+    const params = [];
+
+    let query = `
+      SELECT 
+        t.id,
+        t.client_id,
+        u.name AS client_name,
+        t.car_id,
+        c.name AS car_name,
+        t.partner_id,
+        p.name AS partner_name,
+        p.logo_url,       
+        p.phone,
+        t.date,
+        t.notes
+      FROM tickets t
+      LEFT JOIN users u ON u.id = t.client_id
+      LEFT JOIN cars c ON c.id = t.car_id
+      LEFT JOIN partners p ON p.id = t.partner_id
+    `;
+
+    if (role_name === "client") {
+      query += ` WHERE t.client_id = ?`;
+      params.push(client_id);
+    }
+
+    if (role_name === "partner") {
+      query += ` WHERE t.partner_id = ?`;
+      params.push(partner_id);
+    }
+
+    query += ` ORDER BY t.date DESC`;
+
+    const [rows] = await db.query(query, params);
+    res.json(rows);
+
+  } catch (error) {
+    console.error("Error obteniendo tickets", error);
+    res.status(500).json({ message: "Error al obtener tickets" });
+  }
 });
 
 router.get("/:car_id/:partner_id/:client_id", async (req, res) => {
@@ -168,6 +222,5 @@ router.get("/occupied", async (req, res) => {
         return res.status(500).json({ message: "Error obteniendo horas ocupadas" });
     }
 });
-
 
 export default router;

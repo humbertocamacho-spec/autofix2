@@ -28,28 +28,28 @@ export default function LoginPage() {
 
           <div className="md:w-1/2 p-10 bg-white">
             <h4 className="text-2xl font-semibold mb-2 text-gray-900">
-              Inicia sesión en tu cuenta
+              Login with your account
             </h4>
 
             <p className="text-gray-600 mb-6 leading-tight">
-              Bienvenido de nuevo! Inicia sesión con tus datos
+              Welcome back! Please enter your email and password to access your account.
             </p>
 
             <div className="space-y-3 mb-6">
               <button className="w-full border border-[#27B9BA] text-[#27B9BA] py-2 rounded-lg font-medium hover:bg-blue-50 transition flex items-center justify-center gap-2">
-                <i className="fa fa-google"></i> Iniciar sesión con Google
+                <i className="fa fa-google"></i> Login with Google
               </button>
 
               <button className="w-full border border-[#27B9BA] text-[#27B9BA] py-2 rounded-lg font-medium hover:bg-blue-50 transition flex items-center justify-center gap-2">
-                <i className="fa fa-facebook-f"></i> Iniciar sesión con Facebook
+                <i className="fa fa-facebook-f"></i> Login with Facebook
               </button>
             </div>
 
             <LoginForm onLoginSuccess={handleLoginSuccess} />
 
             <p className="text-center mt-5 text-sm text-gray-700">
-              No tienes una cuenta?{" "}
-              <Link to="/register" className="text-blue-600 hover:underline">Registrate </Link>
+              I don't have an account?{" "}
+              <Link to="/register" className="text-blue-600 hover:underline">Register</Link>
             </p>
           </div>
         </div>

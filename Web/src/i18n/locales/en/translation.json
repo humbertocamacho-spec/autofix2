@@ -1,0 +1,385 @@
+{
+  "admins": "Admins",
+  "admin_screen": {
+    "add_button": "Add Admin",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "no_results": "No admins found",
+    "search_placeholder": "Search admins by name...",
+    "create_title": "Add Admin",
+    "select_user": "Select user",
+    "choose_user": "Choose user",
+    "edit_title": "Edit Admin",
+    "create": "Add",
+    "save": "Save",
+    "cancel": "Cancel",
+    "table": {
+      "actions": "Actions",
+      "id": "ID",
+      "name": "Name"
+    },
+
+
+    "title": "Administrators"
+  },
+
+  "brands": "Car Brands",
+  "certifications": "Certifications",
+
+  "clients": "Clients",
+  "clients_screen": {
+    "add_button": "Add Client",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "no_results": "No clients found",
+    "search_placeholder": "Search clients by name...",
+    "create_title": "Add Client",
+    "select_user": "Select user",
+    "choose_user": "Choose user",
+    "edit_title": "Edit Client",
+    "create": "Add",
+    "save": "Save",
+    "cancel": "Cancel",
+    "table": {
+      "actions": "Actions",
+      "id": "ID",
+      "name": "Name"
+    },
+    "title": "Clients"
+  },
+
+  "confirmed_tickets": "Confirmed",
+  "dashboard": "Dashboard",
+  "dashboard_overview": "Dashboard Overview",
+  "logout": "Logout",
+  "modules": "Modules",
+
+  "myCars": "My Cars",
+  "myCars_screen": {
+    "title": "My Cars",
+    "search_placeholder": "Search cars...",
+    "add_button": "Add Car",
+    "loading": "Loading...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "no_results": "No cars found",
+    "create": "Add",
+    "cancel": "Cancel",
+    "save": "Save",
+    "create_title": "Add Car",
+    "edit_title": "Edit Car",
+    "table": {
+      "name": "Name",
+      "brand": "Car Brand",
+      "model": "Model",
+      "year": "Year",
+      "type": "Type",
+      "plate": "Plate",
+      "actions": "Actions",
+      "select_brand": "Select brand"
+    }
+  },
+
+  "overview": {
+    "buttons": {
+      "seeAll": "See all",
+      "viewAll": "View all"
+    },
+    "progress": "Progress",
+    "stats": {
+      "contactsTrend": "8% from last month",
+      "messagesTrend": "3 new today",
+      "projectTrend": "12% from last month",
+      "tasksTrend": "5% from last month",
+      "totalContacts": "Total Contacts",
+      "totalProjects": "Total Projects Handled",
+      "unfinishedTasks": "Unfinished Tasks",
+      "unreadMessages": "Unread Messages"
+    },
+    "subtitle": "Welcome to your dashboard overview.",
+    "title": "Dashboard Overview",
+    "todo": {
+      "design": "Graphic Design",
+      "development": "Development",
+      "item1": "Visual Graphic for Client Presentation",
+      "item2": "Build Database Design for AutoFix v2",
+      "item3": "Launch AutoFix Campaign Q4",
+      "marketing": "Marketing",
+      "title": "Quick To-Do List"
+    },
+    "upcoming": {
+      "project1": "Redesign Kripton Mobile App",
+      "project2": "Build Branding Persona for Etza.id",
+      "project3": "AutoFix Dashboard v3 Redesign",
+      "title": "Upcoming Projects",
+      "weeks2": "2 weeks left",
+      "weeks3": "3 weeks left",
+      "weeks4": "4 weeks left"
+    }
+  },
+
+  "partners": "Partners",
+  
+  "partners_screen": {
+    "add_button": "Add Partner",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "no_results": "No partners found",
+    "search_placeholder": "Search partner...",
+    "create_title": "Add Partner",
+    "edit_title": "Edit Partner",
+    "create": "Add",
+    "save": "Save",
+    "cancel": "Cancel",
+    "select_user": "Select User",
+    "table": {
+      "actions": "Actions",
+      "id": "ID",
+      "location": "Location",
+      "user": "User",
+      "name": "Name",
+      "phone": "Phone",
+      "priority": "Priority",
+      "whatsapp": "WhatsApp",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "land_use_permit": "Land use permit",
+      "scanner_handling": "Scanner handling",
+      "logo_url": "Logo",
+      "description": "Description",
+      "specialities": "Specialities"
+    },
+    "title": "Partners"
+  },
+
+  "partner_certifications": "Partners Certifications",
+    "partner_certifications_screen": {
+      "title": "Partners Certifications",
+      "search_placeholder": "Search partner certification...",
+      "add_button": "Add Partner Certification",
+      "loading": "Loading...",
+      "edit": "Edit",
+      "delete": "Delete",
+      "no_results": "No partner certifications found",
+      "create_title": "Add Partner Certification",
+      "edit_title": "Edit Partner Certification",
+      "create": "Create",
+      "save": "Save",
+      "cancel": "Cancel",
+      "table": {
+        "actions": "Actions",
+        "id": "ID",
+        "name": "Name",
+        "partner_id": "Partner ID",
+        "partner_name": "Partner Name",
+        "certification_name": "Certification Name",
+        "select_partner": "Select Partner",
+        "select_certification": "Select Certification"
+      }
+    },
+
+  "pending_tickets": "Pending",
+  "permissions": "Permissions",
+  "roles": "Roles",
+  "search": "Search...",
+  "see_all": "See all",
+  "specialities": "Specialities",
+  "tickets": "Tickets",
+
+  "users": "Users",
+  "users_screen": {
+    "add_button": "Add User",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading users...",
+    "modal": {
+      "cancel": "Cancel",
+      "email": "Email",
+      "gender": "Gender",
+      "name": "Name",
+      "phone": "Phone",
+      "role": "Role",
+      "save": "Save",
+      "select_gender": "Select gender",
+      "select_role": "Select role",
+      "title": "Edit User"
+    },
+    "no_results": "No users found",
+    "search_placeholder": "Search users...",
+    "table": {
+      "actions": "Actions",
+      "email": "Email",
+      "gender": "Gender",
+      "id": "ID",
+      "name": "Name",
+      "phone": "Phone",
+      "role": "Role"
+    },
+    "title": "Users"
+  },
+  "view_all": "View all",
+  "welcome_dashboard": "Welcome to your dashboard overview.",
+  
+  "specialities_screen": {
+    "title": "Specialities",
+    "search_placeholder": "Search speciality...",
+    "add_button": "Add Speciality",
+    "loading": "Loading...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "no_results": "No specialities found",
+    "cancel": "Cancel",
+    "create": "Add",
+    "save": "Save",
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "actions": "Actions"
+    }
+  },
+
+  "car_brands_screen": {
+    "title": "Car Brands",
+    "search_placeholder": "Search car brand...",
+    "add_button": "Add Car Brand",
+    "loading": "Loading...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "no_results": "No car brands found",
+    "create_title": "Add Car Brand",
+    "edit_title": "Edit Car Brand",
+    "create": "Add",
+    "save": "Save",
+    "cancel": "Cancel",
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "actions": "Actions"
+    }
+  },
+
+  "certifications_screen": {
+    "title": "Certifications",
+    "search_placeholder": "Search certification...",
+    "add_button": "Add Certification",
+    "loading": "Loading...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "no_results": "No certifications found",
+    "create_title": "Add Certification",
+    "edit_title": "Edit Certification",
+    "create": "Add",
+    "save": "Save",
+    "cancel": "Cancel",
+    "name": "Name",
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "actions": "Actions"
+    }
+  },
+
+  "modules_screen": {
+    "title": "Modules",
+    "search_placeholder": "Search module...",
+    "add_button": "Add Module",
+    "loading": "Loading modules...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "no_results": "No modules found",
+    "create_module": "Add Module",
+    "edit_module": "Edit Module",
+    "cancel": "Cancel",
+    "create": "Add",
+    "save": "Save",
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "description": "Description",
+      "actions": "Actions"
+    }
+  },
+
+  "permissions_screen": {
+    "title": "Permissions",
+    "search_placeholder": "Search permission...",
+    "add_button": "Add Permission",
+    "loading": "Loading permissions...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "no_results": "No permissions found",
+    "unknown_module": "Unknown",
+    "create_title": "Add Permission",
+    "edit_title": "Edit Permission",
+    "name": "Name",
+    "module": "Module",
+    "select_module": "Select module",
+    "create": "Add",
+    "save": "Save",
+    "cancel": "Cancel",
+    "table": {
+      "id": "ID",
+      "permission": "Permission",
+      "module": "Module",
+      "actions": "Actions"
+    }
+  },
+
+  "roles_screen": {
+    "title": "Role and Permissions Management",
+    "loading_roles": "Loading roles...",
+    "assigned_permissions": "Permissions assigned to",
+    "save_button": "Save Changes",
+    "saved_alert": "Permissions saved",
+    "unknown_module": "Unknown"
+  },
+
+  "tickets_screen": {
+    "title": "Tickets",
+    "search_placeholder": "Search ticket...",
+    "loading": "Loading...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "no_results": "No tickets found",
+    "table": {
+      "id": "ID",
+      "client": "Client",
+      "car": "Car",
+      "partner": "Partner",
+      "date": "Date",
+      "notes": "Notes",
+      "actions": "Actions"
+    }
+  },
+  
+  "pending_tickets_table": {
+    "title": "Pending Tickets",
+    "search_placeholder": "Search pending ticket...",
+    "loading": "Loading...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "no_results": "No pending tickets found",
+    "client": "Client",
+    "car": "Car",
+    "table": {
+      "id": "ID",
+      "client": "Client",
+      "car": "Car",
+      "partner": "Partner",
+      "date": "Date",
+      "time": "Time",
+      "notes": "Notes",
+      "actions": "Actions"
+    }
+  },
+
+  "dashboard_layout": {
+    "admin": "Admin",
+    "client": "Client",
+    "partner": "Partner"
+  } 
+}
+

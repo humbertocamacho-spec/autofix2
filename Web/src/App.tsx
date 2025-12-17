@@ -1,7 +1,12 @@
-import WebRoutes from "../src/routes/WebRoutes";
+import WebRoutes from "./routes/WebRoutes";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
-  return <WebRoutes />;
+  return (
+    <AuthProvider>
+      <WebRoutes />
+    </AuthProvider>
+  );
 }
 
 export default App;

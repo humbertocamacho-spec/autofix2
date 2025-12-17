@@ -64,19 +64,17 @@ export default function PartnerDetailScreen() {
   const handleWhatsapp = () => {
     if (!whatsapp) return;
 
-    const phoneNumber = whatsapp.replace(/\D/g, '');
+    let phoneNumber = whatsapp.replace(/\D/g, '');
 
-    const url = `whatsapp://send?phone=${phoneNumber}`;
+    if (phoneNumber.length === 10) {
+      phoneNumber = `52${phoneNumber}`;
+    }
 
-    Linking.canOpenURL(url)
-      .then((supported) => {
-        if (!supported) {
-          alert('WhatsApp no está instalado');
-        } else {
-          Linking.openURL(url);
-        }
-      })
-      .catch((err) => console.error('Error al abrir WhatsApp', err));
+    const url = `https://wa.me/${phoneNumber}`;
+
+    Linking.openURL(url).catch(() => {
+      alert('No se pudo abrir WhatsApp');
+    });
   };
 
   const handleLocation = () => {
@@ -137,9 +135,7 @@ export default function PartnerDetailScreen() {
               ))}
             </>
           ) : (
-            <Text style={{ fontSize: 15, color: "#555", marginBottom: 10 }}>
-              No cuenta con certificación
-            </Text>
+            <Text style={{ fontSize: 15, color: "#555", marginBottom: 10, marginTop: -10 }}>No cuenta con certificación</Text>
           )}
 
           <View style={{ flexDirection: 'row', marginTop: -5, marginBottom: 10 }}>
@@ -154,17 +150,33 @@ export default function PartnerDetailScreen() {
             <Text style={styles.valueText}>{location}</Text>
           </TouchableOpacity>
 
+          {phone ? (
           <TouchableOpacity style={styles.detailItem} onPress={handleCall}>
             <Ionicons name="call-outline" size={20} color="#27B9BA" style={styles.icon} />
             <Text style={styles.labelText}>Teléfono: </Text>
             <Text style={styles.valueText}>{phone}</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.detailItem} onPress={handleWhatsapp}>
-            <Ionicons name="logo-whatsapp" size={20} color="#27B9BA" style={styles.icon} />
-            <Text style={styles.labelText}>WhatsApp: </Text>
-            <Text style={styles.valueText}>{whatsapp}</Text>
-          </TouchableOpacity>
+          ) : (
+            <View style={styles.detailItem}>
+              <Ionicons name="close-circle-outline" size={20} color="gray" style={styles.icon} />
+              <Text style={[styles.labelText, { color: "gray" }]}>Teléfono:</Text>
+              <Text style={[styles.valueText, { color: "gray" }]}>No disponible</Text>
+            </View>
+          )}
+          
+          {whatsapp ? (
+            <TouchableOpacity style={styles.detailItem} onPress={handleWhatsapp}>
+              <Ionicons name="logo-whatsapp" size={20} color="#27B9BA" style={styles.icon} />
+              <Text style={styles.labelText}>WhatsApp: </Text>
+              <Text style={styles.valueText}>{whatsapp}</Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.detailItem}>
+              <Ionicons name="close-circle-outline" size={20} color="gray" style={styles.icon} />
+              <Text style={[styles.labelText, { color: "gray" }]}>WhatsApp:</Text>
+              <Text style={[styles.valueText, { color: "gray" }]}>No disponible</Text>
+            </View>
+          )}
 
           <Text style={styles.sectionTitle}>Acerca de nosotros </Text>
           <Text style={styles.descriptionText}>{description}</Text>

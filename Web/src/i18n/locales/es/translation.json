@@ -1,0 +1,379 @@
+{
+  "admins": "Administradores",
+  "admin_screen": {
+    "add_button": "Agregar Administrador",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando...",
+    "no_results": "No se encontraron administradores",
+    "search_placeholder": "Buscar administradores por nombre...",
+    "create_title": "Agregar Administrador",
+    "select_user": "Seleccionar usuario",
+    "choose_user": "Elige usuario",
+    "edit_title": "Editar Administrador",
+    "create": "Agregar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "table": {
+      "actions": "Acciones",
+      "id": "ID",
+      "name": "Nombre"
+    },
+    "title": "Administradores"
+  },
+
+  "brands": "Marcas de Autos",
+  "certifications": "Certificaciones",
+
+  "clients": "Clientes",
+  "clients_screen": {
+    "add_button": "Agregar Cliente",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando...",
+    "no_results": "No se encontraron clientes",
+    "search_placeholder": "Buscar clientes por nombre...",
+    "create_title": "Agregar Cliente",
+    "select_user": "Seleccionar usuario",
+    "choose_user": "Elige usuario",    
+    "edit_title": "Editar Cliente",
+    "create": "Agregar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "table": {
+      "actions": "Acciones",
+      "id": "ID",
+      "name": "Nombre"
+    },
+    "title": "Clientes"
+  },
+  "confirmed_tickets": "Confirmados",
+  "dashboard": "Panel",
+  "dashboard_overview": "Resumen del Panel",
+  "logout": "Cerrar sesión",
+  "modules": "Módulos",
+
+  "myCars": "Mis Autos",
+  "myCars_screen": {
+    "title": "Mis Autos",
+    "search_placeholder": "Buscar autos...",
+    "add_button": "Agregar Auto",
+    "loading": "Cargando...",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "no_results": "No se encontraron autos",
+    "cancel": "Cancelar",
+    "create": "Agregar",
+    "save": "Guardar",
+    "create_title": "Agregar Auto",
+    "edit_title": "Editar Auto",
+    "table": {
+      "name": "Nombre",
+      "brand": "Marca de Auto",
+      "model": "Modelo",
+      "year": "Año",
+      "type": "Tipo",
+      "plate": "Placa",
+      "actions": "Acciones",
+      "select_brand": "Seleccionar marca"
+    }
+  },
+
+  "overview": {
+    "buttons": {
+      "seeAll": "Ver más",
+      "viewAll": "Ver todo"
+    },
+    "progress": "Progreso",
+    "stats": {
+      "contactsTrend": "8% más que el mes pasado",
+      "messagesTrend": "3 nuevos hoy",
+      "projectTrend": "12% más que el mes pasado",
+      "tasksTrend": "5% menos que el mes pasado",
+      "totalContacts": "Contactos Totales",
+      "totalProjects": "Proyectos Totales",
+      "unfinishedTasks": "Tareas Incompletas",
+      "unreadMessages": "Mensajes sin Leer"
+    },
+    "subtitle": "Bienvenido a tu resumen del dashboard.",
+    "title": "Resumen del Panel",
+    "todo": {
+      "design": "Diseño Gráfico",
+      "development": "Desarrollo",
+      "item1": "Gráfico visual para presentación al cliente",
+      "item2": "Diseñar la base de datos para AutoFix v2",
+      "item3": "Lanzar campaña AutoFix Q4",
+      "marketing": "Mercadotecnia",
+      "title": "Lista Rápida de Tareas"
+    },
+    "upcoming": {
+      "project1": "Rediseño de Kripton Mobile App",
+      "project2": "Construcción de marca para Etza.id",
+      "project3": "Rediseño de AutoFix Dashboard v3",
+      "title": "Próximos Proyectos",
+      "weeks2": "2 semanas restantes",
+      "weeks3": "3 semanas restantes",
+      "weeks4": "4 semanas restantes"
+    }
+  },
+
+  "partners": "Partners",
+  
+  "partners_screen": {
+    "add_button": "Agregar Partner",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando...",
+    "no_results": "No se encontraron partners",
+    "search_placeholder": "Buscar partner...",
+    "create_title": "Agregar Partner",
+    "edit_title": "Editar Partner",
+    "create": "Agregar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "select_user": "Seleccionar Usuario",
+    "table": {
+      "actions": "Acciones",
+      "id": "ID",
+      "location": "Ubicación",
+      "name": "Nombre",
+      "user": "Usuario",
+      "phone": "Teléfono",
+      "priority": "Prioridad",
+      "whatsapp": "WhatsApp",
+      "latitude": "Latitud",
+      "longitude": "Longitud",
+      "land_use_permit": "Permiso de uso de suelo",
+      "scanner_handling": "Manejo de escáner",
+      "logo_url": "Logo",
+      "description": "Descripción",
+      "specialities": "Especialidades"
+    },
+    "title": "Partners"
+  },
+
+    "partner_certifications": "Certificaciones de Partners",
+    "partner_certifications_screen": {
+    "title": "Certificaciones de Partners",
+      "search_placeholder": "Buscar certificación...",
+      "add_button": "Agregar Certificación",
+      "loading": "Cargando...",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "no_results": "No se encontraron certificaciones",
+      "create_title": "Agregar Certificación",
+      "edit_title": "Editar Certificación",
+      "create": "Crear",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "table": {
+        "actions": "Acciones",
+        "id": "ID",
+        "name": "Nombre",
+        "partner_id": "Partner ID",
+        "partner_name": "Nombre del Partner",
+        "certification_name": "Nombre de la Certificación",
+        "select_partner": "Seleccionar Partner",
+        "select_certification": "Seleccionar Certificación"
+      }
+  },
+
+  "pending_tickets": "Pendientes",
+  "permissions": "Permisos",
+  "roles": "Roles",
+  "search": "Buscar...",
+  "see_all": "Ver todos",
+  "specialities": "Especialidades",
+  "tickets": "Tickets",
+  "users": "Usuarios",
+  "users_screen": {
+    "add_button": "Agregar Usuario",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando usuarios...",
+    "modal": {
+      "cancel": "Cancelar",
+      "email": "Correo",
+      "gender": "Género",
+      "name": "Nombre",
+      "phone": "Teléfono",
+      "role": "Rol",
+      "save": "Guardar",
+      "select_gender": "Seleccionar género",
+      "select_role": "Seleccionar rol",
+      "title": "Editar Usuario"
+    },
+    "no_results": "No se encontraron usuarios",
+    "search_placeholder": "Buscar usuarios...",
+    "table": {
+      "actions": "Acciones",
+      "email": "Correo",
+      "gender": "Género",
+      "id": "ID",
+      "name": "Nombre",
+      "phone": "Teléfono",
+      "role": "Rol"
+    },
+    "title": "Usuarios"
+  },
+  "view_all": "Ver todo",
+  "welcome_dashboard": "Bienvenido a tu panel general.",
+
+  "specialities_screen": {
+    "title": "Especialidades",
+    "search_placeholder": "Buscar especialidad...",
+    "add_button": "Agregar Especialidad",
+    "loading": "Cargando...",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "no_results": "No se encontraron especialidades",
+    "create_title": "Agregar Especialidad",
+    "table": {
+      "id": "ID",
+      "name": "Nombre",
+      "actions": "Acciones"
+    }
+  },
+
+  "car_brands_screen": {
+    "title": "Marcas de Autos",
+    "search_placeholder": "Buscar marca de auto...",
+    "add_button": "Agregar Marca de Auto",
+    "loading": "Cargando...",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "no_results": "No se encontraron marcas de autos",
+    "create_title": "Agregar Marca de Auto",
+    "edit_title": "Editar Marca de Auto",
+    "create": "Agregar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "name": "Nombre",
+    "table": {
+      "id": "ID",
+      "name": "Nombre",
+      "actions": "Acciones"
+    }
+  },
+
+  "certifications_screen": {
+    "title": "Certificaciones",
+    "search_placeholder": "Buscar certificación...",
+    "add_button": "Agregar Certificación",
+    "loading": "Cargando...",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "no_results": "No se encontraron certificaciones",
+    "create_title": "Agregar Certificación",
+    "edit_title": "Editar Certificación",
+    "name": "Nombre",
+    "create": "Agregar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "table": {
+      "id": "ID",
+      "name": "Nombre",
+      "actions": "Acciones"
+    }
+  },
+
+  "modules_screen": {
+    "title": "Módulos",
+    "search_placeholder": "Buscar módulo...",
+    "add_button": "Agregar Módulo",
+    "loading": "Cargando módulos...",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "no_results": "No se encontraron módulos",
+    "create_module": "Agregar Módulo",
+    "edit_module": "Editar Módulo",
+    "cancel": "Cancelar",
+    "create": "Agregar",
+    "save": "Guardar",
+    "table": {
+      "id": "ID",
+      "name": "Nombre",
+      "description": "Descripción",
+      "actions": "Acciones"
+    }
+  },
+
+  "permissions_screen": {
+    "title": "Permisos",
+    "search_placeholder": "Buscar permiso...",
+    "add_button": "Agregar Permiso",
+    "loading": "Cargando permisos...",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "no_results": "No se encontraron permisos",
+    "unknown_module": "Desconocido",
+    "create_title": "Agregar Permiso",
+    "edit_title": "Editar Permiso",
+    "name": "Nombre",
+    "module": "Módulo",
+    "select_module": "Seleccionar módulo",
+    "create": "Agregar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "table": {
+      "id": "ID",
+      "permission": "Permiso",
+      "module": "Módulo",
+      "actions": "Acciones"
+    }
+  },
+
+   "roles_screen": {
+    "title": "Gestión de Roles y Permisos",
+    "loading_roles": "Cargando roles...",
+    "assigned_permissions": "Permisos asignados a",
+    "save_button": "Guardar Cambios",
+    "saved_alert": "Permisos guardados",
+    "unknown_module": "Desconocido"
+  },
+
+  "tickets_screen": {
+    "title": "Tickets",
+    "search_placeholder": "Buscar ticket...",
+    "loading": "Cargando...",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "no_results": "No se encontraron tickets",
+    "table": {
+      "id": "ID",
+      "client": "Cliente",
+      "car": "Auto",
+      "partner": "Partner",
+      "date": "Fecha",
+      "notes": "Notas",
+      "actions": "Acciones"
+    }
+  },
+
+  "pending_tickets_table": {
+    "title": "Tickets Pendientes",
+    "search_placeholder": "Buscar ticket pendiente...",
+    "loading": "Cargando...",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "no_results": "No se encontraron tickets pendientes",
+    "client": "Cliente",
+    "car": "Auto",
+    "table": {
+      "id": "ID",
+      "client": "Cliente",
+      "car": "Auto",
+      "partner": "Partner",
+      "date": "Fecha",
+      "time": "Hora",
+      "notes": "Notas",
+      "actions": "Acciones"
+    }
+  },
+
+  "dashboard_layout": {
+    "admin": "Administrador",
+    "client": "Cliente",
+    "partner": "Partner"
+  } 
+}

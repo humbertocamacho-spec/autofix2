@@ -119,8 +119,6 @@ export default function TicketsPending() {
       }
 
       setPendingTickets([]);
-      Alert.alert("¡Listo!", "Citas confirmadas correctamente");
-
       router.replace("/Appointment/confirmedAppointment");
     } catch (err) {
       console.error(err);

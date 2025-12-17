@@ -14,4 +14,60 @@ router.get("/", async (req, res) => {
     }
 });
 
+router.post("/", async (req, res) => {
+    try {
+        const { name } = req.body;
+
+        if (!name || name.trim() === "") {
+            return res.status(400).json({ error: "El nombre es obligatorio" });
+        }
+
+        await db.query(
+            "INSERT INTO car_brands (name) VALUES (?)",
+            [name]
+        );
+
+        res.json({ message: "Marca creada correctamente" });
+    } catch (error) {
+        console.error("Error al crear car_brand:", error);
+        res.status(500).json({ message: "Error al crear car_brand" });
+    }
+});
+
+router.put("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name } = req.body;
+
+        if (!name || name.trim() === "") {
+            return res.status(400).json({ error: "El nombre es obligatorio" });
+        }
+
+        await db.query(
+            "UPDATE car_brands SET name = ? WHERE id = ?",
+            [name, id]
+        );
+
+        res.json({ message: "Marca actualizada correctamente" });
+    } catch (error) {
+        console.error("Error al actualizar car_brand:", error);
+        res.status(500).json({ message: "Error al actualizar car_brand" });
+    }
+});
+
+router.delete("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        await db.query(
+            "DELETE FROM car_brands WHERE id = ?",
+            [id]
+        );
+
+        res.json({ message: "Marca eliminada correctamente" });
+    } catch (error) {
+        console.error("Error al eliminar car_brand:", error);
+        res.status(500).json({ message: "Error al eliminar car_brand" });
+    }
+});
 export default router;

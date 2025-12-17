@@ -9,18 +9,18 @@ export default function RegisterPage() {
           <img src="../../assets/images/Logo.jpg" alt="" className="w-60 h-auto object-contain select-none mx-auto my-auto block" />
         </div>
         <h4 className="text-2xl font-semibold mb-2 text-gray-900 text-center">
-          Crea tu cuenta
+          Create an account
         </h4>
 
         <p className="text-gray-600 mb-6 text-center leading-tight">
-          Ingresa tu información para crear una cuenta
+          Enter your information to create your account.
         </p>
 
         <RegisterForm />
 
         <p className="text-center mt-5 text-sm text-gray-700">
-          Ya tienes una cuenta? 
-           <Link to="/login" className="text-blue-600 hover:underline"> Inicia sesión</Link>
+          I already have an account?{" "}
+           <Link to="/login" className="text-blue-600 hover:underline">Login</Link>
         </p>
       </div>
     </div>
