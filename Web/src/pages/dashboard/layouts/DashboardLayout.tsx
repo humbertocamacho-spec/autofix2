@@ -91,7 +91,7 @@ export default function DashboardLayout({ children }: Props) {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <span className="text-gray-500 text-lg">Loading...</span>
+        <span className="text-gray-500 text-lg">t{t("dashboard_layout.loading")}</span>
       </div>
     );
   }

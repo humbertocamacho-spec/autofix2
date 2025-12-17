@@ -7,7 +7,6 @@ export interface User {
   partner_id?: number | null;
   permissions: string[];
   role_name: string;
-  token?: string;
 }
 
 export interface AuthResponse {

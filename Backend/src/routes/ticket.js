@@ -4,8 +4,8 @@ import { authMiddleware } from "./auth.js";
 
 const router = express.Router();
 
+// Get all tickets
 router.get("/", authMiddleware, async (req, res) => {
-    console.log("USER TOKEN DATA:", req.user);
   try {
     const { role_name, partner_id, client_id } = req.user;
     const params = [];
@@ -29,19 +29,15 @@ router.get("/", authMiddleware, async (req, res) => {
       LEFT JOIN partners p ON p.id = t.partner_id
     `;
 
-    // 🧑‍💼 CLIENT
     if (role_name === "client") {
       query += ` WHERE t.client_id = ?`;
       params.push(client_id);
     }
 
-    // 🧑‍🔧 PARTNER
     if (role_name === "partner") {
       query += ` WHERE t.partner_id = ?`;
       params.push(partner_id);
     }
-
-    // 👑 ADMIN → sin WHERE (ve todo)
 
     query += ` ORDER BY t.date DESC`;
 
@@ -53,7 +49,6 @@ router.get("/", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Error al obtener tickets" });
   }
 });
-
 
 router.get("/:car_id/:partner_id/:client_id", async (req, res) => {
     const { car_id, partner_id, client_id } = req.params;
