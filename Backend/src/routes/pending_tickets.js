@@ -1,12 +1,14 @@
 import express from "express";
 import db from "../config/db.js";
+import { authMiddleware } from "./auth.js";
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
+    
+    const { user_id } = req.user;
     const {
-      client_id,
       car_id,
       partner_id,
       date,
@@ -48,9 +50,19 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Error en el servidor" });
   }
 });
-router.get("/", async (req, res) => {
+
+router.get("/", authMiddleware, async (req, res) => {
   try {
-    const [rows] = await db.query(`
+    const { user_id, role_id } = req.user;
+
+    const [roleRow] = await db.query(
+      "SELECT name FROM roles WHERE id = ?",
+      [role_id]
+    );
+
+    const roleName = roleRow[0]?.name?.toLowerCase();
+
+    let sql = `
       SELECT 
         p.id,
 
@@ -70,52 +82,26 @@ router.get("/", async (req, res) => {
         p.notes
 
       FROM pending_tickets p
-      LEFT JOIN clients cl ON cl.id = p.client_id
-      LEFT JOIN users u ON u.id = cl.user_id    
+      INNER JOIN clients cl ON cl.id = p.client_id
+      INNER JOIN users u ON u.id = cl.user_id
       LEFT JOIN cars c ON c.id = p.car_id
-    `);
+    `;
 
+    const params = [];
+
+    if (roleName === "client") {
+      sql += " WHERE u.id = ?";
+      params.push(user_id);
+    }
+
+    sql += " ORDER BY p.id ASC";
+
+    const [rows] = await db.query(sql, params);
     res.json(rows);
+
   } catch (error) {
-    console.error("Error obteniendo pending tickets:", error);
-    res.status(500).json({ error: "Error al obtener pending tickets" });
-  }
-});
-
-
-router.get("/:client_id", async (req, res) => {
-  try {
-    const { client_id } = req.params;
-    const [rows] = await db.query(`
-      SELECT 
-        p.id,
-
-        p.client_id,
-        u.name AS client_name,
-
-        p.car_id,
-        c.name AS car_name,
-
-        p.partner_id,
-        p.partner_name,
-        p.partner_phone,
-        p.logo_url,
-
-        p.date,
-        p.time,
-        p.notes
-
-      FROM pending_tickets p
-      LEFT JOIN clients cl ON cl.id = p.client_id
-      LEFT JOIN users u ON u.id = cl.user_id
-      LEFT JOIN cars c ON c.id = p.car_id
-      WHERE p.client_id = ?
-    `, [client_id]);
-
-    res.json(rows);
-  } catch (error) {
-    console.error("Error obteniendo pending tickets:", error);
-    res.status(500).json({ error: "Error al obtener pending tickets" });
+    console.error("Error al obtener pending tickets:", error);
+    res.status(500).json({ message: "Error al obtener pending tickets" });
   }
 });
 

@@ -16,7 +16,14 @@ export default function PendingTicketsTable() {
 
   const fetchPendingTickets = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/pending_tickets`);
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${VITE_API_URL}/api/pending_tickets`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
       const data = await res.json();
       setTickets(data);
     } catch (error) {
