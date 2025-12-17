@@ -4,6 +4,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Admin } from "../../../types/admin";
 import type { User } from "../../../types/users";
 import { useTranslation } from "react-i18next";
+import { usePermission } from "../../../hooks/usePermission";
 
 export default function AdminsTable() {
   const [admins, setAdmins] = useState<Admin[]>([]);
@@ -15,6 +16,12 @@ export default function AdminsTable() {
   const [currentAdmin, setCurrentAdmin] = useState<Admin | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const { t } = useTranslation();
+
+  const { can } = usePermission();
+
+  const canCreate = can("create_admins");
+  const canEdit   = can("update_admins");
+  const canDelete = can("delete_admins");
 
   useEffect(() => {
     fetchAdmins();
@@ -44,6 +51,7 @@ export default function AdminsTable() {
   };
 
   const openCreate = () => {
+    if (!canCreate) return;
     setIsEditing(false);
     setCurrentAdmin(null);
     setUserId(null);
@@ -51,6 +59,7 @@ export default function AdminsTable() {
   };
 
   const openEdit = (admin: Admin) => {
+    if (!canEdit) return;
     setIsEditing(true);
     setCurrentAdmin(admin);
     setUserId(admin.user_id);
@@ -76,6 +85,7 @@ export default function AdminsTable() {
   };
 
   const deleteAdmin = async (id: number) => {
+    if (!canDelete) return;
     if (!confirm("¿Eliminar administrador?")) return;
     await fetch(`${VITE_API_URL}/api/admins/${id}`, { method: "DELETE" });
     fetchAdmins();
@@ -98,9 +108,11 @@ export default function AdminsTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button onClick={openCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6]">
-          {t("admin_screen.add_button")}
-        </button>
+        {canCreate && (
+          <button onClick={openCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6]">
+            {t("admin_screen.add_button")}
+          </button>
+        )}
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
@@ -122,13 +134,16 @@ export default function AdminsTable() {
                   <td className="py-2">{item.user_name}</td>
 
                   <td className="py-2 text-right space-x-4">
+                    {canEdit && (
                     <button onClick={() => openEdit(item)} className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
                       {t("admin_screen.edit")}
                     </button>
-
+                    )}
+                    {canDelete && (
                     <button onClick={() => deleteAdmin(item.id)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                       {t("admin_screen.delete")}
                     </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -174,9 +189,11 @@ export default function AdminsTable() {
                 {t("admin_screen.cancel")}
               </button>
 
-              <button onClick={saveAdmin} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                {isEditing ? t("admin_screen.save") : t("admin_screen.create")}
-              </button>
+              {((isEditing && canEdit) || (!isEditing && canCreate)) && (
+                <button onClick={saveAdmin} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                  {isEditing ? t("admin_screen.save") : t("admin_screen.create")}
+                </button>
+              )}
             </div>
           </div>
         </div>
