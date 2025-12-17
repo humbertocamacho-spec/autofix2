@@ -29,12 +29,11 @@ export default function PendingTicketsTable() {
   const formatDate = (date?: string | null) => {
     if (!date) return "—";
 
-    const parsed = new Date(date);
+    const parsed = new Date(`${date}T00:00:00`);
     if (isNaN(parsed.getTime())) return "—";
 
     return parsed.toLocaleDateString("es-MX");
   };
-
 
   const filtered = tickets
     .filter((t) =>
