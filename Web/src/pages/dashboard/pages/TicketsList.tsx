@@ -18,23 +18,13 @@ export default function PendingTicketsTable() {
     try {
       const res = await fetch(`${VITE_API_URL}/api/pending_tickets`);
       const data = await res.json();
-      setTickets(data || []);
+      setTickets(data);
     } catch (error) {
       console.error("Error fetching pending tickets:", error);
     } finally {
       setLoading(false);
     }
   };
-
-  const formatDate = (date?: string | null) => {
-    if (!date) return "—";
-
-    const parsed = new Date(date);
-    if (isNaN(parsed.getTime())) return "—";
-
-    return parsed.toLocaleDateString("es-MX");
-  };
-
 
   const filtered = tickets
     .filter((t) =>
@@ -84,10 +74,10 @@ export default function PendingTicketsTable() {
                     <td className="py-3">{item.client_name || `${t("pending_tickets_table.client")} #${item.client_id}`}</td>
                     <td className="py-3">{item.car_name || `${t("pending_tickets_table.car")} #${item.car_id}`}</td>
                     <td className="py-3 flex items-center gap-3">
-                      <img src={item.logo_url || "/images/no-logo.png"} className="h-8 w-8 rounded-full border" />
+                      <img src={item.logo_url || "/images/no-logo.png"} className="h-8 w-8 rounded-full border"/>
                       <span>{item.partner_name}</span>
                     </td>
-                    <td className="py-3">{formatDate(item.date)}</td>
+                    <td className="py-3">{new Date(item.date).toLocaleDateString()}</td>
                     <td className="py-3">{item.time || "—"}</td>
                     <td className="py-3 max-w-xs whitespace-normal">{item.notes || "—"}</td>
                     <td className="py-3 text-right space-x-3">
