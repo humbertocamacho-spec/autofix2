@@ -65,7 +65,7 @@ router.get("/", async (req, res) => {
         p.partner_phone,
         p.logo_url,
 
-        p.date,
+        DATE_FORMAT(p.date, '%Y-%m-%d') AS date,
         p.time,
         p.notes
 
