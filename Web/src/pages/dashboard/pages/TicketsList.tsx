@@ -3,22 +3,58 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { PendingTicket } from "../../../types/pending_ticket";
+import { useAuthContext } from "../../../context/AuthContext";
 
 export default function PendingTicketsTable() {
   const { t } = useTranslation();
   const [tickets, setTickets] = useState<PendingTicket[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const { user } = useAuthContext();
+
 
   useEffect(() => {
+    if (!user) return;
     fetchPendingTickets();
-  }, []);
+  }, [user]);
+
+  const formatDate = (date?: string | null) => {
+    if (!date) return "—";
+
+    const parts = date.split("-");
+    if (parts.length !== 3) return "—";
+
+    let year: number, month: number, day: number;
+
+    if (parts[0].length === 4) {
+      year = Number(parts[0]);
+      month = Number(parts[1]);
+      day = Number(parts[2]);
+    }
+
+    else {
+      day = Number(parts[0]);
+      month = Number(parts[1]);
+      year = Number(parts[2]);
+    }
+
+    const parsed = new Date(year, month - 1, day);
+    if (isNaN(parsed.getTime())) return "—";
+
+    return parsed.toLocaleDateString();
+  };
+
+
 
   const fetchPendingTickets = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/pending_tickets`);
+      let url = `${VITE_API_URL}/api/pending_tickets`;
+      if (user?.role_id === 3 && user?.client_id) {
+        url = `${VITE_API_URL}/api/pending_tickets/${user.client_id}`;
+      }
+      const res = await fetch(url);
       const data = await res.json();
-      setTickets(data);
+      setTickets(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching pending tickets:", error);
     } finally {
@@ -74,10 +110,12 @@ export default function PendingTicketsTable() {
                     <td className="py-3">{item.client_name || `${t("pending_tickets_table.client")} #${item.client_id}`}</td>
                     <td className="py-3">{item.car_name || `${t("pending_tickets_table.car")} #${item.car_id}`}</td>
                     <td className="py-3 flex items-center gap-3">
-                      <img src={item.logo_url || "/images/no-logo.png"} className="h-8 w-8 rounded-full border"/>
+                      <img src={item.logo_url || "/images/no-logo.png"} className="h-8 w-8 rounded-full border" />
                       <span>{item.partner_name}</span>
                     </td>
-                    <td className="py-3">{new Date(item.date).toLocaleDateString()}</td>
+                    <td className="py-3">
+                      {formatDate(item.date)}
+                    </td>
                     <td className="py-3">{item.time || "—"}</td>
                     <td className="py-3 max-w-xs whitespace-normal">{item.notes || "—"}</td>
                     <td className="py-3 text-right space-x-3">

@@ -3,22 +3,31 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Ticket } from "../../../types/ticket";
+import { useAuthContext } from "../../../context/AuthContext";
 
 export default function TicketsTable() {
   const { t } = useTranslation();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const { user } = useAuthContext();
 
   useEffect(() => {
+    if (!user) return;
     fetchTickets();
-  }, []);
+  }, [user]);
 
   const fetchTickets = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/ticket`);
+      let url = `${VITE_API_URL}/api/ticket`;
+
+      if (user?.role_id === 3 && user?.client_id) {
+        url = `${VITE_API_URL}/api/ticket?client_id=${user.client_id}`;
+      }
+
+      const res = await fetch(url);
       const data = await res.json();
-      setTickets(data);
+      setTickets(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching tickets:", error);
     } finally {
@@ -74,7 +83,7 @@ export default function TicketsTable() {
                     <td className="py-3">{item.client_name}</td>
                     <td className="py-3">{item.car_name}</td>
                     <td className="py-3 flex items-center gap-3">
-                      <img src={item.logo_url || "/images/no-logo.png"} className="h-8 w-8 rounded-full border"/>
+                      <img src={item.logo_url || "/images/no-logo.png"} className="h-8 w-8 rounded-full border" />
                       <span>{item.partner_name}</span>
                     </td>
                     <td className="py-3">{new Date(item.date).toLocaleString()}</td>
