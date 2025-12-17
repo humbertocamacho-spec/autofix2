@@ -1,14 +1,5 @@
 import { Stack, useRouter } from "expo-router";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ActivityIndicator, Alert,} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { getConfirmedTickets, deleteTicket } from "@/services/ticket";
@@ -71,10 +62,7 @@ export default function TicketsConfirmed() {
 
     return (
       <View style={[styles.card, { backgroundColor: bgColor }]}>
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={() => handleCancel(item.id)}
-        >
+        <TouchableOpacity style={styles.cancelButton} onPress={() => handleCancel(item.id)}>
           <Ionicons name="trash-outline" size={22} color="#fff" />
         </TouchableOpacity>
 
@@ -96,9 +84,7 @@ export default function TicketsConfirmed() {
           <Text style={styles.infoText}> {time}</Text>
         </View>
 
-        {item.notes ? (
-          <Text style={styles.notesText}>{item.notes}</Text>
-        ) : null}
+        {item.notes ? (<Text style={styles.notesText}>{item.notes}</Text>) : null}
       </View>
     );
   };
@@ -139,36 +125,13 @@ export default function TicketsConfirmed() {
   );
 }
 
-/* =========================
-   STYLES
-========================= */
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
-  header: {
-    paddingTop: 50,
-    paddingBottom: 20,
-    paddingHorizontal: 15,
-    backgroundColor: "#27B9BA",
-  },
-  title: {
-    fontSize: 25,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 10,
-  },
-  card: {
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 12,
-  },
+  header: { paddingTop: 50, paddingBottom: 20, paddingHorizontal: 15, backgroundColor: "#27B9BA",},
+  title: { fontSize: 25, fontWeight: "bold", textAlign: "center", marginVertical: 10,},
+  card: { padding: 15, borderRadius: 12, marginBottom: 12,},
   row: { flexDirection: "row", alignItems: "center" },
-  logo: {
-    width: 50,
-    height: 50,
-    borderRadius: 10,
-    marginRight: 10,
-    backgroundColor: "#fff",
-  },
+  logo: { width: 50, height: 50, borderRadius: 10, marginRight: 10, backgroundColor: "#fff",},
   partnerName: { color: "#fff", fontSize: 18, fontWeight: "bold" },
   phone: { color: "#fff" },
   dateTimeRow: { flexDirection: "row", alignItems: "center", marginTop: 10 },
