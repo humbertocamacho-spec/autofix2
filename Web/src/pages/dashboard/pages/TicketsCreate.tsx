@@ -17,8 +17,6 @@ export default function TicketsTable() {
     fetchTickets();
   }, [user]);
 
-  console.log("TOKEN:", localStorage.getItem("token"));
-
   const fetchTickets = async () => {
     try {
       const token = localStorage.getItem("token");
