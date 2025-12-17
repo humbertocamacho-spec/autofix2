@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { CarBrands } from "../../../types/car_brands";
+import Can from "../../../components/Can";
 
 export default function CarBrands() {
   const { t } = useTranslation();
@@ -99,9 +100,11 @@ export default function CarBrands() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button onClick={handleCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-          {t("car_brands_screen.add_button")}
-        </button>
+        <Can permission="create_brands">
+          <button onClick={handleCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+            {t("car_brands_screen.add_button")}
+          </button>
+        </Can>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
@@ -124,13 +127,17 @@ export default function CarBrands() {
                     <td className="py-2">{item.id}</td>
                     <td className="py-2">{item.name}</td>
                     <td className="py-2 text-right space-x-5">
-                      <button onClick={() => handleEdit(item)} className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                        {t("car_brands_screen.edit")}
-                      </button>
+                      <Can permission="update_brands">
+                        <button onClick={() => handleEdit(item)} className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                          {t("car_brands_screen.edit")}
+                        </button>
+                      </Can>
 
-                      <button onClick={() => handleDelete(item.id)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                        {t("car_brands_screen.delete")}
-                      </button>
+                      <Can permission="delete_brands">
+                        <button onClick={() => handleDelete(item.id)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                          {t("car_brands_screen.delete")}
+                        </button>
+                      </Can>
                     </td>
                   </tr>
                 ))}
@@ -173,9 +180,11 @@ export default function CarBrands() {
                 {t("car_brands_screen.cancel")}
               </button>
 
-              <button onClick={saveBrand} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                {isEditing ? t("car_brands_screen.save") : t("car_brands_screen.create")}
-              </button>
+              <Can permission={isEditing ? "update_brands" : "create_brands"}>
+                <button onClick={saveBrand} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                  {isEditing ? t("car_brands_screen.save") : t("car_brands_screen.create")}
+                </button>
+              </Can>
             </div>
           </div>
         </div>

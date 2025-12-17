@@ -3,6 +3,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import { useTranslation } from "react-i18next";
 import type { User } from "../../../types/users";
+import Can from "../../../components/Can";
 
 export default function UsersTable() {
   const [users, setUsers] = useState<User[]>([]);
@@ -79,9 +80,11 @@ export default function UsersTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-          {t("users_screen.add_button")}
-        </button>
+        <Can permission="create_users">
+          <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+            {t("users_screen.add_button")}
+          </button>
+        </Can>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
@@ -96,9 +99,7 @@ export default function UsersTable() {
                 <th className="pb-3">{t("users_screen.table.phone")}</th>
                 <th className="pb-3">{t("users_screen.table.role")}</th>
                 <th className="pb-3">{t("users_screen.table.gender")}</th>
-                <th className="pb-3 text-right">
-                  {t("users_screen.table.actions")}
-                </th>
+                <th className="pb-3 text-right">{t("users_screen.table.actions")}</th>
               </tr>
             </thead>
 
@@ -113,14 +114,17 @@ export default function UsersTable() {
                   <td className="py-3">{user.gender_name || "—"}</td>
 
                   <td className="py-3 text-right space-x-3">
-                    <button
-                      className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
-                      onClick={() => handleOpenEdit(user)}>{t("users_screen.edit")}
-                    </button>
+                    <Can permission="update_users">
+                      <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600" onClick={() => handleOpenEdit(user)}>
+                        {t("users_screen.edit")}
+                      </button>
+                    </Can>
 
-                    <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                      {t("users_screen.delete")}
-                    </button>
+                    <Can permission="delete_users">
+                      <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                        {t("users_screen.delete")}
+                      </button>
+                    </Can>
                   </td>
                 </tr>
               ))}
@@ -228,9 +232,11 @@ export default function UsersTable() {
                 {t("users_screen.modal.cancel")}
               </button>
 
-              <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition" onClick={handleUpdateUser}>
-                {t("users_screen.modal.save")}
-              </button>
+              <Can permission="update_users">
+                <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition" onClick={handleUpdateUser}>
+                  {t("users_screen.modal.save")}
+                </button>
+              </Can>
             </div>
           </div>
         </div>

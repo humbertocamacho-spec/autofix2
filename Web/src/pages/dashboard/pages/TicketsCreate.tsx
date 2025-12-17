@@ -4,6 +4,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Ticket } from "../../../types/ticket";
 import { useAuthContext } from "../../../context/AuthContext";
+import Can from "../../../components/Can";
 
 export default function TicketsTable() {
   const { t } = useTranslation();
@@ -91,12 +92,17 @@ export default function TicketsTable() {
                     <td className="py-3">{new Date(item.date).toLocaleString()}</td>
                     <td className="py-3 max-w-xs whitespace-normal">{item.notes || "—"}</td>
                     <td className="py-3 text-right space-x-3">
-                      <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm">
-                        {t("tickets_screen.edit")}
-                      </button>
-                      <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm">
-                        {t("tickets_screen.delete")}
-                      </button>
+                      <Can permission="update_tickets">
+                        <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm">
+                          {t("tickets_screen.edit")}
+                        </button>
+                      </Can>
+
+                      <Can permission="delete_tickets">
+                        <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm">
+                          {t("tickets_screen.delete")}
+                        </button>
+                      </Can>
                     </td>
                   </tr>
                 ))}

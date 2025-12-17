@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Modules } from "../../../types/modules";
+import Can from "../../../components/Can";
 
 export default function ModulesTable() {
   const { t } = useTranslation();
@@ -98,7 +99,6 @@ export default function ModulesTable() {
     setOpenModal(false);
   };
 
-
   const filtered = modules.filter((m) =>
     m.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -116,9 +116,11 @@ export default function ModulesTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-          {t("modules_screen.add_button")}
-        </button>
+        <Can permission="create_modules">
+          <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+            {t("modules_screen.add_button")}
+          </button>
+        </Can>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
@@ -142,12 +144,17 @@ export default function ModulesTable() {
                     <td className="py-3">{mod.name}</td>
                     <td className="py-3">{mod.description ?? "—"}</td>
                     <td className="py-3 text-right space-x-3">
-                      <button onClick={() => openEditModal(mod)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                        {t("modules_screen.edit")}
-                      </button>
-                      <button onClick={() => handleDelete(mod.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                        {t("modules_screen.delete")}
-                      </button>
+                      <Can permission="update_modules">
+                        <button onClick={() => openEditModal(mod)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                          {t("modules_screen.edit")}
+                        </button>
+                      </Can>
+
+                      <Can permission="delete_modules">
+                        <button onClick={() => handleDelete(mod.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                          {t("modules_screen.delete")}
+                        </button>
+                      </Can>
                     </td>
                   </tr>
                 ))}
@@ -173,8 +180,7 @@ export default function ModulesTable() {
               <div>
                 <label className="text-sm font-semibold text-gray-600">{t("modules_screen.table.name")}</label>
                 <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg 
-                            focus:ring-2 focus:ring-[#27B9BA]"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Module name"
@@ -184,8 +190,7 @@ export default function ModulesTable() {
               <div>
                 <label className="text-sm font-semibold text-gray-600">{t("modules_screen.table.description")}</label>
                 <textarea
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg 
-                            focus:ring-2 focus:ring-[#27B9BA]"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -199,9 +204,11 @@ export default function ModulesTable() {
                 {t("modules_screen.cancel")}
               </button>
 
-              <button onClick={handleSave} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                {isEditing ? t("modules_screen.save") : t("modules_screen.create")}
-              </button>
+              <Can permission={isEditing ? "update_modules" : "create_modules"}>
+                <button onClick={handleSave} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                  {isEditing ? t("modules_screen.save") : t("modules_screen.create")}
+                </button>
+              </Can>
             </div>
           </div>
         </div>

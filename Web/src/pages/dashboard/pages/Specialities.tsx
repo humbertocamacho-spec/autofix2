@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Specialities } from "../../../types/specialities";
+import Can from "../../../components/Can";
 
 export default function SpecialitiesTable() {
   const { t } = useTranslation();
@@ -106,10 +107,11 @@ export default function SpecialitiesTable() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-
-        <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-          {t("specialities_screen.add_button")}
-        </button>
+        <Can permission="create_specialities">
+          <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+            {t("specialities_screen.add_button")}
+          </button>
+        </Can>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
@@ -133,12 +135,17 @@ export default function SpecialitiesTable() {
                     <td className="py-3 truncate">{item.name}</td>
                     <td className="py-3 text-right pr-6">
                       <div className="flex justify-end space-x-2">
-                      <button onClick={() => openEditModal(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                        {t("specialities_screen.edit")}
-                      </button>
-                      <button onClick={() => handleDelete(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                        {t("specialities_screen.delete")}
-                      </button>
+                        <Can permission="update_specialities">
+                          <button onClick={() => openEditModal(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                            {t("specialities_screen.edit")}
+                          </button>
+                        </Can>
+
+                        <Can permission="delete_specialities">
+                          <button onClick={() => handleDelete(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                            {t("specialities_screen.delete")}
+                          </button>
+                        </Can>
                       </div>
                     </td>
                   </tr>
@@ -179,11 +186,11 @@ export default function SpecialitiesTable() {
                 {t("specialities_screen.cancel")}
               </button>
 
-              <button onClick={isEditing ? handleUpdate : handleCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                {isEditing
-                  ? t("specialities_screen.save")
-                  : t("specialities_screen.create")}
-              </button>
+              <Can permission={isEditing ? "update_specialities" : "create_specialities"}>
+                <button onClick={isEditing ? handleUpdate : handleCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                  {isEditing ? t("specialities_screen.save") : t("specialities_screen.create")}
+                </button>
+              </Can>
             </div>
           </div>
         </div>
