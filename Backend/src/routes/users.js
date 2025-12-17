@@ -148,10 +148,11 @@ router.delete("/:id", async (req, res) => {
     });
 
   } catch (error) {
-    await connection.rollback();
-    console.error("Error eliminando usuario:", error);
-    res.status(500).json({ message: "Error eliminando usuario" });
-  } finally {
+  await connection.rollback();
+  console.error("DELETE USER ERROR =>", error.sqlMessage || error);
+  res.status(500).json({ message: error.sqlMessage || "Error eliminando usuario" });
+}
+ finally {
     connection.release();
   }
 });
