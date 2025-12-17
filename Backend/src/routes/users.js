@@ -107,4 +107,53 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Delete user
+router.delete("/:id", async (req, res) => {
+  const connection = await db.getConnection();
+
+  try {
+    const { id } = req.params;
+
+    await connection.beginTransaction();
+
+    const [[user]] = await connection.query(
+      "SELECT id, role_id FROM users WHERE id = ?",
+      [id]
+    );
+
+    if (!user) {
+      await connection.rollback();
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    const adminRoleId = await getRoleId(ROLES.ADMIN);
+
+    if (Number(user.role_id) === Number(adminRoleId)) {
+      await connection.query(
+        "DELETE FROM admins WHERE user_id = ?",
+        [id]
+      );
+    }
+
+    await connection.query(
+      "DELETE FROM users WHERE id = ?",
+      [id]
+    );
+
+    await connection.commit();
+
+    res.json({
+      ok: true,
+      message: "Usuario eliminado correctamente"
+    });
+
+  } catch (error) {
+    await connection.rollback();
+    console.error("Error eliminando usuario:", error);
+    res.status(500).json({ message: "Error eliminando usuario" });
+  } finally {
+    connection.release();
+  }
+});
+
 export default router;

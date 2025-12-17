@@ -61,6 +61,32 @@ export default function UsersTable() {
     }
   };
 
+  const handleDeleteUser = async (user: User) => {
+    const confirmDelete = window.confirm(
+      `¿Seguro que deseas eliminar al usuario "${user.name}"?`
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`${VITE_API_URL}/api/users/${user.id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Error al eliminar usuario");
+        return;
+      }
+
+      alert("Usuario eliminado correctamente");
+      fetchUsers();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+
   const filtered = users.filter(
     (u) =>
       u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -121,7 +147,7 @@ export default function UsersTable() {
                     </Can>
 
                     <Can permission="delete_users">
-                      <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                      <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700" onClick={() => handleDeleteUser(user)}>
                         {t("users_screen.delete")}
                       </button>
                     </Can>
