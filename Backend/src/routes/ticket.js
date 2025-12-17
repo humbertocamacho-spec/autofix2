@@ -4,7 +4,51 @@ import { authMiddleware } from "./auth.js";
 
 const router = express.Router();
 
-// Get all tickets
+// Get all tickets (App)
+router.get("/app", authMiddleware, async (req, res) => {
+  try {
+    const { user_id } = req.user;
+
+    const [clientRows] = await db.query(
+      "SELECT id FROM clients WHERE user_id = ?",
+      [user_id]
+    );
+
+    if (!clientRows.length) {
+      return res.json([]);
+    }
+
+    const client_id = clientRows[0].id;
+
+    const [rows] = await db.query(`
+      SELECT 
+        t.id,
+        t.client_id,
+        u.name AS client_name,
+        t.car_id,
+        c.name AS car_name,
+        t.partner_id,
+        p.name AS partner_name,
+        p.logo_url,
+        p.phone,
+        t.date,
+        t.notes
+      FROM tickets t
+      LEFT JOIN users u ON u.id = t.client_id
+      LEFT JOIN cars c ON c.id = t.car_id
+      LEFT JOIN partners p ON p.id = t.partner_id
+      WHERE t.client_id = ?
+      ORDER BY t.date DESC
+    `, [client_id]);
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error obteniendo tickets app:", error);
+    res.status(500).json({ message: "Error al obtener tickets" });
+  }
+});
+
+// Get all tickets (Web)
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const { role_name, partner_id, client_id } = req.user;
