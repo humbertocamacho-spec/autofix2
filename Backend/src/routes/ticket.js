@@ -121,3 +121,5 @@ router.get("/:car_id/:partner_id/:client_id", async (req, res) => {
         res.status(500).json({ message: "Error al obtener ticket" });
     }
 });
+
+export default router;
