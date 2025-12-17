@@ -6,7 +6,8 @@ const router = express.Router();
 
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const { role_name, partner_id, client_id } = req.user;
+    const client_id = req.query.client_id;
+    const { role_name, partner_id } = req.user;
     const params = [];
 
     let query = `
@@ -18,7 +19,7 @@ router.get("/", authMiddleware, async (req, res) => {
         c.name AS car_name,
         t.partner_id,
         p.name AS partner_name,
-        p.logo_url,
+        p.logo_url,       
         p.phone,
         t.date,
         t.notes
@@ -28,54 +29,24 @@ router.get("/", authMiddleware, async (req, res) => {
       LEFT JOIN partners p ON p.id = t.partner_id
     `;
 
+    if (client_id) {
+      query += ` WHERE t.client_id = ?`;
+      params.push(Number(client_id));
+    }
+
     if (role_name === "partner") {
-      query += ` WHERE t.partner_id = ?`;
+      query += client_id ? ` AND` : ` WHERE`;
+      query += ` t.partner_id = ?`;
       params.push(partner_id);
     }
-
-    if (role_name === "client") {
-      query += ` WHERE t.client_id = ?`;
-      params.push(client_id);
-    }
-
-    query += ` ORDER BY t.date DESC`;
 
     const [rows] = await db.query(query, params);
     res.json(rows);
 
   } catch (error) {
-    console.error("Error obteniendo tickets:", error);
+    console.error("Error obteniendo tickets", error);
     res.status(500).json({ message: "Error al obtener tickets" });
   }
-});
-
-router.get("/by-id/:id", authMiddleware, async (req, res) => {
-    const { id } = req.params;
-    const { role_name, partner_id, client_id } = req.user;
-
-    try {
-        let query = `SELECT * FROM tickets WHERE id = ?`;
-        const params = [id];
-
-        if (role_name === "partner") {
-            query += ` AND partner_id = ?`;
-            params.push(partner_id);
-        } else if (role_name === "client") {
-            query += ` AND client_id = ?`;
-            params.push(client_id);
-        }
-
-        const [rows] = await db.query(query, params);
-
-        if (!rows.length)
-            return res.status(404).json({ message: "Ticket no encontrado" });
-
-        res.json(rows[0]);
-
-    } catch (error) {
-        console.error("Error obteniendo ticket:", error);
-        res.status(500).json({ message: "Error al obtener ticket" });
-    }
 });
 
 router.get("/:car_id/:partner_id/:client_id", async (req, res) => {
@@ -118,6 +89,92 @@ router.get("/:car_id/:partner_id/:client_id", async (req, res) => {
     } catch (error) {
         console.error("Error obteniendo ticket:", error);
         res.status(500).json({ message: "Error al obtener ticket" });
+    }
+});
+
+router.get("/by-id/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const [rows] = await db.query(`SELECT * FROM tickets WHERE id = ?`, [id]);
+
+        if (!rows.length)
+            return res.status(404).json({ message: "Ticket no encontrado" });
+
+        res.json(rows[0]);
+    } catch (error) {
+        console.error("Error obteniendo ticket:", error);
+        res.status(500).json({ message: "Error al obtener ticket" });
+    }
+});
+
+router.post("/", async (req, res) => {
+    const { client_id, car_id, partner_id, date, notes } = req.body;
+
+    try {
+        const [result] = await db.query(
+            `INSERT INTO tickets (client_id, car_id, partner_id, date, notes)
+             VALUES (?, ?, ?, ?, ?)`,
+            [client_id, car_id, partner_id, date, notes]
+        );
+
+        res.json({ message: "Ticket creado", id: result.insertId });
+
+    } catch (error) {
+        console.error("Error creando ticket:", error);
+        res.status(500).json({ message: "Error creando ticket" });
+    }
+});
+
+router.delete("/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const [result] = await db.query(
+            "DELETE FROM tickets WHERE id = ?",
+            [id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ ok: false, message: "Ticket no encontrado" });
+        }
+
+        return res.json({ ok: true, message: "Ticket eliminado correctamente" });
+
+    } catch (error) {
+        console.error("Error eliminando ticket:", error);
+        res.status(500).json({ ok: false, message: "Error al eliminar el ticket" });
+    }
+});
+
+router.get("/occupied", async (req, res) => {
+    try {
+        const { partner_id, date } = req.query;
+
+        if (!partner_id || !date) {
+            return res.status(400).json({ message: "Faltan parámetros (partner_id o date)" });
+        }
+
+        const [rows] = await db.query(
+            `
+            SELECT 
+                DATE_FORMAT(date, '%h:%i %p') AS hour
+            FROM 
+                tickets
+            WHERE 
+                partner_id = ? 
+                AND DATE(date) = ?
+            `,
+            [partner_id, date]
+        );
+
+        const occupiedHours = rows.map(r => r.hour);
+
+        return res.json({ occupied_hours: occupiedHours });
+
+    } catch (error) {
+        console.error("Error obteniendo horas ocupadas:", error);
+        return res.status(500).json({ message: "Error obteniendo horas ocupadas" });
     }
 });
 
