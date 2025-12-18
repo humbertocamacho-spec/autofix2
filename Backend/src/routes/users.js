@@ -17,6 +17,7 @@ router.get("/", async (req, res) => {
         u.role_id,
         u.photo_url,
         u.gender_id,
+        u.deleted_at,
         r.name AS role_name,
         g.name AS gender_name
       FROM users u
