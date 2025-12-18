@@ -74,6 +74,7 @@ export default function TicketsTable() {
                   <th className="pb-3 w-48">{t("tickets_screen.table.partner")}</th>
                   <th className="pb-3 w-40">{t("tickets_screen.table.date")}</th>
                   <th className="pb-3">{t("tickets_screen.table.notes")}</th>
+                  <th className="pb-3 w-32"> {t("tickets_screen.table.status")}</th>
                   <th className="pb-3 w-32 text-right">{t("tickets_screen.table.actions")}</th>
                 </tr>
               </thead>

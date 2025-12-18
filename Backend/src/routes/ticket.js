@@ -32,7 +32,8 @@ router.get("/app", authMiddleware, async (req, res) => {
         p.logo_url,
         p.phone,
         t.date,
-        t.notes
+        t.notes,
+        t.status
       FROM tickets t
       LEFT JOIN users u ON u.id = t.client_id
       LEFT JOIN cars c ON c.id = t.car_id
@@ -66,7 +67,8 @@ router.get("/", authMiddleware, async (req, res) => {
         p.logo_url,       
         p.phone,
         t.date,
-        t.notes
+        t.notes,
+        t.status
       FROM tickets t
       LEFT JOIN users u ON u.id = t.client_id
       LEFT JOIN cars c ON c.id = t.car_id

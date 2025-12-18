@@ -10,4 +10,5 @@ export interface Ticket {
     logo_url?: string;
     date: string;
     notes?: string;
+    status: "pendiente" | "revision" | "finalizado";
 }
