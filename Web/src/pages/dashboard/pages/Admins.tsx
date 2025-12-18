@@ -4,6 +4,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Admin } from "../../../types/admin";
 import type { User } from "../../../types/users";
 import { useTranslation } from "react-i18next";
+import Can from "../../../components/Can";
 
 export default function AdminsTable() {
   const [admins, setAdmins] = useState<Admin[]>([]);
@@ -98,9 +99,11 @@ export default function AdminsTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button onClick={openCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6]">
-          {t("admin_screen.add_button")}
-        </button>
+        <Can permission="create_admins">
+          <button onClick={openCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6]">
+            {t("admin_screen.add_button")}
+          </button>
+        </Can>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
@@ -122,13 +125,17 @@ export default function AdminsTable() {
                   <td className="py-2">{item.user_name}</td>
 
                   <td className="py-2 text-right space-x-4">
-                    <button onClick={() => openEdit(item)} className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                      {t("admin_screen.edit")}
-                    </button>
+                    <Can permission="update_admins">
+                      <button onClick={() => openEdit(item)} className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                        {t("admin_screen.edit")}
+                      </button>
+                    </Can>
 
-                    <button onClick={() => deleteAdmin(item.id)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                      {t("admin_screen.delete")}
-                    </button>
+                    <Can permission="delete_admins">
+                      <button onClick={() => deleteAdmin(item.id)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                        {t("admin_screen.delete")}
+                      </button>
+                    </Can>
                   </td>
                 </tr>
               ))}
@@ -174,9 +181,11 @@ export default function AdminsTable() {
                 {t("admin_screen.cancel")}
               </button>
 
-              <button onClick={saveAdmin} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                {isEditing ? t("admin_screen.save") : t("admin_screen.create")}
-              </button>
+              <Can permission={isEditing ? "update_admins" : "create_admins"}>
+                <button onClick={saveAdmin} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                  {isEditing ? t("admin_screen.save") : t("admin_screen.create")}
+                </button>
+              </Can>
             </div>
           </div>
         </div>

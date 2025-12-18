@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { PartnerCertification } from "../../../types/partner_certification";
+import Can from "../../../components/Can";
 
 export default function PartnersCertificationsTable() {
   const { t } = useTranslation();
@@ -132,9 +133,12 @@ export default function PartnersCertificationsTable() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-          {t("partner_certifications_screen.add_button")}
-        </button>
+
+        <Can permission="create_partner_certifications">
+          <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+            {t("partner_certifications_screen.add_button")}
+          </button>
+        </Can>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
@@ -159,12 +163,17 @@ export default function PartnersCertificationsTable() {
                     <td className="py-3">{item.certification_name}</td>
                     <td className="py-3 text-right pr-6">
                       <div className="flex justify-end space-x-2">
-                        <button onClick={() => openEditModal(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                          {t("partner_certifications_screen.edit")}
-                        </button>
-                        <button onClick={() => handleDelete(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                          {t("partner_certifications_screen.delete")}
-                        </button>
+                        <Can permission="update_partner_certifications">
+                          <button onClick={() => openEditModal(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                            {t("partner_certifications_screen.edit")}
+                          </button>
+                        </Can>
+
+                        <Can permission="delete_partner_certifications">
+                          <button onClick={() => handleDelete(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                            {t("partner_certifications_screen.delete")}
+                          </button>
+                        </Can>
                       </div>
                     </td>
                   </tr>
@@ -191,7 +200,7 @@ export default function PartnersCertificationsTable() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">Partner</label>
+                <label className="text-sm font-semibold text-gray-600">{t("partner_certifications_screen.table.partner_name")}</label>
                 <select
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={partnerId}
@@ -226,9 +235,11 @@ export default function PartnersCertificationsTable() {
                 {t("partner_certifications_screen.cancel")}
               </button>
 
-              <button onClick={handleSave} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                {isEditing ? t("partner_certifications_screen.save") : t("partner_certifications_screen.create")}
-              </button>
+              <Can permission={isEditing ? "update_partner_certifications" : "create_partner_certifications"}>
+                <button onClick={handleSave} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                  {isEditing ? t("partner_certifications_screen.save") : t("partner_certifications_screen.create")}
+                </button>
+              </Can>
             </div>
           </div>
         </div>

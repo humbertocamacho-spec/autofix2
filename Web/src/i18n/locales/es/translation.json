@@ -185,12 +185,14 @@
   "see_all": "Ver todos",
   "specialities": "Especialidades",
   "tickets": "Tickets",
+
   "users": "Usuarios",
   "users_screen": {
     "add_button": "Agregar Usuario",
-    "delete": "Eliminar",
+    "delete": "Desactivar",
     "edit": "Editar",
     "loading": "Cargando usuarios...",
+    "restore": "Restaurar",
     "modal": {
       "cancel": "Cancelar",
       "email": "Correo",
@@ -212,7 +214,10 @@
       "id": "ID",
       "name": "Nombre",
       "phone": "Teléfono",
-      "role": "Rol"
+      "role": "Rol",
+      "status": "Estado",
+      "status_active": "Activo",
+      "status_inactive": "Inactivo"
     },
     "title": "Usuarios"
   },

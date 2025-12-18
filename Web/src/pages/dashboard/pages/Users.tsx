@@ -3,6 +3,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import { useTranslation } from "react-i18next";
 import type { User } from "../../../types/users";
+import Can from "../../../components/Can";
 
 export default function UsersTable() {
   const [users, setUsers] = useState<User[]>([]);
@@ -37,13 +38,11 @@ export default function UsersTable() {
     if (!currentUser) return;
 
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users/${currentUser.id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(currentUser),
-        }
-      );
+      const res = await fetch(`${VITE_API_URL}/api/users/${currentUser.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(currentUser),
+      });
 
       const data = await res.json();
 
@@ -57,6 +56,49 @@ export default function UsersTable() {
       fetchUsers();
     } catch (error) {
       console.error("Error updating user:", error);
+    }
+  };
+
+  const handleDeleteUser = async (user: User) => {
+    const confirmDelete = window.confirm(
+      `¿Seguro que deseas desactivar al usuario "${user.name}"?`
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`${VITE_API_URL}/api/users/${user.id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || "Error al desactivar usuario");
+        return;
+      }
+
+      alert("Usuario desactivado correctamente");
+      fetchUsers();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+
+  const handleRestoreUser = async (user: User) => {
+    try {
+      const res = await fetch(`${VITE_API_URL}/api/users/${user.id}/restore`, {
+        method: "PATCH",
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || "Error al reactivar usuario");
+        return;
+      }
+
+      alert("Usuario reactivado correctamente");
+      fetchUsers();
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -79,13 +121,16 @@ export default function UsersTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-          {t("users_screen.add_button")}
-        </button>
+        <Can permission="create_users">
+          <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+            {t("users_screen.add_button")}
+          </button>
+        </Can>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
-        {loading ? (<p className="text-center py-10 text-gray-500">{t("users_screen.loading")}</p>
+        {loading ? (
+          <p className="text-center py-10 text-gray-500">{t("users_screen.loading")}</p>
         ) : (
           <table className="w-full table-auto text-left">
             <thead>
@@ -96,15 +141,14 @@ export default function UsersTable() {
                 <th className="pb-3">{t("users_screen.table.phone")}</th>
                 <th className="pb-3">{t("users_screen.table.role")}</th>
                 <th className="pb-3">{t("users_screen.table.gender")}</th>
-                <th className="pb-3 text-right">
-                  {t("users_screen.table.actions")}
-                </th>
+                <th className="pb-3">{t("users_screen.table.status")}</th>
+                <th className="pb-3 text-right">{t("users_screen.table.actions")}</th>
               </tr>
             </thead>
 
             <tbody>
               {filtered.map((user) => (
-                <tr key={user.id}className="border-b hover:bg-gray-50 text-gray-700">
+                <tr key={user.id} className={`border-b hover:bg-gray-50 text-gray-700 ${user.deleted_at ? "bg-gray-100 opacity-70" : ""}`}>
                   <td className="py-3">{user.id}</td>
                   <td className="py-3">{user.name}</td>
                   <td className="py-3">{user.email}</td>
@@ -112,22 +156,52 @@ export default function UsersTable() {
                   <td className="py-3">{user.role_name || "—"}</td>
                   <td className="py-3">{user.gender_name || "—"}</td>
 
-                  <td className="py-3 text-right space-x-3">
-                    <button
-                      className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
-                      onClick={() => handleOpenEdit(user)}>{t("users_screen.edit")}
-                    </button>
+                  <td className="py-3">
+                    {user.deleted_at ? (
+                      <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                        {t("users_screen.table.status_inactive")}
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                        {t("users_screen.table.status_active")}
+                      </span>
+                    )}
+                  </td>
 
-                    <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                      {t("users_screen.delete")}
-                    </button>
+                  <td className="py-3 text-right space-x-3">
+                    {!user.deleted_at && (
+                      <Can permission="update_users">
+                        <button
+                          className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
+                          onClick={() => handleOpenEdit(user)}
+                        >
+                          {t("users_screen.edit")}
+                        </button>
+                      </Can>
+                    )}
+
+                    {!user.deleted_at && (
+                      <Can permission="delete_users">
+                        <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700" onClick={() => handleDeleteUser(user)}>
+                          {t("users_screen.delete")}
+                        </button>
+                      </Can>
+                    )}
+
+                    {user.deleted_at && (
+                      <Can permission="update_users">
+                        <button className="px-2.5 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700" onClick={() => handleRestoreUser(user)}>
+                          {t("users_screen.restore")}
+                        </button>
+                      </Can>
+                    )}
                   </td>
                 </tr>
               ))}
 
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7}className="text-center py-6 text-gray-500">
+                  <td colSpan={8} className="text-center py-6 text-gray-500">
                     {t("users_screen.no_results")}
                   </td>
                 </tr>
@@ -149,10 +223,7 @@ export default function UsersTable() {
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={currentUser.name}
                   onChange={(e) =>
-                    setCurrentUser({
-                      ...currentUser,
-                      name: e.target.value,
-                    })
+                    setCurrentUser({ ...currentUser, name: e.target.value })
                   }
                 />
               </div>
@@ -163,10 +234,7 @@ export default function UsersTable() {
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={currentUser.email}
                   onChange={(e) =>
-                    setCurrentUser({
-                      ...currentUser,
-                      email: e.target.value,
-                    })
+                    setCurrentUser({ ...currentUser, email: e.target.value })
                   }
                 />
               </div>
@@ -177,10 +245,7 @@ export default function UsersTable() {
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={currentUser.phone || ""}
                   onChange={(e) =>
-                    setCurrentUser({
-                      ...currentUser,
-                      phone: e.target.value,
-                    })
+                    setCurrentUser({ ...currentUser, phone: e.target.value })
                   }
                 />
               </div>
@@ -228,9 +293,11 @@ export default function UsersTable() {
                 {t("users_screen.modal.cancel")}
               </button>
 
-              <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition" onClick={handleUpdateUser}>
-                {t("users_screen.modal.save")}
-              </button>
+              <Can permission="update_users">
+                <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition" onClick={handleUpdateUser}>
+                  {t("users_screen.modal.save")}
+                </button>
+              </Can>
             </div>
           </div>
         </div>

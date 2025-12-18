@@ -4,6 +4,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Modules } from "../../../types/modules";
 import type { Permission } from "../../../types/permission";
+import Can from "../../../components/Can";
 
 export default function PermissionsTable() {
   const { t } = useTranslation();
@@ -109,9 +110,11 @@ export default function PermissionsTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button onClick={openCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-          {t("permissions_screen.add_button")}
-        </button>
+        <Can permission="create_permissions">
+          <button onClick={openCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+            {t("permissions_screen.add_button")}
+          </button>
+        </Can>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
@@ -136,13 +139,17 @@ export default function PermissionsTable() {
                     <td className="py-3">{getModuleName(perm.module_id)}</td>
 
                     <td className="py-3 text-right space-x-3">
-                      <button onClick={() => openEdit(perm)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                        {t("permissions_screen.edit")}
-                      </button>
+                      <Can permission="update_permissions">
+                        <button onClick={() => openEdit(perm)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                          {t("permissions_screen.edit")}
+                        </button>
+                      </Can>
 
-                      <button onClick={() => deletePermission(perm.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                        {t("permissions_screen.delete")}
-                      </button>
+                      <Can permission="delete_permissions">
+                        <button onClick={() => deletePermission(perm.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                          {t("permissions_screen.delete")}
+                        </button>
+                      </Can>
                     </td>
                   </tr>
                 ))}
@@ -199,9 +206,11 @@ export default function PermissionsTable() {
                 {t("permissions_screen.cancel")}
               </button>
 
-              <button onClick={savePermission} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                {isEditing ? t("permissions_screen.save") : t("permissions_screen.create")}
-              </button>
+              <Can permission={isEditing ? "update_permissions" : "create_permissions"}>
+                <button onClick={savePermission} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                  {isEditing ? t("permissions_screen.save") : t("permissions_screen.create")}
+                </button>
+              </Can>
             </div>
           </div>
         </div>

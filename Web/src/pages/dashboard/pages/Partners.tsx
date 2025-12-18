@@ -5,6 +5,7 @@ import type { Partner } from "../../../types/partner";
 import type { User } from "../../../types/users";
 import { useAuthContext } from "../../../context/AuthContext";
 import { useTranslation } from "react-i18next";
+import Can from "../../../components/Can";
 
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -80,8 +81,6 @@ export default function PartnersTable() {
     setSelectedSpecialities(data);
   };
 
-
-
   const openCreate = () => {
     setIsEditing(false);
     setCurrentPartner(null);
@@ -152,7 +151,6 @@ export default function PartnersTable() {
       }),
     });
 
-
     setOpenModal(false);
     fetchPartners();
   };
@@ -184,9 +182,12 @@ export default function PartnersTable() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button onClick={openCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6]">
-          {t("partners_screen.add_button")}
-        </button>
+
+        <Can permission="create_partners">
+          <button onClick={openCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6]">
+            {t("partners_screen.add_button")}
+          </button>
+        </Can>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
@@ -230,12 +231,17 @@ export default function PartnersTable() {
                     <td className="py-3 w-24 text-center font-semibold">{item.priority}</td>
                     <td className="py-3 w-32">
                       <div className="flex justify-end gap-2 whitespace-nowrap">
-                        <button onClick={() => openEdit(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                          {t("partners_screen.edit")}
-                        </button>
-                        <button onClick={() => deletePartner(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                          {t("partners_screen.delete")}
-                        </button>
+                        <Can permission="update_partners">
+                          <button onClick={() => openEdit(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                            {t("partners_screen.edit")}
+                          </button>
+                        </Can>
+
+                        <Can permission="delete_partners">
+                          <button onClick={() => deletePartner(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                            {t("partners_screen.delete")}
+                          </button>
+                        </Can>
                       </div>
                     </td>
                   </tr>
@@ -377,14 +383,8 @@ export default function PartnersTable() {
                       <label key={s.id} className="flex items-center gap-2 text-sm">
                         <input type="checkbox" checked={selectedSpecialities.includes(s.id)} 
                         onChange={(e) =>
-                            e.target.checked
-                              ? setSelectedSpecialities([...selectedSpecialities, s.id])
-                              : setSelectedSpecialities(
-                                  selectedSpecialities.filter((id) => id !== s.id)
-                                )
-                          }
-                        />
-                        {s.name}
+                          e.target.checked ? setSelectedSpecialities([...selectedSpecialities, s.id]) : setSelectedSpecialities( selectedSpecialities.filter((id) => id !== s.id))
+                        }/>{s.name}
                       </label>
                     ))}
                   </div>
@@ -396,9 +396,12 @@ export default function PartnersTable() {
               <button onClick={() => setOpenModal(false)} className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                 {t("partners_screen.cancel")}
               </button>
-              <button onClick={savePartner} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                {isEditing ? t("partners_screen.save") : t("partners_screen.create")}
-              </button>
+
+              <Can permission={isEditing ? "update_partners" : "create_partners"}>
+                <button onClick={savePartner} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                  {isEditing ? t("partners_screen.save") : t("partners_screen.create")}
+                </button>
+              </Can>
             </div>
           </div>
         </div>

@@ -192,9 +192,10 @@
   "users": "Users",
   "users_screen": {
     "add_button": "Add User",
-    "delete": "Delete",
+    "delete": "Deactivate",
     "edit": "Edit",
     "loading": "Loading users...",
+    "restore": "Restore",
     "modal": {
       "cancel": "Cancel",
       "email": "Email",
@@ -216,7 +217,10 @@
       "id": "ID",
       "name": "Name",
       "phone": "Phone",
-      "role": "Role"
+      "role": "Role",
+      "status": "Status",
+      "status_active": "Active",
+      "status_inactive": "Inactive"
     },
     "title": "Users"
   },
