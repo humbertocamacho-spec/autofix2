@@ -348,6 +348,20 @@
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No tickets found",
+    "edit_status": "Edit status",
+
+
+    "status": {
+    "label": "Status",
+    "pendiente": "Pending",
+    "revision": "Review",
+    "finalizado": "Finished"
+   },
+   "common": {
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+
     "table": {
       "id": "ID",
       "client": "Client",
@@ -355,6 +369,7 @@
       "partner": "Partner",
       "date": "Date",
       "notes": "Notes",
+      "status": "Status",
       "actions": "Actions"
     }
   },

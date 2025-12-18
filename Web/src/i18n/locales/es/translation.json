@@ -340,10 +340,21 @@
   "tickets_screen": {
     "title": "Tickets",
     "search_placeholder": "Buscar ticket...",
+    "edit_status": "Editar estado",
     "loading": "Cargando...",
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron tickets",
+    "status": {
+    "label": "Estado",
+    "pendiente": "Pendiente",
+    "revision": "Revisión",
+    "finalizado": "Finalizado"
+    },
+    "common": {
+    "cancel": "Cancelar",
+    "save": "Guardar"
+  },
     "table": {
       "id": "ID",
       "client": "Cliente",
@@ -351,6 +362,7 @@
       "partner": "Partner",
       "date": "Fecha",
       "notes": "Notas",
+      "status": "Estado",
       "actions": "Acciones"
     }
   },

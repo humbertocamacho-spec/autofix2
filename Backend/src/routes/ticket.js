@@ -194,6 +194,42 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
+router.put("/:id/status", authMiddleware, async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  const { role_name, partner_id } = req.user;
+
+  const allowedStatus = ["pendiente", "revision", "finalizado"];
+
+  if (!allowedStatus.includes(status)) {
+    return res.status(400).json({ message: "Status inválido" });
+  }
+
+  if (role_name !== "partner") {
+    return res.status(403).json({ message: "No autorizado" });
+  }
+
+  try {
+    const [result] = await db.query(
+      `UPDATE tickets 
+       SET status = ?
+       WHERE id = ? AND partner_id = ?`,
+      [status, id, partner_id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Ticket no encontrado" });
+    }
+
+    res.json({ message: "Status actualizado correctamente" });
+
+  } catch (error) {
+    console.error("Error actualizando status:", error);
+    res.status(500).json({ message: "Error al actualizar status" });
+  }
+});
+
+
 router.get("/occupied", async (req, res) => {
     try {
         const { partner_id, date } = req.query;
