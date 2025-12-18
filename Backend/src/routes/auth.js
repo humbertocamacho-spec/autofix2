@@ -58,6 +58,11 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ ok: false, message: 'Contraseña incorrecta' });
     }
 
+    // Prohibir acceso a usuarios desactivados
+    if (user.deleted_at) {
+      return res.status(403).json({ ok: false, message: 'Usuario desactivado. Contacta al administrador.' });
+    }
+
     const roleName = await getRoleName(user.role_id);
 
     const [permissions] = await pool.query(

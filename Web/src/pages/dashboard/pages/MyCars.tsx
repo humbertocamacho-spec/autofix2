@@ -5,20 +5,18 @@ import { useAuthContext } from "../../../context/AuthContext";
 import type { Cars } from "../../../types/cars";
 import type { CarBrands } from "../../../types/car_brands";
 import { useTranslation } from "react-i18next";
+import Can from "../../../components/Can";
 
 export default function MyCarsTable() {
     const { user } = useAuthContext();
     const { t } = useTranslation();
-
     const [cars, setCars] = useState<Cars[]>([]);
     const [brands, setBrands] = useState<CarBrands[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
-
     const [openModal, setOpenModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentCar, setCurrentCar] = useState<Cars | null>(null);
-
     const [name, setName] = useState("");
     const [car_brand_id, setCarBrandId] = useState<number>(0);
     const [model, setModel] = useState("");
@@ -61,28 +59,24 @@ export default function MyCarsTable() {
     const openCreateModal = () => {
         setIsEditing(false);
         setCurrentCar(null);
-
         setName("");
         setCarBrandId(0);
         setModel("");
         setYear("");
         setType("");
         setPlate("");
-
         setOpenModal(true);
     };
 
     const openEditModal = (car: Cars) => {
         setIsEditing(true);
         setCurrentCar(car);
-
         setName(car.name);
         setCarBrandId(car.car_brand_id);
         setModel(car.model);
         setYear(String(car.year));
         setType(car.type);
         setPlate(car.plate);
-
         setOpenModal(true);
     };
 
@@ -229,9 +223,11 @@ export default function MyCarsTable() {
                             onChange={(e) => setSearch(e.target.value)}
                         />
 
-                        <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                            {t("myCars_screen.add_button")}
-                        </button>
+                        <Can permission="create_cars_clients">
+                            <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                                {t("myCars_screen.add_button")}
+                            </button>
+                        </Can>
                     </div>
 
                     <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
@@ -264,13 +260,17 @@ export default function MyCarsTable() {
 
                                                 <td className="py-3 text-right pr-6">
                                                     <div className="flex justify-end space-x-2">
-                                                        <button onClick={() => openEditModal(car)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                                                            {t("myCars_screen.edit")}
-                                                        </button>
+                                                        <Can permission="update_cars_clients">
+                                                            <button onClick={() => openEditModal(car)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                                                                {t("myCars_screen.edit")}
+                                                            </button>
+                                                        </Can>
 
-                                                        <button onClick={() => handleDelete(car.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                                                            {t("myCars_screen.delete")}
-                                                        </button>
+                                                        <Can permission="delete_cars_clients">
+                                                            <button onClick={() => handleDelete(car.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                                                                {t("myCars_screen.delete")}
+                                                            </button>
+                                                        </Can>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -342,9 +342,11 @@ export default function MyCarsTable() {
                                         {t("myCars_screen.cancel")}
                                     </button>
 
-                                    <button onClick={isEditing ? handleUpdate : handleCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                                        {isEditing ? t("myCars_screen.save") : t("myCars_screen.create")}
-                                    </button>
+                                    <Can permission={isEditing ? "update_cars_clients" : "create_cars_clients"}>
+                                        <button onClick={isEditing ? handleUpdate : handleCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                                            {isEditing ? t("myCars_screen.save") : t("myCars_screen.create")}
+                                        </button>
+                                    </Can>
                                 </div>
                             </div>
                         </div>

@@ -4,6 +4,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Client } from "../../../types/client";
 import type { User } from "../../../types/users";
 import { useTranslation } from "react-i18next";
+import Can from "../../../components/Can";
 
 export default function ClientsTable() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -103,9 +104,11 @@ export default function ClientsTable() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button onClick={openCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-          {t("clients_screen.add_button")}
-        </button>
+        <Can permission="create_clients">
+          <button onClick={openCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+            {t("clients_screen.add_button")}
+          </button>
+        </Can>
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
@@ -127,13 +130,18 @@ export default function ClientsTable() {
                   <td className="py-3">{item.id}</td>
                   <td className="py-3">{item.user_name}</td>
                   <td className="py-3 text-right space-x-3">
-                    <button onClick={() => openEdit(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                      {t("clients_screen.edit")}
-                    </button>
 
-                    <button onClick={() => deleteClient(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                      {t("clients_screen.delete")}
-                    </button>
+                    <Can permission="update_clients">
+                      <button onClick={() => openEdit(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                        {t("clients_screen.edit")}
+                      </button>
+                    </Can>
+
+                    <Can permission="delete_clients">
+                      <button onClick={() => deleteClient(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                        {t("clients_screen.delete")}
+                      </button>
+                    </Can>
                   </td>
                 </tr>
               ))}
@@ -178,9 +186,11 @@ export default function ClientsTable() {
                 {t("clients_screen.cancel")}
               </button>
 
-              <button onClick={saveClient} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                {isEditing ? t("clients_screen.save") : t("clients_screen.create")}
-              </button>
+              <Can permission={isEditing ? "update_clients" : "create_clients"}>
+                <button onClick={saveClient} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                  {isEditing ? t("clients_screen.save") : t("clients_screen.create")}
+                </button>
+              </Can>
             </div>
           </div>
         </div>

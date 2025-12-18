@@ -4,6 +4,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { PendingTicket } from "../../../types/pending_ticket";
 import { useAuthContext } from "../../../context/AuthContext";
+import Can from "../../../components/Can";
 
 export default function PendingTicketsTable() {
   const { t } = useTranslation();
@@ -43,8 +44,6 @@ export default function PendingTicketsTable() {
 
     return parsed.toLocaleDateString();
   };
-
-
 
   const fetchPendingTickets = async () => {
     try {
@@ -113,18 +112,21 @@ export default function PendingTicketsTable() {
                       <img src={item.logo_url || "/images/no-logo.png"} className="h-8 w-8 rounded-full border" />
                       <span>{item.partner_name}</span>
                     </td>
-                    <td className="py-3">
-                      {formatDate(item.date)}
-                    </td>
+                    <td className="py-3">{formatDate(item.date)}</td>
                     <td className="py-3">{item.time || "—"}</td>
                     <td className="py-3 max-w-xs whitespace-normal">{item.notes || "—"}</td>
                     <td className="py-3 text-right space-x-3">
-                      <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm">
-                        {t("pending_tickets_table.edit")}
-                      </button>
-                      <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm">
-                        {t("pending_tickets_table.delete")}
-                      </button>
+                      <Can permission="update_pending_tickets">
+                        <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm">
+                          {t("pending_tickets_table.edit")}
+                        </button>
+                      </Can>
+
+                      <Can permission="delete_pending_tickets">
+                        <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm">
+                          {t("pending_tickets_table.delete")}
+                        </button>
+                      </Can>
                     </td>
                   </tr>
                 ))}

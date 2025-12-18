@@ -17,6 +17,7 @@ router.get("/", async (req, res) => {
         u.role_id,
         u.photo_url,
         u.gender_id,
+        u.deleted_at,
         r.name AS role_name,
         g.name AS gender_name
       FROM users u
@@ -104,6 +105,56 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ message: "Error actualizando usuario" });
   } finally {
     connection.release();
+  }
+});
+
+// Delete user
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [result] = await db.query(
+      "UPDATE users SET deleted_at = NOW() WHERE id = ?",
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.json({
+      ok: true,
+      message: "Usuario desactivado correctamente"
+    });
+
+  } catch (error) {
+    console.error("Error soft deleting user:", error);
+    res.status(500).json({ message: "Error desactivando usuario" });
+  }
+});
+
+// Restore user
+router.patch("/:id/restore", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [result] = await db.query(
+      "UPDATE users SET deleted_at = NULL WHERE id = ?",
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.json({
+      ok: true,
+      message: "Usuario reactivado correctamente"
+    });
+
+  } catch (error) {
+    console.error("Error restoring user:", error);
+    res.status(500).json({ message: "Error reactivando usuario" });
   }
 });
 
