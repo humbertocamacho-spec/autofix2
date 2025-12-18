@@ -159,11 +159,11 @@ export default function UsersTable() {
                   <td className="py-3">
                     {user.deleted_at ? (
                       <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                        Inactivo
+                        {t("users_screen.table.status_inactive")}
                       </span>
                     ) : (
                       <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                        Activo
+                        {t("users_screen.table.status_active")}
                       </span>
                     )}
                   </td>

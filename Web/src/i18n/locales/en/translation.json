@@ -218,7 +218,9 @@
       "name": "Name",
       "phone": "Phone",
       "role": "Role",
-      "status": "Status"
+      "status": "Status",
+      "status_active": "Active",
+      "status_inactive": "Inactive"
     },
     "title": "Users"
   },
