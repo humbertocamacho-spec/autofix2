@@ -44,7 +44,7 @@ export default function TicketsConfirmed() {
       case "pendiente":
         return "Pendiente";
       case "revision":
-        return "Revisión";
+        return "En Revisión";
       case "finalizado":
         return "Finalizado";
       default:
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   header: { paddingTop: 50, paddingBottom: 20, paddingHorizontal: 15, backgroundColor: "#27B9BA", },
   title: { fontSize: 25, fontWeight: "bold", textAlign: "center", marginVertical: 10, },
-  card: { padding: 15, borderRadius: 12, marginBottom: 12, overflow: "hidden", paddingBottom: 0, },
+  card: { padding: 15, borderRadius: 12, marginBottom: 12, overflow: "hidden", paddingBottom: 0, paddingRight: 48 },
   row: { flexDirection: "row", alignItems: "center" },
   logo: { width: 50, height: 50, borderRadius: 10, marginRight: 10, backgroundColor: "#fff", },
   partnerName: { color: "#fff", fontSize: 18, fontWeight: "bold" },
@@ -176,6 +176,6 @@ const styles = StyleSheet.create({
   notesText: { color: "#fff", marginTop: 10, fontStyle: "italic" },
   cancelButton: { position: "absolute", top: 10, right: 10 },
   center: { alignItems: "center", padding: 20 },
-  statusBar: { height: 26, backgroundColor: "#2ECC71", marginLeft: -15, marginRight: -15, justifyContent: "center", alignItems: "center", borderBottomLeftRadius: 12, borderBottomRightRadius: 12, },
+  statusBar: { height: 26, backgroundColor: "#2ECC71", marginLeft: -15, marginRight: -50, justifyContent: "center", alignItems: "center", borderBottomLeftRadius: 12, borderBottomRightRadius: 12, marginTop: 10},
   statusText: { color: "#fff", fontWeight: "bold", fontSize: 11, letterSpacing: 1, textTransform: "uppercase", },
 });
