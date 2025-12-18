@@ -189,9 +189,10 @@
   "users": "Usuarios",
   "users_screen": {
     "add_button": "Agregar Usuario",
-    "delete": "Eliminar",
+    "delete": "Desactivar",
     "edit": "Editar",
     "loading": "Cargando usuarios...",
+    "restore": "Restaurar",
     "modal": {
       "cancel": "Cancelar",
       "email": "Correo",

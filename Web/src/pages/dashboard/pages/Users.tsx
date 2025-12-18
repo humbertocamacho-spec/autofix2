@@ -201,7 +201,7 @@ export default function UsersTable() {
                     {user.deleted_at && (
                       <Can permission="update_users">
                         <button
-                          className="px-3 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700"
+                          className="px-2.5 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700"
                           onClick={() => handleRestoreUser(user)}
                         >
                           {t("users_screen.restore")}

@@ -192,9 +192,10 @@
   "users": "Users",
   "users_screen": {
     "add_button": "Add User",
-    "delete": "Delete",
+    "delete": "Deactivate",
     "edit": "Edit",
     "loading": "Loading users...",
+    "restore": "Restore",
     "modal": {
       "cancel": "Cancel",
       "email": "Email",
