@@ -100,8 +100,8 @@ export default function TicketsTable() {
                     <td className="py-3">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold
-                        ${item.status === "pendiente" && "bg-yellow-100 text-yellow-700"}
-                        ${item.status === "revision" && "bg-blue-100 text-blue-700"}
+                        ${item.status === "pendiente" && "bg-gray-200 text-gray-700"}
+                        ${item.status === "revision" && "bg-yellow-100 text-yellow-700"}
                         ${item.status === "finalizado" && "bg-green-100 text-green-700"}
                       `}
                       >
