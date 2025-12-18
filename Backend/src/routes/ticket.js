@@ -6,21 +6,21 @@ const router = express.Router();
 
 // Get all tickets (App)
 router.get("/app", authMiddleware, async (req, res) => {
-  try {
-    const { user_id } = req.user;
+    try {
+        const { user_id } = req.user;
 
-    const [clientRows] = await db.query(
-      "SELECT id FROM clients WHERE user_id = ?",
-      [user_id]
-    );
+        const [clientRows] = await db.query(
+            "SELECT id FROM clients WHERE user_id = ?",
+            [user_id]
+        );
 
-    if (!clientRows.length) {
-      return res.json([]);
-    }
+        if (!clientRows.length) {
+            return res.json([]);
+        }
 
-    const client_id = clientRows[0].id;
+        const client_id = clientRows[0].id;
 
-    const [rows] = await db.query(`
+        const [rows] = await db.query(`
       SELECT 
         t.id,
         t.client_id,
@@ -42,20 +42,20 @@ router.get("/app", authMiddleware, async (req, res) => {
       ORDER BY t.date DESC
     `, [client_id]);
 
-    res.json(rows);
-  } catch (error) {
-    console.error("Error obteniendo tickets app:", error);
-    res.status(500).json({ message: "Error al obtener tickets" });
-  }
+        res.json(rows);
+    } catch (error) {
+        console.error("Error obteniendo tickets app:", error);
+        res.status(500).json({ message: "Error al obtener tickets" });
+    }
 });
 
 // Get all tickets (Web)
 router.get("/", authMiddleware, async (req, res) => {
-  try {
-    const { role_name, partner_id, client_id } = req.user;
-    const params = [];
+    try {
+        const { role_name, partner_id, client_id } = req.user;
+        const params = [];
 
-    let query = `
+        let query = `
       SELECT 
         t.id,
         t.client_id,
@@ -75,25 +75,25 @@ router.get("/", authMiddleware, async (req, res) => {
       LEFT JOIN partners p ON p.id = t.partner_id
     `;
 
-    if (role_name === "client") {
-      query += ` WHERE t.client_id = ?`;
-      params.push(client_id);
+        if (role_name === "client") {
+            query += ` WHERE t.client_id = ?`;
+            params.push(client_id);
+        }
+
+        if (role_name === "partner") {
+            query += ` WHERE t.partner_id = ?`;
+            params.push(partner_id);
+        }
+
+        query += ` ORDER BY t.date DESC`;
+
+        const [rows] = await db.query(query, params);
+        res.json(rows);
+
+    } catch (error) {
+        console.error("Error obteniendo tickets", error);
+        res.status(500).json({ message: "Error al obtener tickets" });
     }
-
-    if (role_name === "partner") {
-      query += ` WHERE t.partner_id = ?`;
-      params.push(partner_id);
-    }
-
-    query += ` ORDER BY t.date DESC`;
-
-    const [rows] = await db.query(query, params);
-    res.json(rows);
-
-  } catch (error) {
-    console.error("Error obteniendo tickets", error);
-    res.status(500).json({ message: "Error al obtener tickets" });
-  }
 });
 
 router.get("/:car_id/:partner_id/:client_id", async (req, res) => {
@@ -195,39 +195,32 @@ router.delete("/:id", async (req, res) => {
 });
 
 router.put("/:id/status", authMiddleware, async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  const { role_name, partner_id } = req.user;
+    const { id } = req.params;
+    const { status } = req.body;
 
-  const allowedStatus = ["pendiente", "revision", "finalizado"];
+    const allowedStatus = ["pendiente", "revision", "finalizado"];
 
-  if (!allowedStatus.includes(status)) {
-    return res.status(400).json({ message: "Status inválido" });
-  }
-
-  if (role_name !== "partner") {
-    return res.status(403).json({ message: "No autorizado" });
-  }
-
-  try {
-    const [result] = await db.query(
-      `UPDATE tickets 
-       SET status = ?
-       WHERE id = ? AND partner_id = ?`,
-      [status, id, partner_id]
-    );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Ticket no encontrado" });
+    if (!allowedStatus.includes(status)) {
+        return res.status(400).json({ message: "Status inválido" });
     }
 
-    res.json({ message: "Status actualizado correctamente" });
+    try {
+        const [result] = await db.query(
+            `UPDATE tickets SET status = ? WHERE id = ?`,
+            [status, id]
+        );
 
-  } catch (error) {
-    console.error("Error actualizando status:", error);
-    res.status(500).json({ message: "Error al actualizar status" });
-  }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Ticket no encontrado" });
+        }
+
+        res.json({ message: "Status actualizado correctamente" });
+    } catch (error) {
+        console.error("Error actualizando status:", error);
+        res.status(500).json({ message: "Error al actualizar status" });
+    }
 });
+
 
 
 router.get("/occupied", async (req, res) => {
