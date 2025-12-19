@@ -175,6 +175,10 @@ export default function PartnersTable() {
     fetchPartners();
   };
 
+  const truncateText = (text?: string, max = 10) => {
+    if (!text) return "-";
+    return text.length > max ? text.slice(0, max) + "..." : text;
+  };
 
   const filtered = partners
     .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
@@ -223,9 +227,9 @@ export default function PartnersTable() {
                   <th className="pb-3 w-40 text-center">{t("partners_screen.table.land_use_permit")}</th>
                   <th className="pb-3 w-40 text-center">{t("partners_screen.table.scanner_handling")}</th>
                   <th className="pb-3 w-32 text-center">{t("partners_screen.table.logo_url")}</th>
-                  <th className="pb-3  w-[320px]">{t("partners_screen.table.description")}</th>
-                  <th className="pb-3 w-20 text-center">{t("partners_screen.table.priority")}</th>
-                  <th className="pb-3">{t("users_screen.table.status")}</th>
+                  <th className="pb-3 px-4">{t("partners_screen.table.description")}</th>
+                  <th className="pb-3 px-4 text-center w-24">{t("partners_screen.table.priority")}</th>
+                  <th className="pb-3 px-4 text-center w-28">{t("users_screen.table.status")}</th>
                   <th className="pb-3 w-32 text-right">{t("partners_screen.table.actions")}</th>
                 </tr>
               </thead>
@@ -237,15 +241,31 @@ export default function PartnersTable() {
                     <td className="py-3 font-semibold">{item.name}</td>
                     <td className="py-3">{item.phone}</td>
                     <td className="py-3">{item.whatsapp}</td>
-                    <td className="py-3  max-w-xs whitespace-normal wrap-break-words">{item.location}</td>
+                    <td className="py-3 max-w-xs">
+                      <span
+                        className="block text-sm truncate cursor-help"
+                        title={item.location}
+                      >
+                        {truncateText(item.location, 10)}
+                      </span>
+                    </td>
+
                     <td className="py-3 text-sm">{item.latitude || "-"}</td>
                     <td className="py-3 text-sm">{item.longitude || "-"}</td>
                     <td className="py-3 w-40 text-center">{item.land_use_permit ? "✔" : "✖"}</td>
                     <td className="py-3 w-40 text-center">{item.scanner_handling ? "✔" : "✖"}</td>
                     <td className="py-3 w-32 flex justify-center">{item.logo_url ? (<img src={item.logo_url} className="h-10 w-10 object-contain" />) : "-"}</td>
-                    <td className="py-3 w-[320px] whitespace-normal wrap-break-words text-sm leading-relaxed">{item.description || "-"}</td>
-                    <td className="py-3 w-24 text-center font-semibold">{item.priority}</td>
-                    <td className="py-3">
+                    <td className="py-3 px-4">
+                      <span
+                        className="block text-sm truncate cursor-help"
+                        title={item.description || ""}
+                      >
+                        {truncateText(item.description, 10)}
+                      </span>
+                    </td>
+
+                    <td className="py-3 px-4 text-center font-semibold">{item.priority}</td>
+                    <td className="py-3 px-4 text-center">
                       {item.deleted_at ? (
                         <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
                           {t("users_screen.table.status_inactive")}
