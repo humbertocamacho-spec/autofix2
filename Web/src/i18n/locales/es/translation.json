@@ -391,6 +391,9 @@
   "dashboard_layout": {
     "admin": "Administrador",
     "client": "Cliente",
-    "partner": "Partner"
+    "partner": "Partner",
+    "profile": "Perfil",
+    "change_password": "Cambiar contraseña",
+    "logout": "Cerrar sesión"
   } 
 }

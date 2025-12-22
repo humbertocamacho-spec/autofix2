@@ -2,30 +2,12 @@ import express from 'express';
 import pool from '../config/db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { ROLES, getRoleId } from "../utils/roles.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
-
 const emailvalidate = /^[^\s@]+@gmail\.com$/;
 const phonevalidate = /^[0-9]{10}$/;
-
-const ROLES = {
-  ADMIN: 'admin',
-  PARTNER: 'partner',
-  CLIENT: 'client'
-};
-
-export function authMiddleware(req, res, next) {
-  const header = req.headers.authorization;
-  if (!header) return res.status(401).json({ ok: false, message: "No token" });
-  const token = header.split(" ")[1];
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ ok: false, message: "Token inválido" });
-  }
-}
 
 async function getRoleName(roleId) {
   const [rows] = await pool.query('SELECT name FROM roles WHERE id = ?', [roleId]);
@@ -40,6 +22,7 @@ async function getRoleId(roleName) {
   return rows[0].id;
 }
 
+// Endpoint Login 
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -97,6 +80,8 @@ router.post('/login', async (req, res) => {
         id: user.id,
         name: user.name || null,
         email: user.email,
+        phone: user.phone,
+        photo_url: user.photo_url || null,
         role_id: user.role_id,
         role_name: roleName,         
         client_id,
@@ -110,6 +95,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Endpoint Register
 router.post('/register', async (req, res) => {
   try {
     const { name, phone, email, password } = req.body;
@@ -141,6 +127,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// Endpoint Get Me
 router.get("/me", authMiddleware, async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [req.user.user_id]);
@@ -175,6 +162,8 @@ router.get("/me", authMiddleware, async (req, res) => {
         id: user.id,
         name: user.name || null,
         email: user.email,
+        phone: user.phone,
+        photo_url: user.photo_url || null,
         role_id: user.role_id,
         role_name: roleName,          
         client_id,

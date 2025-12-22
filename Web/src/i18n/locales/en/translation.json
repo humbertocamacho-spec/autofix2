@@ -350,7 +350,6 @@
     "no_results": "No tickets found",
     "edit_status": "Edit status",
 
-
     "status": {
     "label": "Status",
     "pendiente": "Pending",
@@ -398,7 +397,10 @@
   "dashboard_layout": {
     "admin": "Admin",
     "client": "Client",
-    "partner": "Partner"
+    "partner": "Partner",
+    "profile": "Profile",
+    "change_password": "Change Password",
+    "logout": "Logout"
   } 
 }
 

@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   header: { paddingTop: 50, paddingBottom: 20, paddingHorizontal: 15, backgroundColor: "#27B9BA", },
   title: { fontSize: 25, fontWeight: "bold", textAlign: "center", marginVertical: 10, },
-  card: { padding: 15, borderRadius: 12, marginBottom: 12, overflow: "hidden", paddingBottom: 0, paddingRight: 48 },
+  card: { padding: 15, borderRadius: 12, marginBottom: 12, overflow: "hidden", paddingBottom: 0, paddingRight: 48},
   row: { flexDirection: "row", alignItems: "center" },
   logo: { width: 50, height: 50, borderRadius: 10, marginRight: 10, backgroundColor: "#fff", },
   partnerName: { color: "#fff", fontSize: 18, fontWeight: "bold" },
