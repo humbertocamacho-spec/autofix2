@@ -74,6 +74,7 @@ router.post('/login', async (req, res) => {
         email: user.email,
         phone: user.phone,
         photo_url: user.photo_url || null,
+        address: user.address || null,
         role_id: user.role_id,
         role_name: roleName,         
         client_id,
@@ -156,6 +157,7 @@ router.get("/me", authMiddleware, async (req, res) => {
         email: user.email,
         phone: user.phone,
         photo_url: user.photo_url || null,
+        address: user.address || null,
         role_id: user.role_id,
         role_name: roleName,          
         client_id,
@@ -172,12 +174,12 @@ router.get("/me", authMiddleware, async (req, res) => {
 // Endpoint Update Me (Perfil)
 router.put("/me", authMiddleware, async (req, res) => {
   try {
-    const { name, phone } = req.body;
+    const { name, phone, email, address, photo_url } = req.body;
 
-    if (!name || !phone) {
+    if (!name || !email || !phone) {
       return res.status(400).json({
         ok: false,
-        message: "Nombre y teléfono son obligatorios",
+        message: "Nombre, email y teléfono son obligatorios",
       });
     }
 
@@ -189,13 +191,22 @@ router.put("/me", authMiddleware, async (req, res) => {
     }
 
     await pool.query(
-      "UPDATE users SET name = ?, phone = ? WHERE id = ?",
-      [name, phone, req.user.user_id]
+      `UPDATE users 
+       SET name = ?, email = ?, phone = ?, address = ?, photo_url = ?
+       WHERE id = ?`,
+      [
+        name,
+        email,
+        phone,
+        address || null,
+        photo_url || null,
+        req.user.user_id,
+      ]
     );
 
     res.json({ ok: true, message: "Perfil actualizado" });
   } catch (error) {
-    console.error("Error en UPDATE /me:", error);
+    console.error("UPDATE ME ERROR:", error);
     res.status(500).json({ ok: false, message: "Error al actualizar perfil" });
   }
 });

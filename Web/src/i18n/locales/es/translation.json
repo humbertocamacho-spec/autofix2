@@ -402,6 +402,9 @@
     "email": "Correo",
     "name": "Nombre",
     "phone": "Teléfono",
+    "address": "Dirección",
+    "role": "Rol",
+    "changePhoto": "Cambiar foto",
     "save": "Guardar",
     "updated": "Perfil actualizado"
   },
@@ -412,6 +415,7 @@
     "new": "Nueva contraseña",
     "confirm": "Confirmar contraseña",
     "save": "Guardar",
-    "mismatch": "Las contraseñas no coinciden"
+    "mismatch": "Las contraseñas no coinciden",
+    "description": "Cambie su contraseña para acceder a su cuenta."
   }
 }

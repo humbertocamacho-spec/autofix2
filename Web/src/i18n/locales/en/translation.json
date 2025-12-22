@@ -408,7 +408,10 @@
     "email": "Email",
     "name": "Name",
     "phone": "Phone",
+    "address": "Address",
+    "role": "Role",
     "save": "Save",
+    "changePhoto": "Change Photo",
     "updated": "Profile updated"
   },
 
@@ -418,7 +421,8 @@
     "new": "New Password",
     "confirm": "Confirm Password",
     "save": "Save",
-    "mismatch": "Passwords do not match"
+    "mismatch": "Passwords do not match",
+    "description": "Change your password to access your account."
   }
 }
 
