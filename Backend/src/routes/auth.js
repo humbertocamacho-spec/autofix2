@@ -128,6 +128,12 @@ router.get("/me", authMiddleware, async (req, res) => {
     }
 
     const user = rows[0];
+
+    console.log("🟢 USER DESDE DB:", {
+      id: user.id,
+      photo_url: user.photo_url
+    });
+    
     const roleName = await getRoleName(user.role_id);
 
     let client_id = null, partner_id = null;
@@ -163,6 +169,9 @@ router.get("/me", authMiddleware, async (req, res) => {
         permissions: permissions.map(p => p.name)
       }
     });
+
+    console.log("🟢 USER EN RESPUESTA /me:", responseUser);
+    
   } catch (error) {
     console.error("Error en /me:", error);
     res.status(500).json({ ok: false, message: "Error en /me" });
