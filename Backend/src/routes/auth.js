@@ -14,14 +14,6 @@ async function getRoleName(roleId) {
   return rows.length > 0 ? rows[0].name.toLowerCase() : 'client';
 }
 
-async function getRoleId(roleName) {
-  const [rows] = await pool.query('SELECT id FROM roles WHERE name = ?', [roleName]);
-  if (rows.length === 0) {
-    throw new Error(`Rol "${roleName}" no encontrado en la base de datos`);
-  }
-  return rows[0].id;
-}
-
 // Endpoint Login 
 router.post('/login', async (req, res) => {
   try {
