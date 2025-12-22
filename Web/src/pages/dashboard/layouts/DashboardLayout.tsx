@@ -7,12 +7,7 @@ import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlin
 } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import type { Props } from "../../../types/props";
-
-const ROLES = {
-  PARTNER: 'partner',
-  CLIENT: 'client',
-  ADMIN: 'admin'
-}
+import { ROLES } from "../../../constants/roles";
 
 export default function DashboardLayout({ children }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -334,10 +329,9 @@ export default function DashboardLayout({ children }: Props) {
               <span className="absolute right-1 top-1 size-2 rounded-full bg-red-500" />
             </button>
 
-            {/* Usuario */}
             <div className="relative flex items-center gap-3">
               <img
-                src="https://i.pravatar.cc/40"
+                src={user?.photo_url || "/assets/images/profile.png"}
                 className="user-avatar size-10 cursor-pointer rounded-full ring-2 ring-gray-200"
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
               />
@@ -366,7 +360,7 @@ function UserMenu({ user }: { user: any }) {
     <div className="user-menu absolute right-0 top-14 z-50 w-64 rounded-xl bg-white p-4 shadow-xl ring-1 ring-black/5">
       <div className="mb-4 flex items-center gap-3">
         <img
-          src="https://i.pravatar.cc/50"
+          src={user?.photo_url || "/assets/images/profile.png"}
           className="size-12 rounded-full ring-2 ring-gray-200"
         />
         <div>
