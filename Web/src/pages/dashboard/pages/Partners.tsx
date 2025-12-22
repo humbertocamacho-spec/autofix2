@@ -254,25 +254,19 @@ export default function PartnersTable() {
                     <td className="py-3 text-sm">{item.longitude || "-"}</td>
                     <td className="py-3 w-40 text-center">{item.land_use_permit ? "✔" : "✖"}</td>
                     <td className="py-3 w-40 text-center">{item.scanner_handling ? "✔" : "✖"}</td>
-                    <td className="py-3 w-32">
-                      {item.logo_url ? (
-                        <div className="flex justify-center">
-                          <img
-                            src={item.logo_url}
-                            alt="logo"
-                            className=" h-10 w-10 object-contain transition-transform duration-200 ease-out hover:scale-[6] hover:z-20 origin-center cursor-zoom-in"
-                          />
-                        </div>
-                      ) : (
-                        "-"
-                      )}
+                    <td className="py-3 w-32"> {item.logo_url ? (
+                      <div className="flex justify-center">
+                        <img
+                          src={item.logo_url}
+                          alt="logo"
+                          className=" h-10 w-10 object-contain transition-transform duration-200 ease-out hover:scale-[6] hover:z-20 origin-center cursor-zoom-in"
+                        />
+                      </div>
+                      ) : ( "-")}
                     </td>
 
                     <td className="py-3 px-4">
-                      <span
-                        className="block text-sm truncate cursor-help"
-                        title={item.description || ""}
-                      >
+                      <span className="block text-sm truncate cursor-help" title={item.description || ""}>
                         {truncateText(item.description, 10)}
                       </span>
                     </td>
@@ -294,10 +288,7 @@ export default function PartnersTable() {
                       <div className="flex items-center justify-end gap-2 whitespace-nowrap">
                         {!item.deleted_at && (
                           <Can permission="update_users">
-                            <button
-                              className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600"
-                              onClick={() => openEdit(item)}
-                            >
+                            <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600" onClick={() => openEdit(item)}>
                               {t("users_screen.edit")}
                             </button>
                           </Can>
