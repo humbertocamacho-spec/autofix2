@@ -169,4 +169,35 @@ router.get("/me", authMiddleware, async (req, res) => {
   }
 });
 
+// Endpoint Update Me (Perfil)
+router.put("/me", authMiddleware, async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+
+    if (!name || !phone) {
+      return res.status(400).json({
+        ok: false,
+        message: "Nombre y teléfono son obligatorios",
+      });
+    }
+
+    if (!phonevalidate.test(phone)) {
+      return res.status(400).json({
+        ok: false,
+        message: "Teléfono inválido",
+      });
+    }
+
+    await pool.query(
+      "UPDATE users SET name = ?, phone = ? WHERE id = ?",
+      [name, phone, req.user.user_id]
+    );
+
+    res.json({ ok: true, message: "Perfil actualizado" });
+  } catch (error) {
+    console.error("Error en UPDATE /me:", error);
+    res.status(500).json({ ok: false, message: "Error al actualizar perfil" });
+  }
+});
+
 export default router;

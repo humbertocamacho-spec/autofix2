@@ -401,6 +401,24 @@
     "profile": "Profile",
     "change_password": "Change Password",
     "logout": "Logout"
-  } 
+  },
+  
+  "profile": {
+    "title": "Profile",
+    "email": "Email",
+    "name": "Name",
+    "phone": "Phone",
+    "save": "Save",
+    "updated": "Profile updated"
+  },
+
+  "password": {
+    "title": "Change Password",
+    "current": "Current Password",
+    "new": "New Password",
+    "confirm": "Confirm Password",
+    "save": "Save",
+    "mismatch": "Passwords do not match"
+  }
 }
 

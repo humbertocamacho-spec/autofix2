@@ -395,5 +395,23 @@
     "profile": "Perfil",
     "change_password": "Cambiar contraseña",
     "logout": "Cerrar sesión"
-  } 
+  },
+
+  "profile": {
+    "title": "Perfil",
+    "email": "Correo",
+    "name": "Nombre",
+    "phone": "Teléfono",
+    "save": "Guardar",
+    "updated": "Perfil actualizado"
+  },
+  
+  "password": {
+    "title": "Cambiar contraseña",
+    "current": "Contraseña actual",
+    "new": "Nueva contraseña",
+    "confirm": "Confirmar contraseña",
+    "save": "Guardar",
+    "mismatch": "Las contraseñas no coinciden"
+  }
 }
