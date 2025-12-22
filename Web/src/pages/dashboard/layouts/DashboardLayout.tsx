@@ -294,26 +294,18 @@ export default function DashboardLayout({ children }: Props) {
       <div className={`flex-1 transition-all duration-300 overflow-y-auto max-h-screen ${sidebarOpen ? "ml-64" : "ml-20"}`}>
         <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2.5 rounded-lg hover:bg-gray-100 text-gray-600"
-            >
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2.5 rounded-lg hover:bg-gray-100 text-gray-600">
               <HiOutlineMenu size={26} />
             </button>
 
-            <h2 className="text-xl font-semibold text-gray-800">
-              {t("dashboard")}
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-800">{t("dashboard")}</h2>
 
             {roleBadge()}
           </div>
 
           <div className="flex items-center gap-4">
             <div className="relative inline-block">
-              <HiOutlineTranslate
-                size={20}
-                className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700"
-              />
+              <HiOutlineTranslate size={20} className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700"/>
               <select
                 value={i18n.language}
                 onChange={(e) => changeLanguage(e.target.value)}
@@ -359,10 +351,7 @@ function UserMenu({ user }: { user: any }) {
   return (
     <div className="user-menu absolute right-0 top-14 z-50 w-64 rounded-xl bg-white p-4 shadow-xl ring-1 ring-black/5">
       <div className="mb-4 flex items-center gap-3">
-        <img
-          src={user?.photo_url || "/assets/images/profile.png"}
-          className="size-12 rounded-full ring-2 ring-gray-200"
-        />
+        <img src={user?.photo_url || "/assets/images/profile.png"} className="size-12 rounded-full ring-2 ring-gray-200"/>
         <div>
           <p className="text-sm font-semibold">{user?.name}</p>
           <p className="text-xs text-gray-500">{user?.email}</p>
