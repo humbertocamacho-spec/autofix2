@@ -14,4 +14,5 @@ export interface Partner {
     priority: number;
     distance?: number;
     services?: string[];
+    deleted_at?: string | null;
 }

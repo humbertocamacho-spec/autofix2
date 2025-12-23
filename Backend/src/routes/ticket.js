@@ -1,26 +1,26 @@
 import express from "express";
 import db from "../config/db.js";
-import { authMiddleware } from "./auth.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 // Get all tickets (App)
 router.get("/app", authMiddleware, async (req, res) => {
-  try {
-    const { user_id } = req.user;
+    try {
+        const { user_id } = req.user;
 
-    const [clientRows] = await db.query(
-      "SELECT id FROM clients WHERE user_id = ?",
-      [user_id]
-    );
+        const [clientRows] = await db.query(
+            "SELECT id FROM clients WHERE user_id = ?",
+            [user_id]
+        );
 
-    if (!clientRows.length) {
-      return res.json([]);
-    }
+        if (!clientRows.length) {
+            return res.json([]);
+        }
 
-    const client_id = clientRows[0].id;
+        const client_id = clientRows[0].id;
 
-    const [rows] = await db.query(`
+        const [rows] = await db.query(`
       SELECT 
         t.id,
         t.client_id,
@@ -32,7 +32,8 @@ router.get("/app", authMiddleware, async (req, res) => {
         p.logo_url,
         p.phone,
         t.date,
-        t.notes
+        t.notes,
+        t.status
       FROM tickets t
       LEFT JOIN users u ON u.id = t.client_id
       LEFT JOIN cars c ON c.id = t.car_id
@@ -41,57 +42,68 @@ router.get("/app", authMiddleware, async (req, res) => {
       ORDER BY t.date DESC
     `, [client_id]);
 
-    res.json(rows);
-  } catch (error) {
-    console.error("Error obteniendo tickets app:", error);
-    res.status(500).json({ message: "Error al obtener tickets" });
-  }
+        res.json(rows);
+    } catch (error) {
+        console.error("Error obteniendo tickets app:", error);
+        res.status(500).json({ message: "Error al obtener tickets" });
+    }
 });
 
 // Get all tickets (Web)
 router.get("/", authMiddleware, async (req, res) => {
-  try {
-    const { role_name, partner_id, client_id } = req.user;
-    const params = [];
+    try {
+        const { role_name, user_id, client_id } = req.user;
+        const params = [];
 
-    let query = `
-      SELECT 
-        t.id,
-        t.client_id,
-        u.name AS client_name,
-        t.car_id,
-        c.name AS car_name,
-        t.partner_id,
-        p.name AS partner_name,
-        p.logo_url,       
-        p.phone,
-        t.date,
-        t.notes
-      FROM tickets t
-      LEFT JOIN users u ON u.id = t.client_id
-      LEFT JOIN cars c ON c.id = t.car_id
-      LEFT JOIN partners p ON p.id = t.partner_id
-    `;
+        let query = `
+            SELECT 
+                t.id,
+                t.client_id,
+                u.name AS client_name,
+                t.car_id,
+                c.name AS car_name,
+                t.partner_id,
+                p.name AS partner_name,
+                p.logo_url,       
+                p.phone,
+                t.date,
+                t.notes,
+                t.status
+            FROM tickets t
+            LEFT JOIN users u ON u.id = t.client_id
+            LEFT JOIN cars c ON c.id = t.car_id
+            LEFT JOIN partners p ON p.id = t.partner_id
+        `;
 
-    if (role_name === "client") {
-      query += ` WHERE t.client_id = ?`;
-      params.push(client_id);
+        if (role_name === "client") {
+            query += ` WHERE t.client_id = ?`;
+            params.push(client_id);
+        }
+
+        if (role_name === "partner") {
+            // Obtener todos los talleres del usuario
+            const [partners] = await db.query(
+                "SELECT id FROM partners WHERE user_id = ?",
+                [user_id]
+            );
+
+            const partnerIds = partners.map(p => p.id);
+
+            if (partnerIds.length === 0) { return res.json([]);}
+
+            query += ` WHERE t.partner_id IN (?)`;
+            params.push(partnerIds);
+        }
+
+        query += ` ORDER BY t.date DESC`;
+
+        const [rows] = await db.query(query, params);
+        res.json(rows);
+
+    } catch (error) {
+        console.error("Error obteniendo tickets", error);
+        res.status(500).json({ message: "Error al obtener tickets" });
     }
-
-    if (role_name === "partner") {
-      query += ` WHERE t.partner_id = ?`;
-      params.push(partner_id);
-    }
-
-    query += ` ORDER BY t.date DESC`;
-
-    const [rows] = await db.query(query, params);
-    res.json(rows);
-
-  } catch (error) {
-    console.error("Error obteniendo tickets", error);
-    res.status(500).json({ message: "Error al obtener tickets" });
-  }
 });
 
 router.get("/:car_id/:partner_id/:client_id", async (req, res) => {
@@ -191,6 +203,35 @@ router.delete("/:id", async (req, res) => {
         res.status(500).json({ ok: false, message: "Error al eliminar el ticket" });
     }
 });
+
+router.put("/:id/status", authMiddleware, async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const allowedStatus = ["pendiente", "revision", "finalizado"];
+
+    if (!allowedStatus.includes(status)) {
+        return res.status(400).json({ message: "Status inválido" });
+    }
+
+    try {
+        const [result] = await db.query(
+            `UPDATE tickets SET status = ? WHERE id = ?`,
+            [status, id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Ticket no encontrado" });
+        }
+
+        res.json({ message: "Status actualizado correctamente" });
+    } catch (error) {
+        console.error("Error actualizando status:", error);
+        res.status(500).json({ message: "Error al actualizar status" });
+    }
+});
+
+
 
 router.get("/occupied", async (req, res) => {
     try {

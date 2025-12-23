@@ -1,6 +1,6 @@
 import express from "express";
 import db from "../config/db.js";
-import { authMiddleware } from "./auth.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -9,6 +9,7 @@ router.get("/select", authMiddleware, async (req, res) => {
     const [rows] = await db.query(`
       SELECT id, name
       FROM partners
+      WHERE deleted_at IS NULL
       ORDER BY name ASC
     `);
 
@@ -35,6 +36,7 @@ router.get("/map", async (req, res) => {
         description,
         priority
       FROM partners
+      WHERE deleted_at IS NULL
       ORDER BY priority ASC, name ASC
     `);
 
@@ -72,7 +74,8 @@ router.get("/", authMiddleware, async (req, res) => {
         p.scanner_handling,
         p.logo_url,
         p.description,
-        p.priority
+        p.priority,
+        p.deleted_at
       FROM partners p
       JOIN users u ON p.user_id = u.id
     `;
@@ -230,13 +233,50 @@ router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    await db.query("DELETE FROM partners WHERE id = ?", [id]);
+    const [result] = await db.query(
+      "UPDATE partners SET deleted_at = NOW() WHERE id = ?",
+      [id]
+    );
 
-    res.json({ message: "Partner eliminado correctamente" });
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Partner no encontrado" });
+    }
+
+    res.json({
+      ok: true,
+      message: "Partner desactivado correctamente"
+    });
+
   } catch (error) {
-    console.error("Error al eliminar partner:", error);
-    res.status(500).json({ message: "Error al eliminar partner" });
+    console.error("Error soft deleting partner:", error);
+    res.status(500).json({ message: "Error desactivando partner" });
   }
 });
+
+router.patch("/:id/restore", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [result] = await db.query(
+      "UPDATE partners SET deleted_at = NULL WHERE id = ?",
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Partner no encontrado" });
+    }
+
+    res.json({
+      ok: true,
+      message: "Partner reactivado correctamente"
+    });
+
+  } catch (error) {
+    console.error("Error restoring partner:", error);
+    res.status(500).json({ message: "Error reactivando partner" });
+  }
+});
+
+
 
 export default router;

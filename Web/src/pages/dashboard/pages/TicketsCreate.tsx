@@ -13,6 +13,10 @@ export default function TicketsTable() {
   const [search, setSearch] = useState("");
   const { user } = useAuthContext();
 
+  const [openStatusModal, setOpenStatusModal] = useState(false);
+  const [currentTicket, setCurrentTicket] = useState<Ticket | null>(null);
+  const [newStatus, setNewStatus] = useState<"pendiente" | "revision" | "finalizado">("pendiente");
+
   useEffect(() => {
     if (!user) return;
     fetchTickets();
@@ -47,6 +51,33 @@ export default function TicketsTable() {
     )
     .sort((a, b) => a.id - b.id);
 
+    const deleteTicket = async (id: number) => {
+      if (!confirm(t("tickets_screen.confirm_delete"))) return; // Mensaje de confirmación
+
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(`${VITE_API_URL}/api/ticket/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          fetchTickets(); // Actualizar la lista
+        } else {
+          alert(data.message || "Error al eliminar ticket");
+        }
+      } catch (error) {
+        console.error("Error eliminando ticket:", error);
+      }
+    };
+
+
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("tickets_screen.title")}</h1>
@@ -75,6 +106,7 @@ export default function TicketsTable() {
                   <th className="pb-3 w-48">{t("tickets_screen.table.partner")}</th>
                   <th className="pb-3 w-40">{t("tickets_screen.table.date")}</th>
                   <th className="pb-3">{t("tickets_screen.table.notes")}</th>
+                  <th className="pb-3 w-32"> {t("tickets_screen.table.status")}</th>
                   <th className="pb-3 w-32 text-right">{t("tickets_screen.table.actions")}</th>
                 </tr>
               </thead>
@@ -91,15 +123,37 @@ export default function TicketsTable() {
                     </td>
                     <td className="py-3">{new Date(item.date).toLocaleString()}</td>
                     <td className="py-3 max-w-xs whitespace-normal">{item.notes || "—"}</td>
+                    <td className="py-3">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold
+                        ${item.status === "pendiente" && "bg-gray-200 text-gray-700"}
+                        ${item.status === "revision" && "bg-yellow-100 text-yellow-700"}
+                        ${item.status === "finalizado" && "bg-green-100 text-green-700"}
+                      `}
+                      >
+                        {t(`tickets_screen.status.${item.status}`)}
+                      </span>
+                    </td>
+
                     <td className="py-3 text-right space-x-3">
                       <Can permission="update_tickets">
-                        <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm">
+                        <button
+                          className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm"
+                          onClick={() => {
+                            setCurrentTicket(item);
+                            setNewStatus(item.status);
+                            setOpenStatusModal(true);
+                          }}
+                        >
                           {t("tickets_screen.edit")}
                         </button>
                       </Can>
 
                       <Can permission="delete_tickets">
-                        <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm">
+                        <button
+                          className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm"
+                          onClick={() => deleteTicket(item.id)}
+                        >
                           {t("tickets_screen.delete")}
                         </button>
                       </Can>
@@ -119,6 +173,67 @@ export default function TicketsTable() {
           </div>
         )}
       </div>
+      {openStatusModal && currentTicket && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-semibold mb-4">
+              {t("tickets_screen.edit_status")}
+            </h2>
+
+            <label className="block text-sm font-medium mb-2">
+              {t("tickets_screen.table.status")}
+            </label>
+
+            <select
+              value={newStatus}
+              onChange={(e) => setNewStatus(e.target.value as any)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-6 focus:ring-2 focus:ring-[#27B9BA]"
+            >
+              <option value="pendiente">{t("tickets_screen.status.pendiente")}</option>
+              <option value="revision">{t("tickets_screen.status.revision")}</option>
+              <option value="finalizado">{t("tickets_screen.status.finalizado")}</option>
+            </select>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setOpenStatusModal(false)}
+                className="px-4 py-2 rounded-lg border border-gray-300"
+              >
+                {t("tickets_screen.common.cancel")}
+              </button>
+
+              <button
+                onClick={async () => {
+                  try {
+                    const token = localStorage.getItem("token");
+
+                    await fetch(
+                      `${VITE_API_URL}/api/ticket/${currentTicket.id}/status`,
+                      {
+                        method: "PUT",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({ status: newStatus }),
+                      }
+                    );
+
+                    setOpenStatusModal(false);
+                    fetchTickets();
+                  } catch (error) {
+                    console.error("Error actualizando status", error);
+                  }
+                }}
+                className="px-4 py-2 rounded-lg bg-[#27B9BA] text-white"
+              >
+                {t("tickets_screen.common.save")}
+
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }

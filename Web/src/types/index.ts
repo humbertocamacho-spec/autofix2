@@ -2,6 +2,9 @@ export interface User {
   id: number;
   name?: string | null;
   email: string;
+  phone?: string | null;
+  address?: string | null;
+  photo_url?: string | null;
   role_id: number;
   client_id?: number | null;
   partner_id?: number | null;

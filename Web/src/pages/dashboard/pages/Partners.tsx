@@ -12,6 +12,7 @@ export default function PartnersTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentPartner, setCurrentPartner] = useState<Partner | null>(null);
@@ -28,6 +29,7 @@ export default function PartnersTable() {
   const [logoUrl, setLogoUrl] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState(1);
+
   const { user } = useAuthContext();
   const { t } = useTranslation();
 
@@ -87,7 +89,7 @@ export default function PartnersTable() {
     setSelectedSpecialities([]);
     setName("");
     if (user?.role_name === "partner") {
-      setUserId(user.id); 
+      setUserId(user.id);
     } else {
       setUserId(null);
     }
@@ -155,10 +157,27 @@ export default function PartnersTable() {
     fetchPartners();
   };
 
-  const deletePartner = async (id: number) => {
-    if (!confirm("¿Eliminar Partner?")) return;
-    await fetch(`${VITE_API_URL}/api/partners/${id}`, { method: "DELETE" });
+  const deletePartner = async (partner: Partner) => {
+    if (!confirm(`¿Desactivar partner "${partner.name}"?`)) return;
+
+    await fetch(`${VITE_API_URL}/api/partners/${partner.id}`, {
+      method: "DELETE",
+    });
+
     fetchPartners();
+  };
+
+  const restorePartner = async (partner: Partner) => {
+    await fetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, {
+      method: "PATCH",
+    });
+
+    fetchPartners();
+  };
+
+  const truncateText = (text?: string, max = 10) => {
+    if (!text) return "-";
+    return text.length > max ? text.slice(0, max) + "..." : text;
   };
 
   const filtered = partners
@@ -208,8 +227,9 @@ export default function PartnersTable() {
                   <th className="pb-3 w-40 text-center">{t("partners_screen.table.land_use_permit")}</th>
                   <th className="pb-3 w-40 text-center">{t("partners_screen.table.scanner_handling")}</th>
                   <th className="pb-3 w-32 text-center">{t("partners_screen.table.logo_url")}</th>
-                  <th className="pb-3  w-[320px]">{t("partners_screen.table.description")}</th>
-                  <th className="pb-3 w-20 text-center">{t("partners_screen.table.priority")}</th>
+                  <th className="pb-3 px-4">{t("partners_screen.table.description")}</th>
+                  <th className="pb-3 px-4 text-center w-24">{t("partners_screen.table.priority")}</th>
+                  <th className="pb-3 px-4 text-center w-28">{t("users_screen.table.status")}</th>
                   <th className="pb-3 w-32 text-right">{t("partners_screen.table.actions")}</th>
                 </tr>
               </thead>
@@ -221,27 +241,74 @@ export default function PartnersTable() {
                     <td className="py-3 font-semibold">{item.name}</td>
                     <td className="py-3">{item.phone}</td>
                     <td className="py-3">{item.whatsapp}</td>
-                    <td className="py-3  max-w-xs whitespace-normal wrap-break-words">{item.location}</td>
+                    <td className="py-3 max-w-xs">
+                      <span
+                        className="block text-sm truncate cursor-help"
+                        title={item.location}
+                      >
+                        {truncateText(item.location, 10)}
+                      </span>
+                    </td>
+
                     <td className="py-3 text-sm">{item.latitude || "-"}</td>
                     <td className="py-3 text-sm">{item.longitude || "-"}</td>
                     <td className="py-3 w-40 text-center">{item.land_use_permit ? "✔" : "✖"}</td>
                     <td className="py-3 w-40 text-center">{item.scanner_handling ? "✔" : "✖"}</td>
-                    <td className="py-3 w-32 flex justify-center">{item.logo_url ? (<img src={item.logo_url} className="h-10 w-10 object-contain" />) : "-"}</td>
-                    <td className="py-3 w-[320px] whitespace-normal wrap-break-words text-sm leading-relaxed">{item.description || "-"}</td>
-                    <td className="py-3 w-24 text-center font-semibold">{item.priority}</td>
-                    <td className="py-3 w-32">
-                      <div className="flex justify-end gap-2 whitespace-nowrap">
-                        <Can permission="update_partners">
-                          <button onClick={() => openEdit(item)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                            {t("partners_screen.edit")}
-                          </button>
-                        </Can>
+                    <td className="py-3 w-32"> {item.logo_url ? (
+                      <div className="flex justify-center">
+                        <img
+                          src={item.logo_url}
+                          alt="logo"
+                          className=" h-10 w-10 object-contain transition-transform duration-200 ease-out hover:scale-[6] hover:z-20 origin-center cursor-zoom-in"
+                        />
+                      </div>
+                      ) : ( "-")}
+                    </td>
 
-                        <Can permission="delete_partners">
-                          <button onClick={() => deletePartner(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                            {t("partners_screen.delete")}
-                          </button>
-                        </Can>
+                    <td className="py-3 px-4">
+                      <span className="block text-sm truncate cursor-help" title={item.description || ""}>
+                        {truncateText(item.description, 10)}
+                      </span>
+                    </td>
+
+                    <td className="py-3 px-4 text-center font-semibold">{item.priority}</td>
+                    <td className="py-3 px-4 text-center">
+                      {item.deleted_at ? (
+                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                          {t("users_screen.table.status_inactive")}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                          {t("users_screen.table.status_active")}
+                        </span>
+                      )}
+                    </td>
+
+                    <td className="py-3 text-right space-x-3">
+                      <div className="flex items-center justify-end gap-2 whitespace-nowrap">
+                        {!item.deleted_at && (
+                          <Can permission="update_users">
+                            <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600" onClick={() => openEdit(item)}>
+                              {t("users_screen.edit")}
+                            </button>
+                          </Can>
+                        )}
+
+                        {!item.deleted_at && (
+                          <Can permission="delete_users">
+                            <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700" onClick={() => deletePartner(item)}>
+                              {t("users_screen.delete")}
+                            </button>
+                          </Can>
+                        )}
+
+                        {item.deleted_at && (
+                          <Can permission="update_users">
+                            <button className="px-2.5 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700" onClick={() => restorePartner(item)}>
+                              {t("users_screen.restore")}
+                            </button>
+                          </Can>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -277,7 +344,7 @@ export default function PartnersTable() {
                   <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.user")}</label>
                   <select
                     className={`w-full border border-gray-300 px-3 py-2 rounded-lg
-                      ${ user?.role_name === "partner" ? "bg-gray-100 text-gray-500 cursor-not-allowed" : "focus:ring-2 focus:ring-[#27B9BA]"}`}
+                      ${user?.role_name === "partner" ? "bg-gray-100 text-gray-500 cursor-not-allowed" : "focus:ring-2 focus:ring-[#27B9BA]"}`}
                     value={user?.role_name === "partner" ? user.id : userId ?? ""}
                     disabled={user?.role_name === "partner"}
                     onChange={(e) => setUserId(Number(e.target.value))}
@@ -353,12 +420,12 @@ export default function PartnersTable() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <input type="checkbox" checked={landUsePermit} onChange={(e) => setLandUsePermit(e.target.checked)}/>
+                  <input type="checkbox" checked={landUsePermit} onChange={(e) => setLandUsePermit(e.target.checked)} />
                   <span className="text-sm">{t("partners_screen.table.land_use_permit")}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <input type="checkbox" checked={scannerHandling} onChange={(e) => setScannerHandling(e.target.checked)}/>
+                  <input type="checkbox" checked={scannerHandling} onChange={(e) => setScannerHandling(e.target.checked)} />
                   <span className="text-sm">{t("partners_screen.table.scanner_handling")}</span>
                 </div>
 
@@ -381,10 +448,10 @@ export default function PartnersTable() {
                   <div className="border border-gray-300 rounded-lg p-3 max-h-[140px] overflow-y-auto grid grid-cols-2 gap-2">
                     {specialities.map((s) => (
                       <label key={s.id} className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={selectedSpecialities.includes(s.id)} 
-                        onChange={(e) =>
-                          e.target.checked ? setSelectedSpecialities([...selectedSpecialities, s.id]) : setSelectedSpecialities( selectedSpecialities.filter((id) => id !== s.id))
-                        }/>{s.name}
+                        <input type="checkbox" checked={selectedSpecialities.includes(s.id)}
+                          onChange={(e) =>
+                            e.target.checked ? setSelectedSpecialities([...selectedSpecialities, s.id]) : setSelectedSpecialities(selectedSpecialities.filter((id) => id !== s.id))
+                          } />{s.name}
                       </label>
                     ))}
                   </div>

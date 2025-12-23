@@ -192,9 +192,10 @@
   "users": "Users",
   "users_screen": {
     "add_button": "Add User",
-    "delete": "Delete",
+    "delete": "Deactivate",
     "edit": "Edit",
     "loading": "Loading users...",
+    "restore": "Restore",
     "modal": {
       "cancel": "Cancel",
       "email": "Email",
@@ -216,7 +217,10 @@
       "id": "ID",
       "name": "Name",
       "phone": "Phone",
-      "role": "Role"
+      "role": "Role",
+      "status": "Status",
+      "status_active": "Active",
+      "status_inactive": "Inactive"
     },
     "title": "Users"
   },
@@ -344,6 +348,20 @@
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No tickets found",
+    "edit_status": "Edit status",
+    "confirm_delete": "Are you sure you want to delete this ticket?",
+
+    "status": {
+    "label": "Status",
+    "pendiente": "Pending",
+    "revision": "Review",
+    "finalizado": "Finished"
+   },
+   "common": {
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+
     "table": {
       "id": "ID",
       "client": "Client",
@@ -351,6 +369,7 @@
       "partner": "Partner",
       "date": "Date",
       "notes": "Notes",
+      "status": "Status",
       "actions": "Actions"
     }
   },
@@ -379,7 +398,35 @@
   "dashboard_layout": {
     "admin": "Admin",
     "client": "Client",
-    "partner": "Partner"
-  } 
+    "partner": "Partner",
+    "profile": "Profile",
+    "change_password": "Change Password",
+    "logout": "Logout",
+    "loading": "Loading..."
+  },
+  
+  "profile": {
+    "title": "Profile",
+    "email": "Email",
+    "name": "Name",
+    "phone": "Phone",
+    "address": "Address",
+    "role": "Role",
+    "save": "Save",
+    "changePhoto": "Change Photo",
+    "updated": "Profile updated",
+    "cancel": "Cancel"
+  },
+
+  "password": {
+    "title": "Change Password",
+    "current": "Current Password",
+    "new": "New Password",
+    "confirm": "Confirm Password",
+    "save": "Save",
+    "mismatch": "Passwords do not match",
+    "description": "Change your password to access your account.",
+    "updated": "Password updated"
+  }
 }
 

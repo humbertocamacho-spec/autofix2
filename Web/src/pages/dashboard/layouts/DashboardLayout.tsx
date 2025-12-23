@@ -2,17 +2,12 @@ import { useState} from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
 import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineLogout, HiOutlineChevronDown, HiOutlineKey,HiOutlineDocumentDuplicate,
-  HiOutlineEye,HiOutlineTranslate,HiOutlineChevronRight, HiOutlineMenu, HiOutlineSearch, HiOutlineBell, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, 
+  HiOutlineEye,HiOutlineTranslate,HiOutlineChevronRight, HiOutlineMenu, HiOutlineBell, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, 
   HiOutlineShieldCheck,HiOutlineIdentification,HiOutlineThumbUp
 } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
 import type { Props } from "../../../types/props";
-
-const ROLES = {
-  PARTNER: 'partner',
-  CLIENT: 'client',
-  ADMIN: 'admin'
-}
+import { ROLES } from "../../../constants/roles";
 
 export default function DashboardLayout({ children }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -26,6 +21,7 @@ export default function DashboardLayout({ children }: Props) {
   const iconSize = sidebarOpen ? 23 : 28;
   const { t } = useTranslation();
   const { i18n } = useTranslation();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang);
@@ -298,38 +294,18 @@ export default function DashboardLayout({ children }: Props) {
       <div className={`flex-1 transition-all duration-300 overflow-y-auto max-h-screen ${sidebarOpen ? "ml-64" : "ml-20"}`}>
         <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6">
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2.5 rounded-lg hover:bg-gray-100 text-gray-600"
-            >
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2.5 rounded-lg hover:bg-gray-100 text-gray-600">
               <HiOutlineMenu size={26} />
             </button>
 
-            <h2 className="text-xl font-semibold text-gray-800">
-              {t("dashboard")}
-            </h2>
+            <h2 className="text-xl font-semibold text-gray-800">{t("dashboard")}</h2>
 
             {roleBadge()}
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="relative hidden md:block">
-              <HiOutlineSearch
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                size={20}
-              />
-              <input
-                type="text"
-                placeholder={t("search")}
-                className="w-64 rounded-xl bg-gray-100 py-2 pl-10 pr-4 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#27B9BA] transition"
-              />
-            </div>
-
             <div className="relative inline-block">
-              <HiOutlineTranslate
-                size={20}
-                className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700"
-              />
+              <HiOutlineTranslate size={20} className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-700"/>
               <select
                 value={i18n.language}
                 onChange={(e) => changeLanguage(e.target.value)}
@@ -345,21 +321,61 @@ export default function DashboardLayout({ children }: Props) {
               <span className="absolute right-1 top-1 size-2 rounded-full bg-red-500" />
             </button>
 
-            <div className="flex items-center gap-3">
+            <div className="relative flex items-center gap-3">
               <img
-                src="https://i.pravatar.cc/40"
-                alt="User avatar"
-                className="size-10 cursor-pointer rounded-full ring-2 ring-gray-200"
+                src={user?.photo_url || "/assets/images/profile.png"}
+                className="user-avatar size-10 cursor-pointer rounded-full ring-2 ring-gray-200"
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
               />
               {sidebarOpen && (
                 <span className="text-sm font-medium text-gray-700">
                   {user?.name || user?.email}
                 </span>
               )}
+              {userMenuOpen && <UserMenu user={user} />}
             </div>
           </div>
         </header>
-        <main className="bg-gray-50 p-8">{children}</main>
+
+        <main className="p-8">{children}</main>
+      </div>
+    </div>
+  );
+}
+
+function UserMenu({ user }: { user: any }) {
+  const navigate = useNavigate();
+  const { logout } = useAuthContext();
+  const { t } = useTranslation();
+
+  return (
+    <div className="user-menu absolute right-0 top-14 z-50 w-64 rounded-xl bg-white p-4 shadow-xl ring-1 ring-black/5">
+      <div className="mb-4 flex items-center gap-3">
+        <img src={user?.photo_url || "/assets/images/profile.png"} className="size-12 rounded-full ring-2 ring-gray-200"/>
+        <div>
+          <p className="text-sm font-semibold">{user?.name}</p>
+          <p className="text-xs text-gray-500">{user?.email}</p>
+        </div>
+      </div>
+
+      <div className="space-y-1 text-sm">
+        <button onClick={() => navigate("/dashboard/profile")}className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-100">
+          {t("dashboard_layout.profile")}
+        </button>
+
+        <button onClick={() => navigate("/dashboard/change-password")} className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-100">
+          {t("dashboard_layout.change_password")}
+        </button>
+
+        <hr />
+
+        <button onClick={() => {
+            logout();
+            navigate("/login", { replace: true });
+          }}
+          className="w-full rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50">
+          {t("dashboard_layout.logout")}
+        </button>
       </div>
     </div>
   );

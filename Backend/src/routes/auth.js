@@ -2,44 +2,19 @@ import express from 'express';
 import pool from '../config/db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { ROLES, getRoleId } from "../utils/roles.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
-
 const emailvalidate = /^[^\s@]+@gmail\.com$/;
 const phonevalidate = /^[0-9]{10}$/;
-
-const ROLES = {
-  ADMIN: 'admin',
-  PARTNER: 'partner',
-  CLIENT: 'client'
-};
-
-export function authMiddleware(req, res, next) {
-  const header = req.headers.authorization;
-  if (!header) return res.status(401).json({ ok: false, message: "No token" });
-  const token = header.split(" ")[1];
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ ok: false, message: "Token inválido" });
-  }
-}
 
 async function getRoleName(roleId) {
   const [rows] = await pool.query('SELECT name FROM roles WHERE id = ?', [roleId]);
   return rows.length > 0 ? rows[0].name.toLowerCase() : 'client';
 }
 
-async function getRoleId(roleName) {
-  const [rows] = await pool.query('SELECT id FROM roles WHERE name = ?', [roleName]);
-  if (rows.length === 0) {
-    throw new Error(`Rol "${roleName}" no encontrado en la base de datos`);
-  }
-  return rows[0].id;
-}
-
+// Endpoint Login 
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -56,6 +31,11 @@ router.post('/login', async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(401).json({ ok: false, message: 'Contraseña incorrecta' });
+    }
+
+    // Prohibir acceso a usuarios desactivados
+    if (user.deleted_at) {
+      return res.status(403).json({ ok: false, message: 'Usuario desactivado. Contacta al administrador.' });
     }
 
     const roleName = await getRoleName(user.role_id);
@@ -92,6 +72,9 @@ router.post('/login', async (req, res) => {
         id: user.id,
         name: user.name || null,
         email: user.email,
+        phone: user.phone,
+        photo_url: user.photo_url || null,
+        address: user.address || null,
         role_id: user.role_id,
         role_name: roleName,         
         client_id,
@@ -105,6 +88,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Endpoint Register
 router.post('/register', async (req, res) => {
   try {
     const { name, phone, email, password } = req.body;
@@ -136,6 +120,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
+// Endpoint Get Me
 router.get("/me", authMiddleware, async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [req.user.user_id]);
@@ -143,7 +128,7 @@ router.get("/me", authMiddleware, async (req, res) => {
       return res.status(404).json({ ok: false, message: "Usuario no encontrado" });
     }
 
-    const user = rows[0];
+    const user = rows[0];  
     const roleName = await getRoleName(user.role_id);
 
     let client_id = null, partner_id = null;
@@ -170,6 +155,9 @@ router.get("/me", authMiddleware, async (req, res) => {
         id: user.id,
         name: user.name || null,
         email: user.email,
+        phone: user.phone,
+        photo_url: user.photo_url || null,
+        address: user.address || null,
         role_id: user.role_id,
         role_name: roleName,          
         client_id,
@@ -180,6 +168,75 @@ router.get("/me", authMiddleware, async (req, res) => {
   } catch (error) {
     console.error("Error en /me:", error);
     res.status(500).json({ ok: false, message: "Error en /me" });
+  }
+});
+
+// Endpoint Update Me (Perfil)
+router.put("/me", authMiddleware, async (req, res) => {
+  try {
+    const { name, phone, email, address, photo_url } = req.body;
+
+    if (!name || !email || !phone) {
+      return res.status(400).json({ ok: false, message: "Nombre, email y teléfono son obligatorios",});
+    }
+
+    if (!phonevalidate.test(phone)) {
+      return res.status(400).json({ ok: false, message: "Teléfono inválido",});
+    }
+
+    await pool.query(
+      `UPDATE users 
+       SET name = ?, email = ?, phone = ?, address = ?, photo_url = ?
+       WHERE id = ?`,
+      [
+        name,
+        email,
+        phone,
+        address || null,
+        photo_url || null,
+        req.user.user_id,
+      ]
+    );
+
+    res.json({ ok: true, message: "Perfil actualizado" });
+  } catch (error) {
+    console.error("UPDATE ME ERROR:", error);
+    res.status(500).json({ ok: false, message: "Error al actualizar perfil" });
+  }
+});
+
+// Endpoint Change Password
+router.put("/change-password", authMiddleware, async (req, res) => {
+  try {
+    const { current_password, new_password } = req.body;
+
+    if (!current_password || !new_password) {
+      return res.status(400).json({ ok: false, message: "Datos incompletos",});
+    }
+
+    if (new_password.length < 8) {
+      return res.status(400).json({ ok: false, message: "Contraseña mínima 8 caracteres",});
+    }
+
+    const [rows] = await pool.query( "SELECT password FROM users WHERE id = ?", [req.user.user_id]);
+
+    const valid = await bcrypt.compare( current_password, rows[0].password);
+
+    if (!valid) {
+      return res.status(401).json({ ok: false, message: "Contraseña actual incorrecta",});
+    }
+
+    const hashed = await bcrypt.hash(new_password, 10);
+
+    await pool.query( "UPDATE users SET password = ? WHERE id = ?", [hashed, req.user.user_id]);
+
+    res.json({ ok: true, message: "Contraseña actualizada" });
+  } catch (error) {
+    console.error("CHANGE PASSWORD ERROR:", error);
+    res.status(500).json({
+      ok: false,
+      message: "Error al cambiar contraseña",
+    });
   }
 });
 

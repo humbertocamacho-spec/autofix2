@@ -18,6 +18,8 @@ import AdminsTable from "../pages/dashboard/pages/Admins";
 import CertificationsTable from "../pages/dashboard/pages/Certifications";
 import MyCarsTable from "../pages/dashboard/pages/MyCars";
 import PartnersCertificationsTable from "../pages/dashboard/pages/Partner_Certifications";
+import ProfilePage from "../pages/dashboard/pages/Profile";
+import ChangePasswordPage from "../pages/dashboard/pages/Change-Password";
 
 export default function WebRoutes() {
   return (
@@ -26,6 +28,8 @@ export default function WebRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
+      <Route path="/dashboard/profile" element={<ProfilePage />} />
+      <Route path="/dashboard/change-password" element={<ChangePasswordPage />} />
 
       <Route path="/dashboard"
         element={

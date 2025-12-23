@@ -53,10 +53,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
 
       <div className="flex items-center justify-between text-sm mt-2">
         <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            className="w-4 h-4 accent-[#27B9BA]"
-          />
+          <input type="checkbox" className="w-4 h-4 accent-[#27B9BA]"/>
           <span className="text-gray-700">Remember</span>
         </label>
 

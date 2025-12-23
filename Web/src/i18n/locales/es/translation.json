@@ -185,12 +185,14 @@
   "see_all": "Ver todos",
   "specialities": "Especialidades",
   "tickets": "Tickets",
+
   "users": "Usuarios",
   "users_screen": {
     "add_button": "Agregar Usuario",
-    "delete": "Eliminar",
+    "delete": "Desactivar",
     "edit": "Editar",
     "loading": "Cargando usuarios...",
+    "restore": "Restaurar",
     "modal": {
       "cancel": "Cancelar",
       "email": "Correo",
@@ -212,7 +214,10 @@
       "id": "ID",
       "name": "Nombre",
       "phone": "Teléfono",
-      "role": "Rol"
+      "role": "Rol",
+      "status": "Estado",
+      "status_active": "Activo",
+      "status_inactive": "Inactivo"
     },
     "title": "Usuarios"
   },
@@ -335,10 +340,22 @@
   "tickets_screen": {
     "title": "Tickets",
     "search_placeholder": "Buscar ticket...",
+    "edit_status": "Editar estado",
     "loading": "Cargando...",
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron tickets",
+    "confirm_delete": "¿Estás seguro de que deseas eliminar este ticket?",
+    "status": {
+    "label": "Estado",
+    "pendiente": "Pendiente",
+    "revision": "Revisión",
+    "finalizado": "Finalizado"
+    },
+    "common": {
+    "cancel": "Cancelar",
+    "save": "Guardar"
+  },
     "table": {
       "id": "ID",
       "client": "Cliente",
@@ -346,6 +363,7 @@
       "partner": "Partner",
       "date": "Fecha",
       "notes": "Notas",
+      "status": "Estado",
       "actions": "Acciones"
     }
   },
@@ -374,6 +392,34 @@
   "dashboard_layout": {
     "admin": "Administrador",
     "client": "Cliente",
-    "partner": "Partner"
-  } 
+    "partner": "Partner",
+    "profile": "Perfil",
+    "change_password": "Cambiar contraseña",
+    "logout": "Cerrar sesión",
+    "loading": "Cargando..."
+  },
+
+  "profile": {
+    "title": "Perfil",
+    "email": "Correo",
+    "name": "Nombre",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "role": "Rol",
+    "changePhoto": "Cambiar foto",
+    "save": "Guardar",
+    "updated": "Perfil actualizado",
+    "cancel": "Cancelar"
+  },
+  
+  "password": {
+    "title": "Cambiar contraseña",
+    "current": "Contraseña actual",
+    "new": "Nueva contraseña",
+    "confirm": "Confirmar contraseña",
+    "save": "Guardar",
+    "mismatch": "Las contraseñas no coinciden",
+    "description": "Cambie su contraseña para acceder a su cuenta.",
+    "updated": "Contraseña actualizada"
+  }
 }

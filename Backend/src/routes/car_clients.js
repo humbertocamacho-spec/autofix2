@@ -26,4 +26,3 @@ router.get("/client/:client_id", async (req, res) => {
 });
 
 export default router;
-
