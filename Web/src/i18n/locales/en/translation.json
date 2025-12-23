@@ -83,23 +83,26 @@
   },
 
   "overview": {
+    "today": "Today",
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "allday": "All day",
+    "no_tickets_today": "No tickets today",
+    "tickets": "ticket(s)",
     "buttons": {
       "seeAll": "See all",
       "viewAll": "View all"
     },
     "progress": "Progress",
     "stats": {
-      "contactsTrend": "8% from last month",
-      "messagesTrend": "3 new today",
-      "projectTrend": "12% from last month",
-      "tasksTrend": "5% from last month",
-      "totalContacts": "Total Contacts",
-      "totalProjects": "Total Projects Handled",
-      "unfinishedTasks": "Unfinished Tasks",
-      "unreadMessages": "Unread Messages"
+      "dayswithtickets": "Days with tickets",
+      "ticketsoftoday": "Tickets today",
+      "ticketsthismonth": "Tickets this month"
     },
     "subtitle": "Welcome to your dashboard overview.",
     "title": "Dashboard Overview",
+    "title_calendar": "My Calendar",
     "todo": {
       "design": "Graphic Design",
       "development": "Development",
