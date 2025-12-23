@@ -418,6 +418,7 @@
     "confirm": "Confirmar contraseña",
     "save": "Guardar",
     "mismatch": "Las contraseñas no coinciden",
-    "description": "Cambie su contraseña para acceder a su cuenta."
+    "description": "Cambie su contraseña para acceder a su cuenta.",
+    "updated": "Contraseña actualizada"
   }
 }

@@ -424,7 +424,8 @@
     "confirm": "Confirm Password",
     "save": "Save",
     "mismatch": "Passwords do not match",
-    "description": "Change your password to access your account."
+    "description": "Change your password to access your account.",
+    "updated": "Password updated"
   }
 }
 
