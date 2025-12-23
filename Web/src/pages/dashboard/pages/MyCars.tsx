@@ -109,7 +109,7 @@ export default function MyCarsTable() {
         if (!validateForm()) return;
 
         try {
-            const res = await fetch(`${VITE_API_URL}/api/cars`, {
+            const res = await fetch(`${VITE_API_URL}/api/car`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -145,7 +145,7 @@ export default function MyCarsTable() {
         if (!validateForm()) return;
 
         try {
-            const res = await fetch(`${VITE_API_URL}/api/cars/${currentCar.id}`, {
+            const res = await fetch(`${VITE_API_URL}/api/car/${currentCar.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -179,7 +179,7 @@ export default function MyCarsTable() {
         if (!confirm("¿Seguro que deseas eliminar este vehículo?")) return;
 
         try {
-            const res = await fetch(`${VITE_API_URL}/api/cars/${id}`, {
+            const res = await fetch(`${VITE_API_URL}/api/car/${id}`, {
                 method: "DELETE",
             });
 
