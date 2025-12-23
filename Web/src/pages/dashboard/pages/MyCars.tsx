@@ -160,10 +160,7 @@ export default function MyCarsTable() {
 
             const data = await res.json();
 
-            if (!res.ok) {
-                alert(data.message || "Error al actualizar");
-                return;
-            }
+            if (!res.ok) { alert(data.message || "Error al actualizar"); return;}
 
             alert("Vehículo actualizado correctamente");
             setOpenModal(false);
@@ -317,8 +314,7 @@ export default function MyCarsTable() {
                                         <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.year")}</label>
                                         <input
                                             type="number"
-                                            className="w-full border border-gray-300 px-3 py-2 rounded-lg
-                                                    focus:ring-2 focus:ring-[#27B9BA]"
+                                            className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                                             value={year}
                                             onChange={(e) => setYear(e.target.value.slice(0, 4))}
                                             min="1900"
