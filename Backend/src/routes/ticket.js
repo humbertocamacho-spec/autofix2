@@ -52,28 +52,28 @@ router.get("/app", authMiddleware, async (req, res) => {
 // Get all tickets (Web)
 router.get("/", authMiddleware, async (req, res) => {
     try {
-        const { role_name, partner_id, client_id } = req.user;
+        const { role_name, user_id, client_id } = req.user;
         const params = [];
 
         let query = `
-      SELECT 
-        t.id,
-        t.client_id,
-        u.name AS client_name,
-        t.car_id,
-        c.name AS car_name,
-        t.partner_id,
-        p.name AS partner_name,
-        p.logo_url,       
-        p.phone,
-        t.date,
-        t.notes,
-        t.status
-      FROM tickets t
-      LEFT JOIN users u ON u.id = t.client_id
-      LEFT JOIN cars c ON c.id = t.car_id
-      LEFT JOIN partners p ON p.id = t.partner_id
-    `;
+            SELECT 
+                t.id,
+                t.client_id,
+                u.name AS client_name,
+                t.car_id,
+                c.name AS car_name,
+                t.partner_id,
+                p.name AS partner_name,
+                p.logo_url,       
+                p.phone,
+                t.date,
+                t.notes,
+                t.status
+            FROM tickets t
+            LEFT JOIN users u ON u.id = t.client_id
+            LEFT JOIN cars c ON c.id = t.car_id
+            LEFT JOIN partners p ON p.id = t.partner_id
+        `;
 
         if (role_name === "client") {
             query += ` WHERE t.client_id = ?`;
@@ -81,8 +81,18 @@ router.get("/", authMiddleware, async (req, res) => {
         }
 
         if (role_name === "partner") {
-            query += ` WHERE t.partner_id = ?`;
-            params.push(partner_id);
+            // Obtener todos los talleres del usuario
+            const [partners] = await db.query(
+                "SELECT id FROM partners WHERE user_id = ?",
+                [user_id]
+            );
+
+            const partnerIds = partners.map(p => p.id);
+
+            if (partnerIds.length === 0) { return res.json([]);}
+
+            query += ` WHERE t.partner_id IN (?)`;
+            params.push(partnerIds);
         }
 
         query += ` ORDER BY t.date DESC`;
