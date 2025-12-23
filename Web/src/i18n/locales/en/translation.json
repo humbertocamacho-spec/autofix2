@@ -370,7 +370,9 @@
       "date": "Date",
       "notes": "Notes",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "model": "Model",
+      "year": "Year"
     }
   },
   

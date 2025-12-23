@@ -27,6 +27,8 @@ router.get("/app", authMiddleware, async (req, res) => {
         u.name AS client_name,
         t.car_id,
         c.name AS car_name,
+        c.model,
+        c.year,
         t.partner_id,
         p.name AS partner_name,
         p.logo_url,

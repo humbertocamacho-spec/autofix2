@@ -103,6 +103,8 @@ export default function TicketsTable() {
                   <th className="pb-3 w-14">{t("tickets_screen.table.id")}</th>
                   <th className="pb-3 w-48">{t("tickets_screen.table.client")}</th>
                   <th className="pb-3 w-40">{t("tickets_screen.table.car")}</th>
+                  <th className="pb-3 w-40">{t("tickets_screen.table.model")}</th>
+                  <th className="pb-3 w-40">{t("tickets_screen.table.year")}</th>
                   <th className="pb-3 w-48">{t("tickets_screen.table.partner")}</th>
                   <th className="pb-3 w-40">{t("tickets_screen.table.date")}</th>
                   <th className="pb-3">{t("tickets_screen.table.notes")}</th>
@@ -117,6 +119,8 @@ export default function TicketsTable() {
                     <td className="py-3">{item.id}</td>
                     <td className="py-3">{item.client_name}</td>
                     <td className="py-3">{item.car_name}</td>
+                    <td className="py-3">{item.car_model}</td>
+                    <td className="py-3">{item.car_year}</td>
                     <td className="py-3 flex items-center gap-3">
                       <img src={item.logo_url || "/images/no-logo.png"} className="h-8 w-8 rounded-full border" />
                       <span>{item.partner_name}</span>

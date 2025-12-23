@@ -345,7 +345,6 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron tickets",
-    "confirm_delete": "¿Estás seguro de que deseas eliminar este ticket?",
     "status": {
     "label": "Estado",
     "pendiente": "Pendiente",
@@ -364,7 +363,9 @@
       "date": "Fecha",
       "notes": "Notas",
       "status": "Estado",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "model": "Modelo",
+      "year": "Año"
     }
   },
 
@@ -392,34 +393,6 @@
   "dashboard_layout": {
     "admin": "Administrador",
     "client": "Cliente",
-    "partner": "Partner",
-    "profile": "Perfil",
-    "change_password": "Cambiar contraseña",
-    "logout": "Cerrar sesión",
-    "loading": "Cargando..."
-  },
-
-  "profile": {
-    "title": "Perfil",
-    "email": "Correo",
-    "name": "Nombre",
-    "phone": "Teléfono",
-    "address": "Dirección",
-    "role": "Rol",
-    "changePhoto": "Cambiar foto",
-    "save": "Guardar",
-    "updated": "Perfil actualizado",
-    "cancel": "Cancelar"
-  },
-  
-  "password": {
-    "title": "Cambiar contraseña",
-    "current": "Contraseña actual",
-    "new": "Nueva contraseña",
-    "confirm": "Confirmar contraseña",
-    "save": "Guardar",
-    "mismatch": "Las contraseñas no coinciden",
-    "description": "Cambie su contraseña para acceder a su cuenta.",
-    "updated": "Contraseña actualizada"
-  }
+    "partner": "Partner"
+  } 
 }
