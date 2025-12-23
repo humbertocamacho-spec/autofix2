@@ -221,13 +221,13 @@ export default function VehicleScreen() {
             </Modal>
 
             <Text style={styles.label}>Nombre del Vehículo:</Text>
-            <TextInput style={styles.input} placeholder="Ej: Mi Toyota" placeholderTextColor="#888" value={name} onChangeText={setName} />
+            <TextInput style={styles.input} placeholder="Ej: Toyota" placeholderTextColor="#888" value={name} onChangeText={setName} />
 
             <Text style={styles.label}>Modelo:</Text>
-            <TextInput style={styles.input} placeholder="Modelo" placeholderTextColor="#888" value={model} onChangeText={setModel} />
+            <TextInput style={styles.input} placeholder="Ej: Camry" placeholderTextColor="#888" value={model} onChangeText={setModel} />
 
             <Text style={styles.label}>Año:</Text>
-            <TextInput style={styles.input} placeholder="1234" placeholderTextColor="#888" keyboardType="numeric" value={year} onChangeText={setYear} />
+            <TextInput style={styles.input} placeholder="Ej: 2022" placeholderTextColor="#888" keyboardType="numeric" value={year} onChangeText={setYear} />
 
             <Text style={styles.label}>Tipo:</Text>
             <TextInput style={styles.input} placeholder="Sedán, SUV..." placeholderTextColor="#888" value={type} onChangeText={setType} />
