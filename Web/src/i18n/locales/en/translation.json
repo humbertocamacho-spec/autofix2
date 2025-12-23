@@ -400,7 +400,8 @@
     "partner": "Partner",
     "profile": "Profile",
     "change_password": "Change Password",
-    "logout": "Logout"
+    "logout": "Logout",
+    "loading": "Loading..."
   },
   
   "profile": {
@@ -412,7 +413,8 @@
     "role": "Role",
     "save": "Save",
     "changePhoto": "Change Photo",
-    "updated": "Profile updated"
+    "updated": "Profile updated",
+    "cancel": "Cancel"
   },
 
   "password": {

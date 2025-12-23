@@ -177,17 +177,11 @@ router.put("/me", authMiddleware, async (req, res) => {
     const { name, phone, email, address, photo_url } = req.body;
 
     if (!name || !email || !phone) {
-      return res.status(400).json({
-        ok: false,
-        message: "Nombre, email y teléfono son obligatorios",
-      });
+      return res.status(400).json({ ok: false, message: "Nombre, email y teléfono son obligatorios",});
     }
 
     if (!phonevalidate.test(phone)) {
-      return res.status(400).json({
-        ok: false,
-        message: "Teléfono inválido",
-      });
+      return res.status(400).json({ ok: false, message: "Teléfono inválido",});
     }
 
     await pool.query(
@@ -208,6 +202,41 @@ router.put("/me", authMiddleware, async (req, res) => {
   } catch (error) {
     console.error("UPDATE ME ERROR:", error);
     res.status(500).json({ ok: false, message: "Error al actualizar perfil" });
+  }
+});
+
+// Endpoint Change Password
+router.put("/change-password", authMiddleware, async (req, res) => {
+  try {
+    const { current_password, new_password } = req.body;
+
+    if (!current_password || !new_password) {
+      return res.status(400).json({ ok: false, message: "Datos incompletos",});
+    }
+
+    if (new_password.length < 8) {
+      return res.status(400).json({ ok: false, message: "Contraseña mínima 8 caracteres",});
+    }
+
+    const [rows] = await pool.query( "SELECT password FROM users WHERE id = ?", [req.user.user_id]);
+
+    const valid = await bcrypt.compare( current_password, rows[0].password);
+
+    if (!valid) {
+      return res.status(401).json({ ok: false, message: "Contraseña actual incorrecta",});
+    }
+
+    const hashed = await bcrypt.hash(new_password, 10);
+
+    await pool.query( "UPDATE users SET password = ? WHERE id = ?", [hashed, req.user.user_id]);
+
+    res.json({ ok: true, message: "Contraseña actualizada" });
+  } catch (error) {
+    console.error("CHANGE PASSWORD ERROR:", error);
+    res.status(500).json({
+      ok: false,
+      message: "Error al cambiar contraseña",
+    });
   }
 });
 

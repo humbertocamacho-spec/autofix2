@@ -394,7 +394,8 @@
     "partner": "Partner",
     "profile": "Perfil",
     "change_password": "Cambiar contraseña",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "loading": "Cargando..."
   },
 
   "profile": {
@@ -406,7 +407,8 @@
     "role": "Rol",
     "changePhoto": "Cambiar foto",
     "save": "Guardar",
-    "updated": "Perfil actualizado"
+    "updated": "Perfil actualizado",
+    "cancel": "Cancelar"
   },
   
   "password": {

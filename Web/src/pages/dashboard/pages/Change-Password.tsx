@@ -21,7 +21,7 @@ export default function ChangePasswordScreen() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`${VITE_API_URL}/api/users/change-password`, {
+      const res = await fetch(`${VITE_API_URL}/api/auth/change-password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -56,19 +56,14 @@ export default function ChangePasswordScreen() {
         {t("password.title")}
       </h1>
 
-      {/* CONTENEDOR PRINCIPAL – MISMO ESTILO LOGIN */}
       <div className="mx-auto max-w-md rounded-2xl bg-white p-10 shadow-2xl">
 
-        <p className="mb-6 text-gray-600">
-          {t("password.description")}
-        </p>
+        <p className="mb-6 text-gray-600">{t("password.description")}</p>
 
         <div className="space-y-5">
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              {t("password.current")}
-            </label>
+            <label className="text-sm font-medium text-gray-700">{t("password.current")}</label>
             <input
               type="password"
               value={current}
@@ -78,9 +73,7 @@ export default function ChangePasswordScreen() {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              {t("password.new")}
-            </label>
+            <label className="text-sm font-medium text-gray-700">{t("password.new")}</label>
             <input
               type="password"
               value={password}
@@ -90,9 +83,7 @@ export default function ChangePasswordScreen() {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              {t("password.confirm")}
-            </label>
+            <label className="text-sm font-medium text-gray-700">{t("password.confirm")}</label>
             <input
               type="password"
               value={confirm}
