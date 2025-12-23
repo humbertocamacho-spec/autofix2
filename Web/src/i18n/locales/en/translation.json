@@ -349,6 +349,7 @@
     "delete": "Delete",
     "no_results": "No tickets found",
     "edit_status": "Edit status",
+    "confirm_delete": "Are you sure you want to delete this ticket?",
 
     "status": {
     "label": "Status",

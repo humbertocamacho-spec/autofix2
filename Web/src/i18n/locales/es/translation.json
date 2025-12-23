@@ -345,6 +345,7 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron tickets",
+    "confirm_delete": "¿Estás seguro de que deseas eliminar este ticket?",
     "status": {
     "label": "Estado",
     "pendiente": "Pendiente",

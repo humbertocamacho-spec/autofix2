@@ -17,7 +17,6 @@ export default function TicketsTable() {
   const [currentTicket, setCurrentTicket] = useState<Ticket | null>(null);
   const [newStatus, setNewStatus] = useState<"pendiente" | "revision" | "finalizado">("pendiente");
 
-
   useEffect(() => {
     if (!user) return;
     fetchTickets();
@@ -51,6 +50,33 @@ export default function TicketsTable() {
         t.id.toString().includes(search)
     )
     .sort((a, b) => a.id - b.id);
+
+    const deleteTicket = async (id: number) => {
+      if (!confirm(t("tickets_screen.confirm_delete"))) return; // Mensaje de confirmación
+
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(`${VITE_API_URL}/api/ticket/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          fetchTickets(); // Actualizar la lista
+        } else {
+          alert(data.message || "Error al eliminar ticket");
+        }
+      } catch (error) {
+        console.error("Error eliminando ticket:", error);
+      }
+    };
+
 
   return (
     <DashboardLayout>
@@ -124,7 +150,10 @@ export default function TicketsTable() {
                       </Can>
 
                       <Can permission="delete_tickets">
-                        <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm">
+                        <button
+                          className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm"
+                          onClick={() => deleteTicket(item.id)}
+                        >
                           {t("tickets_screen.delete")}
                         </button>
                       </Can>
