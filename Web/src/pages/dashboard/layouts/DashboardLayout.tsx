@@ -20,6 +20,7 @@ export default function DashboardLayout({ children }: Props) {
   const { user, loading, logout } = useAuthContext();
   const layoutKey = user?.id ? `user-${user.id}` : "guest";
   const isPartner = user?.role_name === ROLES.PARTNER;
+  const isAdmin = user?.role_name === ROLES.ADMIN;
 
   const iconSize = sidebarOpen ? 22 : 20;
   const { t } = useTranslation();
@@ -234,7 +235,9 @@ export default function DashboardLayout({ children }: Props) {
             </div>
 
             <div>
-              <SectionTitle show={sidebarOpen} title={t("dashboard_layout.catalogs")} />
+              {isAdmin && (
+                <SectionTitle show={sidebarOpen} title={t("dashboard_layout.catalogs")}/>
+              )}
 
               {CheckPermissionForModule("specialities") && (
                 <Link to="/dashboard/specialities" className={linkClass("/dashboard/specialities")}>
@@ -273,7 +276,9 @@ export default function DashboardLayout({ children }: Props) {
             </div>
 
             <div>
-              <SectionTitle show={sidebarOpen} title={t("dashboard_layout.settings")} />
+              {isAdmin && (
+                <SectionTitle show={sidebarOpen} title={t("dashboard_layout.settings")}/>
+              )}
 
               {CheckPermissionForModule("roles") && (
                 <Link to="/dashboard/roles" className={linkClass("/dashboard/roles")}>
