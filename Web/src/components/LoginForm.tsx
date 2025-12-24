@@ -14,13 +14,15 @@ export default function LoginForm({ onLoginSuccess }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
-    const ok = await login(email, password);
+    const result = await login(email, password);
 
-    if (ok) {
+    if (result.ok) {
       onLoginSuccess?.();
     } else {
-      setError("Credenciales incorrectas");
+      setError(result.message ?? "Error al iniciar sesión");
+
     }
   };
 

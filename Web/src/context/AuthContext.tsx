@@ -65,25 +65,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     [token, logout]
   );
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string) => {
     try {
       setLoading(true);
+
       const response = await api.login(email, password);
 
-      if (!response || !response.token) {
-        setLoading(false);
-        return false;
+      if (!response?.ok) {
+        return {
+          ok: false,
+          message: response?.message || "Error al iniciar sesión",
+        };
       }
 
       localStorage.setItem("token", response.token);
       setToken(response.token);
 
       const ok = await loadUserFromToken(response.token);
+
+      if (!ok) {
+        return {
+          ok: false,
+          message: "No se pudo cargar el usuario",
+        };
+      }
+
+      return { ok: true };
+    } catch (err: any) {
+      return {
+        ok: false,
+        message:
+          err?.response?.data?.message ||
+          err?.message ||
+          "Error de conexión con el servidor",
+      };
+    } finally {
       setLoading(false);
-      return ok;
-    } catch (err) {
-      setLoading(false);
-      return false;
     }
   };
 
