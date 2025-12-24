@@ -75,6 +75,7 @@ router.get("/", authMiddleware, async (req, res) => {
             LEFT JOIN users u ON u.id = t.client_id
             LEFT JOIN cars c ON c.id = t.car_id
             LEFT JOIN partners p ON p.id = t.partner_id
+            WHERE t.deleted_at IS NULL
         `;
 
         if (role_name === "client") {
@@ -85,13 +86,13 @@ router.get("/", authMiddleware, async (req, res) => {
         if (role_name === "partner") {
             // Obtener todos los talleres del usuario
             const [partners] = await db.query(
-                "SELECT id FROM partners WHERE user_id = ?",
+                "SELECT id FROM partners WHERE user_id = ?  AND deleted_at IS NULL",
                 [user_id]
             );
 
             const partnerIds = partners.map(p => p.id);
 
-            if (partnerIds.length === 0) { return res.json([]);}
+            if (partnerIds.length === 0) { return res.json([]); }
 
             query += ` WHERE t.partner_id IN (?)`;
             params.push(partnerIds);
@@ -122,18 +123,18 @@ router.get("/:car_id/:partner_id/:client_id", async (req, res) => {
         if (!carRows.length)
             return res.status(404).json({ message: "Vehículo no encontrado" });
 
-        const [partnerRows] = await db.query(`SELECT * FROM partners WHERE id = ?`, [partner_id]);
+        const [partnerRows] = await db.query(`SELECT * FROM partners WHERE id = ?  AND deleted_at IS NULL`, [partner_id]);
         if (!partnerRows.length)
             return res.status(404).json({ message: "Taller no encontrado" });
 
-        const [clientRows] = await db.query(`SELECT * FROM clients WHERE id = ?`, [client_id]);
+        const [clientRows] = await db.query(`SELECT * FROM clients WHERE id = ?  AND deleted_at IS NULL`, [client_id]);
         if (!clientRows.length)
             return res.status(404).json({ message: "Cliente no encontrado" });
 
         const [ticketRows] = await db.query(`
             SELECT *
             FROM tickets
-            WHERE car_id = ? AND partner_id = ? AND client_id = ?
+            WHERE car_id = ? AND partner_id = ? AND client_id = ? AND deleted_at IS NULL
             ORDER BY id DESC
             LIMIT 1
         `, [car_id, partner_id, client_id]);
@@ -155,7 +156,7 @@ router.get("/by-id/:id", async (req, res) => {
     const { id } = req.params;
 
     try {
-        const [rows] = await db.query(`SELECT * FROM tickets WHERE id = ?`, [id]);
+        const [rows] = await db.query(`SELECT * FROM tickets WHERE id = ?  AND deleted_at IS NULL`, [id]);
 
         if (!rows.length)
             return res.status(404).json({ message: "Ticket no encontrado" });
@@ -190,7 +191,11 @@ router.delete("/:id", async (req, res) => {
 
     try {
         const [result] = await db.query(
-            "DELETE FROM tickets WHERE id = ?",
+            `
+            UPDATE tickets
+            SET deleted_at = NOW()
+            WHERE id = ? AND deleted_at IS NULL
+         `,
             [id]
         );
 
@@ -252,6 +257,7 @@ router.get("/occupied", async (req, res) => {
             WHERE 
                 partner_id = ? 
                 AND DATE(date) = ?
+                AND deleted_at IS NULL
             `,
             [partner_id, date]
         );
