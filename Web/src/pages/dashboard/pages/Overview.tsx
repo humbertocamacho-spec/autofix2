@@ -82,29 +82,17 @@ export default function Overview() {
     fetchTickets();
   }, []);
 
-  const eventsOfDay = useMemo(
-    () => events.filter((e) => e.start.slice(0, 10) === selectedDate),
-    [events, selectedDate]
-  );
+  const eventsOfDay = useMemo( () => events.filter((e) => e.start.slice(0, 10) === selectedDate), [events, selectedDate]);
 
-  const daysWithEvents = useMemo(
-    () => new Set(events.map((e) => e.start.slice(0, 10))),
-    [events]
-  );
+  const daysWithEvents = useMemo( () => new Set(events.map((e) => e.start.slice(0, 10))), [events]);
 
   const calendarLocale =
-    i18n.language.startsWith("es") ? esLocale : enLocale;
-
-  const handleDateOrEventClick = (date: Date) => {
-    setSelectedDate(toLocalDateString(date));
-  };
+  i18n.language.startsWith("es") ? esLocale : enLocale; const handleDateOrEventClick = (date: Date) => { setSelectedDate(toLocalDateString(date));};
 
   if (loading) {
     return (
       <DashboardLayout>
-        <div className="p-6 text-center py-10 text-gray-500">
-          Cargando calendario…
-        </div>
+        <div className="p-6 text-center py-10 text-gray-500"> {t("dashboard_layout.loading")} </div>
       </DashboardLayout>
     );
   }
@@ -115,21 +103,9 @@ export default function Overview() {
         <h1 className="text-3xl font-bold mb-6 text-gray-800"> {t("overview.title_calendar")}</h1>
 
         <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <StatCard
-            title={t("overview.stats.ticketsthismonth")}
-            value={events.length}
-            gradient={COLORS.gradientBlue}
-          />
-          <StatCard
-            title={t("overview.stats.dayswithtickets")}
-            value={daysWithEvents.size}
-            gradient={COLORS.gradientGreen}
-          />
-          <StatCard
-            title={t("overview.stats.ticketsoftoday")}
-            value={eventsOfDay.length}
-            gradient={COLORS.gradientYellow}
-          />
+          <StatCard title={t("overview.stats.ticketsthismonth")} value={events.length} gradient={COLORS.gradientBlue}/>
+          <StatCard title={t("overview.stats.dayswithtickets")} value={daysWithEvents.size} gradient={COLORS.gradientGreen}/>
+          <StatCard title={t("overview.stats.ticketsoftoday")} value={eventsOfDay.length} gradient={COLORS.gradientYellow}/>
         </div>
 
         <div className="grid grid-cols-12 gap-6">
@@ -173,12 +149,7 @@ export default function Overview() {
                 const [carName, clientName] = arg.event.title.split(" · ");
                 const color = STATUS_COLORS[status];
 
-                const time = arg.event.start
-                  ? new Date(arg.event.start).toLocaleTimeString("es-MX", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                  : "";
+                const time = arg.event.start ? new Date(arg.event.start).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", }) : "";
 
                 return (
                   <div className="h-full w-full px-2 py-1 rounded-lg relative overflow-hidden" style={{ backgroundColor: color.lightBg }}>
@@ -324,7 +295,7 @@ export default function Overview() {
             <div className="rounded-xl p-4 mb-6 text-white -mx-6 -mt-6" style={{ background: COLORS.primary }}>
               <p className="text-xl font-bold">
                 {new Date(selectedDate + "T00:00:00").toLocaleDateString(
-                  "es-MX",
+                  i18n.language === "es" ? "es-MX" : "en-US",
                   {
                     weekday: "long",
                     day: "numeric",

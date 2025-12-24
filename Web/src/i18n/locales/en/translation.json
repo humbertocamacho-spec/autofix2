@@ -407,7 +407,13 @@
     "profile": "Profile",
     "change_password": "Change Password",
     "logout": "Logout",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "operations": "Operations",
+    "settings": "Settings",
+    "users": "Users",
+    "catalogs": "Catalogs",
+    "pending": "Pending",
+    "confirmed": "Confirmed"
   },
   
   "profile": {

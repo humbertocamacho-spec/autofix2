@@ -287,7 +287,7 @@ export default function PartnersTable() {
                     <td className="py-3 text-right space-x-3">
                       <div className="flex items-center justify-end gap-2 whitespace-nowrap">
                         {!item.deleted_at && (
-                          <Can permission="update_users">
+                          <Can permission="update_partners">
                             <button className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600" onClick={() => openEdit(item)}>
                               {t("users_screen.edit")}
                             </button>
@@ -295,7 +295,7 @@ export default function PartnersTable() {
                         )}
 
                         {!item.deleted_at && (
-                          <Can permission="delete_users">
+                          <Can permission="delete_partners">
                             <button className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700" onClick={() => deletePartner(item)}>
                               {t("users_screen.delete")}
                             </button>
@@ -303,7 +303,7 @@ export default function PartnersTable() {
                         )}
 
                         {item.deleted_at && (
-                          <Can permission="update_users">
+                          <Can permission="update_partners">
                             <button className="px-2.5 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700" onClick={() => restorePartner(item)}>
                               {t("users_screen.restore")}
                             </button>
@@ -431,12 +431,14 @@ export default function PartnersTable() {
 
                 <div className="col-span-2">
                   <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.priority")}</label>
+
                   <input
                     type="number"
                     min={1}
                     max={10}
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA] disabled:bg-gray-100 disabled:cursor-not-allowed"
                     value={priority}
+                    disabled={user?.role_name !== "admin"}
                     onChange={(e) =>
                       handlePriorityChange(Number(e.target.value))
                     }
