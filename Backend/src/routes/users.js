@@ -50,7 +50,7 @@ router.put("/:id", async (req, res) => {
 
     await connection.beginTransaction();
 
-    const [[user]] = await connection.query( "SELECT id, role_id FROM users WHERE id = ?", [id]);
+    const [[user]] = await connection.query("SELECT id, role_id FROM users WHERE id = ?", [id]);
 
     if (!user) {
       await connection.rollback();
@@ -87,7 +87,7 @@ router.put("/:id", async (req, res) => {
           [id]
         );
       }
-    } 
+    }
     else {
       await connection.query(
         "DELETE FROM admins WHERE user_id = ?",
@@ -97,7 +97,7 @@ router.put("/:id", async (req, res) => {
 
     await connection.commit();
 
-    res.json({ ok: true, message: "Usuario actualizado y rol sincronizado correctamente"});
+    res.json({ ok: true, message: "Usuario actualizado y rol sincronizado correctamente" });
 
   } catch (error) {
     await connection.rollback();
@@ -121,6 +121,16 @@ router.delete("/:id", async (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
+
+    await db.query(
+      `
+      UPDATE tickets
+      SET deleted_at = NOW()
+      WHERE user_id = ?
+        AND deleted_at IS NULL
+      `,
+      [id]
+    );
 
     res.json({
       ok: true,
