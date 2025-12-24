@@ -157,6 +157,15 @@ router.patch("/:id/restore", async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
+    await db.query(
+      `
+      UPDATE tickets
+      SET deleted_at = NULL
+      WHERE user_id = ?
+      `,
+      [id]
+    );
+
     res.json({
       ok: true,
       message: "Usuario reactivado correctamente"

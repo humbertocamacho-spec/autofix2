@@ -275,6 +275,14 @@ router.patch("/:id/restore", async (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Partner no encontrado" });
     }
+    await db.query(
+      `
+      UPDATE tickets
+      SET deleted_at = NULL
+      WHERE partner_id = ?
+      `,
+      [id]
+    );
 
     res.json({
       ok: true,
