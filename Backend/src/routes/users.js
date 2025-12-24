@@ -122,15 +122,14 @@ router.delete("/:id", async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    await db.query(
-      `
-      UPDATE tickets
-      SET deleted_at = NOW()
-      WHERE user_id = ?
-        AND deleted_at IS NULL
-      `,
-      [id]
-    );
+    await db.query(`
+      UPDATE tickets t
+      JOIN clients c ON c.id = t.client_id
+      SET t.deleted_at = NOW()
+      WHERE c.user_id = ?
+        AND t.deleted_at IS NULL
+    `, [id]);
+
 
     res.json({
       ok: true,
@@ -157,15 +156,13 @@ router.patch("/:id/restore", async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    await db.query(
-      `
-      UPDATE tickets
-      SET deleted_at = NULL
-      WHERE user_id = ?
-      `,
-      [id]
-    );
-
+    await db.query(`
+      UPDATE tickets t
+      JOIN clients c ON c.id = t.client_id
+      SET t.deleted_at = NULL
+      WHERE c.user_id = ?
+    `, [id]);
+    
     res.json({
       ok: true,
       message: "Usuario reactivado correctamente"
