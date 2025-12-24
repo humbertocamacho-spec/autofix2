@@ -5,7 +5,7 @@ export interface AuthContextType {
   token: string | null;
   loading: boolean;
   ready: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ ok: boolean; message?: string;}>;
   logout: () => void;
   reloadUser: () => Promise<void>;
   hasPermission: (permission: string) => boolean;

@@ -242,6 +242,16 @@ router.delete("/:id", async (req, res) => {
       return res.status(404).json({ message: "Partner no encontrado" });
     }
 
+    await db.query(
+      `
+      UPDATE tickets
+      SET deleted_at = NOW()
+      WHERE partner_id = ?
+        AND deleted_at IS NULL
+      `,
+      [id]
+    );
+
     res.json({
       ok: true,
       message: "Partner desactivado correctamente"
@@ -265,6 +275,14 @@ router.patch("/:id/restore", async (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Partner no encontrado" });
     }
+    await db.query(
+      `
+      UPDATE tickets
+      SET deleted_at = NULL
+      WHERE partner_id = ?
+      `,
+      [id]
+    );
 
     res.json({
       ok: true,

@@ -60,8 +60,11 @@ router.get("/", authMiddleware, async (req, res) => {
                 t.id,
                 t.client_id,
                 u.name AS client_name,
+                u.deleted_at AS user_deleted_at,
                 t.car_id,
                 c.name AS car_name,
+                c.model,
+                c.year,
                 t.partner_id,
                 p.name AS partner_name,
                 p.logo_url,       
@@ -89,7 +92,7 @@ router.get("/", authMiddleware, async (req, res) => {
 
             const partnerIds = partners.map(p => p.id);
 
-            if (partnerIds.length === 0) { return res.json([]);}
+            if (partnerIds.length === 0) { return res.json([]); }
 
             query += ` WHERE t.partner_id IN (?)`;
             params.push(partnerIds);

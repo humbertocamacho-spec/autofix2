@@ -4,6 +4,8 @@ export interface Ticket {
     client_name?: string;
     car_id: number;
     car_name?: string;
+    model?: string;
+    year?: number;
     partner_id: number;
     partner_name?: string;
     partner_phone?: string;

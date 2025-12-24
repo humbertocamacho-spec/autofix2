@@ -80,23 +80,26 @@
   },
 
   "overview": {
+    "today": "Hoy",
+    "day": "Día",
+    "week": "Semana",
+    "month": "Mes",
+    "allday": "Todo el día",
+    "no_tickets_today": "No hay citas este día",
+    "tickets": "cita(s)",
     "buttons": {
       "seeAll": "Ver más",
       "viewAll": "Ver todo"
     },
     "progress": "Progreso",
     "stats": {
-      "contactsTrend": "8% más que el mes pasado",
-      "messagesTrend": "3 nuevos hoy",
-      "projectTrend": "12% más que el mes pasado",
-      "tasksTrend": "5% menos que el mes pasado",
-      "totalContacts": "Contactos Totales",
-      "totalProjects": "Proyectos Totales",
-      "unfinishedTasks": "Tareas Incompletas",
-      "unreadMessages": "Mensajes sin Leer"
+      "dayswithtickets": "Días con citas",
+      "ticketsoftoday": "Citas hoy",
+      "ticketsthismonth": "Citas este mes"
     },
     "subtitle": "Bienvenido a tu resumen del dashboard.",
     "title": "Resumen del Panel",
+    "title_calendar": "Mi Calendario",
     "todo": {
       "design": "Diseño Gráfico",
       "development": "Desarrollo",
@@ -345,7 +348,6 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron tickets",
-    "confirm_delete": "¿Estás seguro de que deseas eliminar este ticket?",
     "status": {
     "label": "Estado",
     "pendiente": "Pendiente",
@@ -364,7 +366,9 @@
       "date": "Fecha",
       "notes": "Notas",
       "status": "Estado",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "model": "Modelo",
+      "year": "Año"
     }
   },
 
@@ -396,30 +400,12 @@
     "profile": "Perfil",
     "change_password": "Cambiar contraseña",
     "logout": "Cerrar sesión",
-    "loading": "Cargando..."
-  },
-
-  "profile": {
-    "title": "Perfil",
-    "email": "Correo",
-    "name": "Nombre",
-    "phone": "Teléfono",
-    "address": "Dirección",
-    "role": "Rol",
-    "changePhoto": "Cambiar foto",
-    "save": "Guardar",
-    "updated": "Perfil actualizado",
-    "cancel": "Cancelar"
-  },
-  
-  "password": {
-    "title": "Cambiar contraseña",
-    "current": "Contraseña actual",
-    "new": "Nueva contraseña",
-    "confirm": "Confirmar contraseña",
-    "save": "Guardar",
-    "mismatch": "Las contraseñas no coinciden",
-    "description": "Cambie su contraseña para acceder a su cuenta.",
-    "updated": "Contraseña actualizada"
+    "loading": "Cargando...",
+    "operations": "Operaciones",
+    "settings": "Configuración",
+    "users": "Usuarios",
+    "catalogs": "Catálogos",
+    "pending": "Pendientes",
+    "confirmed": "Confirmados"
   }
 }
