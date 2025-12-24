@@ -4,4 +4,8 @@ export default {
     "./index.html",
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 };
