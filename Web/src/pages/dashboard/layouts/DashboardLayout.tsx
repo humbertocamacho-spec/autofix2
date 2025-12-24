@@ -199,7 +199,9 @@ export default function DashboardLayout({ children }: Props) {
             </div>
 
             <div>
-              <SectionTitle show={sidebarOpen} title={t("dashboard_layout.users")} />
+              {(isAdmin || isPartner) && (
+                <SectionTitle show={sidebarOpen} title={t("dashboard_layout.users")}/>
+              )}
 
               {CheckPermissionForModule("users") && (
                 <Link to="/dashboard/users" className={linkClass("/dashboard/users")}>
