@@ -39,6 +39,7 @@ router.get("/app", authMiddleware, async (req, res) => {
       LEFT JOIN cars c ON c.id = t.car_id
       LEFT JOIN partners p ON p.id = t.partner_id
       WHERE t.client_id = ?
+       AND t.deleted_at IS NULL
       ORDER BY t.date DESC
     `, [client_id]);
 
@@ -75,10 +76,11 @@ router.get("/", authMiddleware, async (req, res) => {
             LEFT JOIN users u ON u.id = t.client_id
             LEFT JOIN cars c ON c.id = t.car_id
             LEFT JOIN partners p ON p.id = t.partner_id
+             WHERE t.deleted_at IS NULL
         `;
 
         if (role_name === "client") {
-            query += ` WHERE t.client_id = ?`;
+            query += ` AND t.client_id = ?`;
             params.push(client_id);
         }
 
@@ -93,7 +95,7 @@ router.get("/", authMiddleware, async (req, res) => {
 
             if (partnerIds.length === 0) { return res.json([]);}
 
-            query += ` WHERE t.partner_id IN (?)`;
+            query += ` AND t.partner_id IN (?)`;
             params.push(partnerIds);
         }
 
@@ -155,7 +157,7 @@ router.get("/by-id/:id", async (req, res) => {
     const { id } = req.params;
 
     try {
-        const [rows] = await db.query(`SELECT * FROM tickets WHERE id = ?`, [id]);
+        const [rows] = await db.query(`SELECT * FROM tickets WHERE id = ? AND deleted_at IS NULL`, [id]);
 
         if (!rows.length)
             return res.status(404).json({ message: "Ticket no encontrado" });
@@ -190,7 +192,7 @@ router.delete("/:id", async (req, res) => {
 
     try {
         const [result] = await db.query(
-            "DELETE FROM tickets WHERE id = ?",
+            "UPDATE tickets SET deleted_at = NOW() WHERE id = ?",
             [id]
         );
 
@@ -218,7 +220,7 @@ router.put("/:id/status", authMiddleware, async (req, res) => {
 
     try {
         const [result] = await db.query(
-            `UPDATE tickets SET status = ? WHERE id = ?`,
+            "UPDATE tickets SET status = ? WHERE id = ? AND deleted_at IS NULL",
             [status, id]
         );
 
@@ -252,6 +254,7 @@ router.get("/occupied", async (req, res) => {
             WHERE 
                 partner_id = ? 
                 AND DATE(date) = ?
+                AND deleted_at IS NULL
             `,
             [partner_id, date]
         );
