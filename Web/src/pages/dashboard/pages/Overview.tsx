@@ -40,6 +40,7 @@ type CalendarEvent = {
     status: string;
     notes?: string;
     partnerName?: string;
+    userDisabled: boolean;
   };
 };
 
@@ -71,6 +72,7 @@ export default function Overview() {
             status: t.status,
             notes: t.notes,
             partnerName: t.partner_name,
+            userDisabled: !!t.user_deleted_at,
           },
         };
       });
@@ -151,7 +153,7 @@ export default function Overview() {
 
                 return (
                   <div className="h-full w-full px-2 py-1 rounded-lg relative overflow-hidden" style={{ backgroundColor: color.lightBg }}>
-                    <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: color.accent }}/>
+                    <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: color.accent }} />
 
                     <div className="ml-2 font-semibold text-sm text-black leading-tight"
                       style={{
@@ -349,6 +351,11 @@ export default function Overview() {
                       <p className="text-xs text-gray-400 mt-2">
                         {event.extendedProps.notes || "Sin notas"}
                       </p>
+                      {event.extendedProps.userDisabled && (
+                        <p className="text-xs text-red-500 mt-1">
+                          Este ticket pertenece a un usuario desactivado
+                        </p>
+                      )}
                     </div>
                   );
                 })}
