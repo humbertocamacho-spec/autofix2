@@ -229,6 +229,7 @@ export default function PartnersTable() {
                   <th className="pb-3 w-32 text-center">{t("partners_screen.table.logo_url")}</th>
                   <th className="pb-3 px-4">{t("partners_screen.table.description")}</th>
                   <th className="pb-3 px-4 text-center w-24">{t("partners_screen.table.priority")}</th>
+                  <th className="pb-3 px-4"> {t("partners_screen.table.specialities")}</th>
                   <th className="pb-3 px-4 text-center w-28">{t("users_screen.table.status")}</th>
                   <th className="pb-3 w-32 text-right">{t("partners_screen.table.actions")}</th>
                 </tr>
@@ -272,6 +273,15 @@ export default function PartnersTable() {
                     </td>
 
                     <td className="py-3 px-4 text-center font-semibold">{item.priority}</td>
+                    <td className="py-3 px-4 max-w-xs">
+                      <span
+                        className="block text-sm truncate cursor-help"
+                        title={item.specialities || ""}
+                      >
+                        {item.specialities || "-"}
+                      </span>
+                    </td>
+
                     <td className="py-3 px-4 text-center">
                       <span
                         title={

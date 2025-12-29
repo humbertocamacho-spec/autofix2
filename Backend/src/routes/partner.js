@@ -75,9 +75,12 @@ router.get("/", authMiddleware, async (req, res) => {
         p.logo_url,
         p.description,
         p.priority,
-        p.deleted_at
+        p.deleted_at,
+        GROUP_CONCAT(s.name ORDER BY s.name SEPARATOR ', ') AS specialities
       FROM partners p
       JOIN users u ON p.user_id = u.id
+      LEFT JOIN partners_specialities ps ON ps.partner_id = p.id
+      LEFT JOIN specialities s ON s.id = ps.speciality_id
     `;
 
     const params = [];

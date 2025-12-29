@@ -15,4 +15,5 @@ export interface Partner {
     distance?: number;
     services?: string[];
     deleted_at?: string | null;
+    specialities?: string;
 }
