@@ -66,8 +66,9 @@ export default function Overview() {
         return {
           id: t.id.toString(),
           title: `${t.car_name} · ${t.client_name}`,
-          start: start.toISOString(),
-          end: end.toISOString(),
+          start: start.toISOString().slice(0, 19),
+end: end.toISOString().slice(0, 19),
+
           extendedProps: {
             status: t.status,
             notes: t.notes,
@@ -113,6 +114,7 @@ export default function Overview() {
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
               initialView="dayGridMonth"
+              timeZone="local"
               locale={calendarLocale}
               events={events}
               height="75vh"

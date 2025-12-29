@@ -399,6 +399,7 @@ export default function PartnersTable() {
                     className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    placeholder="Ej. Taller Mecánico El Rayo"
                   />
                 </div>
 
@@ -424,6 +425,7 @@ export default function PartnersTable() {
                     className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Ej. 55 1234 5678"
                   />
                 </div>
 
@@ -433,6 +435,7 @@ export default function PartnersTable() {
                     className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                     value={whatsapp}
                     onChange={(e) => setWhatsapp(e.target.value)}
+                    placeholder="Ej. 55 1234 5678"
                   />
                 </div>
 
@@ -442,6 +445,7 @@ export default function PartnersTable() {
                     className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
+                    placeholder="Ej. Av. Insurgentes Sur 123, Col. Roma Norte, CDMX"
                   />
                 </div>
 
@@ -451,6 +455,7 @@ export default function PartnersTable() {
                     className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                     value={latitude}
                     onChange={(e) => setLatitude(e.target.value)}
+                    placeholder="25.0000"
                   />
                 </div>
 
@@ -460,16 +465,33 @@ export default function PartnersTable() {
                     className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                     value={longitude}
                     onChange={(e) => setLongitude(e.target.value)}
+                    placeholder="-100.0000"
                   />
                 </div>
 
                 <div className="col-span-2">
                   <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.logo_url")}</label>
+
                   <input
                     className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                     value={logoUrl}
                     onChange={(e) => setLogoUrl(e.target.value)}
+                    placeholder="https://ejemplo.com/logo.png"
                   />
+
+                  {logoUrl && (
+                    <div className="mt-3 flex items-center gap-3">
+                      <img
+                        src={logoUrl}
+                        alt="Logo preview"
+                        className="h-16 w-16 object-contain border rounded-lg bg-white"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                      <span className="text-xs text-gray-500">{t("partners_screen.table.logo_url_preview")}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="col-span-2">
@@ -478,6 +500,7 @@ export default function PartnersTable() {
                     className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Ej. Taller especializado en frenos, suspensión y mantenimiento general"
                   />
                 </div>
 
@@ -509,15 +532,26 @@ export default function PartnersTable() {
 
                 <div className="col-span-2">
                   <label className="text-sm font-semibold text-gray-600 mb-1 block">{t("partners_screen.table.specialities")}</label>
+
                   <div className="border border-gray-300 rounded-lg p-3 max-h-[140px] overflow-y-auto grid grid-cols-2 gap-2">
-                    {specialities.map((s) => (
-                      <label key={s.id} className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={selectedSpecialities.includes(s.id)}
-                          onChange={(e) =>
-                            e.target.checked ? setSelectedSpecialities([...selectedSpecialities, s.id]) : setSelectedSpecialities(selectedSpecialities.filter((id) => id !== s.id))
-                          } />{s.name}
-                      </label>
-                    ))}
+                    {[...specialities]
+                      .sort((a, b) => a.name.localeCompare(b.name, "es"))
+                      .map((s) => (
+                        <label key={s.id} className="flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={selectedSpecialities.includes(s.id)}
+                            onChange={(e) =>
+                              e.target.checked
+                                ? setSelectedSpecialities([...selectedSpecialities, s.id])
+                                : setSelectedSpecialities(
+                                    selectedSpecialities.filter((id) => id !== s.id)
+                                  )
+                            }
+                          />
+                          {s.name}
+                        </label>
+                      ))}
                   </div>
                 </div>
               </div>

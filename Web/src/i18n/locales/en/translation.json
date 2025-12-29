@@ -153,7 +153,8 @@
       "scanner_handling": "Scanner handling",
       "logo_url": "Logo",
       "description": "Description",
-      "specialities": "Specialities"
+      "specialities": "Specialities",
+      "logo_url_preview": "Preview"
     },
     "title": "Partners"
   },
