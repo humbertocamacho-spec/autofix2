@@ -62,21 +62,29 @@ router.get("/", authMiddleware, async (req, res) => {
 
     let sql = `
       SELECT 
+        SELECT
         p.id,
-        p.name,
-        p.user_id,
-        p.whatsapp,
-        p.phone,
-        p.location,
-        p.latitude,
-        p.longitude,
-        p.land_use_permit,
-        p.scanner_handling,
-        p.logo_url,
-        p.description,
-        p.priority,
-        p.deleted_at,
-        GROUP_CONCAT(s.name ORDER BY s.name SEPARATOR ', ') AS specialities
+
+        ANY_VALUE(p.name) AS name,
+        ANY_VALUE(p.user_id) AS user_id,
+        ANY_VALUE(p.whatsapp) AS whatsapp,
+        ANY_VALUE(p.phone) AS phone,
+        ANY_VALUE(p.location) AS location,
+        ANY_VALUE(p.latitude) AS latitude,
+        ANY_VALUE(p.longitude) AS longitude,
+        ANY_VALUE(p.land_use_permit) AS land_use_permit,
+        ANY_VALUE(p.scanner_handling) AS scanner_handling,
+        ANY_VALUE(p.logo_url) AS logo_url,
+        ANY_VALUE(p.description) AS description,
+        ANY_VALUE(p.priority) AS priority,
+        ANY_VALUE(p.deleted_at) AS deleted_at,
+
+        GROUP_CONCAT(
+          DISTINCT s.name
+          ORDER BY s.name
+          SEPARATOR ', '
+        ) AS specialities
+
       FROM partners p
       JOIN users u ON p.user_id = u.id
       LEFT JOIN partners_specialities ps ON ps.partner_id = p.id
