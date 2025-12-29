@@ -35,11 +35,13 @@ export default function PartnersTable() {
 
   const [specialities, setSpecialities] = useState<{ id: number; name: string }[]>([]);
   const [selectedSpecialities, setSelectedSpecialities] = useState<number[]>([]);
+  const [allPartnerSpecialities, setAllPartnerSpecialities] = useState<{ partner_id: number, speciality_id: number }[]>([]);
 
   useEffect(() => {
     fetchPartners();
     fetchUsers();
     fetchSpecialities();
+    fetchAllPartnerSpecialities();
   }, []);
 
   const fetchPartners = async () => {
@@ -77,11 +79,32 @@ export default function PartnersTable() {
     setSpecialities(data);
   };
 
+  const fetchAllPartnerSpecialities = async () => {
+    try {
+      const res = await fetch(`${VITE_API_URL}/api/partner_specialities`);
+      const data = await res.json();
+      setAllPartnerSpecialities(data);
+    } catch (error) {
+      console.error("Error fetching all relations:", error);
+    }
+  };
+
   const fetchPartnerSpecialities = async (partnerId: number) => {
     const res = await fetch(`${VITE_API_URL}/api/partner_specialities/${partnerId}`);
     const data: number[] = await res.json();
     setSelectedSpecialities(data);
   };
+
+  const getPartnerSpecialities = (partnerId: number) => {
+    return allPartnerSpecialities
+      .filter(ps => ps.partner_id === partnerId)
+      .map(rel => {
+        const spec = specialities.find(s => s.id === rel.speciality_id);
+        return spec?.name;
+      })
+      .filter(Boolean) as string[];
+  };
+
 
   const openCreate = () => {
     setIsEditing(false);
@@ -155,6 +178,7 @@ export default function PartnersTable() {
 
     setOpenModal(false);
     fetchPartners();
+    fetchAllPartnerSpecialities();
   };
 
   const deletePartner = async (partner: Partner) => {
@@ -229,6 +253,7 @@ export default function PartnersTable() {
                   <th className="pb-3 w-32 text-center">{t("partners_screen.table.logo_url")}</th>
                   <th className="pb-3 px-4">{t("partners_screen.table.description")}</th>
                   <th className="pb-3 px-4 text-center w-24">{t("partners_screen.table.priority")}</th>
+                  <th className="pb-3 px-4">{t("partners_screen.table.specialities")}</th>
                   <th className="pb-3 px-4 text-center w-28">{t("users_screen.table.status")}</th>
                   <th className="pb-3 w-32 text-right">{t("partners_screen.table.actions")}</th>
                 </tr>
@@ -272,6 +297,41 @@ export default function PartnersTable() {
                     </td>
 
                     <td className="py-3 px-4 text-center font-semibold">{item.priority}</td>
+                    <td className="py-3 px-4">
+                      {(() => {
+                        const specs = getPartnerSpecialities(item.id);
+
+                        if (specs.length === 0) {
+                          return <span className="text-gray-400 text-sm">-</span>;
+                        }
+
+                        // mostramos máximo 3
+                        const visible = specs.slice(0, 2);
+                        const hiddenCount = specs.length - visible.length;
+
+                        return (
+                          <div
+                            className="text-sm text-gray-700"
+                            title={specs.join("\n")} // 👈 tooltip completo
+                          >
+                            <ul className="list-disc list-outside pl-4 space-y-0.5 leading-snug">
+
+                              {visible.map((name, idx) => (
+                                <li key={idx}>{name}</li>
+                              ))}
+
+                              {hiddenCount > 0 && (
+                                <li className="text-gray-400 italic">
+                                  +{hiddenCount} más
+                                </li>
+                              )}
+                            </ul>
+                          </div>
+                        );
+                      })()}
+                    </td>
+
+
                     <td className="py-3 px-4 text-center">
                       <span
                         title={
