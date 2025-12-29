@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Modules } from "../../../types/modules";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
 export default function ModulesTable() {
@@ -178,7 +179,7 @@ export default function ModulesTable() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("modules_screen.table.name")}</label>
+                <RequiredLabel required>{t("modules_screen.table.name")}</RequiredLabel>
                 <input
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={name}
@@ -188,7 +189,7 @@ export default function ModulesTable() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("modules_screen.table.description")}</label>
+                <RequiredLabel required>{t("modules_screen.table.description")}</RequiredLabel>
                 <textarea
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   rows={3}

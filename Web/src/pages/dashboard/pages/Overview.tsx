@@ -7,6 +7,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import type { CalendarEvent } from "../../../types/calendar";
 import { VITE_API_URL } from "../../../config/env";
 
 const COLORS = {
@@ -31,19 +32,6 @@ const toLocalDateString = (date: Date) => {
   return localDate.toISOString().slice(0, 10);
 };
 
-type CalendarEvent = {
-  id: string;
-  title: string;
-  start: string;
-  end: string;
-  extendedProps: {
-    status: string;
-    notes?: string;
-    partnerName?: string;
-    userDisabled: boolean;
-  };
-};
-
 export default function Overview() {
   const { t, i18n } = useTranslation();
   const [selectedDate, setSelectedDate] = useState(toLocalDateString(new Date()));
@@ -65,10 +53,9 @@ export default function Overview() {
         const end = new Date(start.getTime() + 30 * 60000);
         return {
           id: t.id.toString(),
-          title: `${t.car_name} · ${t.client_name}`,
+          title: `${t.car_name} ${t.car_year}· ${t.client_name}`,
           start: start.toISOString().slice(0, 19),
-end: end.toISOString().slice(0, 19),
-
+          end: end.toISOString().slice(0, 19),
           extendedProps: {
             status: t.status,
             notes: t.notes,
@@ -84,9 +71,7 @@ end: end.toISOString().slice(0, 19),
   }, []);
 
   const eventsOfDay = useMemo( () => events.filter((e) => e.start.slice(0, 10) === selectedDate), [events, selectedDate]);
-
   const daysWithEvents = useMemo( () => new Set(events.map((e) => e.start.slice(0, 10))), [events]);
-
   const calendarLocale =
   i18n.language.startsWith("es") ? esLocale : enLocale; const handleDateOrEventClick = (date: Date) => { setSelectedDate(toLocalDateString(date));};
 
@@ -355,7 +340,7 @@ end: end.toISOString().slice(0, 19),
                       </p>
                       {event.extendedProps.userDisabled && (
                         <p className="text-xs text-red-500 mt-1">
-                          Este ticket pertenece a un usuario desactivado
+                          {t("tickets_screen.status.label")}
                         </p>
                       )}
                     </div>
@@ -371,13 +356,9 @@ end: end.toISOString().slice(0, 19),
 }
 
 function StatCard({
-  title,
-  value,
-  gradient,
+  title, value, gradient,
 }: {
-  title: string;
-  value: number;
-  gradient: string;
+  title: string; value: number; gradient: string;
 }) {
   return (
     <div className="rounded-2xl p-4 shadow-lg text-white" style={{ background: gradient }}>

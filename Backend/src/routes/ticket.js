@@ -63,6 +63,7 @@ router.get("/", authMiddleware, async (req, res) => {
                 u.deleted_at AS user_deleted_at,
                 t.car_id,
                 c.name AS car_name,
+                c.year AS car_year,
                 c.model,
                 c.year,
                 t.partner_id,

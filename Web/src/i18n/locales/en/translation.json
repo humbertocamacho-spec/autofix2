@@ -361,7 +361,8 @@
     "label": "Status",
     "pendiente": "Pending",
     "revision": "Review",
-    "finalizado": "Finished"
+    "finalizado": "Finished",
+    "user_disabled": "This ticket belongs to a disabled user"
    },
    "common": {
     "cancel": "Cancel",

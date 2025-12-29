@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { PartnerCertification } from "../../../types/partner_certification";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
 export default function PartnersCertificationsTable() {
@@ -200,7 +201,7 @@ export default function PartnersCertificationsTable() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("partner_certifications_screen.table.partner_name")}</label>
+                <RequiredLabel required>{t("partner_certifications_screen.table.partner_name")}</RequiredLabel>
                 <select
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={partnerId}
@@ -214,9 +215,7 @@ export default function PartnersCertificationsTable() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("partner_certifications_screen.table.certification_name")}
-                </label>
+                <RequiredLabel required>{t("partner_certifications_screen.table.certification_name")}</RequiredLabel>
                 <select
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
                   value={certificationId}

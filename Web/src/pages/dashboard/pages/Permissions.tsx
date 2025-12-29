@@ -4,6 +4,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Modules } from "../../../types/modules";
 import type { Permission } from "../../../types/permission";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
 export default function PermissionsTable() {
@@ -177,13 +178,13 @@ export default function PermissionsTable() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("permissions_screen.name")}</label>
+                <RequiredLabel required>{t("permissions_screen.name")}</RequiredLabel>
 
                 <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={name} onChange={(e) => setName(e.target.value)}/>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("permissions_screen.module")}</label>
+                <RequiredLabel required>{t("permissions_screen.module")}</RequiredLabel>
 
                 <select
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg bg-white focus:ring-2 focus:ring-[#27B9BA]"

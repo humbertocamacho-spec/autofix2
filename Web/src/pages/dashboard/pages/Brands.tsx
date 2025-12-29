@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { CarBrands } from "../../../types/car_brands";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
 export default function CarBrands() {
@@ -164,7 +165,7 @@ export default function CarBrands() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("car_brands_screen.table.name")}</label>
+                <RequiredLabel required>{t("car_brands_screen.table.name")}</RequiredLabel>
 
                 <input
                   type="text"

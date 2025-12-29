@@ -4,6 +4,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Client } from "../../../types/client";
 import type { User } from "../../../types/users";
 import { useTranslation } from "react-i18next";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
 export default function ClientsTable() {
@@ -165,8 +166,7 @@ export default function ClientsTable() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("clients_screen.choose_user")}</label>
-
+                <RequiredLabel required>{t("clients_screen.choose_user")}</RequiredLabel>
                 <select
                   className="w-full border border-gray-300 px-3 py-2 rounded-lg bg-white focus:ring-2 focus:ring-[#27B9BA] focus:outline-none"
                   value={userId || ""}

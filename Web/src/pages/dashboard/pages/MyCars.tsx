@@ -5,6 +5,7 @@ import { useAuthContext } from "../../../context/AuthContext";
 import type { Cars } from "../../../types/cars";
 import type { CarBrands } from "../../../types/car_brands";
 import { useTranslation } from "react-i18next";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
 export default function MyCarsTable() {
@@ -291,12 +292,12 @@ export default function MyCarsTable() {
 
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.name")}</label>
+                                        <RequiredLabel required>{t("myCars_screen.table.name")}</RequiredLabel>
                                         <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={name} onChange={(e) => setName(e.target.value)}/>
                                     </div>
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.brand")}</label>
+                                        <RequiredLabel required>{t("myCars_screen.table.brand")}</RequiredLabel>
                                         <select className="w-full border border-gray-300 px-3 py-2 rounded-lgfocus:ring-2 focus:ring-[#27B9BA]" value={car_brand_id} onChange={(e) => setCarBrandId(Number(e.target.value))} >
                                             <option value="0">{t("myCars_screen.table.select_brand")}</option>
                                             {brands.map((b) => (
@@ -306,12 +307,12 @@ export default function MyCarsTable() {
                                     </div>
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.model")}</label>
+                                        <RequiredLabel required>{t("myCars_screen.table.model")}</RequiredLabel>
                                         <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={model} onChange={(e) => setModel(e.target.value)} />
                                     </div>
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.year")}</label>
+                                        <RequiredLabel required>{t("myCars_screen.table.year")}</RequiredLabel>
                                         <input
                                             type="number"
                                             className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
@@ -323,12 +324,12 @@ export default function MyCarsTable() {
                                     </div>
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.type")}</label>
+                                        <RequiredLabel required>{t("myCars_screen.table.type")}</RequiredLabel>
                                         <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={type} onChange={(e) => setType(e.target.value)}/>
                                     </div>
 
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-600">{t("myCars_screen.table.plate")}</label>
+                                        <RequiredLabel required>{t("myCars_screen.table.plate")}</RequiredLabel>
                                         <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={plate} onChange={(e) => setPlate(e.target.value)}/>
                                     </div>
                                 </div>

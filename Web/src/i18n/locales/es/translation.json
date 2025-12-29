@@ -355,7 +355,8 @@
     "label": "Estado",
     "pendiente": "Pendiente",
     "revision": "Revisión",
-    "finalizado": "Finalizado"
+    "finalizado": "Finalizado",
+    "user_disabled": "Este ticket pertenece a un usuario desactivado"
     },
     "common": {
     "cancel": "Cancelar",
