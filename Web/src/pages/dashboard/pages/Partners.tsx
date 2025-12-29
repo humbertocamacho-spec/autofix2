@@ -262,7 +262,7 @@ export default function PartnersTable() {
                           className=" h-10 w-10 object-contain transition-transform duration-200 ease-out hover:scale-[6] hover:z-20 origin-center cursor-zoom-in"
                         />
                       </div>
-                      ) : ( "-")}
+                    ) : ("-")}
                     </td>
 
                     <td className="py-3 px-4">
@@ -273,16 +273,18 @@ export default function PartnersTable() {
 
                     <td className="py-3 px-4 text-center font-semibold">{item.priority}</td>
                     <td className="py-3 px-4 text-center">
-                      {item.deleted_at ? (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                          {t("users_screen.table.status_inactive")}
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                          {t("users_screen.table.status_active")}
-                        </span>
-                      )}
+                      <span
+                        title={
+                          item.deleted_at
+                            ? t("users_screen.table.status_inactive")
+                            : t("users_screen.table.status_active")
+                        }
+                        className={`inline-block w-3 h-3 rounded-full
+                        ${item.deleted_at ? "bg-red-500" : "bg-green-500"}
+                        `}
+                      />
                     </td>
+
 
                     <td className="py-3 text-right space-x-3">
                       <div className="flex items-center justify-end gap-2 whitespace-nowrap">
