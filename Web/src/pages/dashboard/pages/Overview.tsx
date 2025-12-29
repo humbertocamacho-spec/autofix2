@@ -112,7 +112,7 @@ export default function Overview() {
           <div className="col-span-12 lg:col-span-8 bg-white p-6 rounded-xl shadow border border-gray-200 overflow-auto">
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              initialView="timeGridWeek"
+              initialView="dayGridMonth"
               locale={calendarLocale}
               events={events}
               height="75vh"
