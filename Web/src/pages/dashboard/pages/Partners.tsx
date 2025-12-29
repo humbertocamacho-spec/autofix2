@@ -166,7 +166,6 @@ export default function PartnersTable() {
 
     const partnerId = isEditing ? currentPartner?.id : data?.id;
 
-    //Guardar especialidades
     await fetch(`${VITE_API_URL}/api/partner_specialities`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
@@ -246,14 +245,12 @@ export default function PartnersTable() {
                   <th className="pb-3 w-40">{t("partners_screen.table.phone")}</th>
                   <th className="pb-3 w-40">{t("partners_screen.table.whatsapp")}</th>
                   <th className="pb-3 ">{t("partners_screen.table.location")}</th>
-                  <th className="pb-3">{t("partners_screen.table.latitude")}</th>
-                  <th className="pb-3">{t("partners_screen.table.longitude")}</th>
                   <th className="pb-3 w-40 text-center">{t("partners_screen.table.land_use_permit")}</th>
                   <th className="pb-3 w-40 text-center">{t("partners_screen.table.scanner_handling")}</th>
                   <th className="pb-3 w-32 text-center">{t("partners_screen.table.logo_url")}</th>
                   <th className="pb-3 px-4">{t("partners_screen.table.description")}</th>
-                  <th className="pb-3 px-4 text-center w-24">{t("partners_screen.table.priority")}</th>
                   <th className="pb-3 px-4">{t("partners_screen.table.specialities")}</th>
+                  <th className="pb-3 px-4 text-center w-24">{t("partners_screen.table.priority")}</th>
                   <th className="pb-3 px-4 text-center w-28">{t("users_screen.table.status")}</th>
                   <th className="pb-3 w-32 text-right">{t("partners_screen.table.actions")}</th>
                 </tr>
@@ -267,16 +264,10 @@ export default function PartnersTable() {
                     <td className="py-3">{item.phone}</td>
                     <td className="py-3">{item.whatsapp}</td>
                     <td className="py-3 max-w-xs">
-                      <span
-                        className="block text-sm truncate cursor-help"
-                        title={item.location}
-                      >
+                      <span className="block text-sm truncate cursor-help" title={item.location}>
                         {truncateText(item.location, 10)}
                       </span>
                     </td>
-
-                    <td className="py-3 text-sm">{item.latitude || "-"}</td>
-                    <td className="py-3 text-sm">{item.longitude || "-"}</td>
                     <td className="py-3 w-40 text-center">{item.land_use_permit ? "✔" : "✖"}</td>
                     <td className="py-3 w-40 text-center">{item.scanner_handling ? "✔" : "✖"}</td>
                     <td className="py-3 w-32"> {item.logo_url ? (
@@ -296,7 +287,6 @@ export default function PartnersTable() {
                       </span>
                     </td>
 
-                    <td className="py-3 px-4 text-center font-semibold">{item.priority}</td>
                     <td className="py-3 px-4">
                       {(() => {
                         const specs = getPartnerSpecialities(item.id);
@@ -305,15 +295,11 @@ export default function PartnersTable() {
                           return <span className="text-gray-400 text-sm">-</span>;
                         }
 
-                        // mostramos máximo 3
                         const visible = specs.slice(0, 2);
                         const hiddenCount = specs.length - visible.length;
 
                         return (
-                          <div
-                            className="text-sm text-gray-700"
-                            title={specs.join("\n")} // 👈 tooltip completo
-                          >
+                          <div className="text-sm text-gray-700" title={specs.join("\n")}>
                             <ul className="list-disc list-outside pl-4 space-y-0.5 leading-snug">
 
                               {visible.map((name, idx) => (
@@ -321,9 +307,7 @@ export default function PartnersTable() {
                               ))}
 
                               {hiddenCount > 0 && (
-                                <li className="text-gray-400 italic">
-                                  +{hiddenCount} más
-                                </li>
+                                <li className="text-gray-400 italic"> +{hiddenCount} {t("partners_screen.table.hidden")}</li>
                               )}
                             </ul>
                           </div>
@@ -331,7 +315,8 @@ export default function PartnersTable() {
                       })()}
                     </td>
 
-
+                    <td className="py-3 px-4 text-center font-semibold">{item.priority}</td>
+                    
                     <td className="py-3 px-4 text-center">
                       <span
                         title={
@@ -344,7 +329,6 @@ export default function PartnersTable() {
                         `}
                       />
                     </td>
-
 
                     <td className="py-3 text-right space-x-3">
                       <div className="flex items-center justify-end gap-2 whitespace-nowrap">

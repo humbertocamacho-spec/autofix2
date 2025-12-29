@@ -142,6 +142,7 @@
       "name": "Nombre",
       "user": "Usuario",
       "phone": "Teléfono",
+      "contact": "Contacto",
       "priority": "Prioridad",
       "whatsapp": "WhatsApp",
       "latitude": "Latitud",
@@ -151,7 +152,8 @@
       "logo_url": "Logo",
       "description": "Descripción",
       "specialities": "Especialidades",
-      "logo_url_preview": "Vista previa"
+      "logo_url_preview": "Vista previa",
+      "hidden": "más"
     },
     "title": "Partners"
   },
