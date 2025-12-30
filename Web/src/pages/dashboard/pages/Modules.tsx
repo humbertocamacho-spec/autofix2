@@ -54,7 +54,6 @@ export default function ModulesTable() {
     return Object.keys(newErrors).length === 0;
   };
 
-
   const handleSave = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
@@ -82,23 +81,17 @@ export default function ModulesTable() {
       console.error("Error saving module:", error);
     }
   };
-  const handleDelete = async (id: number) => {
-    if (!confirm("¿Seguro que quieres eliminar este módulo?")) return;
+  
+  const handleDelete = async (module: Modules) => {
+    const confirmed = window.confirm(t("modules_screen.confirm.deactivate", { name: module.name }));
+    if (!confirmed) return;
 
-    try {
-      const res = await fetch(`${VITE_API_URL}/api/modules/${id}`, {
-        method: "DELETE",
-      });
+    const res = await fetch( `${VITE_API_URL}/api/modules/${module.id}`, { method: "DELETE" });
 
-      const data = await res.json();
-      if (data.ok) {
-        fetchModules();
-      } else {
-        alert(data.message);
-      }
-    } catch (error) {
-      console.error("Error deleting module:", error);
-    }
+    if (!res.ok) { alert(t("modules_screen.errors.deactivate")); return;}
+
+    alert(t("modules_screen.success.deactivate"));
+    fetchModules();
   };
 
   const openCreateModal = () => {
@@ -177,7 +170,7 @@ export default function ModulesTable() {
                       </Can>
 
                       <Can permission="delete_modules">
-                        <button onClick={() => handleDelete(mod.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                        <button onClick={() => handleDelete(mod)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                           {t("modules_screen.delete")}
                         </button>
                       </Can>

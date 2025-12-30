@@ -122,14 +122,12 @@
       "seeAll": "See all",
       "viewAll": "View all"
     },
-
     "progress": "Progress",
     "stats": {
       "dayswithtickets": "Days with tickets",
       "ticketsoftoday": "Tickets today",
       "ticketsthismonth": "Tickets this month"
     },
-
     "subtitle": "Welcome to your dashboard overview.",
     "title": "Dashboard Overview",
     "title_calendar": "My Calendar",
@@ -142,7 +140,6 @@
       "marketing": "Marketing",
       "title": "Quick To-Do List"
     },
-
     "upcoming": {
       "project1": "Redesign Kripton Mobile App",
       "project2": "Build Branding Persona for Etza.id",
@@ -270,24 +267,20 @@
       "select_role": "Select role",
       "title": "Edit User"
     },
-
     "errors": {
       "fetch": "Error fetching users",
       "update": "Error updating user",
       "deactivate": "Error deactivating user"
     },
-
     "success": {
       "update": "User updated successfully",
       "deactivate": "User deactivated successfully",
       "restore": "User restored successfully"
     },
-
     "confirm": {
       "deactivate": "Are you sure you want to deactivate the user \"{{name}}\"?",
       "restore": "Are you sure you want to restore the user \"{{name}}\"?"
     },
-  
     "no_results": "No users found",
     "search_placeholder": "Search users...",
     "table": {
@@ -353,6 +346,15 @@
       "name": "Name",
       "actions": "Actions",
       "name_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to delete the brand \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Brand deleted successfully"
+    },
+    "errors": {
+      "deactivate": "Error deleting brand"
     }
   },
 
@@ -375,6 +377,15 @@
       "name": "Name",
       "actions": "Actions",
       "name_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to delete the certification \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Certification deleted successfully"
+    },
+    "errors": {
+      "deactivate": "Error deleting certification"
     }
   },
 
@@ -398,6 +409,15 @@
       "actions": "Actions",
       "name_error": "This field is required",
       "description_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to delete the module \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Module deleted successfully"
+    },
+    "errors": {
+      "deactivate": "Error deleting module"
     }
   },
 
@@ -425,6 +445,15 @@
       "actions": "Actions",
       "name_error": "This field is required",
       "module_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to delete the permission \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Permission deleted successfully"
+    },
+    "errors": {
+      "deactivate": "Error deleting permission"
     }
   },
 
@@ -446,7 +475,6 @@
     "no_results": "No tickets found",
     "edit_status": "Edit status",
     "confirm_delete": "Are you sure you want to delete this ticket?",
-
     "status": {
       "label": "Status",
       "pendiente": "Pending",
@@ -454,12 +482,10 @@
       "finalizado": "Finished",
       "user_disabled": "This ticket belongs to a disabled user"
     },
-
     "common": {
       "cancel": "Cancel",
       "save": "Save"
     },
-
     "table": {
       "id": "ID",
       "client": "Client",

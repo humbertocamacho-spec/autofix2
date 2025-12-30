@@ -21,7 +21,6 @@ export default function PermissionsTable() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-
   useEffect(() => {
     fetchModules();
     fetchPermissions();
@@ -59,10 +58,7 @@ export default function PermissionsTable() {
     return Object.keys(newErrors).length === 0;
   };
 
-
-  const getModuleName = (id: number) =>
-    modules.find((m) => m.id === id)?.name ||
-    t("permissions_screen.unknown_module");
+  const getModuleName = (id: number) => modules.find((m) => m.id === id)?.name || t("permissions_screen.unknown_module");
 
   const openCreate = () => {
     setIsEditing(false);
@@ -89,9 +85,7 @@ export default function PermissionsTable() {
     if (!validateForm()) return;
 
     const method = isEditing ? "PUT" : "POST";
-    const url = isEditing
-      ? `${VITE_API_URL}/api/permissions/${current?.id}`
-      : `${VITE_API_URL}/api/permissions`;
+    const url = isEditing ? `${VITE_API_URL}/api/permissions/${current?.id}` : `${VITE_API_URL}/api/permissions`;
 
     await fetch(url, {
       method,
@@ -103,19 +97,19 @@ export default function PermissionsTable() {
     fetchPermissions();
   };
 
-  const deletePermission = async (id: number) => {
-    if (!confirm("¿Eliminar permiso?")) return;
+  const deletePermission = async (permission: Permission) => {
+    const confirmed = window.confirm(t("permissions_screen.confirm.deactivate", { name: permission.name,}));
+    if (!confirmed) return;
 
-    await fetch(`${VITE_API_URL}/api/permissions/${id}`, {
-      method: "DELETE",
-    });
+    const res = await fetch( `${VITE_API_URL}/api/permissions/${permission.id}`, { method: "DELETE" });
 
+    if (!res.ok) { alert(t("permissions_screen.errors.deactivate")); return;}
+
+    alert(t("permissions_screen.success.deactivate"));
     fetchPermissions();
   };
 
-  const filtered = permissions.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = permissions.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
@@ -138,8 +132,7 @@ export default function PermissionsTable() {
       </div>
 
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
-        {loading ? (
-          <p className="text-center py-10 text-gray-500">{t("permissions_screen.loading")}</p>
+        {loading ? (<p className="text-center py-10 text-gray-500">{t("permissions_screen.loading")}</p>
         ) : (
           <div className="max-h-[600px] overflow-y-auto">
             <table className="w-full table-auto text-left">
@@ -157,7 +150,6 @@ export default function PermissionsTable() {
                     <td className="py-3">{perm.id}</td>
                     <td className="py-3">{perm.name}</td>
                     <td className="py-3">{getModuleName(perm.module_id)}</td>
-
                     <td className="py-3 text-right space-x-3">
                       <Can permission="update_permissions">
                         <button onClick={() => openEdit(perm)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
@@ -166,7 +158,7 @@ export default function PermissionsTable() {
                       </Can>
 
                       <Can permission="delete_permissions">
-                        <button onClick={() => deletePermission(perm.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                        <button onClick={() => deletePermission(perm)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                           {t("permissions_screen.delete")}
                         </button>
                       </Can>
@@ -174,13 +166,7 @@ export default function PermissionsTable() {
                   </tr>
                 ))}
 
-                {filtered.length === 0 && (
-                  <tr>
-                    <td colSpan={4} className="text-center py-6 text-gray-500">
-                      {t("permissions_screen.no_results")}
-                    </td>
-                  </tr>
-                )}
+                {filtered.length === 0 && ( <tr><td colSpan={4} className="text-center py-6 text-gray-500"> {t("permissions_screen.no_results")}</td></tr>)}
               </tbody>
             </table>
           </div>
@@ -191,28 +177,21 @@ export default function PermissionsTable() {
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
 
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              {isEditing ? t("permissions_screen.edit_title") : t("permissions_screen.create_title")}
-            </h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800"> {isEditing ? t("permissions_screen.edit_title") : t("permissions_screen.create_title")}</h2>
 
             <div className="space-y-4">
               <div>
                 <RequiredLabel required>{t("permissions_screen.name")}</RequiredLabel>
-
                 <input className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"} `}
                   value={name}
                   onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
                   placeholder="Ej. create_users"
                 />
-
-                {submitted && errors.name && (
-                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
-                )}
+                {submitted && errors.name && ( <p className="text-red-500 text-xs mt-1">{errors.name}</p>)}
               </div>
 
               <div>
                 <RequiredLabel required>{t("permissions_screen.module")}</RequiredLabel>
-
                 <select
                   className={`w-full px-3 py-2 rounded-lg border bg-white  ${submitted && errors.moduleId ? "border-red-500" : "border-gray-300"}  `}
                   value={moduleId || ""}
@@ -221,9 +200,7 @@ export default function PermissionsTable() {
                   <option value="">{t("permissions_screen.select_module")}</option>
 
                   {modules.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.name}
-                    </option>
+                    <option key={m.id} value={m.id}>{m.name}</option>
                   ))}
                 </select>
                 {submitted && errors.moduleId && (

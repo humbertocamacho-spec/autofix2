@@ -19,7 +19,6 @@ export default function CertificationsTable() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-
   useEffect(() => {
     fetchCertifications();
   }, []);
@@ -39,14 +38,11 @@ export default function CertificationsTable() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!name.trim()) {
-      newErrors.name = t("certifications_screen.table.name_error");
-    }
+    if (!name.trim()) { newErrors.name = t("certifications_screen.table.name_error");}
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
 
   const openCreate = () => {
     setIsEditing(false);
@@ -71,9 +67,7 @@ export default function CertificationsTable() {
     if (!validateForm()) return;
 
     const method = isEditing ? "PUT" : "POST";
-    const url = isEditing
-      ? `${VITE_API_URL}/api/certifications/${current?.id}`
-      : `${VITE_API_URL}/api/certifications`;
+    const url = isEditing ? `${VITE_API_URL}/api/certifications/${current?.id}` : `${VITE_API_URL}/api/certifications`;
 
     await fetch(url, {
       method,
@@ -85,16 +79,19 @@ export default function CertificationsTable() {
     fetchCertifications();
   };
 
-  const deleteCertification = async (id: number) => {
-    if (!confirm("¿Eliminar esta certificación?")) return;
-    await fetch(`${VITE_API_URL}/api/certifications/${id}`, { method: "DELETE" });
+  const deleteCertification = async (certification: Certification) => {
+    const confirmed = window.confirm(t("certifications_screen.confirm.deactivate", { name: certification.name,}));
+    if (!confirmed) return;
 
+    const res = await fetch( `${VITE_API_URL}/api/certifications/${certification.id}`, { method: "DELETE" });
+
+    if (!res.ok) { alert(t("certifications_screen.errors.deactivate")); return;}
+
+    alert(t("certifications_screen.success.deactivate"));
     fetchCertifications();
   };
 
-  const filtered = certifications.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = certifications.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
@@ -142,7 +139,7 @@ export default function CertificationsTable() {
                       </Can>
 
                       <Can permission="delete_certifications">
-                        <button onClick={() => deleteCertification(item.id)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                        <button onClick={() => deleteCertification(item)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                           {t("certifications_screen.delete")}
                         </button>
                       </Can>

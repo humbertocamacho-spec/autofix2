@@ -122,14 +122,12 @@
       "seeAll": "Ver más",
       "viewAll": "Ver todo"
     },
-
     "progress": "Progreso",
     "stats": {
       "dayswithtickets": "Días con citas",
       "ticketsoftoday": "Citas hoy",
       "ticketsthismonth": "Citas este mes"
     },
-
     "subtitle": "Bienvenido a tu resumen del dashboard.",
     "title": "Resumen del Panel",
     "title_calendar": "Mi Calendario",
@@ -269,24 +267,20 @@
       "select_role": "Seleccionar rol",
       "title": "Editar Usuario"
     },
-
     "errors": {
       "fetch": "Error al obtener usuarios",
       "update": "Error al actualizar usuario",
       "deactivate": "Error al desactivar usuario"
     },
-
     "success": {
       "update": "Usuario actualizado correctamente",
       "deactivate": "Usuario desactivado correctamente",
       "restore": "Usuario reactivado correctamente"
     }, 
-
     "confirm": {
       "deactivate": "¿Seguro que deseas desactivar al usuario \"{{name}}\"?",
       "restore": "¿Seguro que deseas reactivar al usuario \"{{name}}\"?"
     },
-
     "no_results": "No se encontraron usuarios",
     "search_placeholder": "Buscar usuarios...",
     "table": {
@@ -351,6 +345,15 @@
       "name": "Nombre",
       "actions": "Acciones",
       "name_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar la marca \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Marca eliminada correctamente"
+    },
+    "errors": {
+      "deactivate": "Error al eliminar la marca"
     }
   },
 
@@ -373,6 +376,15 @@
       "name": "Nombre",
       "actions": "Acciones",
       "name_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar la certificación \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Certificación eliminada correctamente"
+    },
+    "errors": {
+      "deactivate": "Error al eliminar la certificación"
     }
   },
 
@@ -396,6 +408,15 @@
       "actions": "Acciones",
       "name_error": "Este campo es obligatorio",
       "description_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar el módulo \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Módulo eliminado correctamente"
+    },
+    "errors": {
+      "deactivate": "Error al eliminar el módulo"
     }
   },
 
@@ -423,6 +444,15 @@
       "actions": "Acciones",
       "name_error": "Este campo es obligatorio",
       "module_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar el permiso \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Permiso eliminado correctamente"
+    },
+    "errors": {
+      "deactivate": "Error al eliminar el permiso"
     }
   },
 
@@ -453,7 +483,7 @@
     "common": {
     "cancel": "Cancelar",
     "save": "Guardar"
-  },
+    },
     "table": {
       "id": "ID",
       "client": "Cliente",

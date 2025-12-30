@@ -47,7 +47,6 @@ export default function CarBrands() {
     return Object.keys(newErrors).length === 0;
   };
 
-
   const handleCreate = () => {
     setIsEditing(false);
     setCurrentBrand(null);
@@ -91,19 +90,23 @@ export default function CarBrands() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    const confirmDelete = window.confirm("¿Eliminar marca?");
-    if (!confirmDelete) return;
+  const handleDelete = async (brand: CarBrands) => {
+    const confirmed = window.confirm(
+      t("car_brands_screen.confirm.deactivate", { name: brand.name })
+    );
+    if (!confirmed) return;
 
-    try {
-      await fetch(`${VITE_API_URL}/api/car_brands/${id}`, {
-        method: "DELETE",
-      });
+    const res = await fetch(`${VITE_API_URL}/api/car_brands/${brand.id}`, {
+      method: "DELETE",
+    });
 
-      fetchCarBrands();
-    } catch (error) {
-      console.error("Error deleting brand:", error);
+    if (!res.ok) {
+      alert(t("car_brands_screen.errors.deactivate"));
+      return;
     }
+
+    alert(t("car_brands_screen.success.deactivate"));
+    fetchCarBrands();
   };
 
   const filtered = carBrands.filter((s) =>
@@ -157,7 +160,7 @@ export default function CarBrands() {
                       </Can>
 
                       <Can permission="delete_brands">
-                        <button onClick={() => handleDelete(item.id)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                        <button onClick={() => handleDelete(item)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                           {t("car_brands_screen.delete")}
                         </button>
                       </Can>
