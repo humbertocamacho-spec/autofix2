@@ -54,7 +54,7 @@ export default function ClientsTable() {
     const newErrors: Record<string, string> = {};
 
     if (!userId) {
-      newErrors.userId = "Este campo es obligatorio";
+      newErrors.userId = t("clients_screen.table.user_error");
     }
 
     setErrors(newErrors);
@@ -121,7 +121,7 @@ export default function ClientsTable() {
         <input
           type="text"
           placeholder={t("clients_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -189,7 +189,7 @@ export default function ClientsTable() {
               <div>
                 <RequiredLabel required>{t("clients_screen.choose_user")}</RequiredLabel>
                 <select
-                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.userId ? "border-red-500" : "border-gray-300"}  bg-white focus:ring-2 focus:ring-[#27B9BA]`}
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.userId ? "border-red-500" : "border-gray-300"}  bg-white`}
                   value={userId || ""}
                   onChange={(e) => { setUserId(Number(e.target.value)); setErrors((prev) => ({ ...prev, userId: "" })); }}
                 >

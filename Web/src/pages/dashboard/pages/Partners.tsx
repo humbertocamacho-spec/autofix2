@@ -40,7 +40,6 @@ export default function PartnersTable() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-
   useEffect(() => {
     fetchPartners();
     fetchUsers();
@@ -112,21 +111,18 @@ export default function PartnersTable() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!name.trim()) newErrors.name = "Este campo es obligatorio";
-    if (!userId) newErrors.userId = "Este campo es obligatorio";
-    if (!phone.trim()) newErrors.phone = "Este campo es obligatorio";
-    if (!location.trim()) newErrors.location = "Este campo es obligatorio";
-    if (!latitude.trim()) newErrors.latitude = "Este campo es obligatorio";
-    if (!longitude.trim()) newErrors.longitude = "Este campo es obligatorio";
-    if (!logoUrl.trim()) newErrors.logoUrl = "Este campo es obligatorio";
-    if (!description.trim()) newErrors.description = "Este campo es obligatorio";
-
+    if (!name.trim()) newErrors.name = t("partners_screen.table.name_error");
+    if (!userId) newErrors.userId = t("partners_screen.table.user_error");
+    if (!phone.trim()) newErrors.phone = t("partners_screen.table.phone_error");
+    if (!location.trim()) newErrors.location = t("partners_screen.table.location_error");
+    if (!latitude.trim()) newErrors.latitude = t("partners_screen.table.latitude_error");
+    if (!longitude.trim()) newErrors.longitude = t("partners_screen.table.longitude_error");
+    if (!logoUrl.trim()) newErrors.logoUrl = t("partners_screen.table.logo_url_error");
+    if (!description.trim()) newErrors.description = t("partners_screen.table.description_error");
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
   };
-
-
 
   const openCreate = () => {
     setIsEditing(false);
@@ -247,7 +243,7 @@ export default function PartnersTable() {
         <input
           type="text"
           placeholder={t("partners_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -407,7 +403,7 @@ export default function PartnersTable() {
                 <div className="col-span-2">
                   <RequiredLabel required>{t("partners_screen.table.name")}</RequiredLabel>
                   <input
-                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"}`}
                     value={name}
                     onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
                     placeholder="Ej. Taller Mecánico El Rayo"
@@ -419,7 +415,7 @@ export default function PartnersTable() {
                   <RequiredLabel required>{t("partners_screen.table.user")}</RequiredLabel>
                   <select
                     className={`w-full border border-gray-300 px-3 py-2 rounded-lg
-                      ${user?.role_name === "partner" ? "bg-gray-100 text-gray-500 cursor-not-allowed" : "focus:ring-2 focus:ring-[#27B9BA]"}`}
+                      ${user?.role_name === "partner" ? "bg-gray-100 text-gray-500 cursor-not-allowed" : " "}`}
                     value={user?.role_name === "partner" ? user.id : userId ?? ""}
                     disabled={user?.role_name === "partner"}
                     onChange={(e) => setUserId(Number(e.target.value))}
@@ -434,7 +430,7 @@ export default function PartnersTable() {
                 <div>
                   <RequiredLabel required>{t("partners_screen.table.phone")}</RequiredLabel>
                   <input
-                    className={`w-full px-3 py-2 rounded-lg border ${errors.phone ? "border-red-500" : "border-gray-300"}  focus:ring-2 focus:ring-[#27B9BA]`}
+                    className={`w-full px-3 py-2 rounded-lg border ${errors.phone ? "border-red-500" : "border-gray-300"} `}
                     value={phone}
                     onChange={(e) => { setPhone(e.target.value); setErrors((prev) => ({ ...prev, phone: "" })); }}
                     placeholder="Ej. 55 1234 5678"
@@ -445,7 +441,7 @@ export default function PartnersTable() {
                 <div>
                   <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.whatsapp")}</label>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                     value={whatsapp}
                     onChange={(e) => setWhatsapp(e.target.value)}
                     placeholder="Ej. 55 1234 5678"
@@ -455,7 +451,8 @@ export default function PartnersTable() {
                 <div className="col-span-2">
                   <RequiredLabel required>{t("partners_screen.table.location")}</RequiredLabel>
                   <textarea
-                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.location ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.location ? "border-red-500" : "border-gray-300"}`}
+                    value={location}
                     onChange={(e) => { setLocation(e.target.value); setErrors((prev) => ({ ...prev, location: "" })); }}
                     placeholder="Ej. Av. Insurgentes Sur 123, Col. Roma Norte, CDMX"
                   />
@@ -467,7 +464,7 @@ export default function PartnersTable() {
                 <div>
                   <RequiredLabel required>{t("partners_screen.table.latitude")}</RequiredLabel>
                   <input
-                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.latitude ? "border-red-500" : "border-gray-300"}focus:ring-2 focus:ring-[#27B9BA]`}
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.latitude ? "border-red-500" : "border-gray-300"}`}
                     value={latitude}
                     onChange={(e) => {
                       setLatitude(e.target.value); setErrors((prev) => ({ ...prev, latitude: "" }));
@@ -482,7 +479,7 @@ export default function PartnersTable() {
                 <div>
                   <RequiredLabel required>{t("partners_screen.table.longitude")}</RequiredLabel>
                   <input
-                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.longitude ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.longitude ? "border-red-500" : "border-gray-300"}`}
                     value={longitude}
                     onChange={(e) => {
                       setLongitude(e.target.value); setErrors((prev) => ({ ...prev, longitude: "" }));
@@ -492,13 +489,13 @@ export default function PartnersTable() {
                   {submitted && errors.longitude && (
                     <p className="text-red-500 text-xs mt-1">{errors.longitude}</p>
                   )}
-
                 </div>
 
                 <div className="col-span-2">
                   <RequiredLabel required>{t("partners_screen.table.logo_url")}</RequiredLabel>
                   <input
-                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.logoUrl ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.logoUrl ? "border-red-500" : "border-gray-300"}`}
+                    value={logoUrl}
                     onChange={(e) => { setLogoUrl(e.target.value); setErrors((prev) => ({ ...prev, logoUrl: "" })); }}
                     placeholder="https://ejemplo.com/logo.png"
                   />
@@ -524,7 +521,7 @@ export default function PartnersTable() {
                 <div className="col-span-2">
                   <RequiredLabel required>{t("partners_screen.table.description")}</RequiredLabel>
                   <input
-                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.description ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.description ? "border-red-500" : "border-gray-300"}`}
                     value={description}
                     onChange={(e) => { setDescription(e.target.value); setErrors((prev) => ({ ...prev, description: "" })); }}
                     placeholder="Ej. Taller especializado en frenos, suspensión y mantenimiento general"
@@ -551,7 +548,7 @@ export default function PartnersTable() {
                     type="number"
                     min={1}
                     max={10}
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full border border-gray-300 px-3 py-2 rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
                     value={priority}
                     disabled={user?.role_name !== "admin"}
                     onChange={(e) =>

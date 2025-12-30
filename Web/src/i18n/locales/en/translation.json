@@ -1,6 +1,7 @@
 {
   "admins": "Admins",
   "admin_screen": {
+    "title": "Administrators",
     "add_button": "Add Admin",
     "delete": "Delete",
     "edit": "Edit",
@@ -17,11 +18,9 @@
     "table": {
       "actions": "Actions",
       "id": "ID",
-      "name": "Name"
-    },
-
-
-    "title": "Administrators"
+      "name": "Name",
+      "user_error": "This field is required"
+    }
   },
 
   "brands": "Car Brands",
@@ -29,6 +28,7 @@
 
   "clients": "Clients",
   "clients_screen": {
+    "title": "Clients",
     "add_button": "Add Client",
     "delete": "Delete",
     "edit": "Edit",
@@ -45,9 +45,9 @@
     "table": {
       "actions": "Actions",
       "id": "ID",
-      "name": "Name"
-    },
-    "title": "Clients"
+      "name": "Name",
+      "user_error": "This field is required"
+    }
   },
 
   "confirmed_tickets": "Confirmed",
@@ -78,7 +78,13 @@
       "type": "Type",
       "plate": "Plate",
       "actions": "Actions",
-      "select_brand": "Select brand"
+      "select_brand": "Select brand",
+      "name_error": "This field is required",
+      "brand_error": "This field is required",
+      "model_error": "This field is required",
+      "year_error": "This field is required",
+      "type_error": "This field is required",
+      "plate_error": "This field is required"
     }
   },
 
@@ -94,12 +100,14 @@
       "seeAll": "See all",
       "viewAll": "View all"
     },
+
     "progress": "Progress",
     "stats": {
       "dayswithtickets": "Days with tickets",
       "ticketsoftoday": "Tickets today",
       "ticketsthismonth": "Tickets this month"
     },
+
     "subtitle": "Welcome to your dashboard overview.",
     "title": "Dashboard Overview",
     "title_calendar": "My Calendar",
@@ -112,6 +120,7 @@
       "marketing": "Marketing",
       "title": "Quick To-Do List"
     },
+
     "upcoming": {
       "project1": "Redesign Kripton Mobile App",
       "project2": "Build Branding Persona for Etza.id",
@@ -124,8 +133,8 @@
   },
 
   "partners": "Partners",
-  
   "partners_screen": {
+    "title": "Partners",
     "add_button": "Add Partner",
     "delete": "Delete",
     "edit": "Edit",
@@ -156,36 +165,45 @@
       "description": "Description",
       "specialities": "Specialities",
       "logo_url_preview": "Preview",
-      "hidden": "more"
-    },
-    "title": "Partners"
+      "hidden": "more",
+      "name_error": "This field is required",
+      "user_error": "This field is required",
+      "phone_error": "This field is required",
+      "location_error": "This field is required",
+      "latitude_error": "This field is required",
+      "longitude_error": "This field is required",
+      "logo_url_error": "This field is required",
+      "description_error": "This field is required"
+    }
   },
 
   "partner_certifications": "Partners Certifications",
-    "partner_certifications_screen": {
-      "title": "Partners Certifications",
-      "search_placeholder": "Search partner certification...",
-      "add_button": "Add Partner Certification",
-      "loading": "Loading...",
-      "edit": "Edit",
-      "delete": "Delete",
-      "no_results": "No partner certifications found",
-      "create_title": "Add Partner Certification",
-      "edit_title": "Edit Partner Certification",
-      "create": "Create",
-      "save": "Save",
-      "cancel": "Cancel",
-      "table": {
-        "actions": "Actions",
-        "id": "ID",
-        "name": "Name",
-        "partner_id": "Partner ID",
-        "partner_name": "Partner Name",
-        "certification_name": "Certification Name",
-        "select_partner": "Select Partner",
-        "select_certification": "Select Certification"
-      }
-    },
+  "partner_certifications_screen": {
+    "title": "Partners Certifications",
+    "search_placeholder": "Search partner certification...",
+    "add_button": "Add Partner Certification",
+    "loading": "Loading...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "no_results": "No partner certifications found",
+    "create_title": "Add Partner Certification",
+    "edit_title": "Edit Partner Certification",
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
+    "table": {
+      "actions": "Actions",
+      "id": "ID",
+      "name": "Name",
+      "partner_id": "Partner ID",
+      "partner_name": "Partner Name",
+      "certification_name": "Certification Name",
+      "select_partner": "Select Partner",
+      "select_certification": "Select Certification",
+      "partner_error": "This field is required",
+      "certification_error": "This field is required"
+    }
+  },
 
   "pending_tickets": "Pending",
   "permissions": "Permissions",
@@ -214,6 +232,7 @@
       "select_role": "Select role",
       "title": "Edit User"
     },
+  
     "no_results": "No users found",
     "search_placeholder": "Search users...",
     "table": {
@@ -247,7 +266,8 @@
     "table": {
       "id": "ID",
       "name": "Name",
-      "actions": "Actions"
+      "actions": "Actions",
+      "name_error": "This field is required"
     }
   },
 
@@ -267,7 +287,8 @@
     "table": {
       "id": "ID",
       "name": "Name",
-      "actions": "Actions"
+      "actions": "Actions",
+      "name_error": "This field is required"
     }
   },
 
@@ -288,7 +309,8 @@
     "table": {
       "id": "ID",
       "name": "Name",
-      "actions": "Actions"
+      "actions": "Actions",
+      "name_error": "This field is required"
     }
   },
 
@@ -309,7 +331,9 @@
       "id": "ID",
       "name": "Name",
       "description": "Description",
-      "actions": "Actions"
+      "actions": "Actions",
+      "name_error": "This field is required",
+      "description_error": "This field is required"
     }
   },
 
@@ -334,7 +358,9 @@
       "id": "ID",
       "permission": "Permission",
       "module": "Module",
-      "actions": "Actions"
+      "actions": "Actions",
+      "name_error": "This field is required",
+      "module_error": "This field is required"
     }
   },
 
@@ -358,16 +384,17 @@
     "confirm_delete": "Are you sure you want to delete this ticket?",
 
     "status": {
-    "label": "Status",
-    "pendiente": "Pending",
-    "revision": "Review",
-    "finalizado": "Finished",
-    "user_disabled": "This ticket belongs to a disabled user"
-   },
-   "common": {
-    "cancel": "Cancel",
-    "save": "Save"
-  },
+      "label": "Status",
+      "pendiente": "Pending",
+      "revision": "Review",
+      "finalizado": "Finished",
+      "user_disabled": "This ticket belongs to a disabled user"
+    },
+
+    "common": {
+      "cancel": "Cancel",
+      "save": "Save"
+    },
 
     "table": {
       "id": "ID",
@@ -442,6 +469,12 @@
     "mismatch": "Passwords do not match",
     "description": "Change your password to access your account.",
     "updated": "Password updated"
-  }
+  },
+
+  "unauthorized_page": {
+    "title": "Unauthorized",
+    "description": "You are not authorized to access this page.",
+    "button": "Go to Dashboard"
+  } 
 }
 

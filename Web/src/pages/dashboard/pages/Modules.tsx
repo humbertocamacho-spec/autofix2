@@ -43,11 +43,11 @@ export default function ModulesTable() {
     const newErrors: Record<string, string> = {};
 
     if (!name.trim()) {
-      newErrors.name = "Este campo es obligatorio";
+      newErrors.name = t("modules_screen.table.name_error");
     }
 
     if (!description.trim()) {
-      newErrors.description = "Este campo es obligatorio";
+      newErrors.description = t("modules_screen.table.description_error");
     }
 
     setErrors(newErrors);
@@ -137,7 +137,7 @@ export default function ModulesTable() {
         <input
           type="text"
           placeholder={t("modules_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -206,7 +206,7 @@ export default function ModulesTable() {
               <div>
                 <RequiredLabel required>{t("modules_screen.table.name")}</RequiredLabel>
                 <input
-                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"}`}
                   value={name}
                   onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
                   placeholder="Ej. Gestión de Partners"
@@ -219,7 +219,7 @@ export default function ModulesTable() {
               <div>
                 <RequiredLabel required>{t("modules_screen.table.description")}</RequiredLabel>
                 <textarea
-                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.description ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.description ? "border-red-500" : "border-gray-300"}`}
                   rows={3}
                   value={description}
                   onChange={(e) => {  setDescription(e.target.value); setErrors((prev) => ({ ...prev, description: "" })); }}

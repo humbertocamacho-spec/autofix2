@@ -71,11 +71,11 @@ export default function PartnersCertificationsTable() {
     const newErrors: Record<string, string> = {};
 
     if (!partnerId) {
-      newErrors.partnerId = "Este campo es obligatorio";
+      newErrors.partnerId = t("partner_certifications_screen.table.partner_error");
     }
 
     if (!certificationId) {
-      newErrors.certificationId = "Este campo es obligatorio";
+      newErrors.certificationId = t("partner_certifications_screen.table.certification_error");
     }
 
     setErrors(newErrors);
@@ -154,7 +154,7 @@ export default function PartnersCertificationsTable() {
         <input
           type="text"
           placeholder="Buscar..."
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -227,7 +227,7 @@ export default function PartnersCertificationsTable() {
               <div>
                 <RequiredLabel required>{t("partner_certifications_screen.table.partner_name")}</RequiredLabel>
                 <select
-                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.partnerId ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.partnerId ? "border-red-500" : "border-gray-300"}`}
                   value={partnerId}
                   onChange={(e) => { setPartnerId(Number(e.target.value)); setErrors((prev) => ({ ...prev, partnerId: "" })); }}
                 >
@@ -245,7 +245,7 @@ export default function PartnersCertificationsTable() {
               <div>
                 <RequiredLabel required>{t("partner_certifications_screen.table.certification_name")}</RequiredLabel>
                 <select
-                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.certificationId ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.certificationId ? "border-red-500" : "border-gray-300"}`}
                   value={certificationId}
                   onChange={(e) => { setCertificationId(Number(e.target.value)); setErrors((prev) => ({ ...prev, certificationId: "" })); }}
                 >

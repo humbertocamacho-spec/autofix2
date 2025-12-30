@@ -1,6 +1,7 @@
 {
   "admins": "Administradores",
   "admin_screen": {
+    "title": "Administradores",
     "add_button": "Agregar Administrador",
     "delete": "Eliminar",
     "edit": "Editar",
@@ -17,9 +18,9 @@
     "table": {
       "actions": "Acciones",
       "id": "ID",
-      "name": "Nombre"
-    },
-    "title": "Administradores"
+      "name": "Nombre",
+      "user_error": "Este campo es obligatorio"
+    }
   },
 
   "brands": "Marcas de Autos",
@@ -27,6 +28,7 @@
 
   "clients": "Clientes",
   "clients_screen": {
+    "title": "Clientes",
     "add_button": "Agregar Cliente",
     "delete": "Eliminar",
     "edit": "Editar",
@@ -43,10 +45,11 @@
     "table": {
       "actions": "Acciones",
       "id": "ID",
-      "name": "Nombre"
-    },
-    "title": "Clientes"
+      "name": "Nombre",
+      "user_error": "Este campo es obligatorio"
+    } 
   },
+
   "confirmed_tickets": "Confirmados",
   "dashboard": "Panel",
   "dashboard_overview": "Resumen del Panel",
@@ -75,7 +78,13 @@
       "type": "Tipo",
       "plate": "Placa",
       "actions": "Acciones",
-      "select_brand": "Seleccionar marca"
+      "select_brand": "Seleccionar marca",
+      "name_error": "Este campo es obligatorio",
+      "brand_error": "Este campo es obligatorio",
+      "model_error": "Este campo es obligatorio",
+      "year_error": "Este campo es obligatorio",
+      "type_error": "Este campo es obligatorio",
+      "plate_error": "Este campo es obligatorio"
     }
   },
 
@@ -91,12 +100,14 @@
       "seeAll": "Ver más",
       "viewAll": "Ver todo"
     },
+
     "progress": "Progreso",
     "stats": {
       "dayswithtickets": "Días con citas",
       "ticketsoftoday": "Citas hoy",
       "ticketsthismonth": "Citas este mes"
     },
+
     "subtitle": "Bienvenido a tu resumen del dashboard.",
     "title": "Resumen del Panel",
     "title_calendar": "Mi Calendario",
@@ -121,7 +132,6 @@
   },
 
   "partners": "Partners",
-  
   "partners_screen": {
     "add_button": "Agregar Partner",
     "delete": "Eliminar",
@@ -153,35 +163,45 @@
       "description": "Descripción",
       "specialities": "Especialidades",
       "logo_url_preview": "Vista previa",
-      "hidden": "más"
+      "hidden": "más",
+      "name_error": "Este campo es obligatorio",
+      "user_error": "Este campo es obligatorio",
+      "phone_error": "Este campo es obligatorio",
+      "location_error": "Este campo es obligatorio",
+      "latitude_error": "Este campo es obligatorio",
+      "longitude_error": "Este campo es obligatorio",
+      "logo_url_error": "Este campo es obligatorio",
+      "description_error": "Este campo es obligatorio"
     },
     "title": "Partners"
   },
 
-    "partner_certifications": "Certificaciones de Partners",
-    "partner_certifications_screen": {
-    "title": "Certificaciones de Partners",
-      "search_placeholder": "Buscar certificación...",
-      "add_button": "Agregar Certificación",
-      "loading": "Cargando...",
-      "edit": "Editar",
-      "delete": "Eliminar",
-      "no_results": "No se encontraron certificaciones",
-      "create_title": "Agregar Certificación",
-      "edit_title": "Editar Certificación",
-      "create": "Crear",
-      "save": "Guardar",
-      "cancel": "Cancelar",
-      "table": {
-        "actions": "Acciones",
-        "id": "ID",
-        "name": "Nombre",
-        "partner_id": "Partner ID",
-        "partner_name": "Nombre del Partner",
-        "certification_name": "Nombre de la Certificación",
-        "select_partner": "Seleccionar Partner",
-        "select_certification": "Seleccionar Certificación"
-      }
+  "partner_certifications": "Certificaciones de Partners",
+  "partner_certifications_screen": {
+  "title": "Certificaciones de Partners",
+    "search_placeholder": "Buscar certificación...",
+    "add_button": "Agregar Certificación",
+    "loading": "Cargando...",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "no_results": "No se encontraron certificaciones",
+    "create_title": "Agregar Certificación",
+    "edit_title": "Editar Certificación",
+    "create": "Crear",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "table": {
+      "actions": "Acciones",
+      "id": "ID",
+      "name": "Nombre",
+      "partner_id": "Partner ID",
+      "partner_name": "Nombre del Partner",
+      "certification_name": "Nombre de la Certificación",
+      "select_partner": "Seleccionar Partner",
+      "select_certification": "Seleccionar Certificación",
+      "partner_error": "Este campo es obligatorio",
+      "certification_error": "Este campo es obligatorio"
+    }
   },
 
   "pending_tickets": "Pendientes",
@@ -242,7 +262,8 @@
     "table": {
       "id": "ID",
       "name": "Nombre",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "name_error": "Este campo es obligatorio"
     }
   },
 
@@ -263,7 +284,8 @@
     "table": {
       "id": "ID",
       "name": "Nombre",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "name_error": "Este campo es obligatorio"
     }
   },
 
@@ -284,7 +306,8 @@
     "table": {
       "id": "ID",
       "name": "Nombre",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "name_error": "Este campo es obligatorio"
     }
   },
 
@@ -305,7 +328,9 @@
       "id": "ID",
       "name": "Nombre",
       "description": "Descripción",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "name_error": "Este campo es obligatorio",
+      "description_error": "Este campo es obligatorio"
     }
   },
 
@@ -330,7 +355,9 @@
       "id": "ID",
       "permission": "Permiso",
       "module": "Módulo",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "name_error": "Este campo es obligatorio",
+      "module_error": "Este campo es obligatorio"
     }
   },
 
@@ -411,5 +438,11 @@
     "catalogs": "Catálogos",
     "pending": "Pendientes",
     "confirmed": "Confirmados"
+  },
+
+  "unauthorized_page": {
+    "title": "No autorizado",
+    "description": "No estás autorizado para acceder a esta página.",
+    "button": "Ir al Panel"
   }
 }

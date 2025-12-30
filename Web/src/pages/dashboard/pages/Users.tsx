@@ -117,7 +117,7 @@ export default function UsersTable() {
         <input
           type="text"
           placeholder={t("users_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -221,7 +221,7 @@ export default function UsersTable() {
               <div>
                 <RequiredLabel required>{t("users_screen.modal.name")}</RequiredLabel>
                 <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                   value={currentUser.name}
                   onChange={(e) =>
                     setCurrentUser({ ...currentUser, name: e.target.value })
@@ -232,7 +232,7 @@ export default function UsersTable() {
               <div>
                 <RequiredLabel required>{t("users_screen.modal.email")}</RequiredLabel>
                 <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                   value={currentUser.email}
                   onChange={(e) =>
                     setCurrentUser({ ...currentUser, email: e.target.value })
@@ -243,7 +243,7 @@ export default function UsersTable() {
               <div>
                 <RequiredLabel required>{t("users_screen.modal.phone")}</RequiredLabel>
                 <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                   value={currentUser.phone || ""}
                   onChange={(e) =>
                     setCurrentUser({ ...currentUser, phone: e.target.value })
@@ -254,7 +254,7 @@ export default function UsersTable() {
               <div>
                 <RequiredLabel required>{t("users_screen.modal.role")}</RequiredLabel>
                 <select
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                   value={currentUser.role_id}
                   onChange={(e) =>
                     setCurrentUser({
@@ -273,7 +273,7 @@ export default function UsersTable() {
               <div>
                 <label className="text-sm font-semibold text-gray-600">{t("users_screen.modal.gender")}</label>
                 <select
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                   value={currentUser.gender_id || ""}
                   onChange={(e) =>
                     setCurrentUser({

@@ -53,7 +53,7 @@ export default function Overview() {
         const end = new Date(start.getTime() + 30 * 60000);
         return {
           id: t.id.toString(),
-          title: `${t.car_name} - ${t.car_year} · ${t.client_name}`,
+          title: `${t.car_name} ${t.car_model} - ${t.car_year} · ${t.client_name}`,
           start: start.toISOString().slice(0, 19),
           end: end.toISOString().slice(0, 19),
           extendedProps: {

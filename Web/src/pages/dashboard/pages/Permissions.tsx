@@ -52,8 +52,8 @@ export default function PermissionsTable() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!name.trim()) newErrors.name = "Este campo es obligatorio";
-    if (!moduleId) newErrors.moduleId = "Este campo es obligatorio";
+    if (!name.trim()) newErrors.name = t("permissions_screen.table.name_error");
+    if (!moduleId) newErrors.moduleId = t("permissions_screen.table.module_error");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -125,7 +125,7 @@ export default function PermissionsTable() {
         <input
           type="text"
           placeholder={t("permissions_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300 "
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -199,7 +199,7 @@ export default function PermissionsTable() {
               <div>
                 <RequiredLabel required>{t("permissions_screen.name")}</RequiredLabel>
 
-                <input className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                <input className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"} `}
                   value={name}
                   onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
                   placeholder="Ej. create_users"
@@ -214,7 +214,7 @@ export default function PermissionsTable() {
                 <RequiredLabel required>{t("permissions_screen.module")}</RequiredLabel>
 
                 <select
-                  className={`w-full px-3 py-2 rounded-lg border bg-white  ${submitted && errors.moduleId ? "border-red-500" : "border-gray-300"}  focus:ring-2 focus:ring-[#27B9BA]`}
+                  className={`w-full px-3 py-2 rounded-lg border bg-white  ${submitted && errors.moduleId ? "border-red-500" : "border-gray-300"}  `}
                   value={moduleId || ""}
                   onChange={(e) => { setModuleId(Number(e.target.value)); setErrors((prev) => ({ ...prev, moduleId: "" })); }}
                 >

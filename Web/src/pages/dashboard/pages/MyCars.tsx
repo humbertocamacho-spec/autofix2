@@ -63,12 +63,12 @@ export default function MyCarsTable() {
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
 
-        if (!name.trim()) newErrors.name = "Campo obligatorio";
-        if (!car_brand_id) newErrors.carBrandId = "Selecciona una marca";
-        if (!model.trim()) newErrors.model = "Campo obligatorio";
-        if (!/^\d{4}$/.test(year)) newErrors.year = "Debe tener 4 dígitos";
-        if (!type.trim()) newErrors.type = "Campo obligatorio";
-        if (!plate.trim()) newErrors.plate = "Campo obligatorio debe tener 3 letras y 4 números";
+        if (!name.trim()) newErrors.name = t("myCars_screen.table.name_error");
+        if (!car_brand_id) newErrors.carBrandId = t("myCars_screen.table.brand_error");
+        if (!model.trim()) newErrors.model = t("myCars_screen.table.model_error");
+        if (!/^\d{4}$/.test(year)) newErrors.year = t("myCars_screen.table.year_error");
+        if (!type.trim()) newErrors.type = t("myCars_screen.table.type_error");
+        if (!plate.trim()) newErrors.plate = t("myCars_screen.table.plate_error");
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -101,7 +101,6 @@ export default function MyCarsTable() {
         setSubmitted(false);
         setOpenModal(true);
     };
-
 
     const handleCreate = async () => {
         if (!user?.id) return;
@@ -216,7 +215,7 @@ export default function MyCarsTable() {
                         <input
                             type="text"
                             placeholder="Search..."
-                            className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+                            className="w-80 px-4 py-2 rounded-lg border border-gray-300"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
@@ -293,13 +292,13 @@ export default function MyCarsTable() {
                                 <div className="space-y-4">
                                     <div>
                                         <RequiredLabel required>{t("myCars_screen.table.name")}</RequiredLabel>
-                                        <input className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                                        <input className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"}`}
                                             value={name}
                                             onChange={(e) => {
                                                 setName(e.target.value);
                                                 setErrors((prev) => ({ ...prev, name: "" }));
                                             }}
-                                            placeholder="Ej. Mi auto"
+                                            placeholder="Ej. Toyota"
                                         />
                                         {submitted && errors.name && (
                                             <p className="text-red-500 text-xs mt-1">{errors.name}</p>
@@ -308,7 +307,7 @@ export default function MyCarsTable() {
 
                                     <div>
                                         <RequiredLabel required>{t("myCars_screen.table.brand")}</RequiredLabel>
-                                        <select className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.car_brand_id ? "border-red-500" : "border-gray-300"} bg-white focus:ring-2 focus:ring-[#27B9BA]`}
+                                        <select className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.car_brand_id ? "border-red-500" : "border-gray-300"} bg-white`}
                                             value={car_brand_id}
                                             onChange={(e) => {
                                                 setCarBrandId(Number(e.target.value));
@@ -329,7 +328,7 @@ export default function MyCarsTable() {
 
                                     <div>
                                         <RequiredLabel required>{t("myCars_screen.table.model")}</RequiredLabel>
-                                        <input className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.model ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                                        <input className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.model ? "border-red-500" : "border-gray-300"}`}
                                             value={model}
                                             onChange={(e) => { setModel(e.target.value); setErrors((prev) => ({ ...prev, model: "" })); }}
                                             placeholder="Ej. Corolla"
@@ -343,7 +342,7 @@ export default function MyCarsTable() {
                                         <RequiredLabel required>{t("myCars_screen.table.year")}</RequiredLabel>
                                         <input
                                             type="number"
-                                            className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.year ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                                            className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.year ? "border-red-500" : "border-gray-300"}`}
                                             value={year}
                                             onChange={(e) => { setYear(e.target.value.slice(0, 4)); setErrors((prev) => ({ ...prev, year: "" })); }}
                                             placeholder="Ej. 2020"
@@ -357,7 +356,7 @@ export default function MyCarsTable() {
 
                                     <div>
                                         <RequiredLabel required>{t("myCars_screen.table.type")}</RequiredLabel>
-                                        <input className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.type ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                                        <input className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.type ? "border-red-500" : "border-gray-300"}`}
                                             value={type}
                                             onChange={(e) => { setType(e.target.value); setErrors((prev) => ({ ...prev, type: "" })); }}
                                             placeholder="Ej. Sedán"
@@ -369,7 +368,7 @@ export default function MyCarsTable() {
 
                                     <div>
                                         <RequiredLabel required>{t("myCars_screen.table.plate")}</RequiredLabel>
-                                        <input className={`w-full px-3 py-2 rounded-lg border  ${submitted && errors.plate ? "border-red-500" : "border-gray-300"}  focus:ring-2 focus:ring-[#27B9BA]`}
+                                        <input className={`w-full px-3 py-2 rounded-lg border  ${submitted && errors.plate ? "border-red-500" : "border-gray-300"} `}
                                             value={plate}
                                             onChange={(e) => { setPlate(e.target.value.toUpperCase()); setErrors((prev) => ({ ...prev, plate: "" })); }}
                                             placeholder="Ej. ABC1234"

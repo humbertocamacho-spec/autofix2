@@ -52,7 +52,7 @@ export default function AdminsTable() {
     const newErrors: Record<string, string> = {};
 
     if (!userId) {
-      newErrors.userId = "Este campo es obligatorio";
+      newErrors.userId = t("admins_screen.table.user_error");
     }
 
     setErrors(newErrors);
@@ -114,7 +114,7 @@ export default function AdminsTable() {
         <input
           type="text"
           placeholder={t("admin_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -183,7 +183,7 @@ export default function AdminsTable() {
               <div>
                 <RequiredLabel required>{t("admin_screen.choose_user")}</RequiredLabel>
                 <select
-                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.userId ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.userId ? "border-red-500" : "border-gray-300"}`}
                   value={userId || ""}
                   onChange={(e) => { setUserId(Number(e.target.value)); setErrors((prev) => ({ ...prev, userId: "" })); }}
                 >

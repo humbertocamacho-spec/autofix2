@@ -40,7 +40,7 @@ export default function CarBrands() {
     const newErrors: Record<string, string> = {};
 
     if (!name.trim()) {
-      newErrors.name = "Este campo es obligatorio";
+      newErrors.name = t("car_brands_screen.table.name_error");
     }
 
     setErrors(newErrors);
@@ -118,7 +118,7 @@ export default function CarBrands() {
         <input
           type="text"
           placeholder={t("car_brands_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -191,7 +191,7 @@ export default function CarBrands() {
 
                 <input
                   type="text"
-                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"}`}
                   value={name}
                   onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
                   placeholder="Ej. Toyota"
