@@ -192,7 +192,10 @@
       "latitude_error": "Este campo es obligatorio",
       "longitude_error": "Este campo es obligatorio",
       "logo_url_error": "Este campo es obligatorio",
-      "description_error": "Este campo es obligatorio"
+      "description_error": "Este campo es obligatorio",
+      "name_placeholder": "Ej. Taller Mecánico El Rayo",
+      "logo_url_placeholder": "https://example.com/logo.png",
+      "description_placeholder": "Ej. Taller especializado en frenos, suspensión y mantenimiento general"
     },
     "confirm": {
       "deactivate": "¿Seguro que deseas desactivar el partner \"{{name}}\"?",

@@ -51,13 +51,7 @@ export default function PartnersTable() {
   const fetchPartners = async () => {
     try {
       const token = localStorage.getItem("token");
-
-      const res = await fetch(`${VITE_API_URL}/api/partners`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const res = await fetch(`${VITE_API_URL}/api/partners`, { headers: { Authorization: `Bearer ${token}`, },});
       const data: Partner[] = await res.json();
       setPartners(data);
     } catch (error) {
@@ -103,10 +97,7 @@ export default function PartnersTable() {
   const getPartnerSpecialities = (partnerId: number) => {
     return allPartnerSpecialities
       .filter(ps => ps.partner_id === partnerId)
-      .map(rel => {
-        const spec = specialities.find(s => s.id === rel.speciality_id);
-        return spec?.name;
-      })
+      .map(rel => { const spec = specialities.find(s => s.id === rel.speciality_id); return spec?.name;})
       .filter(Boolean) as string[];
   };
 
@@ -213,38 +204,24 @@ export default function PartnersTable() {
 
   // Actions
   const deletePartner = async (partner: Partner) => {
-    const confirmed = window.confirm(
-      t("partners_screen.confirm.deactivate", { name: partner.name })
-    );
+    const confirmed = window.confirm( t("partners_screen.confirm.deactivate", { name: partner.name }));
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/partners/${partner.id}`, {
-      method: "DELETE",
-    });
+    const res = await fetch(`${VITE_API_URL}/api/partners/${partner.id}`, { method: "DELETE",});
 
-    if (!res.ok) {
-      alert(t("partners_screen.errors.deactivate"));
-      return;
-    }
+    if (!res.ok) { alert(t("partners_screen.errors.deactivate")); return;}
 
     alert(t("partners_screen.success.deactivate"));
     fetchPartners();
   };
 
   const restorePartner = async (partner: Partner) => {
-    const confirmed = window.confirm(
-      t("partners_screen.confirm.restore", { name: partner.name })
-    );
+    const confirmed = window.confirm( t("partners_screen.confirm.restore", { name: partner.name }));
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, {
-      method: "PATCH",
-    });
+    const res = await fetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, { method: "PATCH",});
 
-    if (!res.ok) {
-      alert(t("partners_screen.errors.restore"));
-      return;
-    }
+    if (!res.ok) { alert(t("partners_screen.errors.restore")); return;}
 
     alert(t("partners_screen.success.restore"));
     fetchPartners();
@@ -419,7 +396,7 @@ export default function PartnersTable() {
                     className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"}`}
                     value={name}
                     onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
-                    placeholder="Ej. Taller Mecánico El Rayo"
+                    placeholder={t("partners_screen.table.name_placeholder")}
                   />
                   {submitted && errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                 </div>
@@ -509,7 +486,7 @@ export default function PartnersTable() {
                     className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.logoUrl ? "border-red-500" : "border-gray-300"}`}
                     value={logoUrl}
                     onChange={(e) => { setLogoUrl(e.target.value); setErrors((prev) => ({ ...prev, logoUrl: "" })); }}
-                    placeholder="https://ejemplo.com/logo.png"
+                    placeholder={t("partners_screen.table.logo_url_placeholder")}
                   />
                   {submitted && errors.logoUrl && (
                     <p className="text-red-500 text-xs mt-1">{errors.logoUrl}</p>
@@ -536,7 +513,7 @@ export default function PartnersTable() {
                     className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.description ? "border-red-500" : "border-gray-300"}`}
                     value={description}
                     onChange={(e) => { setDescription(e.target.value); setErrors((prev) => ({ ...prev, description: "" })); }}
-                    placeholder="Ej. Taller especializado en frenos, suspensión y mantenimiento general"
+                    placeholder={t("partners_screen.table.description_placeholder")}
                   />
                   {submitted && errors.description && (
                     <p className="text-red-500 text-xs mt-1">{errors.description}</p>

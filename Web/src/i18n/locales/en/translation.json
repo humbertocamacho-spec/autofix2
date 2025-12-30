@@ -192,7 +192,10 @@
       "latitude_error": "This field is required",
       "longitude_error": "This field is required",
       "logo_url_error": "This field is required",
-      "description_error": "This field is required"
+      "description_error": "This field is required",
+      "name_placeholder": "Ej. The Rayo Mechanical Workshop",
+      "logo_url_placeholder": "https://example.com/logo.png",
+      "description_placeholder": "Ej. Workshop specializing in brakes, suspension and general maintenance"
     },
     "confirm": {
       "deactivate": "Are you sure you want to deactivate the partner \"{{name}}\"?",
