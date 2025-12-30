@@ -61,7 +61,6 @@ export default function ClientsTable() {
     return Object.keys(newErrors).length === 0;
   };
 
-
   const openCreate = () => {
     setIsEditing(false);
     setCurrentClient(null);
@@ -99,13 +98,22 @@ export default function ClientsTable() {
     fetchClients();
   };
 
-  const deleteClient = async (id: number) => {
-    if (!confirm("¿Eliminar cliente?")) return;
+  const deleteClient = async (client: Client) => {
+    const confirmed = window.confirm(
+      t("clients_screen.confirm.deactivate", { name: client.user_name })
+    );
+    if (!confirmed) return;
 
-    await fetch(`${VITE_API_URL}/api/client/${id}`, {
+    const res = await fetch(`${VITE_API_URL}/api/client/${client.id}`, {
       method: "DELETE",
     });
 
+    if (!res.ok) {
+      alert(t("clients_screen.errors.deactivate"));
+      return;
+    }
+
+    alert(t("clients_screen.success.deactivate"));
     fetchClients();
   };
 
@@ -160,7 +168,7 @@ export default function ClientsTable() {
                     </Can>
 
                     <Can permission="delete_clients">
-                      <button onClick={() => deleteClient(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                      <button onClick={() => deleteClient(item)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                         {t("clients_screen.delete")}
                       </button>
                     </Can>

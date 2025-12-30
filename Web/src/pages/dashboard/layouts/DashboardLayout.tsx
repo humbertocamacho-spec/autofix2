@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
 import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineLogout, HiOutlineChevronDown, HiOutlineKey,HiOutlineDocumentDuplicate,
-  HiOutlineEye,HiOutlineTranslate,HiOutlineChevronRight, HiOutlineMenu, HiOutlineBell, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, 
+  HiOutlineEye,HiOutlineTranslate,HiOutlineChevronRight, HiOutlineMenu, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, 
   HiOutlineShieldCheck,HiOutlineIdentification,HiOutlineThumbUp
 } from "react-icons/hi";
 import { useTranslation } from "react-i18next";
@@ -23,8 +23,7 @@ export default function DashboardLayout({ children }: Props) {
   const isAdmin = user?.role_name === ROLES.ADMIN;
 
   const iconSize = sidebarOpen ? 22 : 20;
-  const { t } = useTranslation();
-  const { i18n } = useTranslation();
+  const { t , i18n } = useTranslation();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [floatingMenu, setFloatingMenu] = useState<string | null>(null);
 
@@ -343,11 +342,6 @@ export default function DashboardLayout({ children }: Props) {
               </select>
             </div>
 
-            <button className="relative rounded-xl p-2 text-gray-600 transition hover:bg-gray-100">
-              <HiOutlineBell size={22} />
-              <span className="absolute right-1 top-1 size-2 rounded-full bg-red-500" />
-            </button>
-
             <div className="relative flex items-center gap-3">
               <img
                 src={user?.photo_url || "/assets/images/profile.png"}
@@ -440,4 +434,3 @@ const SubLink = ({
     {children}
   </Link>
 );
-

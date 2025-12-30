@@ -51,9 +51,7 @@ export default function AdminsTable() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!userId) {
-      newErrors.userId = t("admins_screen.table.user_error");
-    }
+    if (!userId) { newErrors.userId = t("admin_screen.table.user_error");}
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -81,30 +79,39 @@ export default function AdminsTable() {
     setSubmitted(true);
     if (!validateForm()) return;
 
-    const method = isEditing ? "PUT" : "POST";
-    const url = isEditing
-      ? `${VITE_API_URL}/api/admins/${currentAdmin?.id}`
-      : `${VITE_API_URL}/api/admins`;
-
-    await fetch(url, {
+    const isEdit = isEditing && currentAdmin;
+    const method = isEdit ? "PUT" : "POST";
+    const url = isEdit ? `${VITE_API_URL}/api/admins/${currentAdmin!.id}` : `${VITE_API_URL}/api/admins`;
+    const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId }),
     });
 
+    if (!res.ok) {
+      alert(t( isEdit ? "admin_screen.errors.update" : "admin_screen.errors.create"));
+      return;
+    }
+
+    alert(t( isEdit ? "admin_screen.success.update" : "admin_screen.success.create"));
+
     setOpenModal(false);
     fetchAdmins();
   };
 
-  const deleteAdmin = async (id: number) => {
-    if (!confirm("¿Eliminar administrador?")) return;
-    await fetch(`${VITE_API_URL}/api/admins/${id}`, { method: "DELETE" });
+  const deleteAdmin = async (admin: Admin) => {
+    const confirmed = window.confirm( t("admin_screen.confirm.deactivate", { name: admin.user_name }));
+    if (!confirmed) return;
+
+    const res = await fetch(`${VITE_API_URL}/api/admins/${admin.id}`, { method: "DELETE",});
+
+    if (!res.ok) { alert(t("admin_screen.errors.deactivate")); return;}
+
+    alert(t("admin_screen.success.deactivate"));
     fetchAdmins();
   };
 
-  const filtered = admins.filter((a) =>
-    a.user_name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = admins.filter((a) => a.user_name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
@@ -143,7 +150,6 @@ export default function AdminsTable() {
                 <tr key={item.id} className="border-b hover:bg-gray-50">
                   <td className="py-2">{item.id}</td>
                   <td className="py-2">{item.user_name}</td>
-
                   <td className="py-2 text-right space-x-4">
                     <Can permission="update_admins">
                       <button onClick={() => openEdit(item)} className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
@@ -152,7 +158,7 @@ export default function AdminsTable() {
                     </Can>
 
                     <Can permission="delete_admins">
-                      <button onClick={() => deleteAdmin(item.id)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                      <button onClick={() => deleteAdmin(item)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                         {t("admin_screen.delete")}
                       </button>
                     </Can>
@@ -162,9 +168,7 @@ export default function AdminsTable() {
 
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="text-center py-6 text-gray-500">
-                    {t("admin_screen.no_results")}
-                  </td>
+                  <td colSpan={3} className="text-center py-6 text-gray-500">{t("admin_screen.no_results")}</td>
                 </tr>
               )}
             </tbody>
@@ -175,9 +179,7 @@ export default function AdminsTable() {
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              {isEditing ? t("admin_screen.edit_title") : t("admin_screen.create_title")}
-            </h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800"> {isEditing ? t("admin_screen.edit_title") : t("admin_screen.create_title")}</h2>
 
             <div className="space-y-4">
               <div>
@@ -193,9 +195,7 @@ export default function AdminsTable() {
                   ))}
                 </select>
                 {submitted && errors.userId && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.userId}
-                  </p>
+                  <p className="text-red-500 text-xs mt-1"> {errors.userId}</p>
                 )}
               </div>
             </div>

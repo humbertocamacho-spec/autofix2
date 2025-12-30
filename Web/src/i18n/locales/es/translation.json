@@ -20,6 +20,19 @@
       "id": "ID",
       "name": "Nombre",
       "user_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar al administrador \"{{name}}\"?"
+    },
+    "success": {
+      "create": "Administrador creado correctamente",
+      "update": "Administrador actualizado correctamente",
+      "deactivate": "Administrador eliminado correctamente"
+    },
+    "errors": {
+      "create": "Error al crear el administrador",
+      "update": "Error al actualizar el administrador",
+      "deactivate": "Error al eliminar el administrador"
     }
   },
 
@@ -47,7 +60,16 @@
       "id": "ID",
       "name": "Nombre",
       "user_error": "Este campo es obligatorio"
-    } 
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar al cliente \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Cliente eliminado correctamente"
+    },
+    "errors": {
+      "deactivate": "Error al eliminar el cliente"
+    }
   },
 
   "confirmed_tickets": "Confirmados",
@@ -133,6 +155,7 @@
 
   "partners": "Partners",
   "partners_screen": {
+    "title": "Partners",
     "add_button": "Agregar Partner",
     "delete": "Eliminar",
     "edit": "Editar",
@@ -173,7 +196,22 @@
       "logo_url_error": "Este campo es obligatorio",
       "description_error": "Este campo es obligatorio"
     },
-    "title": "Partners"
+    "confirm": {
+      "deactivate": "¿Seguro que deseas desactivar el partner \"{{name}}\"?",
+      "restore": "¿Seguro que deseas restaurar el partner \"{{name}}\"?"
+    },
+    "success": {
+      "create": "Partner creado correctamente",
+      "update": "Partner actualizado correctamente",
+      "deactivate": "Partner desactivado correctamente",
+      "restore": "Partner restaurado correctamente"
+    },
+    "errors": {
+      "create": "Error al crear el partner",
+      "update": "Error al actualizar el partner",
+      "deactivate": "Error al desactivar el partner",
+      "restore": "Error al restaurar el partner"
+    }
   },
 
   "partner_certifications": "Certificaciones de Partners",
@@ -231,6 +269,24 @@
       "select_role": "Seleccionar rol",
       "title": "Editar Usuario"
     },
+
+    "errors": {
+      "fetch": "Error al obtener usuarios",
+      "update": "Error al actualizar usuario",
+      "deactivate": "Error al desactivar usuario"
+    },
+
+    "success": {
+      "update": "Usuario actualizado correctamente",
+      "deactivate": "Usuario desactivado correctamente",
+      "restore": "Usuario reactivado correctamente"
+    }, 
+
+    "confirm": {
+      "deactivate": "¿Seguro que deseas desactivar al usuario \"{{name}}\"?",
+      "restore": "¿Seguro que deseas reactivar al usuario \"{{name}}\"?"
+    },
+
     "no_results": "No se encontraron usuarios",
     "search_placeholder": "Buscar usuarios...",
     "table": {
@@ -264,6 +320,15 @@
       "name": "Nombre",
       "actions": "Acciones",
       "name_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar la especialidad \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Especialidad eliminada correctamente"
+    },
+    "errors": {
+      "deactivate": "Error al eliminar la especialidad"
     }
   },
 

@@ -11,13 +11,15 @@ import Can from "../../../components/Can";
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [specialities, setSpecialities] = useState<{ id: number; name: string }[]>([]);
+  const [allPartnerSpecialities, setAllPartnerSpecialities] = useState< { partner_id: number; speciality_id: number }[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentPartner, setCurrentPartner] = useState<Partner | null>(null);
 
+  const [currentPartner, setCurrentPartner] = useState<Partner | null>(null);
   const [name, setName] = useState("");
   const [userId, setUserId] = useState<number | null>(null);
   const [phone, setPhone] = useState("");
@@ -30,15 +32,13 @@ export default function PartnersTable() {
   const [logoUrl, setLogoUrl] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState(1);
+  const [selectedSpecialities, setSelectedSpecialities] = useState<number[]>([]);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
 
   const { user } = useAuthContext();
   const { t } = useTranslation();
-
-  const [specialities, setSpecialities] = useState<{ id: number; name: string }[]>([]);
-  const [selectedSpecialities, setSelectedSpecialities] = useState<number[]>([]);
-  const [allPartnerSpecialities, setAllPartnerSpecialities] = useState<{ partner_id: number, speciality_id: number }[]>([]);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     fetchPartners();
@@ -47,6 +47,7 @@ export default function PartnersTable() {
     fetchAllPartnerSpecialities();
   }, []);
 
+  // Fetch
   const fetchPartners = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -98,6 +99,7 @@ export default function PartnersTable() {
     setSelectedSpecialities(data);
   };
 
+  // Helpers
   const getPartnerSpecialities = (partnerId: number) => {
     return allPartnerSpecialities
       .filter(ps => ps.partner_id === partnerId)
@@ -106,6 +108,16 @@ export default function PartnersTable() {
         return spec?.name;
       })
       .filter(Boolean) as string[];
+  };
+
+  const truncateText = (text?: string, max = 10) => {
+    if (!text) return "-";
+    return text.length > max ? text.slice(0, max) + "..." : text;
+  };
+
+  const handlePriorityChange = (value: number) => {
+    if (Number.isNaN(value)) return;
+    setPriority(Math.min(10, Math.max(1, value)));
   };
 
   const validateForm = () => {
@@ -186,16 +198,12 @@ export default function PartnersTable() {
     });
 
     const data = await res.json();
-
     const partnerId = isEditing ? currentPartner?.id : data?.id;
 
     await fetch(`${VITE_API_URL}/api/partner_specialities`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
-      body: JSON.stringify({
-        partner_id: partnerId,
-        speciality_ids: selectedSpecialities,
-      }),
+      body: JSON.stringify({ partner_id: partnerId, speciality_ids: selectedSpecialities,}),
     });
 
     setOpenModal(false);
@@ -203,37 +211,48 @@ export default function PartnersTable() {
     fetchAllPartnerSpecialities();
   };
 
+  // Actions
   const deletePartner = async (partner: Partner) => {
-    if (!confirm(`¿Desactivar partner "${partner.name}"?`)) return;
+    const confirmed = window.confirm(
+      t("partners_screen.confirm.deactivate", { name: partner.name })
+    );
+    if (!confirmed) return;
 
-    await fetch(`${VITE_API_URL}/api/partners/${partner.id}`, {
+    const res = await fetch(`${VITE_API_URL}/api/partners/${partner.id}`, {
       method: "DELETE",
     });
 
+    if (!res.ok) {
+      alert(t("partners_screen.errors.deactivate"));
+      return;
+    }
+
+    alert(t("partners_screen.success.deactivate"));
     fetchPartners();
   };
 
   const restorePartner = async (partner: Partner) => {
-    await fetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, {
+    const confirmed = window.confirm(
+      t("partners_screen.confirm.restore", { name: partner.name })
+    );
+    if (!confirmed) return;
+
+    const res = await fetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, {
       method: "PATCH",
     });
 
-    fetchPartners();
-  };
+    if (!res.ok) {
+      alert(t("partners_screen.errors.restore"));
+      return;
+    }
 
-  const truncateText = (text?: string, max = 10) => {
-    if (!text) return "-";
-    return text.length > max ? text.slice(0, max) + "..." : text;
+    alert(t("partners_screen.success.restore"));
+    fetchPartners();
   };
 
   const filtered = partners
     .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => a.id - b.id);
-
-  const handlePriorityChange = (value: number) => {
-    if (Number.isNaN(value)) return;
-    setPriority(Math.min(10, Math.max(1, value)));
-  };
 
   return (
     <DashboardLayout>
@@ -342,14 +361,8 @@ export default function PartnersTable() {
 
                     <td className="py-3 px-4 text-center">
                       <span
-                        title={
-                          item.deleted_at
-                            ? t("users_screen.table.status_inactive")
-                            : t("users_screen.table.status_active")
-                        }
-                        className={`inline-block w-3 h-3 rounded-full
-                        ${item.deleted_at ? "bg-red-500" : "bg-green-500"}
-                        `}
+                        title={ item.deleted_at ? t("users_screen.table.status_inactive") : t("users_screen.table.status_active")} 
+                        className={`inline-block w-3 h-3 rounded-full ${item.deleted_at ? "bg-red-500" : "bg-green-500"}`}
                       />
                     </td>
 
@@ -414,8 +427,7 @@ export default function PartnersTable() {
                 <div className="col-span-2">
                   <RequiredLabel required>{t("partners_screen.table.user")}</RequiredLabel>
                   <select
-                    className={`w-full border border-gray-300 px-3 py-2 rounded-lg
-                      ${user?.role_name === "partner" ? "bg-gray-100 text-gray-500 cursor-not-allowed" : " "}`}
+                    className={`w-full border border-gray-300 px-3 py-2 rounded-lg ${user?.role_name === "partner" ? "bg-gray-100 text-gray-500 cursor-not-allowed" : " "}`}
                     value={user?.role_name === "partner" ? user.id : userId ?? ""}
                     disabled={user?.role_name === "partner"}
                     onChange={(e) => setUserId(Number(e.target.value))}

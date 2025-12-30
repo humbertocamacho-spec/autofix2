@@ -48,7 +48,6 @@ export default function SpecialitiesTable() {
     return Object.keys(newErrors).length === 0;
   };
 
-
   const handleCreate = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
@@ -90,18 +89,23 @@ export default function SpecialitiesTable() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("¿Seguro que deseas eliminar esta especialidad?")) return;
+  const handleDelete = async (item: Specialities) => {
+    const confirmed = window.confirm(
+      t("specialities_screen.confirm.deactivate", { name: item.name })
+    );
+    if (!confirmed) return;
 
-    try {
-      await fetch(`${VITE_API_URL}/api/specialities/${id}`, {
-        method: "DELETE",
-      });
+    const res = await fetch(`${VITE_API_URL}/api/specialities/${item.id}`, {
+      method: "DELETE",
+    });
 
-      fetchSpecialities();
-    } catch (error) {
-      console.error("Error deleting speciality:", error);
+    if (!res.ok) {
+      alert(t("specialities_screen.errors.deactivate"));
+      return;
     }
+
+    alert(t("specialities_screen.success.deactivate"));
+    fetchSpecialities();
   };
 
   const openCreateModal = () => {
@@ -172,7 +176,7 @@ export default function SpecialitiesTable() {
                         </Can>
 
                         <Can permission="delete_specialities">
-                          <button onClick={() => handleDelete(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                          <button onClick={() => handleDelete(item)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                             {t("specialities_screen.delete")}
                           </button>
                         </Can>

@@ -20,6 +20,19 @@
       "id": "ID",
       "name": "Name",
       "user_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to deactivate the admin \"{{name}}\"?"
+    },
+    "success": {
+      "create": "Admin created successfully",
+      "update": "Admin updated successfully",
+      "deactivate": "Admin deactivated successfully"
+    },
+    "errors": {
+      "create": "Error creating admin",
+      "update": "Error updating admin",
+      "deactivate": "Error deactivating admin"
     }
   },
 
@@ -47,6 +60,15 @@
       "id": "ID",
       "name": "Name",
       "user_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to deactivate the client \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Client deactivated successfully"
+    },
+    "errors": {
+      "deactivate": "Error deactivating client"
     }
   },
 
@@ -174,6 +196,22 @@
       "longitude_error": "This field is required",
       "logo_url_error": "This field is required",
       "description_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to deactivate the partner \"{{name}}\"?",
+      "restore": "Are you sure you want to restore the partner \"{{name}}\"?"
+    },
+    "success": {
+      "create": "Partner created successfully",
+      "update": "Partner updated successfully",
+      "deactivate": "Partner deactivated successfully",
+      "restore": "Partner restored successfully"
+    },
+    "errors": {
+      "create": "Error creating partner",
+      "update": "Error updating partner",
+      "deactivate": "Error deactivating partner",
+      "restore": "Error restoring partner"
     }
   },
 
@@ -232,6 +270,23 @@
       "select_role": "Select role",
       "title": "Edit User"
     },
+
+    "errors": {
+      "fetch": "Error fetching users",
+      "update": "Error updating user",
+      "deactivate": "Error deactivating user"
+    },
+
+    "success": {
+      "update": "User updated successfully",
+      "deactivate": "User deactivated successfully",
+      "restore": "User restored successfully"
+    },
+
+    "confirm": {
+      "deactivate": "Are you sure you want to deactivate the user \"{{name}}\"?",
+      "restore": "Are you sure you want to restore the user \"{{name}}\"?"
+    },
   
     "no_results": "No users found",
     "search_placeholder": "Search users...",
@@ -268,6 +323,15 @@
       "name": "Name",
       "actions": "Actions",
       "name_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to delete the speciality \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Speciality deleted successfully"
+    },
+    "errors": {
+      "deactivate": "Error deleting speciality"
     }
   },
 
