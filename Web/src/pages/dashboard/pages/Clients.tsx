@@ -19,6 +19,10 @@ export default function ClientsTable() {
 
   const [userId, setUserId] = useState<number | null>(null);
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
+
   useEffect(() => {
     fetchClients();
     fetchUsers();
@@ -46,10 +50,24 @@ export default function ClientsTable() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!userId) {
+      newErrors.userId = "Este campo es obligatorio";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
   const openCreate = () => {
     setIsEditing(false);
     setCurrentClient(null);
     setUserId(null);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -57,11 +75,14 @@ export default function ClientsTable() {
     setIsEditing(true);
     setCurrentClient(client);
     setUserId(client.user_id);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
   const saveClient = async () => {
-    if (!userId) return alert("Debes seleccionar un usuario");
+    setSubmitted(true);
+    if (!validateForm()) return;
 
     const method = isEditing ? "PUT" : "POST";
     const url = isEditing
@@ -168,9 +189,9 @@ export default function ClientsTable() {
               <div>
                 <RequiredLabel required>{t("clients_screen.choose_user")}</RequiredLabel>
                 <select
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg bg-white focus:ring-2 focus:ring-[#27B9BA] focus:outline-none"
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.userId ? "border-red-500" : "border-gray-300"}  bg-white focus:ring-2 focus:ring-[#27B9BA]`}
                   value={userId || ""}
-                  onChange={(e) => setUserId(Number(e.target.value))}
+                  onChange={(e) => { setUserId(Number(e.target.value)); setErrors((prev) => ({ ...prev, userId: "" })); }}
                 >
                   <option value="">{t("clients_screen.choose_user")}</option>
 
@@ -178,6 +199,11 @@ export default function ClientsTable() {
                     <option key={u.id} value={u.id}>{u.name}</option>
                   ))}
                 </select>
+                {submitted && errors.userId && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.userId}
+                  </p>
+                )}
               </div>
             </div>
 

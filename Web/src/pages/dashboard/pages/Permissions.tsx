@@ -18,6 +18,9 @@ export default function PermissionsTable() {
   const [current, setCurrent] = useState<Permission | null>(null);
   const [name, setName] = useState("");
   const [moduleId, setModuleId] = useState<number | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
 
   useEffect(() => {
     fetchModules();
@@ -46,6 +49,17 @@ export default function PermissionsTable() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!name.trim()) newErrors.name = "Este campo es obligatorio";
+    if (!moduleId) newErrors.moduleId = "Este campo es obligatorio";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
   const getModuleName = (id: number) =>
     modules.find((m) => m.id === id)?.name ||
     t("permissions_screen.unknown_module");
@@ -55,6 +69,8 @@ export default function PermissionsTable() {
     setCurrent(null);
     setName("");
     setModuleId(null);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -63,11 +79,14 @@ export default function PermissionsTable() {
     setCurrent(perm);
     setName(perm.name);
     setModuleId(perm.module_id);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
   const savePermission = async () => {
-    if (!name || !moduleId) return alert("Todos los campos son obligatorios.");
+    setSubmitted(true);
+    if (!validateForm()) return;
 
     const method = isEditing ? "PUT" : "POST";
     const url = isEditing
@@ -180,16 +199,24 @@ export default function PermissionsTable() {
               <div>
                 <RequiredLabel required>{t("permissions_screen.name")}</RequiredLabel>
 
-                <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={name} onChange={(e) => setName(e.target.value)}/>
+                <input className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                  value={name}
+                  onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
+                  placeholder="Ej. create_users"
+                />
+
+                {submitted && errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                )}
               </div>
 
               <div>
                 <RequiredLabel required>{t("permissions_screen.module")}</RequiredLabel>
 
                 <select
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg bg-white focus:ring-2 focus:ring-[#27B9BA]"
+                  className={`w-full px-3 py-2 rounded-lg border bg-white  ${submitted && errors.moduleId ? "border-red-500" : "border-gray-300"}  focus:ring-2 focus:ring-[#27B9BA]`}
                   value={moduleId || ""}
-                  onChange={(e) => setModuleId(Number(e.target.value))}
+                  onChange={(e) => { setModuleId(Number(e.target.value)); setErrors((prev) => ({ ...prev, moduleId: "" })); }}
                 >
                   <option value="">{t("permissions_screen.select_module")}</option>
 
@@ -199,11 +226,15 @@ export default function PermissionsTable() {
                     </option>
                   ))}
                 </select>
+                {submitted && errors.moduleId && (
+                  <p className="text-red-500 text-xs mt-1">{errors.moduleId}</p>
+                )}
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenModal(false)}>
+              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+                onClick={() => { setOpenModal(false); setErrors({}); setSubmitted(false); }}>
                 {t("permissions_screen.cancel")}
               </button>
 

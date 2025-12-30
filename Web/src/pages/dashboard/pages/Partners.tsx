@@ -37,6 +37,9 @@ export default function PartnersTable() {
   const [specialities, setSpecialities] = useState<{ id: number; name: string }[]>([]);
   const [selectedSpecialities, setSelectedSpecialities] = useState<number[]>([]);
   const [allPartnerSpecialities, setAllPartnerSpecialities] = useState<{ partner_id: number, speciality_id: number }[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
 
   useEffect(() => {
     fetchPartners();
@@ -106,9 +109,29 @@ export default function PartnersTable() {
       .filter(Boolean) as string[];
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!name.trim()) newErrors.name = "Este campo es obligatorio";
+    if (!userId) newErrors.userId = "Este campo es obligatorio";
+    if (!phone.trim()) newErrors.phone = "Este campo es obligatorio";
+    if (!location.trim()) newErrors.location = "Este campo es obligatorio";
+    if (!latitude.trim()) newErrors.latitude = "Este campo es obligatorio";
+    if (!longitude.trim()) newErrors.longitude = "Este campo es obligatorio";
+    if (!logoUrl.trim()) newErrors.logoUrl = "Este campo es obligatorio";
+    if (!description.trim()) newErrors.description = "Este campo es obligatorio";
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+
 
   const openCreate = () => {
     setIsEditing(false);
+    setSubmitted(false);
+    setErrors({});
     setCurrentPartner(null);
     setSelectedSpecialities([]);
     setName("");
@@ -132,6 +155,8 @@ export default function PartnersTable() {
 
   const openEdit = (partner: Partner) => {
     setIsEditing(true);
+    setSubmitted(false);
+    setErrors({});
     setCurrentPartner(partner);
     fetchPartnerSpecialities(partner.id);
     setName(partner.name);
@@ -150,7 +175,8 @@ export default function PartnersTable() {
   };
 
   const savePartner = async () => {
-    if (!name || !userId) return alert("Name y User son requeridos");
+    setSubmitted(true);
+    if (!validateForm()) return;
 
     const body = { name, user_id: userId, phone, whatsapp, location, latitude, longitude, land_use_permit: landUsePermit, scanner_handling: scannerHandling, logo_url: logoUrl, description, priority };
     const url = isEditing ? `${VITE_API_URL}/api/partners/${currentPartner?.id}` : `${VITE_API_URL}/api/partners`;
@@ -317,7 +343,7 @@ export default function PartnersTable() {
                     </td>
 
                     <td className="py-3 px-4 text-center font-semibold">{item.priority}</td>
-                    
+
                     <td className="py-3 px-4 text-center">
                       <span
                         title={
@@ -381,11 +407,12 @@ export default function PartnersTable() {
                 <div className="col-span-2">
                   <RequiredLabel required>{t("partners_screen.table.name")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
                     placeholder="Ej. Taller Mecánico El Rayo"
                   />
+                  {submitted && errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                 </div>
 
                 <div className="col-span-2">
@@ -407,11 +434,12 @@ export default function PartnersTable() {
                 <div>
                   <RequiredLabel required>{t("partners_screen.table.phone")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className={`w-full px-3 py-2 rounded-lg border ${errors.phone ? "border-red-500" : "border-gray-300"}  focus:ring-2 focus:ring-[#27B9BA]`}
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => { setPhone(e.target.value); setErrors((prev) => ({ ...prev, phone: "" })); }}
                     placeholder="Ej. 55 1234 5678"
                   />
+                  {submitted && errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 </div>
 
                 <div>
@@ -427,41 +455,56 @@ export default function PartnersTable() {
                 <div className="col-span-2">
                   <RequiredLabel required>{t("partners_screen.table.location")}</RequiredLabel>
                   <textarea
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.location ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                    onChange={(e) => { setLocation(e.target.value); setErrors((prev) => ({ ...prev, location: "" })); }}
                     placeholder="Ej. Av. Insurgentes Sur 123, Col. Roma Norte, CDMX"
                   />
+                  {submitted && errors.location && (
+                    <p className="text-red-500 text-xs mt-1">{errors.location}</p>
+                  )}
                 </div>
 
                 <div>
                   <RequiredLabel required>{t("partners_screen.table.latitude")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.latitude ? "border-red-500" : "border-gray-300"}focus:ring-2 focus:ring-[#27B9BA]`}
                     value={latitude}
-                    onChange={(e) => setLatitude(e.target.value)}
+                    onChange={(e) => {
+                      setLatitude(e.target.value); setErrors((prev) => ({ ...prev, latitude: "" }));
+                    }}
                     placeholder="25.0000"
                   />
+                  {submitted && errors.latitude && (
+                    <p className="text-red-500 text-xs mt-1">{errors.latitude}</p>
+                  )}
                 </div>
 
                 <div>
                   <RequiredLabel required>{t("partners_screen.table.longitude")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.longitude ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
                     value={longitude}
-                    onChange={(e) => setLongitude(e.target.value)}
+                    onChange={(e) => {
+                      setLongitude(e.target.value); setErrors((prev) => ({ ...prev, longitude: "" }));
+                    }}
                     placeholder="-100.0000"
                   />
+                  {submitted && errors.longitude && (
+                    <p className="text-red-500 text-xs mt-1">{errors.longitude}</p>
+                  )}
+
                 </div>
 
                 <div className="col-span-2">
                   <RequiredLabel required>{t("partners_screen.table.logo_url")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
-                    value={logoUrl}
-                    onChange={(e) => setLogoUrl(e.target.value)}
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.logoUrl ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                    onChange={(e) => { setLogoUrl(e.target.value); setErrors((prev) => ({ ...prev, logoUrl: "" })); }}
                     placeholder="https://ejemplo.com/logo.png"
                   />
+                  {submitted && errors.logoUrl && (
+                    <p className="text-red-500 text-xs mt-1">{errors.logoUrl}</p>
+                  )}
 
                   {logoUrl && (
                     <div className="mt-3 flex items-center gap-3">
@@ -481,11 +524,14 @@ export default function PartnersTable() {
                 <div className="col-span-2">
                   <RequiredLabel required>{t("partners_screen.table.description")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.description ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    onChange={(e) => { setDescription(e.target.value); setErrors((prev) => ({ ...prev, description: "" })); }}
                     placeholder="Ej. Taller especializado en frenos, suspensión y mantenimiento general"
                   />
+                  {submitted && errors.description && (
+                    <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -529,8 +575,8 @@ export default function PartnersTable() {
                               e.target.checked
                                 ? setSelectedSpecialities([...selectedSpecialities, s.id])
                                 : setSelectedSpecialities(
-                                    selectedSpecialities.filter((id) => id !== s.id)
-                                  )
+                                  selectedSpecialities.filter((id) => id !== s.id)
+                                )
                             }
                           />
                           {s.name}
@@ -542,7 +588,8 @@ export default function PartnersTable() {
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={() => setOpenModal(false)} className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
+              <button onClick={() => { setOpenModal(false); setErrors({}); setSubmitted(false); }}
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                 {t("partners_screen.cancel")}
               </button>
 

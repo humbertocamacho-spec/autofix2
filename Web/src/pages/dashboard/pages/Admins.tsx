@@ -18,6 +18,9 @@ export default function AdminsTable() {
   const [userId, setUserId] = useState<number | null>(null);
   const { t } = useTranslation();
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
   useEffect(() => {
     fetchAdmins();
     fetchUsers();
@@ -45,10 +48,23 @@ export default function AdminsTable() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!userId) {
+      newErrors.userId = "Este campo es obligatorio";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const openCreate = () => {
     setIsEditing(false);
     setCurrentAdmin(null);
     setUserId(null);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -56,11 +72,14 @@ export default function AdminsTable() {
     setIsEditing(true);
     setCurrentAdmin(admin);
     setUserId(admin.user_id);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
   const saveAdmin = async () => {
-    if (!userId) return alert("Debes seleccionar un usuario.");
+    setSubmitted(true);
+    if (!validateForm()) return;
 
     const method = isEditing ? "PUT" : "POST";
     const url = isEditing
@@ -164,20 +183,26 @@ export default function AdminsTable() {
               <div>
                 <RequiredLabel required>{t("admin_screen.choose_user")}</RequiredLabel>
                 <select
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.userId ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
                   value={userId || ""}
-                  onChange={(e) => setUserId(Number(e.target.value))}
+                  onChange={(e) => { setUserId(Number(e.target.value)); setErrors((prev) => ({ ...prev, userId: "" })); }}
                 >
                   <option value="">{t("admin_screen.choose_user")}</option>
                   {users.map((u) => (
                     <option key={u.id} value={u.id}>{u.name}</option>
                   ))}
                 </select>
+                {submitted && errors.userId && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.userId}
+                  </p>
+                )}
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenModal(false)}>
+              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+                onClick={() => { setOpenModal(false); setErrors({}); setSubmitted(false); }}>
                 {t("admin_screen.cancel")}
               </button>
 

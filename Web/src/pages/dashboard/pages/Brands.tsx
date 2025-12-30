@@ -16,6 +16,10 @@ export default function CarBrands() {
   const [currentBrand, setCurrentBrand] = useState<CarBrands | null>(null);
   const [name, setName] = useState("");
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
+
   useEffect(() => {
     fetchCarBrands();
   }, []);
@@ -32,10 +36,24 @@ export default function CarBrands() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!name.trim()) {
+      newErrors.name = "Este campo es obligatorio";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
   const handleCreate = () => {
     setIsEditing(false);
     setCurrentBrand(null);
     setName("");
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -43,10 +61,14 @@ export default function CarBrands() {
     setIsEditing(true);
     setCurrentBrand(brand);
     setName(brand.name);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
   const saveBrand = async () => {
+    setSubmitted(true);
+    if (!validateForm()) return;
     try {
       const url = isEditing
         ? `${VITE_API_URL}/api/car_brands/${currentBrand?.id}`
@@ -169,15 +191,20 @@ export default function CarBrands() {
 
                 <input
                   type="text"
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
+                  placeholder="Ej. Toyota"
                 />
+                {submitted && errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                )}
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={() => setOpenModal(false)} className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
+              <button onClick={() => { setOpenModal(false); setErrors({}); setSubmitted(false); }}
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                 {t("car_brands_screen.cancel")}
               </button>
 

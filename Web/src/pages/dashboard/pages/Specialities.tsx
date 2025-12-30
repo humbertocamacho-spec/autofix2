@@ -17,6 +17,10 @@ export default function SpecialitiesTable() {
   const [current, setCurrent] = useState<Specialities | null>(null);
   const [name, setName] = useState("");
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
+
   useEffect(() => {
     fetchSpecialities();
   }, []);
@@ -33,7 +37,22 @@ export default function SpecialitiesTable() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!name.trim()) {
+      newErrors.name = "Este campo es obligatorio";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
   const handleCreate = async () => {
+    setSubmitted(true);
+    if (!validateForm()) return;
+
     try {
       await fetch(`${VITE_API_URL}/api/specialities`, {
         method: "POST",
@@ -42,6 +61,8 @@ export default function SpecialitiesTable() {
       });
 
       setOpenModal(false);
+      setSubmitted(false);
+      setErrors({});
       fetchSpecialities();
     } catch (error) {
       console.error("Error creating specialities:", error);
@@ -50,6 +71,8 @@ export default function SpecialitiesTable() {
 
   const handleUpdate = async () => {
     if (!current) return;
+    setSubmitted(true);
+    if (!validateForm()) return;
 
     try {
       await fetch(`${VITE_API_URL}/api/specialities/${current.id}`, {
@@ -59,6 +82,8 @@ export default function SpecialitiesTable() {
       });
 
       setOpenModal(false);
+      setSubmitted(false);
+      setErrors({});
       fetchSpecialities();
     } catch (error) {
       console.error("Error updating speciality:", error);
@@ -83,6 +108,8 @@ export default function SpecialitiesTable() {
     setIsEditing(false);
     setName("");
     setCurrent(null);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -90,6 +117,8 @@ export default function SpecialitiesTable() {
     setIsEditing(true);
     setCurrent(item);
     setName(item.name);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -177,13 +206,22 @@ export default function SpecialitiesTable() {
             <div className="space-y-4">
               <div>
                 <RequiredLabel required>{t("specialities_screen.table.name")}</RequiredLabel>
+                <input
+                  className={`w-full px-3 py-2 rounded-lg border  ${submitted && errors.name ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
+                  value={name}
+                  onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
+                  placeholder="Ej. Frenos"
+                />
 
-                <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={name} onChange={(e) => setName(e.target.value)}/>
+                {submitted && errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                )}
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenModal(false)}>
+              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+                onClick={() => { setOpenModal(false); setErrors({}); setSubmitted(false); }}>
                 {t("specialities_screen.cancel")}
               </button>
 

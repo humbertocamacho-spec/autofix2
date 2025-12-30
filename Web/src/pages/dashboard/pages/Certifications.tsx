@@ -16,6 +16,9 @@ export default function CertificationsTable() {
   const [current, setCurrent] = useState<Certification | null>(null);
 
   const [name, setName] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
 
   useEffect(() => {
     fetchCertifications();
@@ -33,10 +36,24 @@ export default function CertificationsTable() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!name.trim()) {
+      newErrors.name = "Este campo es obligatorio";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
   const openCreate = () => {
     setIsEditing(false);
     setCurrent(null);
     setName("");
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -44,11 +61,14 @@ export default function CertificationsTable() {
     setIsEditing(true);
     setCurrent(item);
     setName(item.name);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
   const saveCertification = async () => {
-    if (!name || name.trim() === "") return alert("El nombre es obligatorio");
+    setSubmitted(true);
+    if (!validateForm()) return;
 
     const method = isEditing ? "PUT" : "POST";
     const url = isEditing
@@ -156,15 +176,20 @@ export default function CertificationsTable() {
 
                 <input
                   type="text"
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:ring-[#27B9BA]`}
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
+                  placeholder="Ej. Certificación ASE"
                 />
+                {submitted && errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                )}
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={() => setOpenModal(false)} className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
+              <button onClick={() => { setOpenModal(false); setErrors({}); setSubmitted(false); }}
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                 {t("certifications_screen.cancel")}
               </button>
 
