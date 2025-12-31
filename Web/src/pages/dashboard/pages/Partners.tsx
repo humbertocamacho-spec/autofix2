@@ -260,11 +260,11 @@ export default function PartnersTable() {
               <thead>
                 <tr className="text-gray-600 border-b">
                   <th className="pb-3 w-12">{t("partners_screen.table.id")}</th>
-                  <th className="pb-3 w-64">{t("partners_screen.table.name")}</th>
+                  <th className="pb-3 w-40">{t("partners_screen.table.name")}</th>
                   <th className="pb-3 w-40">{t("partners_screen.table.phone")}</th>
                   <th className="pb-3 w-40">{t("partners_screen.table.whatsapp")}</th>
                   <th className="pb-3 ">{t("partners_screen.table.location")}</th>
-                  <th className="pb-3 w-40 text-center">{t("partners_screen.table.land_use_permit")}</th>
+                  <th className="pb-3 w-30 text-center">{t("partners_screen.table.land_use_permit")}</th>
                   <th className="pb-3 w-40 text-center">{t("partners_screen.table.scanner_handling")}</th>
                   <th className="pb-3 w-32 text-center">{t("partners_screen.table.logo_url")}</th>
                   <th className="pb-3 px-4">{t("partners_screen.table.description")}</th>

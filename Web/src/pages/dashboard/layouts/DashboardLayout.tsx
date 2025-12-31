@@ -27,13 +27,25 @@ export default function DashboardLayout({ children }: Props) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [floatingMenu, setFloatingMenu] = useState<string | null>(null);
 
-  const changeLanguage = (lang: string) => {
-    i18n.changeLanguage(lang);
-    localStorage.setItem("lang", lang);
-  };
+  const [userLanguage, setUserLanguage] = useState("es");
+
+  const changeLanguage = (lang: string) => { i18n.changeLanguage(lang); localStorage.setItem("lang", lang);};
 
   useEffect(() => {
-    localStorage.setItem("sidebarOpen", JSON.stringify(sidebarOpen));
+    if (user?.id) {
+      const savedLang = localStorage.getItem(`lang_user_${user.id}`);
+      if (savedLang) {
+        setUserLanguage(savedLang);
+        i18n.changeLanguage(savedLang);
+      }
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (user?.id) { i18n.changeLanguage(userLanguage); localStorage.setItem(`lang_user_${user.id}`, userLanguage);}
+  }, [userLanguage, user?.id]);
+
+  useEffect(() => { localStorage.setItem("sidebarOpen", JSON.stringify(sidebarOpen));
   }, [sidebarOpen]);
 
   const toggleMenu = (menu: string) =>
@@ -102,10 +114,7 @@ export default function DashboardLayout({ children }: Props) {
 
   function linkClass(path: string) {
     return `group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
-      isActive(path)
-        ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30"
-        : "text-gray-700 hover:bg-gray-100"
-    }`;
+      isActive(path) ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`;
   }
 
   function textClass() {
@@ -160,9 +169,7 @@ export default function DashboardLayout({ children }: Props) {
                     <HiOutlineTicket size={iconSize} />
                     <span className={textClass()}>{t("tickets")}</span>
 
-                    {!isPartner && sidebarOpen && (
-                      <span className="ml-auto"> {openMenu === "tickets" ? <HiOutlineChevronDown /> : <HiOutlineChevronRight />}</span>
-                    )}
+                    {!isPartner && sidebarOpen && ( <span className="ml-auto"> {openMenu === "tickets" ? <HiOutlineChevronDown /> : <HiOutlineChevronRight />}</span>)}
 
                     {!sidebarOpen && <Tooltip>{t("tickets")}</Tooltip>}
                   </button>
@@ -265,10 +272,7 @@ export default function DashboardLayout({ children }: Props) {
               )}
 
               {CheckPermissionForModule("partner_certifications") && (
-                <Link
-                  to="/dashboard/partner_certifications"
-                  className={linkClass("/dashboard/partner_certifications")}
-                >
+                <Link to="/dashboard/partner_certifications" className={linkClass("/dashboard/partner_certifications")}>
                   <HiOutlineThumbUp size={iconSize} />
                   <span className={textClass()}>{t("partner_certifications")}</span>
                   {!sidebarOpen && <Tooltip>{t("partner_certifications")}</Tooltip>}
@@ -348,11 +352,7 @@ export default function DashboardLayout({ children }: Props) {
                 className="user-avatar size-10 cursor-pointer rounded-full ring-2 ring-gray-200"
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
               />
-              {sidebarOpen && (
-                <span className="text-sm font-medium text-gray-700">
-                  {user?.name || user?.email}
-                </span>
-              )}
+              {sidebarOpen && (<span className="text-sm font-medium text-gray-700">{user?.name || user?.email}</span>)}
               {userMenuOpen && <UserMenu user={user} />}
             </div>
           </div>
@@ -390,10 +390,7 @@ function UserMenu({ user }: { user: any }) {
 
         <hr />
 
-        <button onClick={() => {
-            logout();
-            navigate("/login", { replace: true });
-          }}
+        <button onClick={() => { logout(); navigate("/login", { replace: true });}}
           className="w-full rounded-lg px-3 py-2 text-left text-red-600 hover:bg-red-50">
           {t("dashboard_layout.logout")}
         </button>
@@ -412,23 +409,13 @@ const SectionTitle = ({ title, show }: { title: string; show: boolean }) =>
   show ? ( <p className="px-4 text-xs font-semibold uppercase tracking-wider text-gray-400">{title}</p>) : null;
 
 const SubLink = ({
-  to,
-  active,
-  children,
-  onClick,
+  to, active, children, onClick,
 }: {
-  to: string;
-  active: boolean;
-  children: React.ReactNode;
-  onClick?: () => void;
+  to: string; active: boolean; children: React.ReactNode; onClick?: () => void;
 }) => (
-  <Link
-    to={to}
-    onClick={onClick}
+  <Link to={to} onClick={onClick}
     className={`block rounded-lg px-4 py-2 text-sm transition ${
-      active
-        ? "bg-[#27B9BA]/10 text-[#27B9BA]"
-        : "text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA]"
+      active ? "bg-[#27B9BA]/10 text-[#27B9BA]" : "text-gray-600 hover:bg-[#27B9BA]/10 hover:text-[#27B9BA]"
     }`}
   >
     {children}
