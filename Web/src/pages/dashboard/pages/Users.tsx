@@ -139,7 +139,6 @@ export default function UsersTable() {
                 <th className="pb-3">{t("users_screen.table.email")}</th>
                 <th className="pb-3">{t("users_screen.table.phone")}</th>
                 <th className="pb-3">{t("users_screen.table.role")}</th>
-                <th className="pb-3">{t("users_screen.table.gender")}</th>
                 <th className="pb-3">{t("users_screen.table.status")}</th>
                 <th className="pb-3 text-right">{t("users_screen.table.actions")}</th>
               </tr>
@@ -153,7 +152,6 @@ export default function UsersTable() {
                   <td className="py-3">{user.email}</td>
                   <td className="py-3">{user.phone || "—"}</td>
                   <td className="py-3">{user.role_name || "—"}</td>
-                  <td className="py-3">{user.gender_name || "—"}</td>
                   <td className="py-3">
                     <span
                       title={ user.deleted_at ? t("users_screen.table.status_inactive") : t("users_screen.table.status_active")}
@@ -257,24 +255,6 @@ export default function UsersTable() {
                   <option value={1}>Admin</option>
                   <option value={2}>Partner</option>
                   <option value={3}>Client</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-gray-600">{t("users_screen.modal.gender")}</label>
-                <select
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
-                  value={currentUser.gender_id || ""}
-                  onChange={(e) =>
-                    setCurrentUser({
-                      ...currentUser,
-                      gender_id: Number(e.target.value),
-                    })
-                  }
-                >
-                  <option value="">{t("users_screen.modal.select_gender")}</option>
-                  <option value={1}>Femenino</option>
-                  <option value={2}>Masculino</option>
                 </select>
               </div>
             </div>
