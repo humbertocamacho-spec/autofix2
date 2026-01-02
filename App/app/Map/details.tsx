@@ -29,9 +29,7 @@ export default function PartnerDetailScreen() {
   const latitude = Array.isArray(params.latitude) ? parseFloat(params.latitude[0]) : parseFloat(params.latitude);
   const longitude = Array.isArray(params.longitude) ? parseFloat(params.longitude[0]) : parseFloat(params.longitude);
   const description = Array.isArray(params.description) ? params.description[0] : params.description;
-  const specialityNames = params.specialities
-    ? JSON.parse(Array.isArray(params.specialities) ? params.specialities[0] : params.specialities)
-    : [];
+  const specialityNames = params.specialities ? JSON.parse(Array.isArray(params.specialities) ? params.specialities[0] : params.specialities) : [];
 
   if (!id) {
     return (
@@ -84,6 +82,7 @@ export default function PartnerDetailScreen() {
       Linking.openURL(url).catch(() => alert('No se pudo abrir la ubicación'));
     }
   };
+
   const isAutofix = (name: string) =>
     name.toLowerCase().includes("autofix");
 
@@ -98,18 +97,12 @@ export default function PartnerDetailScreen() {
       </View>
 
       <ScrollView style={styles.container}>
-        <Image
-          source={
-            logo_url && logo_url !== ''
-              ? { uri: logo_url }
-              : require('@/assets/images/taller-electrico-automotriz.jpg')
-          }
+        <Image source={ logo_url && logo_url !== '' ? { uri: logo_url } : require('@/assets/images/taller-electrico-automotriz.jpg')}
           style={styles.partnerImage}
         />
 
         <View style={styles.content}>
           <Text style={styles.partnerName}>{name}</Text>
-          {/* CERTIFICACIONES*/}
           {partnerCertifications.length === 1 && (
             (() => {
               const cert = partnerCertifications[0];
@@ -125,9 +118,7 @@ export default function PartnerDetailScreen() {
                     }}
                   >
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
-                      <Text style={{ fontSize: 14, color: "#555", marginRight: 6 }}>
-                        {cert.certification_name}
-                      </Text>
+                      <Text style={{ fontSize: 14, color: "#555", marginRight: 6 }}>{cert.certification_name}</Text>
                       <Ionicons name="shield-checkmark" size={18} color="green" />
                     </View>
 
@@ -135,12 +126,7 @@ export default function PartnerDetailScreen() {
                       <TouchableOpacity
                         onPress={() => setShowAutofixSpecs(!showAutofixSpecs)}
                       >
-                        <Ionicons
-                          name={
-                            showAutofixSpecs
-                              ? "chevron-up-outline"
-                              : "chevron-down-outline"
-                          }
+                        <Ionicons name={ showAutofixSpecs ? "chevron-up-outline" : "chevron-down-outline"}
                           size={22}
                           color="#27B9BA"
                         />
@@ -151,19 +137,14 @@ export default function PartnerDetailScreen() {
                   {autofix && showAutofixSpecs && (
                     <View style={{ marginTop: 8, paddingLeft: 10 }}>
                       {staticCertInfo.map((item, index) => (
-                        <View
-                          key={index}
-                          style={{ flexDirection: "row", marginBottom: 5 }}
-                        >
+                        <View key={index} style={{ flexDirection: "row", marginBottom: 5 }}>
                           <Ionicons
                             name="checkmark-circle"
                             size={16}
                             color="green"
                             style={{ marginRight: 6, marginTop: 2 }}
                           />
-                          <Text style={{ fontSize: 14, color: "#444", flex: 1 }}>
-                            {item}
-                          </Text>
+                          <Text style={{ fontSize: 14, color: "#444", flex: 1 }}>{item}</Text>
                         </View>
                       ))}
                     </View>
@@ -175,7 +156,6 @@ export default function PartnerDetailScreen() {
 
           {partnerCertifications.length > 1 && (
             <View style={{ marginBottom: 5 }}>
-              {/* TÍTULO */}
               <TouchableOpacity
                 onPress={() => setShowCertifications(!showCertifications)}
                 style={{
@@ -184,21 +164,14 @@ export default function PartnerDetailScreen() {
                   justifyContent: "space-between",
                 }}
               >
-                <Text style={{ fontSize: 13, color: "#000" }}>
-                  Certificaciones
-                </Text>
+                <Text style={{ fontSize: 13, color: "#000" }}>Certificaciones</Text>
                 <Ionicons
-                  name={
-                    showCertifications
-                      ? "chevron-up-outline"
-                      : "chevron-down-outline"
-                  }
+                  name={ showCertifications ? "chevron-up-outline" : "chevron-down-outline"}
                   size={22}
                   color="#27B9BA"
                 />
               </TouchableOpacity>
 
-              {/* LISTADO */}
               {showCertifications &&
                 partnerCertifications.map((c) => {
                   const autofix = isAutofix(c.certification_name);
@@ -219,23 +192,13 @@ export default function PartnerDetailScreen() {
                             color="green"
                             style={{ marginRight: 6 }}
                           />
-                          <Text style={{ fontSize: 13, color: "#555" }}>
-                            {c.certification_name}
-                          </Text>
+                          <Text style={{ fontSize: 13, color: "#555" }}>{c.certification_name}</Text>
                         </View>
 
                         {autofix && (
-                          <TouchableOpacity
-                            onPress={() =>
-                              setShowAutofixSpecs(!showAutofixSpecs)
-                            }
-                          >
+                          <TouchableOpacity onPress={() => setShowAutofixSpecs(!showAutofixSpecs)}>
                             <Ionicons
-                              name={
-                                showAutofixSpecs
-                                  ? "chevron-up-outline"
-                                  : "chevron-down-outline"
-                              }
+                              name={ showAutofixSpecs ? "chevron-up-outline" : "chevron-down-outline"}
                               size={20}
                               color="#27B9BA"
                             />
@@ -246,19 +209,14 @@ export default function PartnerDetailScreen() {
                       {autofix && showAutofixSpecs && (
                         <View style={{ marginTop: 6, paddingLeft: 24 }}>
                           {staticCertInfo.map((item, index) => (
-                            <View
-                              key={index}
-                              style={{ flexDirection: "row", marginBottom: 4 }}
-                            >
+                            <View key={index} style={{ flexDirection: "row", marginBottom: 4 }}>
                               <Ionicons
                                 name="checkmark-circle"
                                 size={15}
                                 color="green"
                                 style={{ marginRight: 6, marginTop: 2 }}
                               />
-                              <Text style={{ fontSize: 14, color: "#444", flex: 1 }}>
-                                {item}
-                              </Text>
+                              <Text style={{ fontSize: 14, color: "#444", flex: 1 }}>{item}</Text>
                             </View>
                           ))}
                         </View>
@@ -270,9 +228,7 @@ export default function PartnerDetailScreen() {
           )}
 
           {partnerCertifications.length === 0 && (
-            <Text style={{ fontSize: 15, color: "#555", marginBottom: 5 }}>
-              No cuenta con certificación
-            </Text>
+            <Text style={{ fontSize: 15, color: "#555", marginBottom: 5 }}> No cuenta con certificación</Text>
           )}
 
           <View style={{ flexDirection: 'row', marginTop: -5, marginBottom: 10 }}>
