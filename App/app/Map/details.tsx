@@ -118,7 +118,7 @@ export default function PartnerDetailScreen() {
                     }}
                   >
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
-                      <Text style={{ fontSize: 14, color: "#555", marginRight: 6 }}>{cert.certification_name}</Text>
+                      <Text style={{ fontSize: 13, color: "#555", marginRight: 6 }}>{cert.certification_name}</Text>
                       <Ionicons name="shield-checkmark" size={18} color="green" />
                     </View>
 
@@ -135,7 +135,7 @@ export default function PartnerDetailScreen() {
                   </View>
 
                   {autofix && showAutofixSpecs && (
-                    <View style={{ marginTop: 8, paddingLeft: 10 }}>
+                    <View style={{ marginTop: 3, paddingLeft: 10 }}>
                       {staticCertInfo.map((item, index) => (
                         <View key={index} style={{ flexDirection: "row", marginBottom: 5 }}>
                           <Ionicons
@@ -164,7 +164,7 @@ export default function PartnerDetailScreen() {
                   justifyContent: "space-between",
                 }}
               >
-                <Text style={{ fontSize: 13, color: "#000" }}>Certificaciones</Text>
+                <Text style={{ fontSize: 13,color: "#000" }}>Certificaciones</Text>
                 <Ionicons
                   name={ showCertifications ? "chevron-up-outline" : "chevron-down-outline"}
                   size={22}
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 50, paddingBottom: 20, paddingHorizontal: 15, backgroundColor: '#27B9BA', borderBottomWidth: 1, borderBottomColor: '#eee' },
   menuIcon: { fontSize: 28, fontWeight: 'bold', color: '#ffff' },
   content: { padding: 20 },
-  partnerName: { fontSize: 25, fontWeight: 'bold', color: '#333', marginBottom: 10, marginTop: -10 },
+  partnerName: { fontSize: 25, fontWeight: 'bold', color: '#333', marginTop: -10 },
   partnerCertifications: { fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 10, marginTop: -10 },
   partnerSubtitle: { fontSize: 20, color: '#2e2d2dff', marginBottom: 20 },
   detailItem: { flexDirection: 'row', marginBottom: 10, alignItems: 'center' },
