@@ -1,5 +1,5 @@
 import { Stack, useLocalSearchParams, useRouter, } from 'expo-router';
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getPartnerCertifications } from '@/services/partner_certifications';
@@ -41,7 +41,8 @@ export default function PartnerDetailScreen() {
     );
   }
 
-  const [showMore, setShowMore] = useState(false);
+  const [showCertifications, setShowCertifications] = useState(false);
+  const [showAutofixSpecs, setShowAutofixSpecs] = useState(false);
   const [partnerCertifications, setPartnerCertifications] = useState<any[]>([]);
 
   useEffect(() => {
@@ -83,6 +84,8 @@ export default function PartnerDetailScreen() {
       Linking.openURL(url).catch(() => alert('No se pudo abrir la ubicación'));
     }
   };
+  const isAutofix = (name: string) =>
+    name.toLowerCase().includes("autofix");
 
   return (
     <>
@@ -106,36 +109,170 @@ export default function PartnerDetailScreen() {
 
         <View style={styles.content}>
           <Text style={styles.partnerName}>{name}</Text>
-          {partnerCertifications.length > 0 ? (
-            <>
-              {partnerCertifications.map((c) => (
-                <View key={c.id} style={{ marginBottom: 8, marginTop: -8 }}>
-                  
-                  <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+          {/* CERTIFICACIONES*/}
+          {partnerCertifications.length === 1 && (
+            (() => {
+              const cert = partnerCertifications[0];
+              const autofix = isAutofix(cert.certification_name);
+
+              return (
+                <View style={{ marginBottom: 5 }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <View style={{ flexDirection: "row", alignItems: "center" }}>
-                      <Text style={{ fontSize: 14, color: "#555", marginRight: 6, marginLeft: -3 }}> {c.certification_name}</Text>
-                      <Ionicons name="shield-checkmark" size={18} color="green"/>
+                      <Text style={{ fontSize: 14, color: "#555", marginRight: 6 }}>
+                        {cert.certification_name}
+                      </Text>
+                      <Ionicons name="shield-checkmark" size={18} color="green" />
                     </View>
 
-                    <TouchableOpacity onPress={() => setShowMore(!showMore)}>
-                      <Ionicons name={showMore ? "chevron-up-outline" : "chevron-down-outline"} size={22} color="#27B9BA"/>
-                    </TouchableOpacity>
+                    {autofix && (
+                      <TouchableOpacity
+                        onPress={() => setShowAutofixSpecs(!showAutofixSpecs)}
+                      >
+                        <Ionicons
+                          name={
+                            showAutofixSpecs
+                              ? "chevron-up-outline"
+                              : "chevron-down-outline"
+                          }
+                          size={22}
+                          color="#27B9BA"
+                        />
+                      </TouchableOpacity>
+                    )}
                   </View>
 
-                  {showMore && (
-                    <View style={{ marginTop: 8, paddingLeft: 24 }}>
+                  {autofix && showAutofixSpecs && (
+                    <View style={{ marginTop: 8, paddingLeft: 10 }}>
                       {staticCertInfo.map((item, index) => (
-                        <Text key={index} style={{ fontSize: 14, color: "#444", marginBottom: 5 }}>
-                          <Ionicons name="checkmark-circle" size={16} color="green"/>{" "}{item}
-                        </Text>
+                        <View
+                          key={index}
+                          style={{ flexDirection: "row", marginBottom: 5 }}
+                        >
+                          <Ionicons
+                            name="checkmark-circle"
+                            size={16}
+                            color="green"
+                            style={{ marginRight: 6, marginTop: 2 }}
+                          />
+                          <Text style={{ fontSize: 14, color: "#444", flex: 1 }}>
+                            {item}
+                          </Text>
+                        </View>
                       ))}
                     </View>
                   )}
                 </View>
-              ))}
-            </>
-          ) : (
-            <Text style={{ fontSize: 15, color: "#555", marginBottom: 10, marginTop: -10 }}>No cuenta con certificación</Text>
+              );
+            })()
+          )}
+
+          {partnerCertifications.length > 1 && (
+            <View style={{ marginBottom: 5 }}>
+              {/* TÍTULO */}
+              <TouchableOpacity
+                onPress={() => setShowCertifications(!showCertifications)}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text style={{ fontSize: 13, color: "#000" }}>
+                  Certificaciones
+                </Text>
+                <Ionicons
+                  name={
+                    showCertifications
+                      ? "chevron-up-outline"
+                      : "chevron-down-outline"
+                  }
+                  size={22}
+                  color="#27B9BA"
+                />
+              </TouchableOpacity>
+
+              {/* LISTADO */}
+              {showCertifications &&
+                partnerCertifications.map((c) => {
+                  const autofix = isAutofix(c.certification_name);
+
+                  return (
+                    <View key={c.id} style={{ marginTop: 8 }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                          <Ionicons
+                            name="shield-checkmark"
+                            size={18}
+                            color="green"
+                            style={{ marginRight: 6 }}
+                          />
+                          <Text style={{ fontSize: 13, color: "#555" }}>
+                            {c.certification_name}
+                          </Text>
+                        </View>
+
+                        {autofix && (
+                          <TouchableOpacity
+                            onPress={() =>
+                              setShowAutofixSpecs(!showAutofixSpecs)
+                            }
+                          >
+                            <Ionicons
+                              name={
+                                showAutofixSpecs
+                                  ? "chevron-up-outline"
+                                  : "chevron-down-outline"
+                              }
+                              size={20}
+                              color="#27B9BA"
+                            />
+                          </TouchableOpacity>
+                        )}
+                      </View>
+
+                      {autofix && showAutofixSpecs && (
+                        <View style={{ marginTop: 6, paddingLeft: 24 }}>
+                          {staticCertInfo.map((item, index) => (
+                            <View
+                              key={index}
+                              style={{ flexDirection: "row", marginBottom: 4 }}
+                            >
+                              <Ionicons
+                                name="checkmark-circle"
+                                size={15}
+                                color="green"
+                                style={{ marginRight: 6, marginTop: 2 }}
+                              />
+                              <Text style={{ fontSize: 14, color: "#444", flex: 1 }}>
+                                {item}
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
+            </View>
+          )}
+
+          {partnerCertifications.length === 0 && (
+            <Text style={{ fontSize: 15, color: "#555", marginBottom: 5 }}>
+              No cuenta con certificación
+            </Text>
           )}
 
           <View style={{ flexDirection: 'row', marginTop: -5, marginBottom: 10 }}>
@@ -151,11 +288,11 @@ export default function PartnerDetailScreen() {
           </TouchableOpacity>
 
           {phone ? (
-          <TouchableOpacity style={styles.detailItem} onPress={handleCall}>
-            <Ionicons name="call-outline" size={20} color="#27B9BA" style={styles.icon} />
-            <Text style={styles.labelText}>Teléfono: </Text>
-            <Text style={styles.valueText}>{phone}</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.detailItem} onPress={handleCall}>
+              <Ionicons name="call-outline" size={20} color="#27B9BA" style={styles.icon} />
+              <Text style={styles.labelText}>Teléfono: </Text>
+              <Text style={styles.valueText}>{phone}</Text>
+            </TouchableOpacity>
           ) : (
             <View style={styles.detailItem}>
               <Ionicons name="close-circle-outline" size={20} color="gray" style={styles.icon} />
@@ -163,7 +300,7 @@ export default function PartnerDetailScreen() {
               <Text style={[styles.valueText, { color: "gray" }]}>No disponible</Text>
             </View>
           )}
-          
+
           {whatsapp ? (
             <TouchableOpacity style={styles.detailItem} onPress={handleWhatsapp}>
               <Ionicons name="logo-whatsapp" size={20} color="#27B9BA" style={styles.icon} />
@@ -199,7 +336,7 @@ export default function PartnerDetailScreen() {
               style={[styles.actionButton, { backgroundColor: '#27B9BA' }]}
               onPress={() => router.push({
                 pathname: "/Appointment",
-                params: { 
+                params: {
                   id,
                   name,
                   location,
@@ -224,7 +361,7 @@ export default function PartnerDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f9f9f9', marginTop: -1 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  partnerImage: { width: '100%', height: 240, resizeMode: 'contain', backgroundColor: '#ffffffff'},
+  partnerImage: { width: '100%', height: 240, resizeMode: 'contain', backgroundColor: '#ffffffff' },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 50, paddingBottom: 20, paddingHorizontal: 15, backgroundColor: '#27B9BA', borderBottomWidth: 1, borderBottomColor: '#eee' },
   menuIcon: { fontSize: 28, fontWeight: 'bold', color: '#ffff' },
   content: { padding: 20 },
@@ -233,9 +370,9 @@ const styles = StyleSheet.create({
   partnerSubtitle: { fontSize: 20, color: '#2e2d2dff', marginBottom: 20 },
   detailItem: { flexDirection: 'row', marginBottom: 10, alignItems: 'center' },
   icon: { marginRight: 5, marginTop: 2 },
-  labelText: { color: '#27B9BA', fontWeight: "bold", marginRight: 5,padding: 0, },
-  valueText: { fontSize: 14, color: '#000',  flexShrink: 1, padding: 0, },
-  sectionTitle: { fontSize: 20, fontWeight: 'bold', color: '#27B9BA',  marginBottom: 5 },
+  labelText: { color: '#27B9BA', fontWeight: "bold", marginRight: 5, padding: 0, },
+  valueText: { fontSize: 14, color: '#000', flexShrink: 1, padding: 0, },
+  sectionTitle: { fontSize: 20, fontWeight: 'bold', color: '#27B9BA', marginBottom: 5 },
   descriptionText: { fontSize: 16, color: '#666', lineHeight: 22, marginBottom: 10 },
   partnerInfo: { fontSize: 25, marginVertical: 10 },
   buttonRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, paddingHorizontal: 20 },
