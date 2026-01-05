@@ -13,7 +13,6 @@ export default function PendingTicketsTable() {
   const [search, setSearch] = useState("");
   const { user } = useAuthContext();
 
-
   useEffect(() => {
     if (!user) return;
     fetchPendingTickets();

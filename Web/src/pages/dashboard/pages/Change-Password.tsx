@@ -5,12 +5,12 @@ import { useTranslation } from "react-i18next";
 
 export default function ChangePasswordScreen() {
   const { t } = useTranslation();
-
   const [current, setCurrent] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Handles password update request
   const changePassword = async () => {
     if (password !== confirm) {
       return alert(t("password.mismatch"));
@@ -56,12 +56,10 @@ export default function ChangePasswordScreen() {
         {t("password.title")}
       </h1>
 
+      {/* Change password form */}
       <div className="mx-auto max-w-md rounded-2xl bg-white p-10 shadow-2xl">
-
         <p className="mb-6 text-gray-600">{t("password.description")}</p>
-
         <div className="space-y-5">
-
           <div>
             <label className="text-sm font-medium text-gray-700">{t("password.current")}</label>
             <input
@@ -94,6 +92,7 @@ export default function ChangePasswordScreen() {
 
         </div>
 
+        {/* Submit Action */}
         <div className="mt-10 flex justify-end">
           <button
             onClick={changePassword}

@@ -19,10 +19,10 @@ export default function CertificationsTable() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-  useEffect(() => {
-    fetchCertifications();
-  }, []);
+  // Initial data fetch on component mount
+  useEffect(() => { fetchCertifications();}, []);
 
+  // Fetch certifications from API
   const fetchCertifications = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/certifications`);
@@ -35,6 +35,7 @@ export default function CertificationsTable() {
     }
   };
 
+  // Basic form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -44,6 +45,7 @@ export default function CertificationsTable() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Open modal in create mode
   const openCreate = () => {
     setIsEditing(false);
     setCurrent(null);
@@ -53,6 +55,7 @@ export default function CertificationsTable() {
     setOpenModal(true);
   };
 
+  // Open modal in edit mode with selected item
   const openEdit = (item: Certification) => {
     setIsEditing(true);
     setCurrent(item);
@@ -62,6 +65,7 @@ export default function CertificationsTable() {
     setOpenModal(true);
   };
 
+  // Create or update certification
   const saveCertification = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
@@ -79,6 +83,7 @@ export default function CertificationsTable() {
     fetchCertifications();
   };
 
+  // Delete certification
   const deleteCertification = async (certification: Certification) => {
     const confirmed = window.confirm(t("certifications_screen.confirm.deactivate", { name: certification.name,}));
     if (!confirmed) return;
@@ -91,12 +96,14 @@ export default function CertificationsTable() {
     fetchCertifications();
   };
 
+  // Filter certifications by name
   const filtered = certifications.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("certifications_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -113,6 +120,7 @@ export default function CertificationsTable() {
         </Can>
       </div>
 
+      {/* Certifications table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("certifications_screen.loading")}</p>
@@ -160,6 +168,7 @@ export default function CertificationsTable() {
         )}
       </div>
 
+      {/* Create / edit certification modal */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">

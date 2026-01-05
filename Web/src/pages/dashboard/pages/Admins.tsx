@@ -21,11 +21,10 @@ export default function AdminsTable() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-  useEffect(() => {
-    fetchAdmins();
-    fetchUsers();
-  }, []);
+  // Initial load of admins and users
+  useEffect(() => { fetchAdmins(); fetchUsers();}, []);
 
+  // Fetch admins list
   const fetchAdmins = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/admins`);
@@ -38,6 +37,7 @@ export default function AdminsTable() {
     }
   };
 
+  // Fetch users for the select input
   const fetchUsers = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/users`);
@@ -48,6 +48,7 @@ export default function AdminsTable() {
     }
   };
 
+  // Basic form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -57,6 +58,7 @@ export default function AdminsTable() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Open modal in create mode
   const openCreate = () => {
     setIsEditing(false);
     setCurrentAdmin(null);
@@ -66,6 +68,7 @@ export default function AdminsTable() {
     setOpenModal(true);
   };
 
+  // Open modal in edit mode
   const openEdit = (admin: Admin) => {
     setIsEditing(true);
     setCurrentAdmin(admin);
@@ -75,6 +78,7 @@ export default function AdminsTable() {
     setOpenModal(true);
   };
 
+  // Create or update admin
   const saveAdmin = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
@@ -99,6 +103,7 @@ export default function AdminsTable() {
     fetchAdmins();
   };
 
+  // Delete (deactivate) admin
   const deleteAdmin = async (admin: Admin) => {
     const confirmed = window.confirm( t("admin_screen.confirm.deactivate", { name: admin.user_name }));
     if (!confirmed) return;
@@ -111,12 +116,14 @@ export default function AdminsTable() {
     fetchAdmins();
   };
 
+  // Filter admins by name
   const filtered = admins.filter((a) => a.user_name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("admin_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -133,6 +140,7 @@ export default function AdminsTable() {
         </Can>
       </div>
 
+      {/* Admins table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("admin_screen.loading")}</p>
@@ -176,6 +184,7 @@ export default function AdminsTable() {
         )}
       </div>
 
+      {/* Create / edit admin modal */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">

@@ -19,11 +19,10 @@ export default function CarBrands() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
+  // Initial load
+  useEffect(() => { fetchCarBrands(); }, []);
 
-  useEffect(() => {
-    fetchCarBrands();
-  }, []);
-
+  // Fetch car brands list
   const fetchCarBrands = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/car_brands`);
@@ -36,6 +35,7 @@ export default function CarBrands() {
     }
   };
 
+  // Basic form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -47,6 +47,7 @@ export default function CarBrands() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Open modal in create mode
   const handleCreate = () => {
     setIsEditing(false);
     setCurrentBrand(null);
@@ -56,6 +57,7 @@ export default function CarBrands() {
     setOpenModal(true);
   };
 
+  // Open modal in edit mode
   const handleEdit = (brand: CarBrands) => {
     setIsEditing(true);
     setCurrentBrand(brand);
@@ -65,6 +67,7 @@ export default function CarBrands() {
     setOpenModal(true);
   };
 
+  // Create or update car brand
   const saveBrand = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
@@ -90,6 +93,7 @@ export default function CarBrands() {
     }
   };
 
+  // Delete car brand
   const handleDelete = async (brand: CarBrands) => {
     const confirmed = window.confirm(
       t("car_brands_screen.confirm.deactivate", { name: brand.name })
@@ -109,14 +113,14 @@ export default function CarBrands() {
     fetchCarBrands();
   };
 
-  const filtered = carBrands.filter((s) =>
-    s.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter car brands by name
+  const filtered = carBrands.filter((s) => s.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("car_brands_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -133,6 +137,7 @@ export default function CarBrands() {
         </Can>
       </div>
 
+      {/* Car brands table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("car_brands_screen.loading")}</p>
@@ -181,6 +186,7 @@ export default function CarBrands() {
         )}
       </div>
 
+      {/* Create / edit car brand modal */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">

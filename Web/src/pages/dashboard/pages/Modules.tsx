@@ -11,22 +11,17 @@ export default function ModulesTable() {
   const [modules, setModules] = useState<Modules[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentModule, setCurrentModule] = useState<Modules | null>(null);
-
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
+  useEffect(() => { fetchModules(); }, []);
 
-  useEffect(() => {
-    fetchModules();
-  }, []);
-
+  // Fetch modules list
   const fetchModules = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/modules`);
@@ -39,6 +34,7 @@ export default function ModulesTable() {
     }
   };
 
+  //Client-side form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -54,6 +50,7 @@ export default function ModulesTable() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Create or update module
   const handleSave = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
@@ -82,6 +79,7 @@ export default function ModulesTable() {
     }
   };
   
+  // Delete module
   const handleDelete = async (module: Modules) => {
     const confirmed = window.confirm(t("modules_screen.confirm.deactivate", { name: module.name }));
     if (!confirmed) return;
@@ -94,6 +92,7 @@ export default function ModulesTable() {
     fetchModules();
   };
 
+  // Open create modal
   const openCreateModal = () => {
     setIsEditing(false);
     setCurrentModule(null);
@@ -104,6 +103,7 @@ export default function ModulesTable() {
     setOpenModal(true);
   };
 
+  // Open edit modal
   const openEditModal = (mod: Modules) => {
     setIsEditing(true);
     setCurrentModule(mod);
@@ -126,6 +126,7 @@ export default function ModulesTable() {
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("modules_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -142,6 +143,7 @@ export default function ModulesTable() {
         </Can>
       </div>
 
+      {/* Modules table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("modules_screen.loading")}</p>
@@ -188,6 +190,8 @@ export default function ModulesTable() {
           </div>
         )}
       </div>
+
+      {/* Create / edit module modal */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">

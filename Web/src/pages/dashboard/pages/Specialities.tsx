@@ -20,7 +20,6 @@ export default function SpecialitiesTable() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-
   useEffect(() => {
     fetchSpecialities();
   }, []);
