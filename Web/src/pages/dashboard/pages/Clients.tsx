@@ -4,6 +4,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Client } from "../../../types/client";
 import type { User } from "../../../types/users";
 import { useTranslation } from "react-i18next";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
 export default function ClientsTable() {
@@ -17,6 +18,10 @@ export default function ClientsTable() {
   const [currentClient, setCurrentClient] = useState<Client | null>(null);
 
   const [userId, setUserId] = useState<number | null>(null);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
 
   useEffect(() => {
     fetchClients();
@@ -45,10 +50,23 @@ export default function ClientsTable() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!userId) {
+      newErrors.userId = t("clients_screen.table.user_error");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const openCreate = () => {
     setIsEditing(false);
     setCurrentClient(null);
     setUserId(null);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -56,11 +74,14 @@ export default function ClientsTable() {
     setIsEditing(true);
     setCurrentClient(client);
     setUserId(client.user_id);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
   const saveClient = async () => {
-    if (!userId) return alert("Debes seleccionar un usuario");
+    setSubmitted(true);
+    if (!validateForm()) return;
 
     const method = isEditing ? "PUT" : "POST";
     const url = isEditing
@@ -77,13 +98,22 @@ export default function ClientsTable() {
     fetchClients();
   };
 
-  const deleteClient = async (id: number) => {
-    if (!confirm("¿Eliminar cliente?")) return;
+  const deleteClient = async (client: Client) => {
+    const confirmed = window.confirm(
+      t("clients_screen.confirm.deactivate", { name: client.user_name })
+    );
+    if (!confirmed) return;
 
-    await fetch(`${VITE_API_URL}/api/client/${id}`, {
+    const res = await fetch(`${VITE_API_URL}/api/client/${client.id}`, {
       method: "DELETE",
     });
 
+    if (!res.ok) {
+      alert(t("clients_screen.errors.deactivate"));
+      return;
+    }
+
+    alert(t("clients_screen.success.deactivate"));
     fetchClients();
   };
 
@@ -99,7 +129,7 @@ export default function ClientsTable() {
         <input
           type="text"
           placeholder={t("clients_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -138,7 +168,7 @@ export default function ClientsTable() {
                     </Can>
 
                     <Can permission="delete_clients">
-                      <button onClick={() => deleteClient(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                      <button onClick={() => deleteClient(item)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                         {t("clients_screen.delete")}
                       </button>
                     </Can>
@@ -165,12 +195,11 @@ export default function ClientsTable() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("clients_screen.choose_user")}</label>
-
+                <RequiredLabel required>{t("clients_screen.choose_user")}</RequiredLabel>
                 <select
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg bg-white focus:ring-2 focus:ring-[#27B9BA] focus:outline-none"
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.userId ? "border-red-500" : "border-gray-300"}  bg-white`}
                   value={userId || ""}
-                  onChange={(e) => setUserId(Number(e.target.value))}
+                  onChange={(e) => { setUserId(Number(e.target.value)); setErrors((prev) => ({ ...prev, userId: "" })); }}
                 >
                   <option value="">{t("clients_screen.choose_user")}</option>
 
@@ -178,6 +207,11 @@ export default function ClientsTable() {
                     <option key={u.id} value={u.id}>{u.name}</option>
                   ))}
                 </select>
+                {submitted && errors.userId && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.userId}
+                  </p>
+                )}
               </div>
             </div>
 

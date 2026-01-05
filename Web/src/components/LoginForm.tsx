@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuthContext } from "../context/AuthContext";
 
 interface Props {
@@ -11,6 +11,15 @@ export default function LoginForm({ onLoginSuccess }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [remember, setRemember] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberEmail");
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRemember(true);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,10 +28,15 @@ export default function LoginForm({ onLoginSuccess }: Props) {
     const result = await login(email, password);
 
     if (result.ok) {
+      if (remember) {
+        localStorage.setItem("rememberEmail", email);
+      } else {
+        localStorage.removeItem("rememberEmail");
+      }
+
       onLoginSuccess?.();
     } else {
       setError(result.message ?? "Error al iniciar sesión");
-
     }
   };
 
@@ -55,7 +69,12 @@ export default function LoginForm({ onLoginSuccess }: Props) {
 
       <div className="flex items-center justify-between text-sm mt-2">
         <label className="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" className="w-4 h-4 accent-[#27B9BA]"/>
+          <input
+            type="checkbox"
+            className="w-4 h-4 accent-[#27B9BA]"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+          />
           <span className="text-gray-700">Remember</span>
         </label>
 

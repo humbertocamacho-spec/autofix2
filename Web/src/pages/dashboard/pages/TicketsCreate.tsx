@@ -86,7 +86,7 @@ export default function TicketsTable() {
         <input
           type="text"
           placeholder={t("tickets_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -191,7 +191,7 @@ export default function TicketsTable() {
             <select
               value={newStatus}
               onChange={(e) => setNewStatus(e.target.value as any)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-6 focus:ring-2 focus:ring-[#27B9BA]"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-6"
             >
               <option value="pendiente">{t("tickets_screen.status.pendiente")}</option>
               <option value="revision">{t("tickets_screen.status.revision")}</option>

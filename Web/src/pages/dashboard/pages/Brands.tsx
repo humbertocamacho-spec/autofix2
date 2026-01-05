@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { CarBrands } from "../../../types/car_brands";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
 export default function CarBrands() {
@@ -14,6 +15,10 @@ export default function CarBrands() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentBrand, setCurrentBrand] = useState<CarBrands | null>(null);
   const [name, setName] = useState("");
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
 
   useEffect(() => {
     fetchCarBrands();
@@ -31,10 +36,23 @@ export default function CarBrands() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!name.trim()) {
+      newErrors.name = t("car_brands_screen.table.name_error");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleCreate = () => {
     setIsEditing(false);
     setCurrentBrand(null);
     setName("");
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -42,10 +60,14 @@ export default function CarBrands() {
     setIsEditing(true);
     setCurrentBrand(brand);
     setName(brand.name);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
   const saveBrand = async () => {
+    setSubmitted(true);
+    if (!validateForm()) return;
     try {
       const url = isEditing
         ? `${VITE_API_URL}/api/car_brands/${currentBrand?.id}`
@@ -68,19 +90,23 @@ export default function CarBrands() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    const confirmDelete = window.confirm("¿Eliminar marca?");
-    if (!confirmDelete) return;
+  const handleDelete = async (brand: CarBrands) => {
+    const confirmed = window.confirm(
+      t("car_brands_screen.confirm.deactivate", { name: brand.name })
+    );
+    if (!confirmed) return;
 
-    try {
-      await fetch(`${VITE_API_URL}/api/car_brands/${id}`, {
-        method: "DELETE",
-      });
+    const res = await fetch(`${VITE_API_URL}/api/car_brands/${brand.id}`, {
+      method: "DELETE",
+    });
 
-      fetchCarBrands();
-    } catch (error) {
-      console.error("Error deleting brand:", error);
+    if (!res.ok) {
+      alert(t("car_brands_screen.errors.deactivate"));
+      return;
     }
+
+    alert(t("car_brands_screen.success.deactivate"));
+    fetchCarBrands();
   };
 
   const filtered = carBrands.filter((s) =>
@@ -95,7 +121,7 @@ export default function CarBrands() {
         <input
           type="text"
           placeholder={t("car_brands_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -134,7 +160,7 @@ export default function CarBrands() {
                       </Can>
 
                       <Can permission="delete_brands">
-                        <button onClick={() => handleDelete(item.id)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                        <button onClick={() => handleDelete(item)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                           {t("car_brands_screen.delete")}
                         </button>
                       </Can>
@@ -164,19 +190,24 @@ export default function CarBrands() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("car_brands_screen.table.name")}</label>
+                <RequiredLabel required>{t("car_brands_screen.table.name")}</RequiredLabel>
 
                 <input
                   type="text"
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"}`}
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
+                  placeholder="Ej. Toyota"
                 />
+                {submitted && errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                )}
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={() => setOpenModal(false)} className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
+              <button onClick={() => { setOpenModal(false); setErrors({}); setSubmitted(false); }}
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                 {t("car_brands_screen.cancel")}
               </button>
 

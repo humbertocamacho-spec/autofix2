@@ -1,6 +1,7 @@
 {
   "admins": "Admins",
   "admin_screen": {
+    "title": "Administrators",
     "add_button": "Add Admin",
     "delete": "Delete",
     "edit": "Edit",
@@ -17,11 +18,22 @@
     "table": {
       "actions": "Actions",
       "id": "ID",
-      "name": "Name"
+      "name": "Name",
+      "user_error": "This field is required"
     },
-
-
-    "title": "Administrators"
+    "confirm": {
+      "deactivate": "Are you sure you want to deactivate the admin \"{{name}}\"?"
+    },
+    "success": {
+      "create": "Admin created successfully",
+      "update": "Admin updated successfully",
+      "deactivate": "Admin deactivated successfully"
+    },
+    "errors": {
+      "create": "Error creating admin",
+      "update": "Error updating admin",
+      "deactivate": "Error deactivating admin"
+    }
   },
 
   "brands": "Car Brands",
@@ -29,6 +41,7 @@
 
   "clients": "Clients",
   "clients_screen": {
+    "title": "Clients",
     "add_button": "Add Client",
     "delete": "Delete",
     "edit": "Edit",
@@ -45,9 +58,18 @@
     "table": {
       "actions": "Actions",
       "id": "ID",
-      "name": "Name"
+      "name": "Name",
+      "user_error": "This field is required"
     },
-    "title": "Clients"
+    "confirm": {
+      "deactivate": "Are you sure you want to deactivate the client \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Client deactivated successfully"
+    },
+    "errors": {
+      "deactivate": "Error deactivating client"
+    }
   },
 
   "confirmed_tickets": "Confirmed",
@@ -78,7 +100,13 @@
       "type": "Type",
       "plate": "Plate",
       "actions": "Actions",
-      "select_brand": "Select brand"
+      "select_brand": "Select brand",
+      "name_error": "This field is required",
+      "brand_error": "This field is required",
+      "model_error": "This field is required",
+      "year_error": "This field is required",
+      "type_error": "This field is required",
+      "plate_error": "This field is required"
     }
   },
 
@@ -124,8 +152,8 @@
   },
 
   "partners": "Partners",
-  
   "partners_screen": {
+    "title": "Partners",
     "add_button": "Add Partner",
     "delete": "Delete",
     "edit": "Edit",
@@ -145,6 +173,7 @@
       "user": "User",
       "name": "Name",
       "phone": "Phone",
+      "contact": "Contact",
       "priority": "Priority",
       "whatsapp": "WhatsApp",
       "latitude": "Latitude",
@@ -153,36 +182,66 @@
       "scanner_handling": "Scanner handling",
       "logo_url": "Logo",
       "description": "Description",
-      "specialities": "Specialities"
+      "specialities": "Specialities",
+      "logo_url_preview": "Preview",
+      "hidden": "more",
+      "name_error": "This field is required",
+      "user_error": "This field is required",
+      "phone_error": "This field is required",
+      "location_error": "This field is required",
+      "latitude_error": "This field is required",
+      "longitude_error": "This field is required",
+      "logo_url_error": "This field is required",
+      "description_error": "This field is required",
+      "name_placeholder": "Ej. The Rayo Mechanical Workshop",
+      "logo_url_placeholder": "https://example.com/logo.png",
+      "description_placeholder": "Ej. Workshop specializing in brakes, suspension and general maintenance"
     },
-    "title": "Partners"
+    "confirm": {
+      "deactivate": "Are you sure you want to deactivate the partner \"{{name}}\"?",
+      "restore": "Are you sure you want to restore the partner \"{{name}}\"?"
+    },
+    "success": {
+      "create": "Partner created successfully",
+      "update": "Partner updated successfully",
+      "deactivate": "Partner deactivated successfully",
+      "restore": "Partner restored successfully"
+    },
+    "errors": {
+      "create": "Error creating partner",
+      "update": "Error updating partner",
+      "deactivate": "Error deactivating partner",
+      "restore": "Error restoring partner"
+    }
   },
 
   "partner_certifications": "Partners Certifications",
-    "partner_certifications_screen": {
-      "title": "Partners Certifications",
-      "search_placeholder": "Search partner certification...",
-      "add_button": "Add Partner Certification",
-      "loading": "Loading...",
-      "edit": "Edit",
-      "delete": "Delete",
-      "no_results": "No partner certifications found",
-      "create_title": "Add Partner Certification",
-      "edit_title": "Edit Partner Certification",
-      "create": "Create",
-      "save": "Save",
-      "cancel": "Cancel",
-      "table": {
-        "actions": "Actions",
-        "id": "ID",
-        "name": "Name",
-        "partner_id": "Partner ID",
-        "partner_name": "Partner Name",
-        "certification_name": "Certification Name",
-        "select_partner": "Select Partner",
-        "select_certification": "Select Certification"
-      }
-    },
+  "partner_certifications_screen": {
+    "title": "Partners Certifications",
+    "search_placeholder": "Search partner certification...",
+    "add_button": "Add Partner Certification",
+    "loading": "Loading...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "no_results": "No partner certifications found",
+    "create_title": "Add Partner Certification",
+    "edit_title": "Edit Partner Certification",
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
+    "table": {
+      "actions": "Actions",
+      "id": "ID",
+      "name": "Name",
+      "partner_id": "Partner ID",
+      "partner_name": "Partner Name",
+      "certification_name": "Certification Name",
+      "select_partner": "Select Partner",
+      "select_certification": "Select Certification",
+      "partner_error": "This field is required",
+      "certification_error": "This field is required"
+    }
+  },
 
   "pending_tickets": "Pending",
   "permissions": "Permissions",
@@ -210,6 +269,20 @@
       "select_gender": "Select gender",
       "select_role": "Select role",
       "title": "Edit User"
+    },
+    "errors": {
+      "fetch": "Error fetching users",
+      "update": "Error updating user",
+      "deactivate": "Error deactivating user"
+    },
+    "success": {
+      "update": "User updated successfully",
+      "deactivate": "User deactivated successfully",
+      "restore": "User restored successfully"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to deactivate the user \"{{name}}\"?",
+      "restore": "Are you sure you want to restore the user \"{{name}}\"?"
     },
     "no_results": "No users found",
     "search_placeholder": "Search users...",
@@ -244,7 +317,17 @@
     "table": {
       "id": "ID",
       "name": "Name",
-      "actions": "Actions"
+      "actions": "Actions",
+      "name_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to delete the speciality \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Speciality deleted successfully"
+    },
+    "errors": {
+      "deactivate": "Error deleting speciality"
     }
   },
 
@@ -264,7 +347,17 @@
     "table": {
       "id": "ID",
       "name": "Name",
-      "actions": "Actions"
+      "actions": "Actions",
+      "name_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to delete the brand \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Brand deleted successfully"
+    },
+    "errors": {
+      "deactivate": "Error deleting brand"
     }
   },
 
@@ -285,7 +378,17 @@
     "table": {
       "id": "ID",
       "name": "Name",
-      "actions": "Actions"
+      "actions": "Actions",
+      "name_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to delete the certification \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Certification deleted successfully"
+    },
+    "errors": {
+      "deactivate": "Error deleting certification"
     }
   },
 
@@ -306,7 +409,18 @@
       "id": "ID",
       "name": "Name",
       "description": "Description",
-      "actions": "Actions"
+      "actions": "Actions",
+      "name_error": "This field is required",
+      "description_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to delete the module \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Module deleted successfully"
+    },
+    "errors": {
+      "deactivate": "Error deleting module"
     }
   },
 
@@ -331,7 +445,18 @@
       "id": "ID",
       "permission": "Permission",
       "module": "Module",
-      "actions": "Actions"
+      "actions": "Actions",
+      "name_error": "This field is required",
+      "module_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to delete the permission \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Permission deleted successfully"
+    },
+    "errors": {
+      "deactivate": "Error deleting permission"
     }
   },
 
@@ -353,18 +478,17 @@
     "no_results": "No tickets found",
     "edit_status": "Edit status",
     "confirm_delete": "Are you sure you want to delete this ticket?",
-
     "status": {
-    "label": "Status",
-    "pendiente": "Pending",
-    "revision": "Review",
-    "finalizado": "Finished"
-   },
-   "common": {
-    "cancel": "Cancel",
-    "save": "Save"
-  },
-
+      "label": "Status",
+      "pendiente": "Pending",
+      "revision": "Review",
+      "finalizado": "Finished",
+      "user_disabled": "This ticket belongs to a disabled user"
+    },
+    "common": {
+      "cancel": "Cancel",
+      "save": "Save"
+    },
     "table": {
       "id": "ID",
       "client": "Client",
@@ -438,6 +562,12 @@
     "mismatch": "Passwords do not match",
     "description": "Change your password to access your account.",
     "updated": "Password updated"
-  }
+  },
+
+  "unauthorized_page": {
+    "title": "Unauthorized",
+    "description": "You are not authorized to access this page.",
+    "button": "Go to Dashboard"
+  } 
 }
 

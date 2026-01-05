@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Modules } from "../../../types/modules";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
 export default function ModulesTable() {
@@ -17,6 +18,10 @@ export default function ModulesTable() {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
 
   useEffect(() => {
     fetchModules();
@@ -34,8 +39,24 @@ export default function ModulesTable() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!name.trim()) {
+      newErrors.name = t("modules_screen.table.name_error");
+    }
+
+    if (!description.trim()) {
+      newErrors.description = t("modules_screen.table.description_error");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSave = async () => {
-    if (!name.trim()) return alert("El nombre es obligatorio");
+    setSubmitted(true);
+    if (!validateForm()) return;
 
     const method = isEditing ? "PUT" : "POST";
     const url = isEditing
@@ -60,23 +81,17 @@ export default function ModulesTable() {
       console.error("Error saving module:", error);
     }
   };
-  const handleDelete = async (id: number) => {
-    if (!confirm("¿Seguro que quieres eliminar este módulo?")) return;
+  
+  const handleDelete = async (module: Modules) => {
+    const confirmed = window.confirm(t("modules_screen.confirm.deactivate", { name: module.name }));
+    if (!confirmed) return;
 
-    try {
-      const res = await fetch(`${VITE_API_URL}/api/modules/${id}`, {
-        method: "DELETE",
-      });
+    const res = await fetch( `${VITE_API_URL}/api/modules/${module.id}`, { method: "DELETE" });
 
-      const data = await res.json();
-      if (data.ok) {
-        fetchModules();
-      } else {
-        alert(data.message);
-      }
-    } catch (error) {
-      console.error("Error deleting module:", error);
-    }
+    if (!res.ok) { alert(t("modules_screen.errors.deactivate")); return;}
+
+    alert(t("modules_screen.success.deactivate"));
+    fetchModules();
   };
 
   const openCreateModal = () => {
@@ -84,6 +99,8 @@ export default function ModulesTable() {
     setCurrentModule(null);
     setName("");
     setDescription("");
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -92,6 +109,8 @@ export default function ModulesTable() {
     setCurrentModule(mod);
     setName(mod.name);
     setDescription(mod.description || "");
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -111,7 +130,7 @@ export default function ModulesTable() {
         <input
           type="text"
           placeholder={t("modules_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -151,7 +170,7 @@ export default function ModulesTable() {
                       </Can>
 
                       <Can permission="delete_modules">
-                        <button onClick={() => handleDelete(mod.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                        <button onClick={() => handleDelete(mod)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                           {t("modules_screen.delete")}
                         </button>
                       </Can>
@@ -178,29 +197,41 @@ export default function ModulesTable() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("modules_screen.table.name")}</label>
+                <RequiredLabel required>{t("modules_screen.table.name")}</RequiredLabel>
                 <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"}`}
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Module name"
+                  onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
+                  placeholder="Ej. Gestión de Partners"
                 />
+                {submitted && errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                )}
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("modules_screen.table.description")}</label>
+                <RequiredLabel required>{t("modules_screen.table.description")}</RequiredLabel>
                 <textarea
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.description ? "border-red-500" : "border-gray-300"}`}
                   rows={3}
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Description"
-                ></textarea>
+                  onChange={(e) => {  setDescription(e.target.value); setErrors((prev) => ({ ...prev, description: "" })); }}
+                  placeholder="Ej. Permite administrar talleres, especialidades y certificaciones"
+                />
+                {submitted && errors.description && (
+                  <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+                )}
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={closeModal} className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
+              <button
+                onClick={() => {
+                  closeModal();
+                  setErrors({});
+                  setSubmitted(false);
+                }}
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                 {t("modules_screen.cancel")}
               </button>
 

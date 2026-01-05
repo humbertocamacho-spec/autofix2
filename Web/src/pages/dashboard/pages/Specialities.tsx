@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { Specialities } from "../../../types/specialities";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
 export default function SpecialitiesTable() {
@@ -15,6 +16,10 @@ export default function SpecialitiesTable() {
   const [isEditing, setIsEditing] = useState(false);
   const [current, setCurrent] = useState<Specialities | null>(null);
   const [name, setName] = useState("");
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
 
   useEffect(() => {
     fetchSpecialities();
@@ -32,7 +37,21 @@ export default function SpecialitiesTable() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!name.trim()) {
+      newErrors.name = t("specialities_screen.table.name_error");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleCreate = async () => {
+    setSubmitted(true);
+    if (!validateForm()) return;
+
     try {
       await fetch(`${VITE_API_URL}/api/specialities`, {
         method: "POST",
@@ -41,6 +60,8 @@ export default function SpecialitiesTable() {
       });
 
       setOpenModal(false);
+      setSubmitted(false);
+      setErrors({});
       fetchSpecialities();
     } catch (error) {
       console.error("Error creating specialities:", error);
@@ -49,6 +70,8 @@ export default function SpecialitiesTable() {
 
   const handleUpdate = async () => {
     if (!current) return;
+    setSubmitted(true);
+    if (!validateForm()) return;
 
     try {
       await fetch(`${VITE_API_URL}/api/specialities/${current.id}`, {
@@ -58,30 +81,39 @@ export default function SpecialitiesTable() {
       });
 
       setOpenModal(false);
+      setSubmitted(false);
+      setErrors({});
       fetchSpecialities();
     } catch (error) {
       console.error("Error updating speciality:", error);
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("¿Seguro que deseas eliminar esta especialidad?")) return;
+  const handleDelete = async (item: Specialities) => {
+    const confirmed = window.confirm(
+      t("specialities_screen.confirm.deactivate", { name: item.name })
+    );
+    if (!confirmed) return;
 
-    try {
-      await fetch(`${VITE_API_URL}/api/specialities/${id}`, {
-        method: "DELETE",
-      });
+    const res = await fetch(`${VITE_API_URL}/api/specialities/${item.id}`, {
+      method: "DELETE",
+    });
 
-      fetchSpecialities();
-    } catch (error) {
-      console.error("Error deleting speciality:", error);
+    if (!res.ok) {
+      alert(t("specialities_screen.errors.deactivate"));
+      return;
     }
+
+    alert(t("specialities_screen.success.deactivate"));
+    fetchSpecialities();
   };
 
   const openCreateModal = () => {
     setIsEditing(false);
     setName("");
     setCurrent(null);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -89,6 +121,8 @@ export default function SpecialitiesTable() {
     setIsEditing(true);
     setCurrent(item);
     setName(item.name);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -103,7 +137,7 @@ export default function SpecialitiesTable() {
         <input
           type="text"
           placeholder={t("specialities_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -142,7 +176,7 @@ export default function SpecialitiesTable() {
                         </Can>
 
                         <Can permission="delete_specialities">
-                          <button onClick={() => handleDelete(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                          <button onClick={() => handleDelete(item)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                             {t("specialities_screen.delete")}
                           </button>
                         </Can>
@@ -175,14 +209,23 @@ export default function SpecialitiesTable() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("specialities_screen.table.name")}</label>
+                <RequiredLabel required>{t("specialities_screen.table.name")}</RequiredLabel>
+                <input
+                  className={`w-full px-3 py-2 rounded-lg border  ${submitted && errors.name ? "border-red-500" : "border-gray-300"}`}
+                  value={name}
+                  onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
+                  placeholder="Ej. Frenos"
+                />
 
-                <input className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]" value={name} onChange={(e) => setName(e.target.value)}/>
+                {submitted && errors.name && (
+                  <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                )}
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenModal(false)}>
+              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+                onClick={() => { setOpenModal(false); setErrors({}); setSubmitted(false); }}>
                 {t("specialities_screen.cancel")}
               </button>
 

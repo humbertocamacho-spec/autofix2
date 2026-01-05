@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import type { PartnerCertification } from "../../../types/partner_certification";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
 export default function PartnersCertificationsTable() {
@@ -18,6 +19,10 @@ export default function PartnersCertificationsTable() {
   const [certificationId, setCertificationId] = useState<number | "">("");
   const [partners, setPartners] = useState<{ id: number; name: string }[]>([]);
   const [allCertifications, setAllCertifications] = useState<{ id: number; name: string }[]>([]);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
 
   useEffect(() => {
     fetchCertifications();
@@ -62,11 +67,29 @@ export default function PartnersCertificationsTable() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!partnerId) {
+      newErrors.partnerId = t("partner_certifications_screen.table.partner_error");
+    }
+
+    if (!certificationId) {
+      newErrors.certificationId = t("partner_certifications_screen.table.certification_error");
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
   const openCreateModal = () => {
     setIsEditing(false);
     setCurrent(null);
     setPartnerId("");
     setCertificationId("");
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -75,14 +98,14 @@ export default function PartnersCertificationsTable() {
     setCurrent(item);
     setPartnerId(item.partner_id);
     setCertificationId(item.certification_id);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
   const handleSave = async () => {
-    if (!partnerId || !certificationId) {
-      alert("Selecciona partner y certificación");
-      return;
-    }
+    setSubmitted(true);
+    if (!validateForm()) return;
 
     try {
       if (isEditing && current) {
@@ -100,6 +123,8 @@ export default function PartnersCertificationsTable() {
       }
 
       setOpenModal(false);
+      setErrors({});
+      setSubmitted(false);
       fetchCertifications();
     } catch (error) {
       console.error("Error saving certification:", error);
@@ -129,7 +154,7 @@ export default function PartnersCertificationsTable() {
         <input
           type="text"
           placeholder="Buscar..."
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -200,38 +225,45 @@ export default function PartnersCertificationsTable() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("partner_certifications_screen.table.partner_name")}</label>
+                <RequiredLabel required>{t("partner_certifications_screen.table.partner_name")}</RequiredLabel>
                 <select
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.partnerId ? "border-red-500" : "border-gray-300"}`}
                   value={partnerId}
-                  onChange={(e) => setPartnerId(Number(e.target.value))}
+                  onChange={(e) => { setPartnerId(Number(e.target.value)); setErrors((prev) => ({ ...prev, partnerId: "" })); }}
                 >
                   <option value="">{t("partner_certifications_screen.table.select_partner")}</option>
                   {partners.map((p) => (
                     <option key={p.id} value={p.id}>{p.name}</option>
                   ))}
                 </select>
+                {submitted && errors.partnerId && (
+                  <p className="text-red-500 text-xs mt-1">{errors.partnerId}</p>
+                )}
+
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  {t("partner_certifications_screen.table.certification_name")}
-                </label>
+                <RequiredLabel required>{t("partner_certifications_screen.table.certification_name")}</RequiredLabel>
                 <select
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.certificationId ? "border-red-500" : "border-gray-300"}`}
                   value={certificationId}
-                  onChange={(e) => setCertificationId(Number(e.target.value))}
+                  onChange={(e) => { setCertificationId(Number(e.target.value)); setErrors((prev) => ({ ...prev, certificationId: "" })); }}
                 >
                   <option value="">{t("partner_certifications_screen.table.select_certification")}</option>
                   {allCertifications.map((c) => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
                 </select>
+                {submitted && errors.certificationId && (
+                  <p className="text-red-500 text-xs mt-1">{errors.certificationId}</p>
+                )}
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenModal(false)}>
+              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+                onClick={() => { setOpenModal(false); setErrors({}); setSubmitted(false); }}
+              >
                 {t("partner_certifications_screen.cancel")}
               </button>
 

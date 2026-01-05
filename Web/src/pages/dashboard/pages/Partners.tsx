@@ -1,22 +1,25 @@
 import { useEffect, useState } from "react";
-import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
+import { useAuthContext } from "../../../context/AuthContext";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
+import { useTranslation } from "react-i18next";
+import DashboardLayout from "../layouts/DashboardLayout";
 import type { Partner } from "../../../types/partner";
 import type { User } from "../../../types/users";
-import { useAuthContext } from "../../../context/AuthContext";
-import { useTranslation } from "react-i18next";
 import Can from "../../../components/Can";
 
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [specialities, setSpecialities] = useState<{ id: number; name: string }[]>([]);
+  const [allPartnerSpecialities, setAllPartnerSpecialities] = useState< { partner_id: number; speciality_id: number }[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [currentPartner, setCurrentPartner] = useState<Partner | null>(null);
 
+  const [currentPartner, setCurrentPartner] = useState<Partner | null>(null);
   const [name, setName] = useState("");
   const [userId, setUserId] = useState<number | null>(null);
   const [phone, setPhone] = useState("");
@@ -29,29 +32,26 @@ export default function PartnersTable() {
   const [logoUrl, setLogoUrl] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState(1);
+  const [selectedSpecialities, setSelectedSpecialities] = useState<number[]>([]);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
 
   const { user } = useAuthContext();
   const { t } = useTranslation();
-
-  const [specialities, setSpecialities] = useState<{ id: number; name: string }[]>([]);
-  const [selectedSpecialities, setSelectedSpecialities] = useState<number[]>([]);
 
   useEffect(() => {
     fetchPartners();
     fetchUsers();
     fetchSpecialities();
+    fetchAllPartnerSpecialities();
   }, []);
 
+  // Fetch
   const fetchPartners = async () => {
     try {
       const token = localStorage.getItem("token");
-
-      const res = await fetch(`${VITE_API_URL}/api/partners`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const res = await fetch(`${VITE_API_URL}/api/partners`, { headers: { Authorization: `Bearer ${token}`, },});
       const data: Partner[] = await res.json();
       setPartners(data);
     } catch (error) {
@@ -77,14 +77,60 @@ export default function PartnersTable() {
     setSpecialities(data);
   };
 
+  const fetchAllPartnerSpecialities = async () => {
+    try {
+      const res = await fetch(`${VITE_API_URL}/api/partner_specialities`);
+      const data = await res.json();
+      setAllPartnerSpecialities(data);
+    } catch (error) {
+      console.error("Error fetching all relations:", error);
+    }
+  };
+
   const fetchPartnerSpecialities = async (partnerId: number) => {
     const res = await fetch(`${VITE_API_URL}/api/partner_specialities/${partnerId}`);
     const data: number[] = await res.json();
     setSelectedSpecialities(data);
   };
 
+  // Helpers
+  const getPartnerSpecialities = (partnerId: number) => {
+    return allPartnerSpecialities
+      .filter(ps => ps.partner_id === partnerId)
+      .map(rel => { const spec = specialities.find(s => s.id === rel.speciality_id); return spec?.name;})
+      .filter(Boolean) as string[];
+  };
+
+  const truncateText = (text?: string, max = 10) => {
+    if (!text) return "-";
+    return text.length > max ? text.slice(0, max) + "..." : text;
+  };
+
+  const handlePriorityChange = (value: number) => {
+    if (Number.isNaN(value)) return;
+    setPriority(Math.min(10, Math.max(1, value)));
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!name.trim()) newErrors.name = t("partners_screen.table.name_error");
+    if (!userId) newErrors.userId = t("partners_screen.table.user_error");
+    if (!phone.trim()) newErrors.phone = t("partners_screen.table.phone_error");
+    if (!location.trim()) newErrors.location = t("partners_screen.table.location_error");
+    if (!latitude.trim()) newErrors.latitude = t("partners_screen.table.latitude_error");
+    if (!longitude.trim()) newErrors.longitude = t("partners_screen.table.longitude_error");
+    if (!logoUrl.trim()) newErrors.logoUrl = t("partners_screen.table.logo_url_error");
+    if (!description.trim()) newErrors.description = t("partners_screen.table.description_error");
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   const openCreate = () => {
     setIsEditing(false);
+    setSubmitted(false);
+    setErrors({});
     setCurrentPartner(null);
     setSelectedSpecialities([]);
     setName("");
@@ -108,6 +154,8 @@ export default function PartnersTable() {
 
   const openEdit = (partner: Partner) => {
     setIsEditing(true);
+    setSubmitted(false);
+    setErrors({});
     setCurrentPartner(partner);
     fetchPartnerSpecialities(partner.id);
     setName(partner.name);
@@ -126,7 +174,8 @@ export default function PartnersTable() {
   };
 
   const savePartner = async () => {
-    if (!name || !userId) return alert("Name y User son requeridos");
+    setSubmitted(true);
+    if (!validateForm()) return;
 
     const body = { name, user_id: userId, phone, whatsapp, location, latitude, longitude, land_use_permit: landUsePermit, scanner_handling: scannerHandling, logo_url: logoUrl, description, priority };
     const url = isEditing ? `${VITE_API_URL}/api/partners/${currentPartner?.id}` : `${VITE_API_URL}/api/partners`;
@@ -140,54 +189,47 @@ export default function PartnersTable() {
     });
 
     const data = await res.json();
-
     const partnerId = isEditing ? currentPartner?.id : data?.id;
 
-    //Guardar especialidades
     await fetch(`${VITE_API_URL}/api/partner_specialities`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
-      body: JSON.stringify({
-        partner_id: partnerId,
-        speciality_ids: selectedSpecialities,
-      }),
+      body: JSON.stringify({ partner_id: partnerId, speciality_ids: selectedSpecialities,}),
     });
 
     setOpenModal(false);
     fetchPartners();
+    fetchAllPartnerSpecialities();
   };
 
+  // Actions
   const deletePartner = async (partner: Partner) => {
-    if (!confirm(`¿Desactivar partner "${partner.name}"?`)) return;
+    const confirmed = window.confirm( t("partners_screen.confirm.deactivate", { name: partner.name }));
+    if (!confirmed) return;
 
-    await fetch(`${VITE_API_URL}/api/partners/${partner.id}`, {
-      method: "DELETE",
-    });
+    const res = await fetch(`${VITE_API_URL}/api/partners/${partner.id}`, { method: "DELETE",});
 
+    if (!res.ok) { alert(t("partners_screen.errors.deactivate")); return;}
+
+    alert(t("partners_screen.success.deactivate"));
     fetchPartners();
   };
 
   const restorePartner = async (partner: Partner) => {
-    await fetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, {
-      method: "PATCH",
-    });
+    const confirmed = window.confirm( t("partners_screen.confirm.restore", { name: partner.name }));
+    if (!confirmed) return;
 
+    const res = await fetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, { method: "PATCH",});
+
+    if (!res.ok) { alert(t("partners_screen.errors.restore")); return;}
+
+    alert(t("partners_screen.success.restore"));
     fetchPartners();
-  };
-
-  const truncateText = (text?: string, max = 10) => {
-    if (!text) return "-";
-    return text.length > max ? text.slice(0, max) + "..." : text;
   };
 
   const filtered = partners
     .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => a.id - b.id);
-
-  const handlePriorityChange = (value: number) => {
-    if (Number.isNaN(value)) return;
-    setPriority(Math.min(10, Math.max(1, value)));
-  };
 
   return (
     <DashboardLayout>
@@ -197,7 +239,7 @@ export default function PartnersTable() {
         <input
           type="text"
           placeholder={t("partners_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -218,16 +260,15 @@ export default function PartnersTable() {
               <thead>
                 <tr className="text-gray-600 border-b">
                   <th className="pb-3 w-12">{t("partners_screen.table.id")}</th>
-                  <th className="pb-3 w-64">{t("partners_screen.table.name")}</th>
+                  <th className="pb-3 w-40">{t("partners_screen.table.name")}</th>
                   <th className="pb-3 w-40">{t("partners_screen.table.phone")}</th>
                   <th className="pb-3 w-40">{t("partners_screen.table.whatsapp")}</th>
                   <th className="pb-3 ">{t("partners_screen.table.location")}</th>
-                  <th className="pb-3">{t("partners_screen.table.latitude")}</th>
-                  <th className="pb-3">{t("partners_screen.table.longitude")}</th>
-                  <th className="pb-3 w-40 text-center">{t("partners_screen.table.land_use_permit")}</th>
+                  <th className="pb-3 w-30 text-center">{t("partners_screen.table.land_use_permit")}</th>
                   <th className="pb-3 w-40 text-center">{t("partners_screen.table.scanner_handling")}</th>
                   <th className="pb-3 w-32 text-center">{t("partners_screen.table.logo_url")}</th>
                   <th className="pb-3 px-4">{t("partners_screen.table.description")}</th>
+                  <th className="pb-3 px-4">{t("partners_screen.table.specialities")}</th>
                   <th className="pb-3 px-4 text-center w-24">{t("partners_screen.table.priority")}</th>
                   <th className="pb-3 px-4 text-center w-28">{t("users_screen.table.status")}</th>
                   <th className="pb-3 w-32 text-right">{t("partners_screen.table.actions")}</th>
@@ -242,16 +283,10 @@ export default function PartnersTable() {
                     <td className="py-3">{item.phone}</td>
                     <td className="py-3">{item.whatsapp}</td>
                     <td className="py-3 max-w-xs">
-                      <span
-                        className="block text-sm truncate cursor-help"
-                        title={item.location}
-                      >
+                      <span className="block text-sm truncate cursor-help" title={item.location}>
                         {truncateText(item.location, 10)}
                       </span>
                     </td>
-
-                    <td className="py-3 text-sm">{item.latitude || "-"}</td>
-                    <td className="py-3 text-sm">{item.longitude || "-"}</td>
                     <td className="py-3 w-40 text-center">{item.land_use_permit ? "✔" : "✖"}</td>
                     <td className="py-3 w-40 text-center">{item.scanner_handling ? "✔" : "✖"}</td>
                     <td className="py-3 w-32"> {item.logo_url ? (
@@ -262,7 +297,7 @@ export default function PartnersTable() {
                           className=" h-10 w-10 object-contain transition-transform duration-200 ease-out hover:scale-[6] hover:z-20 origin-center cursor-zoom-in"
                         />
                       </div>
-                      ) : ( "-")}
+                    ) : ("-")}
                     </td>
 
                     <td className="py-3 px-4">
@@ -271,17 +306,41 @@ export default function PartnersTable() {
                       </span>
                     </td>
 
+                    <td className="py-3 px-4">
+                      {(() => {
+                        const specs = getPartnerSpecialities(item.id);
+
+                        if (specs.length === 0) {
+                          return <span className="text-gray-400 text-sm">-</span>;
+                        }
+
+                        const visible = specs.slice(0, 2);
+                        const hiddenCount = specs.length - visible.length;
+
+                        return (
+                          <div className="text-sm text-gray-700" title={specs.join("\n")}>
+                            <ul className="list-disc list-outside pl-4 space-y-0.5 leading-snug">
+
+                              {visible.map((name, idx) => (
+                                <li key={idx}>{name}</li>
+                              ))}
+
+                              {hiddenCount > 0 && (
+                                <li className="text-gray-400 italic"> +{hiddenCount} {t("partners_screen.table.hidden")}</li>
+                              )}
+                            </ul>
+                          </div>
+                        );
+                      })()}
+                    </td>
+
                     <td className="py-3 px-4 text-center font-semibold">{item.priority}</td>
+
                     <td className="py-3 px-4 text-center">
-                      {item.deleted_at ? (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                          {t("users_screen.table.status_inactive")}
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                          {t("users_screen.table.status_active")}
-                        </span>
-                      )}
+                      <span
+                        title={ item.deleted_at ? t("users_screen.table.status_inactive") : t("users_screen.table.status_active")} 
+                        className={`inline-block w-3 h-3 rounded-full ${item.deleted_at ? "bg-red-500" : "bg-green-500"}`}
+                      />
                     </td>
 
                     <td className="py-3 text-right space-x-3">
@@ -332,19 +391,20 @@ export default function PartnersTable() {
             <div className="overflow-y-auto pb-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.name")}</label>
+                  <RequiredLabel required>{t("partners_screen.table.name")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.name ? "border-red-500" : "border-gray-300"}`}
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => { setName(e.target.value); setErrors((prev) => ({ ...prev, name: "" })); }}
+                    placeholder={t("partners_screen.table.name_placeholder")}
                   />
+                  {submitted && errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                 </div>
 
                 <div className="col-span-2">
-                  <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.user")}</label>
+                  <RequiredLabel required>{t("partners_screen.table.user")}</RequiredLabel>
                   <select
-                    className={`w-full border border-gray-300 px-3 py-2 rounded-lg
-                      ${user?.role_name === "partner" ? "bg-gray-100 text-gray-500 cursor-not-allowed" : "focus:ring-2 focus:ring-[#27B9BA]"}`}
+                    className={`w-full border border-gray-300 px-3 py-2 rounded-lg ${user?.role_name === "partner" ? "bg-gray-100 text-gray-500 cursor-not-allowed" : " "}`}
                     value={user?.role_name === "partner" ? user.id : userId ?? ""}
                     disabled={user?.role_name === "partner"}
                     onChange={(e) => setUserId(Number(e.target.value))}
@@ -357,66 +417,107 @@ export default function PartnersTable() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.phone")}</label>
+                  <RequiredLabel required>{t("partners_screen.table.phone")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className={`w-full px-3 py-2 rounded-lg border ${errors.phone ? "border-red-500" : "border-gray-300"} `}
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => { setPhone(e.target.value); setErrors((prev) => ({ ...prev, phone: "" })); }}
+                    placeholder="Ej. 55 1234 5678"
                   />
+                  {submitted && errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 </div>
 
                 <div>
                   <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.whatsapp")}</label>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                     value={whatsapp}
                     onChange={(e) => setWhatsapp(e.target.value)}
+                    placeholder="Ej. 55 1234 5678"
                   />
                 </div>
 
                 <div className="col-span-2">
-                  <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.location")}</label>
+                  <RequiredLabel required>{t("partners_screen.table.location")}</RequiredLabel>
                   <textarea
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.location ? "border-red-500" : "border-gray-300"}`}
                     value={location}
-                    onChange={(e) => setLocation(e.target.value)}
+                    onChange={(e) => { setLocation(e.target.value); setErrors((prev) => ({ ...prev, location: "" })); }}
+                    placeholder="Ej. Av. Insurgentes Sur 123, Col. Roma Norte, CDMX"
                   />
+                  {submitted && errors.location && (
+                    <p className="text-red-500 text-xs mt-1">{errors.location}</p>
+                  )}
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.latitude")}</label>
+                  <RequiredLabel required>{t("partners_screen.table.latitude")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.latitude ? "border-red-500" : "border-gray-300"}`}
                     value={latitude}
-                    onChange={(e) => setLatitude(e.target.value)}
+                    onChange={(e) => {
+                      setLatitude(e.target.value); setErrors((prev) => ({ ...prev, latitude: "" }));
+                    }}
+                    placeholder="25.0000"
                   />
+                  {submitted && errors.latitude && (
+                    <p className="text-red-500 text-xs mt-1">{errors.latitude}</p>
+                  )}
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.longitude")}</label>
+                  <RequiredLabel required>{t("partners_screen.table.longitude")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.longitude ? "border-red-500" : "border-gray-300"}`}
                     value={longitude}
-                    onChange={(e) => setLongitude(e.target.value)}
+                    onChange={(e) => {
+                      setLongitude(e.target.value); setErrors((prev) => ({ ...prev, longitude: "" }));
+                    }}
+                    placeholder="-100.0000"
                   />
+                  {submitted && errors.longitude && (
+                    <p className="text-red-500 text-xs mt-1">{errors.longitude}</p>
+                  )}
                 </div>
 
                 <div className="col-span-2">
-                  <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.logo_url")}</label>
+                  <RequiredLabel required>{t("partners_screen.table.logo_url")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.logoUrl ? "border-red-500" : "border-gray-300"}`}
                     value={logoUrl}
-                    onChange={(e) => setLogoUrl(e.target.value)}
+                    onChange={(e) => { setLogoUrl(e.target.value); setErrors((prev) => ({ ...prev, logoUrl: "" })); }}
+                    placeholder={t("partners_screen.table.logo_url_placeholder")}
                   />
+                  {submitted && errors.logoUrl && (
+                    <p className="text-red-500 text-xs mt-1">{errors.logoUrl}</p>
+                  )}
+
+                  {logoUrl && (
+                    <div className="mt-3 flex items-center gap-3">
+                      <img
+                        src={logoUrl}
+                        alt="Logo preview"
+                        className="h-16 w-16 object-contain border rounded-lg bg-white"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                      <span className="text-xs text-gray-500">{t("partners_screen.table.logo_url_preview")}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="col-span-2">
-                  <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.description")}</label>
+                  <RequiredLabel required>{t("partners_screen.table.description")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                    className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.description ? "border-red-500" : "border-gray-300"}`}
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    onChange={(e) => { setDescription(e.target.value); setErrors((prev) => ({ ...prev, description: "" })); }}
+                    placeholder={t("partners_screen.table.description_placeholder")}
                   />
+                  {submitted && errors.description && (
+                    <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -436,7 +537,7 @@ export default function PartnersTable() {
                     type="number"
                     min={1}
                     max={10}
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full border border-gray-300 px-3 py-2 rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
                     value={priority}
                     disabled={user?.role_name !== "admin"}
                     onChange={(e) =>
@@ -447,22 +548,34 @@ export default function PartnersTable() {
 
                 <div className="col-span-2">
                   <label className="text-sm font-semibold text-gray-600 mb-1 block">{t("partners_screen.table.specialities")}</label>
+
                   <div className="border border-gray-300 rounded-lg p-3 max-h-[140px] overflow-y-auto grid grid-cols-2 gap-2">
-                    {specialities.map((s) => (
-                      <label key={s.id} className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" checked={selectedSpecialities.includes(s.id)}
-                          onChange={(e) =>
-                            e.target.checked ? setSelectedSpecialities([...selectedSpecialities, s.id]) : setSelectedSpecialities(selectedSpecialities.filter((id) => id !== s.id))
-                          } />{s.name}
-                      </label>
-                    ))}
+                    {[...specialities]
+                      .sort((a, b) => a.name.localeCompare(b.name, "es"))
+                      .map((s) => (
+                        <label key={s.id} className="flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={selectedSpecialities.includes(s.id)}
+                            onChange={(e) =>
+                              e.target.checked
+                                ? setSelectedSpecialities([...selectedSpecialities, s.id])
+                                : setSelectedSpecialities(
+                                  selectedSpecialities.filter((id) => id !== s.id)
+                                )
+                            }
+                          />
+                          {s.name}
+                        </label>
+                      ))}
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={() => setOpenModal(false)} className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
+              <button onClick={() => { setOpenModal(false); setErrors({}); setSubmitted(false); }}
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                 {t("partners_screen.cancel")}
               </button>
 

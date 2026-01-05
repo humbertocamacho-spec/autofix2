@@ -1,13 +1,14 @@
 import * as Location from 'expo-location';
 import { Stack, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Animated, Dimensions, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, Platform } from 'react-native';
+import { ActivityIndicator, Alert, Animated, Dimensions, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView} from 'react-native';
 import MapView, { Marker, Region } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { getPartners } from '@/services/partners';
 import { Partner } from '@backend-types/partner';
 import { getSpecialities } from '@/services/specialities';
 import { getPartnerSpecialities } from '@/services/partner_specialities';
+import { Image } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -17,6 +18,7 @@ const defaultRegion = {
   latitudeDelta: 0.04,
   longitudeDelta: 0.04,
 };
+
 function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -31,25 +33,38 @@ function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon
   return R * c;
 }
 
+function matchPartnerName(name: string, search: string): boolean {
+  const text = search.trim().toLowerCase();
+  if (!text) return true;
+  return name.toLowerCase().includes(text);
+}
+
 export default function MapScreen() {
   const router = useRouter();
+  const modalMapRef = useRef<MapView>(null);
+  const mapRef = useRef<MapView>(null);
+  const slideAnim = useRef(new Animated.Value(-width)).current;
   const [region, setRegion] = useState<Region | null>(null);
+  const [tempRegion, setTempRegion] = useState<Region | null>(null);
   const [loading, setLoading] = useState(true);
   const [menuVisible, setMenuVisible] = useState(false);
   const [mapModalVisible, setMapModalVisible] = useState(false);
-  const [tempRegion, setTempRegion] = useState<Region | null>(null);
-  const slideAnim = useRef(new Animated.Value(-width)).current;
-  const mapRef = useRef<MapView>(null);
+  const [distanceModalVisible, setDistanceModalVisible] = useState(false);
+  const [showCitasSubMenu, setShowCitasSubMenu] = useState(false);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [specialities, setSpecialities] = useState<any[]>([]);
-  const [selectedSpeciality, setSelectedSpeciality] = useState<number | null>(null);
   const [partnersSpecialities, setPartnersSpecialities] = useState<any[]>([]);
+  const [selectedSpeciality, setSelectedSpeciality] = useState<number | null>(null);
   const [searchText, setSearchText] = useState('');
-  const [showCitasSubMenu, setShowCitasSubMenu] = useState(false);
-  const modalMapRef = useRef<MapView>(null);
   const [distanceRadius, setDistanceRadius] = useState(10);
-  const [distanceModalVisible, setDistanceModalVisible] = useState(false);
+  const [loadedMarkers, setLoadedMarkers] = useState<Set<string | number>>(new Set());
 
+  // Reset markers when filters change
+  useEffect(() => {
+    setLoadedMarkers(new Set());
+  }, [searchText, selectedSpeciality]);
+
+  // Load specialities and partner specialities
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -66,6 +81,7 @@ export default function MapScreen() {
     fetchData();
   }, []);
 
+  // Get user location
   useEffect(() => {
     (async () => {
       try {
@@ -112,39 +128,19 @@ export default function MapScreen() {
     const lon = parseFloat(partner.longitude);
     if (isNaN(lat) || isNaN(lon) || !region) return false;
 
-    const distance = getDistanceFromLatLonInKm(
-      region.latitude,
-      region.longitude,
-      lat,
-      lon
-    );
-
-    const withinDistance = distance <= distanceRadius;
-    const hasSpeciality = selectedSpeciality
-      ? partnersSpecialities.some(
-        (ps) => ps.partner_id === partner.id && ps.speciality_id === selectedSpeciality
-      )
-      : true;
-
-    const matchesSearch = partner.name
-      ?.toLowerCase()
-      .includes(searchText.toLowerCase());
+    const distance = getDistanceFromLatLonInKm( region.latitude, region.longitude, lat, lon);
+    const isSearching = searchText.trim().length > 0;
+    const withinDistance = isSearching ? true : distance <= distanceRadius;
+    const hasSpeciality = selectedSpeciality ? partnersSpecialities.some( (ps) => ps.partner_id === partner.id && ps.speciality_id === selectedSpeciality) : true;
+    const matchesSearch = matchPartnerName(partner.name, searchText);
 
     return withinDistance && hasSpeciality && (!searchText || matchesSearch);
   });
 
-
   useEffect(() => {
     if (mapRef.current && region && nearbyPartners.length > 0) {
-      const validCoords = nearbyPartners.map((p) => ({
-        latitude: parseFloat(p.latitude),
-        longitude: parseFloat(p.longitude),
-      }));
-
-      const coords = [
-        { latitude: region.latitude, longitude: region.longitude },
-        ...validCoords,
-      ];
+      const validCoords = nearbyPartners.map((p) => ({ latitude: parseFloat(p.latitude), longitude: parseFloat(p.longitude),}));
+      const coords = [ { latitude: region.latitude, longitude: region.longitude }, ...validCoords,];
 
       if (coords.length > 1) {
         mapRef.current.fitToCoordinates(coords, {
@@ -166,10 +162,7 @@ export default function MapScreen() {
   };
 
   const confirmNewLocation = () => {
-    if (tempRegion) {
-      setRegion(tempRegion);
-      mapRef.current?.animateToRegion(tempRegion, 1000);
-    }
+    if (tempRegion) { setRegion(tempRegion); mapRef.current?.animateToRegion(tempRegion, 1000);}
     setMapModalVisible(false);
   };
 
@@ -191,10 +184,7 @@ export default function MapScreen() {
           <Text style={styles.menuIcon}>☰</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => {
-          setTempRegion(region);
-          setMapModalVisible(true);
-        }}>
+        <TouchableOpacity onPress={() => { setTempRegion(region); setMapModalVisible(true);}}>
           <Ionicons name="location-outline" size={35} color="#ffffff" />
         </TouchableOpacity>
       </View>
@@ -218,15 +208,18 @@ export default function MapScreen() {
             {nearbyPartners.map((partner) => {
               const lat = parseFloat(partner.latitude);
               const lon = parseFloat(partner.longitude);
+              if (isNaN(lat) || isNaN(lon)) return null;
 
-              const isMatch =
-                searchText.trim().length > 0 &&
-                partner.name.toLowerCase().includes(searchText.toLowerCase());
+              const isMatch = searchText.trim().length > 0 && partner.name.toLowerCase().includes(searchText.toLowerCase());
+              const markerKey = partner.id;
+              const alreadyLoaded = loadedMarkers.has(markerKey);
 
               return (
-                <Marker key={partner.id + (isMatch ? '-match' : '-nomatch')}
-                  coordinate={{ latitude: lat, longitude: lon }} pinColor={isMatch ? "green" : "blue"}
-                  tracksViewChanges={true}
+                <Marker
+                  key={partner.id}
+                  coordinate={{ latitude: lat, longitude: lon }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  tracksViewChanges={!alreadyLoaded}
                   onPress={() => {
                     const specs = partnersSpecialities
                       .filter((ps) => ps.partner_id === partner.id)
@@ -235,23 +228,44 @@ export default function MapScreen() {
                         return spec ? spec.name : "";
                       });
 
-                    router.push({
-                      pathname: "../Map/details",
-                      params: {
-                        id: partner.id.toString(),
-                        name: partner.name,
-                        location: partner.location,
-                        phone: partner.phone || "",
-                        whatsapp: partner.whatsapp || "",
-                        logo_url: partner.logo_url || "",
-                        latitude: partner.latitude,
-                        longitude: partner.longitude,
-                        description: partner.description,
-                        specialities: JSON.stringify(specs),
-                      },
-                    });
-                  }}
-                />
+                      router.push({
+                        pathname: "../Map/details",
+                        params: {
+                          id: partner.id.toString(),
+                          name: partner.name,
+                          location: partner.location,
+                          phone: partner.phone || "",
+                          whatsapp: partner.whatsapp || "",
+                          logo_url: partner.logo_url || "",
+                          latitude: partner.latitude,
+                          longitude: partner.longitude,
+                          description: partner.description,
+                          specialities: JSON.stringify(specs),
+                        },
+                      });
+                    }}
+                  >
+
+                  <View style={styles.markerContainer}>
+                    <View style={[ styles.markerBubble, { borderColor: isMatch ? '#00ff00' : '#ddd' },]}>
+                      {partner.logo_url ? (
+                        <Image
+                          source={{ uri: partner.logo_url }}
+                          style={styles.markerImage}
+                          resizeMode="contain"
+                          fadeDuration={0}
+                          onLoad={() =>
+                            setLoadedMarkers((prev) => new Set([...prev, markerKey]))
+                          }
+                        />
+                      ) : (
+                        <View style={styles.markerImage} />
+                      )}
+                    </View>
+
+                    <View style={[ styles.markerArrow, { borderTopColor: isMatch ? '#00ff00' : '#ffffff' },]}/>
+                  </View>   
+                </Marker>
               );
             })}
           </MapView>
@@ -335,9 +349,7 @@ export default function MapScreen() {
                 <Ionicons name="close" size={22} color="#333" />
               </TouchableOpacity>
 
-              <Text style={styles.distanceModalTitle}>
-                Seleccionar radio de búsqueda
-              </Text>
+              <Text style={styles.distanceModalTitle}>Seleccionar radio de búsqueda</Text>
 
               {[10, 15, 20, 25, 30].map((km) => (
                 <TouchableOpacity key={km}
@@ -350,12 +362,7 @@ export default function MapScreen() {
                     setDistanceModalVisible(false);
                   }}
                 >
-                  <Text
-                    style={[
-                      styles.distanceOptionText,
-                      distanceRadius === km && styles.distanceOptionTextActive,
-                    ]}
-                  >
+                  <Text style={[ styles.distanceOptionText, distanceRadius === km && styles.distanceOptionTextActive,]}>
                     {km} km
                   </Text>
                 </TouchableOpacity>
@@ -456,5 +463,9 @@ const styles = StyleSheet.create({
   distanceOptionActive: { backgroundColor: "#27B9BA", },
   distanceOptionText: { fontSize: 15, fontWeight: "600", color: "#333", },
   distanceOptionTextActive: { color: "#fff", fontWeight: "bold", },
+  markerContainer: { alignItems: 'center',},
+  markerBubble: { width: 30, height: 30, borderRadius: 30, backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center', borderWidth: 1,},
+  markerImage: { width: 30, height: 30, borderRadius: 15,},
+  markerArrow: { width: 0, height: 0, borderLeftWidth: 6, borderRightWidth: 6, borderTopWidth: 5, borderLeftColor: 'transparent', borderRightColor: 'transparent', marginTop: -2,},
 
 });

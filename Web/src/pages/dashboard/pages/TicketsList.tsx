@@ -77,7 +77,7 @@ export default function PendingTicketsTable() {
         <input
           type="text"
           placeholder={t("pending_tickets_table.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />

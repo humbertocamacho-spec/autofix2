@@ -1,6 +1,7 @@
 {
   "admins": "Administradores",
   "admin_screen": {
+    "title": "Administradores",
     "add_button": "Agregar Administrador",
     "delete": "Eliminar",
     "edit": "Editar",
@@ -17,9 +18,22 @@
     "table": {
       "actions": "Acciones",
       "id": "ID",
-      "name": "Nombre"
+      "name": "Nombre",
+      "user_error": "Este campo es obligatorio"
     },
-    "title": "Administradores"
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar al administrador \"{{name}}\"?"
+    },
+    "success": {
+      "create": "Administrador creado correctamente",
+      "update": "Administrador actualizado correctamente",
+      "deactivate": "Administrador eliminado correctamente"
+    },
+    "errors": {
+      "create": "Error al crear el administrador",
+      "update": "Error al actualizar el administrador",
+      "deactivate": "Error al eliminar el administrador"
+    }
   },
 
   "brands": "Marcas de Autos",
@@ -27,6 +41,7 @@
 
   "clients": "Clientes",
   "clients_screen": {
+    "title": "Clientes",
     "add_button": "Agregar Cliente",
     "delete": "Eliminar",
     "edit": "Editar",
@@ -43,10 +58,20 @@
     "table": {
       "actions": "Acciones",
       "id": "ID",
-      "name": "Nombre"
+      "name": "Nombre",
+      "user_error": "Este campo es obligatorio"
     },
-    "title": "Clientes"
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar al cliente \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Cliente eliminado correctamente"
+    },
+    "errors": {
+      "deactivate": "Error al eliminar el cliente"
+    }
   },
+
   "confirmed_tickets": "Confirmados",
   "dashboard": "Panel",
   "dashboard_overview": "Resumen del Panel",
@@ -75,7 +100,13 @@
       "type": "Tipo",
       "plate": "Placa",
       "actions": "Acciones",
-      "select_brand": "Seleccionar marca"
+      "select_brand": "Seleccionar marca",
+      "name_error": "Este campo es obligatorio",
+      "brand_error": "Este campo es obligatorio",
+      "model_error": "Este campo es obligatorio",
+      "year_error": "Este campo es obligatorio",
+      "type_error": "Este campo es obligatorio",
+      "plate_error": "Este campo es obligatorio"
     }
   },
 
@@ -121,8 +152,8 @@
   },
 
   "partners": "Partners",
-  
   "partners_screen": {
+    "title": "Partners",
     "add_button": "Agregar Partner",
     "delete": "Eliminar",
     "edit": "Editar",
@@ -142,6 +173,7 @@
       "name": "Nombre",
       "user": "Usuario",
       "phone": "Teléfono",
+      "contact": "Contacto",
       "priority": "Prioridad",
       "whatsapp": "WhatsApp",
       "latitude": "Latitud",
@@ -150,35 +182,65 @@
       "scanner_handling": "Manejo de escáner",
       "logo_url": "Logo",
       "description": "Descripción",
-      "specialities": "Especialidades"
+      "specialities": "Especialidades",
+      "logo_url_preview": "Vista previa",
+      "hidden": "más",
+      "name_error": "Este campo es obligatorio",
+      "user_error": "Este campo es obligatorio",
+      "phone_error": "Este campo es obligatorio",
+      "location_error": "Este campo es obligatorio",
+      "latitude_error": "Este campo es obligatorio",
+      "longitude_error": "Este campo es obligatorio",
+      "logo_url_error": "Este campo es obligatorio",
+      "description_error": "Este campo es obligatorio",
+      "name_placeholder": "Ej. Taller Mecánico El Rayo",
+      "logo_url_placeholder": "https://example.com/logo.png",
+      "description_placeholder": "Ej. Taller especializado en frenos, suspensión y mantenimiento general"
     },
-    "title": "Partners"
+    "confirm": {
+      "deactivate": "¿Seguro que deseas desactivar el partner \"{{name}}\"?",
+      "restore": "¿Seguro que deseas restaurar el partner \"{{name}}\"?"
+    },
+    "success": {
+      "create": "Partner creado correctamente",
+      "update": "Partner actualizado correctamente",
+      "deactivate": "Partner desactivado correctamente",
+      "restore": "Partner restaurado correctamente"
+    },
+    "errors": {
+      "create": "Error al crear el partner",
+      "update": "Error al actualizar el partner",
+      "deactivate": "Error al desactivar el partner",
+      "restore": "Error al restaurar el partner"
+    }
   },
 
-    "partner_certifications": "Certificaciones de Partners",
-    "partner_certifications_screen": {
-    "title": "Certificaciones de Partners",
-      "search_placeholder": "Buscar certificación...",
-      "add_button": "Agregar Certificación",
-      "loading": "Cargando...",
-      "edit": "Editar",
-      "delete": "Eliminar",
-      "no_results": "No se encontraron certificaciones",
-      "create_title": "Agregar Certificación",
-      "edit_title": "Editar Certificación",
-      "create": "Crear",
-      "save": "Guardar",
-      "cancel": "Cancelar",
-      "table": {
-        "actions": "Acciones",
-        "id": "ID",
-        "name": "Nombre",
-        "partner_id": "Partner ID",
-        "partner_name": "Nombre del Partner",
-        "certification_name": "Nombre de la Certificación",
-        "select_partner": "Seleccionar Partner",
-        "select_certification": "Seleccionar Certificación"
-      }
+  "partner_certifications": "Certificaciones de Partners",
+  "partner_certifications_screen": {
+  "title": "Certificaciones de Partners",
+    "search_placeholder": "Buscar certificación...",
+    "add_button": "Agregar Certificación",
+    "loading": "Cargando...",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "no_results": "No se encontraron certificaciones",
+    "create_title": "Agregar Certificación",
+    "edit_title": "Editar Certificación",
+    "create": "Crear",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "table": {
+      "actions": "Acciones",
+      "id": "ID",
+      "name": "Nombre",
+      "partner_id": "Partner ID",
+      "partner_name": "Nombre del Partner",
+      "certification_name": "Nombre de la Certificación",
+      "select_partner": "Seleccionar Partner",
+      "select_certification": "Seleccionar Certificación",
+      "partner_error": "Este campo es obligatorio",
+      "certification_error": "Este campo es obligatorio"
+    }
   },
 
   "pending_tickets": "Pendientes",
@@ -207,6 +269,20 @@
       "select_gender": "Seleccionar género",
       "select_role": "Seleccionar rol",
       "title": "Editar Usuario"
+    },
+    "errors": {
+      "fetch": "Error al obtener usuarios",
+      "update": "Error al actualizar usuario",
+      "deactivate": "Error al desactivar usuario"
+    },
+    "success": {
+      "update": "Usuario actualizado correctamente",
+      "deactivate": "Usuario desactivado correctamente",
+      "restore": "Usuario reactivado correctamente"
+    }, 
+    "confirm": {
+      "deactivate": "¿Seguro que deseas desactivar al usuario \"{{name}}\"?",
+      "restore": "¿Seguro que deseas reactivar al usuario \"{{name}}\"?"
     },
     "no_results": "No se encontraron usuarios",
     "search_placeholder": "Buscar usuarios...",
@@ -239,7 +315,17 @@
     "table": {
       "id": "ID",
       "name": "Nombre",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "name_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar la especialidad \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Especialidad eliminada correctamente"
+    },
+    "errors": {
+      "deactivate": "Error al eliminar la especialidad"
     }
   },
 
@@ -260,7 +346,17 @@
     "table": {
       "id": "ID",
       "name": "Nombre",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "name_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar la marca \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Marca eliminada correctamente"
+    },
+    "errors": {
+      "deactivate": "Error al eliminar la marca"
     }
   },
 
@@ -281,7 +377,17 @@
     "table": {
       "id": "ID",
       "name": "Nombre",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "name_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar la certificación \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Certificación eliminada correctamente"
+    },
+    "errors": {
+      "deactivate": "Error al eliminar la certificación"
     }
   },
 
@@ -302,7 +408,18 @@
       "id": "ID",
       "name": "Nombre",
       "description": "Descripción",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "name_error": "Este campo es obligatorio",
+      "description_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar el módulo \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Módulo eliminado correctamente"
+    },
+    "errors": {
+      "deactivate": "Error al eliminar el módulo"
     }
   },
 
@@ -327,7 +444,18 @@
       "id": "ID",
       "permission": "Permiso",
       "module": "Módulo",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "name_error": "Este campo es obligatorio",
+      "module_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar el permiso \"{{name}}\"?"
+    },
+    "success": {
+      "deactivate": "Permiso eliminado correctamente"
+    },
+    "errors": {
+      "deactivate": "Error al eliminar el permiso"
     }
   },
 
@@ -352,12 +480,13 @@
     "label": "Estado",
     "pendiente": "Pendiente",
     "revision": "Revisión",
-    "finalizado": "Finalizado"
+    "finalizado": "Finalizado",
+    "user_disabled": "Este ticket pertenece a un usuario desactivado"
     },
     "common": {
     "cancel": "Cancelar",
     "save": "Guardar"
-  },
+    },
     "table": {
       "id": "ID",
       "client": "Cliente",
@@ -407,5 +536,11 @@
     "catalogs": "Catálogos",
     "pending": "Pendientes",
     "confirmed": "Confirmados"
+  },
+
+  "unauthorized_page": {
+    "title": "No autorizado",
+    "description": "No estás autorizado para acceder a esta página.",
+    "button": "Ir al Panel"
   }
 }

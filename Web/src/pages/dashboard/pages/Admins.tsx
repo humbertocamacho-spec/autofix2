@@ -4,6 +4,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Admin } from "../../../types/admin";
 import type { User } from "../../../types/users";
 import { useTranslation } from "react-i18next";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
 export default function AdminsTable() {
@@ -16,6 +17,9 @@ export default function AdminsTable() {
   const [currentAdmin, setCurrentAdmin] = useState<Admin | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const { t } = useTranslation();
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     fetchAdmins();
@@ -44,10 +48,21 @@ export default function AdminsTable() {
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!userId) { newErrors.userId = t("admin_screen.table.user_error");}
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const openCreate = () => {
     setIsEditing(false);
     setCurrentAdmin(null);
     setUserId(null);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
@@ -55,36 +70,48 @@ export default function AdminsTable() {
     setIsEditing(true);
     setCurrentAdmin(admin);
     setUserId(admin.user_id);
+    setErrors({});
+    setSubmitted(false);
     setOpenModal(true);
   };
 
   const saveAdmin = async () => {
-    if (!userId) return alert("Debes seleccionar un usuario.");
+    setSubmitted(true);
+    if (!validateForm()) return;
 
-    const method = isEditing ? "PUT" : "POST";
-    const url = isEditing
-      ? `${VITE_API_URL}/api/admins/${currentAdmin?.id}`
-      : `${VITE_API_URL}/api/admins`;
-
-    await fetch(url, {
+    const isEdit = isEditing && currentAdmin;
+    const method = isEdit ? "PUT" : "POST";
+    const url = isEdit ? `${VITE_API_URL}/api/admins/${currentAdmin!.id}` : `${VITE_API_URL}/api/admins`;
+    const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId }),
     });
 
+    if (!res.ok) {
+      alert(t( isEdit ? "admin_screen.errors.update" : "admin_screen.errors.create"));
+      return;
+    }
+
+    alert(t( isEdit ? "admin_screen.success.update" : "admin_screen.success.create"));
+
     setOpenModal(false);
     fetchAdmins();
   };
 
-  const deleteAdmin = async (id: number) => {
-    if (!confirm("¿Eliminar administrador?")) return;
-    await fetch(`${VITE_API_URL}/api/admins/${id}`, { method: "DELETE" });
+  const deleteAdmin = async (admin: Admin) => {
+    const confirmed = window.confirm( t("admin_screen.confirm.deactivate", { name: admin.user_name }));
+    if (!confirmed) return;
+
+    const res = await fetch(`${VITE_API_URL}/api/admins/${admin.id}`, { method: "DELETE",});
+
+    if (!res.ok) { alert(t("admin_screen.errors.deactivate")); return;}
+
+    alert(t("admin_screen.success.deactivate"));
     fetchAdmins();
   };
 
-  const filtered = admins.filter((a) =>
-    a.user_name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = admins.filter((a) => a.user_name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
@@ -94,7 +121,7 @@ export default function AdminsTable() {
         <input
           type="text"
           placeholder={t("admin_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -123,7 +150,6 @@ export default function AdminsTable() {
                 <tr key={item.id} className="border-b hover:bg-gray-50">
                   <td className="py-2">{item.id}</td>
                   <td className="py-2">{item.user_name}</td>
-
                   <td className="py-2 text-right space-x-4">
                     <Can permission="update_admins">
                       <button onClick={() => openEdit(item)} className="px-5 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
@@ -132,7 +158,7 @@ export default function AdminsTable() {
                     </Can>
 
                     <Can permission="delete_admins">
-                      <button onClick={() => deleteAdmin(item.id)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                      <button onClick={() => deleteAdmin(item)} className="px-5 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                         {t("admin_screen.delete")}
                       </button>
                     </Can>
@@ -142,9 +168,7 @@ export default function AdminsTable() {
 
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="text-center py-6 text-gray-500">
-                    {t("admin_screen.no_results")}
-                  </td>
+                  <td colSpan={3} className="text-center py-6 text-gray-500">{t("admin_screen.no_results")}</td>
                 </tr>
               )}
             </tbody>
@@ -155,29 +179,30 @@ export default function AdminsTable() {
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              {isEditing ? t("admin_screen.edit_title") : t("admin_screen.create_title")}
-            </h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800"> {isEditing ? t("admin_screen.edit_title") : t("admin_screen.create_title")}</h2>
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("admin_screen.choose_user")}</label>
-
+                <RequiredLabel required>{t("admin_screen.choose_user")}</RequiredLabel>
                 <select
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.userId ? "border-red-500" : "border-gray-300"}`}
                   value={userId || ""}
-                  onChange={(e) => setUserId(Number(e.target.value))}
+                  onChange={(e) => { setUserId(Number(e.target.value)); setErrors((prev) => ({ ...prev, userId: "" })); }}
                 >
                   <option value="">{t("admin_screen.choose_user")}</option>
                   {users.map((u) => (
                     <option key={u.id} value={u.id}>{u.name}</option>
                   ))}
                 </select>
+                {submitted && errors.userId && (
+                  <p className="text-red-500 text-xs mt-1"> {errors.userId}</p>
+                )}
               </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">
-              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => setOpenModal(false)}>
+              <button className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+                onClick={() => { setOpenModal(false); setErrors({}); setSubmitted(false); }}>
                 {t("admin_screen.cancel")}
               </button>
 

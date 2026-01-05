@@ -7,6 +7,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import type { CalendarEvent } from "../../../types/calendar";
 import { VITE_API_URL } from "../../../config/env";
 
 const COLORS = {
@@ -31,19 +32,6 @@ const toLocalDateString = (date: Date) => {
   return localDate.toISOString().slice(0, 10);
 };
 
-type CalendarEvent = {
-  id: string;
-  title: string;
-  start: string;
-  end: string;
-  extendedProps: {
-    status: string;
-    notes?: string;
-    partnerName?: string;
-    userDisabled: boolean;
-  };
-};
-
 export default function Overview() {
   const { t, i18n } = useTranslation();
   const [selectedDate, setSelectedDate] = useState(toLocalDateString(new Date()));
@@ -53,21 +41,16 @@ export default function Overview() {
   useEffect(() => {
     const fetchTickets = async () => {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${VITE_API_URL}/api/ticket`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await fetch(`${VITE_API_URL}/api/ticket`, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json",},});
       const data = await res.json();
       const mapped: CalendarEvent[] = data.map((t: any) => {
         const start = new Date(t.date);
         const end = new Date(start.getTime() + 30 * 60000);
         return {
           id: t.id.toString(),
-          title: `${t.car_name} · ${t.client_name}`,
-          start: start.toISOString(),
-          end: end.toISOString(),
+          title: `${t.car_name} ${t.car_model} - ${t.car_year} · ${t.client_name}`,
+          start: start.toISOString().slice(0, 19),
+          end: end.toISOString().slice(0, 19),
           extendedProps: {
             status: t.status,
             notes: t.notes,
@@ -83,11 +66,8 @@ export default function Overview() {
   }, []);
 
   const eventsOfDay = useMemo( () => events.filter((e) => e.start.slice(0, 10) === selectedDate), [events, selectedDate]);
-
   const daysWithEvents = useMemo( () => new Set(events.map((e) => e.start.slice(0, 10))), [events]);
-
-  const calendarLocale =
-  i18n.language.startsWith("es") ? esLocale : enLocale; const handleDateOrEventClick = (date: Date) => { setSelectedDate(toLocalDateString(date));};
+  const calendarLocale = i18n.language.startsWith("es") ? esLocale : enLocale; const handleDateOrEventClick = (date: Date) => { setSelectedDate(toLocalDateString(date));};
 
   if (loading) {
     return (
@@ -112,7 +92,8 @@ export default function Overview() {
           <div className="col-span-12 lg:col-span-8 bg-white p-6 rounded-xl shadow border border-gray-200 overflow-auto">
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              initialView="timeGridWeek"
+              initialView="dayGridMonth"
+              timeZone="local"
               locale={calendarLocale}
               events={events}
               height="75vh"
@@ -133,11 +114,7 @@ export default function Overview() {
               allDayText={t("overview.allday")}
               dateClick={(info) => handleDateOrEventClick(info.date)}
               eventClick={(info) => handleDateOrEventClick(info.event.start!)}
-              headerToolbar={{
-                left: "prev,next today",
-                center: "title",
-                right: "timeGridDay,timeGridWeek,dayGridMonth",
-              }}
+              headerToolbar={{ left: "prev,next today", center: "title", right: "timeGridDay,timeGridWeek,dayGridMonth",}}
               buttonText={{
                 today: t("overview.today"),
                 day: t("overview.day"),
@@ -148,7 +125,6 @@ export default function Overview() {
                 const { status } = arg.event.extendedProps;
                 const [carName, clientName] = arg.event.title.split(" · ");
                 const color = STATUS_COLORS[status];
-
                 const time = arg.event.start ? new Date(arg.event.start).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit", }) : "";
 
                 return (
@@ -177,9 +153,7 @@ export default function Overview() {
                       {clientName}
                     </div>
 
-                    <div className="ml-2 text-[11px] text-black leading-tight">
-                      {time}
-                    </div>
+                    <div className="ml-2 text-[11px] text-black leading-tight"> {time} </div>
                   </div>
                 );
               }}
@@ -303,15 +277,11 @@ export default function Overview() {
                   }
                 )}
               </p>
-              <p className="text-sm opacity-90 mt-1">
-                {eventsOfDay.length} {t("overview.tickets")}
-              </p>
+              <p className="text-sm opacity-90 mt-1"> {eventsOfDay.length} {t("overview.tickets")} </p>
             </div>
 
             {eventsOfDay.length === 0 ? (
-              <p className="text-center py-10 text-gray-500">
-                {t("overview.no_tickets_today")}
-              </p>
+              <p className="text-center py-10 text-gray-500"> {t("overview.no_tickets_today")}</p>
             ) : (
               <div className="space-y-3 max-h-[70vh] overflow-y-auto">
                 {eventsOfDay.map((event) => {
@@ -325,36 +295,19 @@ export default function Overview() {
                     >
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <p className="font-semibold text-gray-800">
-                            {event.title}
-                          </p>
-                          {event.extendedProps.partnerName && (
-                            <p className="text-xs text-gray-500 mt-1">
-                              🏪 {event.extendedProps.partnerName}
-                            </p>
-                          )}
+                          <p className="font-semibold text-gray-800"> {event.title}</p>
+                          {event.extendedProps.partnerName && (<p className="text-xs text-gray-500 mt-1">{event.extendedProps.partnerName}</p>)}
                         </div>
-                        <span className="text-sm font-medium text-gray-500">
-                          {event.start.slice(11, 16)}
-                        </span>
+                        <span className="text-sm font-medium text-gray-500">{event.start.slice(11, 16)}</span>
                       </div>
                       <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold"
-                        style={{
-                          background: color.lightBg,
-                          color: color.accent,
-                        }}
+                        style={{ background: color.lightBg, color: color.accent,}}
                       >
-                        {t(
-                          `tickets_screen.status.${event.extendedProps.status}`
-                        )}
+                        {t( `tickets_screen.status.${event.extendedProps.status}`)}
                       </span>
-                      <p className="text-xs text-gray-400 mt-2">
-                        {event.extendedProps.notes || "Sin notas"}
-                      </p>
+                      <p className="text-xs text-gray-400 mt-2"> {event.extendedProps.notes || "Sin notas"}</p>
                       {event.extendedProps.userDisabled && (
-                        <p className="text-xs text-red-500 mt-1">
-                          Este ticket pertenece a un usuario desactivado
-                        </p>
+                        <p className="text-xs text-red-500 mt-1">{t("tickets_screen.status.label")}</p>
                       )}
                     </div>
                   );
@@ -369,13 +322,9 @@ export default function Overview() {
 }
 
 function StatCard({
-  title,
-  value,
-  gradient,
-}: {
-  title: string;
-  value: number;
-  gradient: string;
+  title, value, gradient,
+} : {
+  title: string; value: number; gradient: string;
 }) {
   return (
     <div className="rounded-2xl p-4 shadow-lg text-white" style={{ background: gradient }}>

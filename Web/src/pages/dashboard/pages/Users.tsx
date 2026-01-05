@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import { useTranslation } from "react-i18next";
+import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import type { User } from "../../../types/users";
 import Can from "../../../components/Can";
 
@@ -23,7 +24,7 @@ export default function UsersTable() {
       const data = await res.json();
       setUsers(data);
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error(t("users_screen.errors.fetch"), error);
     } finally {
       setLoading(false);
     }
@@ -46,59 +47,57 @@ export default function UsersTable() {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        alert(data.message || "Error updating user");
+      if (!res.ok) { alert(data.message || t("users_screen.errors.update"));
         return;
       }
 
-      alert("Usuario actualizado correctamente");
+      alert(t("users_screen.success.update"));
       setOpenEdit(false);
       fetchUsers();
     } catch (error) {
-      console.error("Error updating user:", error);
+      console.error(t("users_screen.errors.update"), error);
     }
   };
 
   const handleDeleteUser = async (user: User) => {
     const confirmDelete = window.confirm(
-      `¿Seguro que deseas desactivar al usuario "${user.name}"?`
+      t("users_screen.confirm.deactivate", { name: user.name })
     );
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users/${user.id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`${VITE_API_URL}/api/users/${user.id}`, { method: "DELETE",});
 
       const data = await res.json();
       if (!res.ok) {
-        alert(data.message || "Error al desactivar usuario");
+        alert(data.message || t("users_screen.errors.deactivate"));
         return;
       }
 
-      alert("Usuario desactivado correctamente");
+      alert(t("users_screen.success.deactivate"));
       fetchUsers();
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error(t("users_screen.errors.deactivate"), error);
     }
   };
 
   const handleRestoreUser = async (user: User) => {
+    const confirmRestore = window.confirm( t("users_screen.confirm.restore", { name: user.name }));
+    if (!confirmRestore) return;
+
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users/${user.id}/restore`, {
-        method: "PATCH",
-      });
+      const res = await fetch(`${VITE_API_URL}/api/users/${user.id}/restore`, { method: "PATCH",});
 
       const data = await res.json();
       if (!res.ok) {
-        alert(data.message || "Error al reactivar usuario");
+        alert(data.message || t("users_screen.errors.restore"));
         return;
       }
 
-      alert("Usuario reactivado correctamente");
+      alert(t("users_screen.success.restore"));
       fetchUsers();
     } catch (error) {
-      console.error(error);
+      console.error(t("users_screen.errors.restore"), error);
     }
   };
 
@@ -116,7 +115,7 @@ export default function UsersTable() {
         <input
           type="text"
           placeholder={t("users_screen.search_placeholder")}
-          className="w-80 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#27B9BA]"
+          className="w-80 px-4 py-2 rounded-lg border border-gray-300"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -140,7 +139,6 @@ export default function UsersTable() {
                 <th className="pb-3">{t("users_screen.table.email")}</th>
                 <th className="pb-3">{t("users_screen.table.phone")}</th>
                 <th className="pb-3">{t("users_screen.table.role")}</th>
-                <th className="pb-3">{t("users_screen.table.gender")}</th>
                 <th className="pb-3">{t("users_screen.table.status")}</th>
                 <th className="pb-3 text-right">{t("users_screen.table.actions")}</th>
               </tr>
@@ -154,18 +152,11 @@ export default function UsersTable() {
                   <td className="py-3">{user.email}</td>
                   <td className="py-3">{user.phone || "—"}</td>
                   <td className="py-3">{user.role_name || "—"}</td>
-                  <td className="py-3">{user.gender_name || "—"}</td>
-
                   <td className="py-3">
-                    {user.deleted_at ? (
-                      <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                        {t("users_screen.table.status_inactive")}
-                      </span>
-                    ) : (
-                      <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                        {t("users_screen.table.status_active")}
-                      </span>
-                    )}
+                    <span
+                      title={ user.deleted_at ? t("users_screen.table.status_inactive") : t("users_screen.table.status_active")}
+                      className={`inline-block w-3 h-3 rounded-full ${ user.deleted_at ? "bg-red-500" : "bg-green-500"}`}
+                    />
                   </td>
 
                   <td className="py-3 text-right space-x-3">
@@ -201,9 +192,7 @@ export default function UsersTable() {
 
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="text-center py-6 text-gray-500">
-                    {t("users_screen.no_results")}
-                  </td>
+                  <td colSpan={8} className="text-center py-6 text-gray-500">{t("users_screen.no_results")}</td>
                 </tr>
               )}
             </tbody>
@@ -218,9 +207,9 @@ export default function UsersTable() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("users_screen.modal.name")}</label>
+                <RequiredLabel required>{t("users_screen.modal.name")}</RequiredLabel>
                 <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                   value={currentUser.name}
                   onChange={(e) =>
                     setCurrentUser({ ...currentUser, name: e.target.value })
@@ -229,9 +218,9 @@ export default function UsersTable() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("users_screen.modal.email")}</label>
+                <RequiredLabel required>{t("users_screen.modal.email")}</RequiredLabel>
                 <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                   value={currentUser.email}
                   onChange={(e) =>
                     setCurrentUser({ ...currentUser, email: e.target.value })
@@ -240,9 +229,9 @@ export default function UsersTable() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("users_screen.modal.phone")}</label>
+                <RequiredLabel required>{t("users_screen.modal.phone")}</RequiredLabel>
                 <input
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                   value={currentUser.phone || ""}
                   onChange={(e) =>
                     setCurrentUser({ ...currentUser, phone: e.target.value })
@@ -251,9 +240,9 @@ export default function UsersTable() {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">{t("users_screen.modal.role")}</label>
+                <RequiredLabel required>{t("users_screen.modal.role")}</RequiredLabel>
                 <select
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
+                  className="w-full border border-gray-300 px-3 py-2 rounded-lg"
                   value={currentUser.role_id}
                   onChange={(e) =>
                     setCurrentUser({
@@ -266,24 +255,6 @@ export default function UsersTable() {
                   <option value={1}>Admin</option>
                   <option value={2}>Partner</option>
                   <option value={3}>Client</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-gray-600">{t("users_screen.modal.gender")}</label>
-                <select
-                  className="w-full border border-gray-300 px-3 py-2 rounded-lg focus:ring-2 focus:ring-[#27B9BA]"
-                  value={currentUser.gender_id || ""}
-                  onChange={(e) =>
-                    setCurrentUser({
-                      ...currentUser,
-                      gender_id: Number(e.target.value),
-                    })
-                  }
-                >
-                  <option value="">{t("users_screen.modal.select_gender")}</option>
-                  <option value={1}>Femenino</option>
-                  <option value={2}>Masculino</option>
                 </select>
               </div>
             </div>
