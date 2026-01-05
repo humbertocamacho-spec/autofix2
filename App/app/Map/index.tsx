@@ -246,38 +246,25 @@ export default function MapScreen() {
                     }}
                   >
 
-                  <View
-                    style={{
-                      backgroundColor: '#ffffff',     
-                      borderRadius: 20,               
-                      overflow: 'hidden',             
-                      width: 33,                      
-                      height: 33,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderWidth: 1,
-                      borderColor: isMatch ? '#00ff00' : '#dddddd',
-                    }}
-                  >
-                    {partner.logo_url ? (
-                      <Image
-                        source={{ uri: partner.logo_url }}
-                        style={{
-                          width: 33,
-                          height: 33,
-                          borderRadius: 20,
-                          opacity: 1,
-                        }}
-                        resizeMode="contain"
-                        fadeDuration={0}
-                        onLoad={() => { setLoadedMarkers((prev) => new Set([...prev, markerKey]));}}
-                        onError={(e) => console.log('Error cargando logo:', partner.logo_url, e.nativeEvent)}
-                      />
-                    ) : (
+                  <View style={styles.markerContainer}>
+                    <View style={[ styles.markerBubble, { borderColor: isMatch ? '#00ff00' : '#ddd' },]}>
+                      {partner.logo_url ? (
+                        <Image
+                          source={{ uri: partner.logo_url }}
+                          style={styles.markerImage}
+                          resizeMode="contain"
+                          fadeDuration={0}
+                          onLoad={() =>
+                            setLoadedMarkers((prev) => new Set([...prev, markerKey]))
+                          }
+                        />
+                      ) : (
+                        <View style={styles.markerImage} />
+                      )}
+                    </View>
 
-                      <View style={{ width: 33, height: 33 }} />
-                    )}
-                  </View>
+                    <View style={[ styles.markerArrow, { borderTopColor: isMatch ? '#00ff00' : '#ffffff' },]}/>
+                  </View>   
                 </Marker>
               );
             })}
@@ -476,5 +463,9 @@ const styles = StyleSheet.create({
   distanceOptionActive: { backgroundColor: "#27B9BA", },
   distanceOptionText: { fontSize: 15, fontWeight: "600", color: "#333", },
   distanceOptionTextActive: { color: "#fff", fontWeight: "bold", },
+  markerContainer: { alignItems: 'center',},
+  markerBubble: { width: 30, height: 30, borderRadius: 30, backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center', borderWidth: 1,},
+  markerImage: { width: 30, height: 30, borderRadius: 15,},
+  markerArrow: { width: 0, height: 0, borderLeftWidth: 6, borderRightWidth: 6, borderTopWidth: 5, borderLeftColor: 'transparent', borderRightColor: 'transparent', marginTop: -2,},
 
 });
