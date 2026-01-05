@@ -18,6 +18,7 @@ const defaultRegion = {
   latitudeDelta: 0.04,
   longitudeDelta: 0.04,
 };
+
 function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -32,26 +33,38 @@ function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon
   return R * c;
 }
 
+function matchPartnerName(name: string, search: string): boolean {
+  const text = search.trim().toLowerCase();
+  if (!text) return true;
+  return name.toLowerCase().includes(text);
+}
+
 export default function MapScreen() {
   const router = useRouter();
+  const modalMapRef = useRef<MapView>(null);
+  const mapRef = useRef<MapView>(null);
+  const slideAnim = useRef(new Animated.Value(-width)).current;
   const [region, setRegion] = useState<Region | null>(null);
+  const [tempRegion, setTempRegion] = useState<Region | null>(null);
   const [loading, setLoading] = useState(true);
   const [menuVisible, setMenuVisible] = useState(false);
   const [mapModalVisible, setMapModalVisible] = useState(false);
-  const [tempRegion, setTempRegion] = useState<Region | null>(null);
-  const slideAnim = useRef(new Animated.Value(-width)).current;
-  const mapRef = useRef<MapView>(null);
+  const [distanceModalVisible, setDistanceModalVisible] = useState(false);
+  const [showCitasSubMenu, setShowCitasSubMenu] = useState(false);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [specialities, setSpecialities] = useState<any[]>([]);
-  const [selectedSpeciality, setSelectedSpeciality] = useState<number | null>(null);
   const [partnersSpecialities, setPartnersSpecialities] = useState<any[]>([]);
+  const [selectedSpeciality, setSelectedSpeciality] = useState<number | null>(null);
   const [searchText, setSearchText] = useState('');
-  const [showCitasSubMenu, setShowCitasSubMenu] = useState(false);
-  const modalMapRef = useRef<MapView>(null);
   const [distanceRadius, setDistanceRadius] = useState(10);
-  const [distanceModalVisible, setDistanceModalVisible] = useState(false);
   const [loadedMarkers, setLoadedMarkers] = useState<Set<string | number>>(new Set());
 
+  // Reset markers when filters change
+  useEffect(() => {
+    setLoadedMarkers(new Set());
+  }, [searchText, selectedSpeciality]);
+
+  // Load specialities and partner specialities
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -68,6 +81,7 @@ export default function MapScreen() {
     fetchData();
   }, []);
 
+  // Get user location
   useEffect(() => {
     (async () => {
       try {
@@ -109,30 +123,15 @@ export default function MapScreen() {
     fetchPartners();
   }, []);
 
-  function matchPartnerName(name: string, search: string): boolean {
-    const text = search.trim().toLowerCase();
-    if (!text) return true;
-
-    const words = name.toLowerCase().split(/\s+/);
-
-    return words.some(word => word.startsWith(text));
-  }
-
   const nearbyPartners = partners.filter((partner) => {
     const lat = parseFloat(partner.latitude);
     const lon = parseFloat(partner.longitude);
     if (isNaN(lat) || isNaN(lon) || !region) return false;
 
     const distance = getDistanceFromLatLonInKm( region.latitude, region.longitude, lat, lon);
-
     const isSearching = searchText.trim().length > 0;
     const withinDistance = isSearching ? true : distance <= distanceRadius;
-    const hasSpeciality = selectedSpeciality
-      ? partnersSpecialities.some(
-        (ps) => ps.partner_id === partner.id && ps.speciality_id === selectedSpeciality
-      )
-      : true;
-
+    const hasSpeciality = selectedSpeciality ? partnersSpecialities.some( (ps) => ps.partner_id === partner.id && ps.speciality_id === selectedSpeciality) : true;
     const matchesSearch = matchPartnerName(partner.name, searchText);
 
     return withinDistance && hasSpeciality && (!searchText || matchesSearch);
@@ -140,15 +139,8 @@ export default function MapScreen() {
 
   useEffect(() => {
     if (mapRef.current && region && nearbyPartners.length > 0) {
-      const validCoords = nearbyPartners.map((p) => ({
-        latitude: parseFloat(p.latitude),
-        longitude: parseFloat(p.longitude),
-      }));
-
-      const coords = [
-        { latitude: region.latitude, longitude: region.longitude },
-        ...validCoords,
-      ];
+      const validCoords = nearbyPartners.map((p) => ({ latitude: parseFloat(p.latitude), longitude: parseFloat(p.longitude),}));
+      const coords = [ { latitude: region.latitude, longitude: region.longitude }, ...validCoords,];
 
       if (coords.length > 1) {
         mapRef.current.fitToCoordinates(coords, {
@@ -219,9 +211,7 @@ export default function MapScreen() {
               if (isNaN(lat) || isNaN(lon)) return null;
 
               const isMatch = searchText.trim().length > 0 && partner.name.toLowerCase().includes(searchText.toLowerCase());
-
               const markerKey = partner.id;
-
               const alreadyLoaded = loadedMarkers.has(markerKey);
 
               return (
@@ -255,7 +245,7 @@ export default function MapScreen() {
                       });
                     }}
                   >
-                    
+
                   <View
                     style={{
                       backgroundColor: '#ffffff',     
@@ -280,9 +270,7 @@ export default function MapScreen() {
                         }}
                         resizeMode="contain"
                         fadeDuration={0}
-                        onLoad={() => {
-                          setLoadedMarkers((prev) => new Set([...prev, markerKey]));
-                        }}
+                        onLoad={() => { setLoadedMarkers((prev) => new Set([...prev, markerKey]));}}
                         onError={(e) => console.log('Error cargando logo:', partner.logo_url, e.nativeEvent)}
                       />
                     ) : (
