@@ -8,6 +8,7 @@ import { getPartners } from '@/services/partners';
 import { Partner } from '@backend-types/partner';
 import { getSpecialities } from '@/services/specialities';
 import { getPartnerSpecialities } from '@/services/partner_specialities';
+import { Image } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -49,6 +50,7 @@ export default function MapScreen() {
   const modalMapRef = useRef<MapView>(null);
   const [distanceRadius, setDistanceRadius] = useState(10);
   const [distanceModalVisible, setDistanceModalVisible] = useState(false);
+  const [loadedMarkers, setLoadedMarkers] = useState<Set<string | number>>(new Set());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -214,13 +216,20 @@ export default function MapScreen() {
             {nearbyPartners.map((partner) => {
               const lat = parseFloat(partner.latitude);
               const lon = parseFloat(partner.longitude);
+              if (isNaN(lat) || isNaN(lon)) return null;
 
               const isMatch = searchText.trim().length > 0 && partner.name.toLowerCase().includes(searchText.toLowerCase());
 
+              const markerKey = partner.id;
+
+              const alreadyLoaded = loadedMarkers.has(markerKey);
+
               return (
-                <Marker key={partner.id + (isMatch ? '-match' : '-nomatch')}
-                  coordinate={{ latitude: lat, longitude: lon }} pinColor={isMatch ? "green" : "blue"}
-                  tracksViewChanges={true}
+                <Marker
+                  key={partner.id}
+                  coordinate={{ latitude: lat, longitude: lon }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  tracksViewChanges={!alreadyLoaded}
                   onPress={() => {
                     const specs = partnersSpecialities
                       .filter((ps) => ps.partner_id === partner.id)
@@ -229,23 +238,59 @@ export default function MapScreen() {
                         return spec ? spec.name : "";
                       });
 
-                    router.push({
-                      pathname: "../Map/details",
-                      params: {
-                        id: partner.id.toString(),
-                        name: partner.name,
-                        location: partner.location,
-                        phone: partner.phone || "",
-                        whatsapp: partner.whatsapp || "",
-                        logo_url: partner.logo_url || "",
-                        latitude: partner.latitude,
-                        longitude: partner.longitude,
-                        description: partner.description,
-                        specialities: JSON.stringify(specs),
-                      },
-                    });
-                  }}
-                />
+                      router.push({
+                        pathname: "../Map/details",
+                        params: {
+                          id: partner.id.toString(),
+                          name: partner.name,
+                          location: partner.location,
+                          phone: partner.phone || "",
+                          whatsapp: partner.whatsapp || "",
+                          logo_url: partner.logo_url || "",
+                          latitude: partner.latitude,
+                          longitude: partner.longitude,
+                          description: partner.description,
+                          specialities: JSON.stringify(specs),
+                        },
+                      });
+                    }}
+                  >
+                    
+                  <View
+                    style={{
+                      backgroundColor: '#ffffff',     
+                      borderRadius: 20,               
+                      overflow: 'hidden',             
+                      width: 33,                      
+                      height: 33,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      borderWidth: 1,
+                      borderColor: isMatch ? '#00ff00' : '#dddddd',
+                    }}
+                  >
+                    {partner.logo_url ? (
+                      <Image
+                        source={{ uri: partner.logo_url }}
+                        style={{
+                          width: 33,
+                          height: 33,
+                          borderRadius: 20,
+                          opacity: 1,
+                        }}
+                        resizeMode="contain"
+                        fadeDuration={0}
+                        onLoad={() => {
+                          setLoadedMarkers((prev) => new Set([...prev, markerKey]));
+                        }}
+                        onError={(e) => console.log('Error cargando logo:', partner.logo_url, e.nativeEvent)}
+                      />
+                    ) : (
+
+                      <View style={{ width: 33, height: 33 }} />
+                    )}
+                  </View>
+                </Marker>
               );
             })}
           </MapView>
