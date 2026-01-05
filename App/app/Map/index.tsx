@@ -1,7 +1,7 @@
 import * as Location from 'expo-location';
 import { Stack, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Animated, Dimensions, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, Platform } from 'react-native';
+import { ActivityIndicator, Alert, Animated, Dimensions, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView} from 'react-native';
 import MapView, { Marker, Region } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { getPartners } from '@/services/partners';
@@ -107,32 +107,34 @@ export default function MapScreen() {
     fetchPartners();
   }, []);
 
+  function matchPartnerName(name: string, search: string): boolean {
+    const text = search.trim().toLowerCase();
+    if (!text) return true;
+
+    const words = name.toLowerCase().split(/\s+/);
+
+    return words.some(word => word.startsWith(text));
+  }
+
   const nearbyPartners = partners.filter((partner) => {
     const lat = parseFloat(partner.latitude);
     const lon = parseFloat(partner.longitude);
     if (isNaN(lat) || isNaN(lon) || !region) return false;
 
-    const distance = getDistanceFromLatLonInKm(
-      region.latitude,
-      region.longitude,
-      lat,
-      lon
-    );
+    const distance = getDistanceFromLatLonInKm( region.latitude, region.longitude, lat, lon);
 
-    const withinDistance = distance <= distanceRadius;
+    const isSearching = searchText.trim().length > 0;
+    const withinDistance = isSearching ? true : distance <= distanceRadius;
     const hasSpeciality = selectedSpeciality
       ? partnersSpecialities.some(
         (ps) => ps.partner_id === partner.id && ps.speciality_id === selectedSpeciality
       )
       : true;
 
-    const matchesSearch = partner.name
-      ?.toLowerCase()
-      .includes(searchText.toLowerCase());
+    const matchesSearch = matchPartnerName(partner.name, searchText);
 
     return withinDistance && hasSpeciality && (!searchText || matchesSearch);
   });
-
 
   useEffect(() => {
     if (mapRef.current && region && nearbyPartners.length > 0) {
@@ -166,10 +168,7 @@ export default function MapScreen() {
   };
 
   const confirmNewLocation = () => {
-    if (tempRegion) {
-      setRegion(tempRegion);
-      mapRef.current?.animateToRegion(tempRegion, 1000);
-    }
+    if (tempRegion) { setRegion(tempRegion); mapRef.current?.animateToRegion(tempRegion, 1000);}
     setMapModalVisible(false);
   };
 
@@ -191,10 +190,7 @@ export default function MapScreen() {
           <Text style={styles.menuIcon}>☰</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => {
-          setTempRegion(region);
-          setMapModalVisible(true);
-        }}>
+        <TouchableOpacity onPress={() => { setTempRegion(region); setMapModalVisible(true);}}>
           <Ionicons name="location-outline" size={35} color="#ffffff" />
         </TouchableOpacity>
       </View>
@@ -219,9 +215,7 @@ export default function MapScreen() {
               const lat = parseFloat(partner.latitude);
               const lon = parseFloat(partner.longitude);
 
-              const isMatch =
-                searchText.trim().length > 0 &&
-                partner.name.toLowerCase().includes(searchText.toLowerCase());
+              const isMatch = searchText.trim().length > 0 && partner.name.toLowerCase().includes(searchText.toLowerCase());
 
               return (
                 <Marker key={partner.id + (isMatch ? '-match' : '-nomatch')}
@@ -335,9 +329,7 @@ export default function MapScreen() {
                 <Ionicons name="close" size={22} color="#333" />
               </TouchableOpacity>
 
-              <Text style={styles.distanceModalTitle}>
-                Seleccionar radio de búsqueda
-              </Text>
+              <Text style={styles.distanceModalTitle}>Seleccionar radio de búsqueda</Text>
 
               {[10, 15, 20, 25, 30].map((km) => (
                 <TouchableOpacity key={km}
@@ -350,12 +342,7 @@ export default function MapScreen() {
                     setDistanceModalVisible(false);
                   }}
                 >
-                  <Text
-                    style={[
-                      styles.distanceOptionText,
-                      distanceRadius === km && styles.distanceOptionTextActive,
-                    ]}
-                  >
+                  <Text style={[ styles.distanceOptionText, distanceRadius === km && styles.distanceOptionTextActive,]}>
                     {km} km
                   </Text>
                 </TouchableOpacity>
