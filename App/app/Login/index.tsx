@@ -70,7 +70,6 @@ export default function LoginScreen() {
           return;
         }
 
-        // 🔐 TOKEN
         await AsyncStorage.setItem('token', data.token);
 
         const userId = data.user.id;
@@ -88,7 +87,6 @@ export default function LoginScreen() {
           await AsyncStorage.removeItem('savedPassword');
         }
 
-        // 👉 AHORA sí navega
         router.replace('/Map');
 
 

@@ -64,6 +64,11 @@ export default function MapScreen() {
     setLoadedMarkers(new Set());
   }, [searchText, selectedSpeciality]);
 
+  // Reset markers when region changes
+  useEffect(() => {
+    setLoadedMarkers(new Set());
+  }, [region]);
+
   // Load specialities and partner specialities
   useEffect(() => {
     const fetchData = async () => {
