@@ -10,6 +10,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import type { CalendarEvent } from "../../../types/calendar";
 import { VITE_API_URL } from "../../../config/env";
 
+// Colors for the calendar
 const COLORS = {
   primary: "#27B9BA",
   bg: "#F9FAFB",
@@ -19,6 +20,7 @@ const COLORS = {
   gradientGray: "linear-gradient(135deg, #9CA3AF 0%, #D1D5DB 100%)",
 };
 
+// Colors for the status labels
 const STATUS_COLORS: Record<string, { lightBg: string; text: string; accent: string }> = {
   pendiente: { lightBg: "#f9fafb", text: "#4b5563", accent: "#9ca3af" },
   revision: { lightBg: "#fffbeb", text: "#78350f", accent: "#f59e0b" },
@@ -26,11 +28,26 @@ const STATUS_COLORS: Record<string, { lightBg: string; text: string; accent: str
   finalizado: { lightBg: "#f0fdf4", text: "#065f46", accent: "#22c55e" },
 };
 
+// Convert a date to a string in the local timezone
 const toLocalDateString = (date: Date) => {
   const offset = date.getTimezoneOffset();
   const localDate = new Date(date.getTime() - offset * 60000);
   return localDate.toISOString().slice(0, 10);
 };
+
+// Stat card component
+function StatCard({
+  title, value, gradient,
+} : {
+  title: string; value: number; gradient: string;
+}) {
+  return (
+    <div className="rounded-2xl p-4 shadow-lg text-white" style={{ background: gradient }}>
+      <p className="text-sm opacity-90">{title}</p>
+      <p className="text-2xl font-bold">{value}</p>
+    </div>
+  );
+}
 
 export default function Overview() {
   const { t, i18n } = useTranslation();
@@ -38,6 +55,7 @@ export default function Overview() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch tickets for the current month
   useEffect(() => {
     const fetchTickets = async () => {
       const token = localStorage.getItem("token");
@@ -69,6 +87,7 @@ export default function Overview() {
   const daysWithEvents = useMemo( () => new Set(events.map((e) => e.start.slice(0, 10))), [events]);
   const calendarLocale = i18n.language.startsWith("es") ? esLocale : enLocale; const handleDateOrEventClick = (date: Date) => { setSelectedDate(toLocalDateString(date));};
 
+  // Loading state
   if (loading) {
     return (
       <DashboardLayout>
@@ -82,12 +101,14 @@ export default function Overview() {
       <div className="p" style={{ background: COLORS.bg }}>
         <h1 className="text-3xl font-bold mb-6 text-gray-800"> {t("overview.title_calendar")}</h1>
 
+        {/* Stats */}
         <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatCard title={t("overview.stats.ticketsthismonth")} value={events.length} gradient={COLORS.gradientBlue}/>
           <StatCard title={t("overview.stats.dayswithtickets")} value={daysWithEvents.size} gradient={COLORS.gradientGreen}/>
           <StatCard title={t("overview.stats.ticketsoftoday")} value={eventsOfDay.length} gradient={COLORS.gradientYellow}/>
         </div>
 
+        {/* Calendar */}
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 lg:col-span-8 bg-white p-6 rounded-xl shadow border border-gray-200 overflow-auto">
             <FullCalendar
@@ -159,6 +180,7 @@ export default function Overview() {
               }}
             />
 
+            {/* FullCalendar styles */}
             <style>{`
 
             .fc-toolbar-chunk {
@@ -265,6 +287,7 @@ export default function Overview() {
             `}</style>
           </div>
 
+          {/* Tickets of the day */}
           <div className="col-span-12 lg:col-span-4 bg-white rounded-xl shadow border border-gray-200 p-6">
             <div className="rounded-xl p-4 mb-6 text-white -mx-6 -mt-6" style={{ background: COLORS.primary }}>
               <p className="text-xl font-bold">
@@ -321,15 +344,3 @@ export default function Overview() {
   );
 }
 
-function StatCard({
-  title, value, gradient,
-} : {
-  title: string; value: number; gradient: string;
-}) {
-  return (
-    <div className="rounded-2xl p-4 shadow-lg text-white" style={{ background: gradient }}>
-      <p className="text-sm opacity-90">{title}</p>
-      <p className="text-2xl font-bold">{value}</p>
-    </div>
-  );
-}

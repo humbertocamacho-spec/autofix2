@@ -1,11 +1,7 @@
-import type { ReactNode } from "react";
 import { usePermission } from "../hooks/usePermission";
+import type { CanProps } from "../types/can_props";
 
-interface CanProps {
-  permission: string | string[];
-  children: ReactNode;
-}
-
+// Can component
 export default function Can({ permission, children }: CanProps) {
   const { can } = usePermission();
 

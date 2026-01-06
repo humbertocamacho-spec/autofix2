@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuthContext } from "../context/AuthContext";
-
-interface Props {
-  onLoginSuccess?: () => void;
-}
+import type { Props } from "../types/props_login";
 
 export default function LoginForm({ onLoginSuccess }: Props) {
   const { login } = useAuthContext();
@@ -13,6 +10,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
   const [error, setError] = useState("");
   const [remember, setRemember] = useState(false);
 
+  // Remember email
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberEmail");
     if (savedEmail) {
@@ -21,6 +19,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
     }
   }, []);
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -41,6 +40,7 @@ export default function LoginForm({ onLoginSuccess }: Props) {
   };
 
   return (
+    // Login form
     <form onSubmit={handleSubmit} className="space-y-5">
 
       <div>

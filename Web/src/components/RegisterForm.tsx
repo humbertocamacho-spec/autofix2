@@ -12,6 +12,7 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -26,6 +27,7 @@ export default function RegisterForm() {
   };
 
   return (
+    // Register form
     <form onSubmit={handleSubmit} className="space-y-5">
 
       <div>

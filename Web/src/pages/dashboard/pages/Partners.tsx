@@ -40,6 +40,7 @@ export default function PartnersTable() {
   const { user } = useAuthContext();
   const { t } = useTranslation();
 
+  // Initial load of partners, users and specialities
   useEffect(() => {
     fetchPartners();
     fetchUsers();
@@ -47,7 +48,7 @@ export default function PartnersTable() {
     fetchAllPartnerSpecialities();
   }, []);
 
-  // Fetch
+  // Fetch partners list
   const fetchPartners = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -61,6 +62,7 @@ export default function PartnersTable() {
     }
   };
 
+  // Fetch users list
   const fetchUsers = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/users`);
@@ -71,12 +73,14 @@ export default function PartnersTable() {
     }
   };
 
+  // Fetch specialities list
   const fetchSpecialities = async () => {
     const res = await fetch(`${VITE_API_URL}/api/specialities`);
     const data = await res.json();
     setSpecialities(data);
   };
 
+  // Fetch all partner specialities
   const fetchAllPartnerSpecialities = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/partner_specialities`);
@@ -87,6 +91,7 @@ export default function PartnersTable() {
     }
   };
 
+  // Fetch partner specialities
   const fetchPartnerSpecialities = async (partnerId: number) => {
     const res = await fetch(`${VITE_API_URL}/api/partner_specialities/${partnerId}`);
     const data: number[] = await res.json();
@@ -106,11 +111,13 @@ export default function PartnersTable() {
     return text.length > max ? text.slice(0, max) + "..." : text;
   };
 
+  // Change priority
   const handlePriorityChange = (value: number) => {
     if (Number.isNaN(value)) return;
     setPriority(Math.min(10, Math.max(1, value)));
   };
 
+  // Basic form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -127,6 +134,7 @@ export default function PartnersTable() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Open create modal
   const openCreate = () => {
     setIsEditing(false);
     setSubmitted(false);
@@ -152,6 +160,7 @@ export default function PartnersTable() {
     setOpenModal(true);
   };
 
+  // Open edit modal
   const openEdit = (partner: Partner) => {
     setIsEditing(true);
     setSubmitted(false);
@@ -173,6 +182,7 @@ export default function PartnersTable() {
     setOpenModal(true);
   };
 
+  // Create or update partner
   const savePartner = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
@@ -215,6 +225,7 @@ export default function PartnersTable() {
     fetchPartners();
   };
 
+  // Restore partner
   const restorePartner = async (partner: Partner) => {
     const confirmed = window.confirm( t("partners_screen.confirm.restore", { name: partner.name }));
     if (!confirmed) return;
@@ -227,14 +238,14 @@ export default function PartnersTable() {
     fetchPartners();
   };
 
-  const filtered = partners
-    .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => a.id - b.id);
+  // Filter partners by name
+  const filtered = partners .filter((p) => p.name.toLowerCase().includes(search.toLowerCase())) .sort((a, b) => a.id - b.id);
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("partners_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -251,6 +262,7 @@ export default function PartnersTable() {
         </Can>
       </div>
 
+      {/* Partners table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("partners_screen.loading")}</p>
@@ -310,9 +322,7 @@ export default function PartnersTable() {
                       {(() => {
                         const specs = getPartnerSpecialities(item.id);
 
-                        if (specs.length === 0) {
-                          return <span className="text-gray-400 text-sm">-</span>;
-                        }
+                        if (specs.length === 0) { return <span className="text-gray-400 text-sm">-</span>;}
 
                         const visible = specs.slice(0, 2);
                         const hiddenCount = specs.length - visible.length;
@@ -320,14 +330,8 @@ export default function PartnersTable() {
                         return (
                           <div className="text-sm text-gray-700" title={specs.join("\n")}>
                             <ul className="list-disc list-outside pl-4 space-y-0.5 leading-snug">
-
-                              {visible.map((name, idx) => (
-                                <li key={idx}>{name}</li>
-                              ))}
-
-                              {hiddenCount > 0 && (
-                                <li className="text-gray-400 italic"> +{hiddenCount} {t("partners_screen.table.hidden")}</li>
-                              )}
+                              {visible.map((name, idx) => ( <li key={idx}>{name}</li>))}
+                              {hiddenCount > 0 && (<li className="text-gray-400 italic"> +{hiddenCount} {t("partners_screen.table.hidden")}</li>)}
                             </ul>
                           </div>
                         );
@@ -384,6 +388,7 @@ export default function PartnersTable() {
         )}
       </div>
 
+      {/* Create / edit partner modal */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] max-h-[90vh] rounded-2xl p-6 shadow-xl border border-gray-200 overflow-y-auto">

@@ -4,6 +4,7 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
+// Endpoint to get all partners
 router.get("/select", authMiddleware, async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -20,7 +21,7 @@ router.get("/select", authMiddleware, async (req, res) => {
   }
 });
 
-// Mapa de la app (Visible para todos)
+// Endpoint to get all partners for the map
 router.get("/map", async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -47,16 +48,13 @@ router.get("/map", async (req, res) => {
   }
 });
 
-// Tabla de Partners por usuario (Web)
+// Endpoint to get partners for the web
 router.get("/", authMiddleware, async (req, res) => {
   try {
 
     const { user_id, role_id } = req.user;
 
-    const [roleRow] = await db.query(
-      "SELECT name FROM roles WHERE id = ?",
-      [role_id]
-    );
+    const [roleRow] = await db.query( "SELECT name FROM roles WHERE id = ?", [role_id]);
 
     const roleName = roleRow[0]?.name?.toLowerCase();
 
@@ -82,10 +80,7 @@ router.get("/", authMiddleware, async (req, res) => {
 
     const params = [];
 
-    if (roleName === "partner") {
-      sql += " WHERE p.user_id = ?";
-      params.push(user_id);
-    }
+    if (roleName === "partner") { sql += " WHERE p.user_id = ?"; params.push(user_id);}
 
     sql += " ORDER BY p.priority ASC, p.name ASC";
 
@@ -97,6 +92,7 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
+// Endpoint to create a partner
 router.post("/", async (req, res) => {
   const connection = await db.getConnection();
   try {
@@ -118,7 +114,7 @@ router.post("/", async (req, res) => {
 
     await connection.beginTransaction();
 
-    //Crear partner
+    //Create partner
     const [result] = await connection.query(`
       INSERT INTO partners 
       (name, user_id, whatsapp, phone, location, latitude, longitude, land_use_permit, scanner_handling, logo_url, description, priority)
@@ -153,13 +149,10 @@ router.post("/", async (req, res) => {
       );
     }
 
-    // Confirmar transacción
+    // Confirm transaction
     await connection.commit();
 
-    res.json({
-      message: "Partner creado correctamente",
-      id: partnerId
-    });
+    res.json({ message: "Partner creado correctamente", id: partnerId});
 
   } catch (error) {
     await connection.rollback();
@@ -170,6 +163,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Endpoint to update a partner
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -229,14 +223,12 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Endpoint to delete a partner
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const [result] = await db.query(
-      "UPDATE partners SET deleted_at = NOW() WHERE id = ?",
-      [id]
-    );
+    const [result] = await db.query( "UPDATE partners SET deleted_at = NOW() WHERE id = ?", [id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Partner no encontrado" });
@@ -252,10 +244,7 @@ router.delete("/:id", async (req, res) => {
       [id]
     );
 
-    res.json({
-      ok: true,
-      message: "Partner desactivado correctamente"
-    });
+    res.json({ ok: true,message: "Partner desactivado correctamente"});
 
   } catch (error) {
     console.error("Error soft deleting partner:", error);
@@ -263,14 +252,12 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Endpoint to restore a partner
 router.patch("/:id/restore", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const [result] = await db.query(
-      "UPDATE partners SET deleted_at = NULL WHERE id = ?",
-      [id]
-    );
+    const [result] = await db.query( "UPDATE partners SET deleted_at = NULL WHERE id = ?", [id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Partner no encontrado" });
@@ -284,17 +271,12 @@ router.patch("/:id/restore", async (req, res) => {
       [id]
     );
 
-    res.json({
-      ok: true,
-      message: "Partner reactivado correctamente"
-    });
+    res.json({ ok: true, message: "Partner reactivado correctamente"});
 
   } catch (error) {
     console.error("Error restoring partner:", error);
     res.status(500).json({ message: "Error reactivando partner" });
   }
 });
-
-
 
 export default router;

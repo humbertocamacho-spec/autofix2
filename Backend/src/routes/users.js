@@ -4,7 +4,7 @@ import { ROLES, getRoleId } from "../utils/roles.js";
 
 const router = express.Router();
 
-//Get users
+// Endpoint to get all users
 router.get("/", async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -32,7 +32,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Update user
+// Endpoint to create a user
 router.put("/:id", async (req, res) => {
   const connection = await db.getConnection();
 
@@ -108,7 +108,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Delete user
+// Endpoint to delete a user
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -142,7 +142,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Restore user
+// Endpoint to restore a user
 router.patch("/:id/restore", async (req, res) => {
   try {
     const { id } = req.params;

@@ -17,7 +17,8 @@ export default function UsersTable() {
   useEffect(() => {
     fetchUsers();
   }, []);
-
+  
+  // Fetch users list
   const fetchUsers = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/users`);
@@ -30,11 +31,13 @@ export default function UsersTable() {
     }
   };
 
+  // Open edit modal
   const handleOpenEdit = (user: User) => {
     setCurrentUser(user);
     setOpenEdit(true);
   };
 
+  // Update user
   const handleUpdateUser = async () => {
     if (!currentUser) return;
 
@@ -59,6 +62,7 @@ export default function UsersTable() {
     }
   };
 
+  // Delete user
   const handleDeleteUser = async (user: User) => {
     const confirmDelete = window.confirm(
       t("users_screen.confirm.deactivate", { name: user.name })
@@ -81,6 +85,7 @@ export default function UsersTable() {
     }
   };
 
+  // Restore user
   const handleRestoreUser = async (user: User) => {
     const confirmRestore = window.confirm( t("users_screen.confirm.restore", { name: user.name }));
     if (!confirmRestore) return;
@@ -101,6 +106,7 @@ export default function UsersTable() {
     }
   };
 
+  // Filter users by name
   const filtered = users.filter(
     (u) =>
       u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -111,6 +117,7 @@ export default function UsersTable() {
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("users_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -127,6 +134,7 @@ export default function UsersTable() {
         </Can>
       </div>
 
+      {/* Users table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("users_screen.loading")}</p>
@@ -200,6 +208,7 @@ export default function UsersTable() {
         )}
       </div>
 
+      {/* Create / edit user modal */}
       {openEdit && currentUser && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">

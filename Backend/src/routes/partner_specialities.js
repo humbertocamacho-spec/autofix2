@@ -2,6 +2,8 @@ import express from "express";
 import db from "../config/db.js";
 
 const router = express.Router();
+
+// Endpoint to get all partner specialities
 router.get("/", async (req, res) => {
     try {
         const [rows] = await db.query(`
@@ -18,7 +20,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-//Obtener especialidades por partner
+// Endpoint to get all partner specialities
 router.get("/:partnerId", async (req, res) => {
   const { partnerId } = req.params;
 
@@ -39,7 +41,7 @@ router.get("/:partnerId", async (req, res) => {
   }
 });
 
-//Guardar especialidades de un partner
+// Endpoint to create a partner speciality
 router.post("/", async (req, res) => {
   const { partner_id, speciality_ids } = req.body;
 
@@ -48,13 +50,11 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    //Eliminar relaciones anteriores
     await db.query(
       `DELETE FROM partners_specialities WHERE partner_id = ?`,
       [partner_id]
     );
 
-    //Insertar nuevas relaciones
     if (speciality_ids.length > 0) {
       const values = speciality_ids.map(id => [partner_id, id]);
       await db.query(

@@ -27,7 +27,6 @@ export default function MyCarsTable() {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [submitted, setSubmitted] = useState(false);
 
-
     useEffect(() => {
         if (!user?.id) return;
 
@@ -35,6 +34,7 @@ export default function MyCarsTable() {
         fetchBrands();
     }, [user]);
 
+    // Fetch cars for the user
     const fetchCars = async () => {
         try {
             const res = await fetch(
@@ -50,6 +50,7 @@ export default function MyCarsTable() {
         }
     };
 
+    // Fetch brands for the user
     const fetchBrands = async () => {
         try {
             const res = await fetch(`${VITE_API_URL}/api/car_brands`);
@@ -60,6 +61,7 @@ export default function MyCarsTable() {
         }
     };
 
+    // Basic form validation
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
 
@@ -74,6 +76,7 @@ export default function MyCarsTable() {
         return Object.keys(newErrors).length === 0;
     };
 
+    // Open create modal
     const openCreateModal = () => {
         setIsEditing(false);
         setCurrentCar(null);
@@ -88,6 +91,7 @@ export default function MyCarsTable() {
         setOpenModal(true);
     };
 
+    // Open edit modal
     const openEditModal = (car: Cars) => {
         setIsEditing(true);
         setCurrentCar(car);
@@ -102,6 +106,7 @@ export default function MyCarsTable() {
         setOpenModal(true);
     };
 
+    // Create or update car
     const handleCreate = async () => {
         if (!user?.id) return;
         setSubmitted(true);
@@ -139,6 +144,7 @@ export default function MyCarsTable() {
         }
     };
 
+    // Update car
     const handleUpdate = async () => {
         if (!currentCar) return;
         setSubmitted(true);
@@ -172,6 +178,7 @@ export default function MyCarsTable() {
         }
     };
 
+    // Delete car
     const handleDelete = async (id: number) => {
         if (!confirm("¿Seguro que deseas eliminar este vehículo?")) return;
 
@@ -196,6 +203,7 @@ export default function MyCarsTable() {
         }
     };
 
+    // Filter cars by name, brand, model or plate
     const filtered = cars.filter((c) =>
         c.name.toLowerCase().includes(search.toLowerCase()) ||
         c.brand_name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -211,6 +219,7 @@ export default function MyCarsTable() {
                 <>
                     <h1 className="text-3xl font-bold mb-6">{t("myCars_screen.title")}</h1>
 
+                    {/* Search input and create button */}
                     <div className="mb-6 flex justify-between">
                         <input
                             type="text"
@@ -227,6 +236,7 @@ export default function MyCarsTable() {
                         </Can>
                     </div>
 
+                    {/* Cars table */}
                     <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
                         {loading ? (
                             <p className="text-center py-10 text-gray-500">{t("myCars_screen.loading")}</p>
@@ -282,6 +292,7 @@ export default function MyCarsTable() {
                         )}
                     </div>
 
+                    {/* Create / edit car modal */}
                     {openModal && (
                         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
                             <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">

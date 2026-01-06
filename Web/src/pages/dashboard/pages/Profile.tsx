@@ -18,6 +18,7 @@ export default function ProfileScreen() {
     fetchProfile();
   }, []);
 
+  // Fetch user profile
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -37,6 +38,7 @@ export default function ProfileScreen() {
     }
   };
 
+  // Update user profile
   const saveProfile = async () => {
     if (!profile) return;
 
@@ -65,17 +67,20 @@ export default function ProfileScreen() {
     }
   };
 
+  // Open photo modal
   const openPhotoModal = () => {
     setPhotoInput(profile?.photo_url || "");
     setShowPhotoModal(true);
   };
 
+  // Save photo url
   const savePhotoUrl = () => {
     if (!profile) return;
     setProfile({ ...profile, photo_url: photoInput });
     setShowPhotoModal(false);
   };
 
+  // Loading state
   if (loading) {
     return (
       <DashboardLayout>
@@ -92,8 +97,10 @@ export default function ProfileScreen() {
     <DashboardLayout>
       <h1 className="mb-6 text-3xl font-bold">{t("profile.title")}</h1>
 
+      {/* Profile image and buttons */}
       <div className="mx-auto max-w-3xl rounded-2xl bg-white p-10 shadow-2xl">
 
+        {/* Profile image */}
         <div className="mb-10 flex flex-col items-center">
           <img
             src={profile.photo_url || "/assets/images/profile.png"}
@@ -106,9 +113,8 @@ export default function ProfileScreen() {
           </button>
         </div>
 
-
+        {/* Profile form */}
         <div className="grid grid-cols-2 gap-6">
-
           <div className="col-span-2">
             <label className="text-sm font-medium text-gray-700">{t("profile.name")}</label>
             <input
@@ -164,8 +170,9 @@ export default function ProfileScreen() {
             {saving ? t("saving") : t("profile.save")}
           </button>
         </div>
-      </div>
+      </div>    
 
+      {/* Photo modal */} 
       {showPhotoModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="w-96 rounded-xl bg-white p-6">

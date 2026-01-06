@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 
+// Auth middleware
 export function authMiddleware(req, res, next) {
   const header = req.headers.authorization;
   if (!header) return res.status(401).json({ ok: false, message: "No token" });

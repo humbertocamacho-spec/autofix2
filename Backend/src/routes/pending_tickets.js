@@ -3,6 +3,7 @@ import db from "../config/db.js";
 
 const router = express.Router();
 
+// Endpoint to create a ticket
 router.post("/", async (req, res) => {
   try {
     const {
@@ -38,37 +39,31 @@ router.post("/", async (req, res) => {
       ]
     );
 
-    res.json({
-      message: "Pending ticket creado",
-      id: result.insertId
-    });
+    res.json({ message: "Pending ticket creado", id: result.insertId});
 
   } catch (error) {
     console.error("Error insertando pending_ticket:", error);
     res.status(500).json({ error: "Error en el servidor" });
   }
 });
+
+// Endpoint to get all pending tickets
 router.get("/", async (req, res) => {
   try {
     const [rows] = await db.query(`
       SELECT 
         p.id,
-
         p.client_id,
         u.name AS client_name,
-
         p.car_id,
         c.name AS car_name,
-
         p.partner_id,
         p.partner_name,
         p.partner_phone,
         p.logo_url,
-
         p.date,
         p.time,
         p.notes
-
       FROM pending_tickets p
       LEFT JOIN clients cl ON cl.id = p.client_id
       LEFT JOIN users u ON u.id = cl.user_id    
@@ -82,29 +77,24 @@ router.get("/", async (req, res) => {
   }
 });
 
-
+// Endpoint to get pending tickets for a client
 router.get("/:client_id", async (req, res) => {
   try {
     const { client_id } = req.params;
     const [rows] = await db.query(`
       SELECT 
         p.id,
-
         p.client_id,
         u.name AS client_name,
-
         p.car_id,
         c.name AS car_name,
-
         p.partner_id,
         p.partner_name,
         p.partner_phone,
         p.logo_url,
-
         p.date,
         p.time,
         p.notes
-
       FROM pending_tickets p
       LEFT JOIN clients cl ON cl.id = p.client_id
       LEFT JOIN users u ON u.id = cl.user_id
@@ -119,6 +109,7 @@ router.get("/:client_id", async (req, res) => {
   }
 });
 
+// Endpoint to delete a pending ticket
 router.delete("/:id", async (req, res) => {
   try {
     const idNum = Number(req.params.id);
@@ -141,6 +132,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Endpoint to update a pending ticket
 router.put("/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);

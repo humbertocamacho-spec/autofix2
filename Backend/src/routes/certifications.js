@@ -3,6 +3,7 @@ import pool from "../config/db.js";
 
 const router = express.Router();
 
+// Endpoint to get all certifications
 router.get("/", async (req, res) => {
     try {
         const [certifications] = await pool.query(
@@ -16,6 +17,7 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Endpoint to create a certification
 router.post("/", async (req, res) => {
     try {
         const { name } = req.body;
@@ -36,6 +38,7 @@ router.post("/", async (req, res) => {
     }
 });
 
+// Endpoint to get a certification by id
 router.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -53,6 +56,7 @@ router.put("/:id", async (req, res) => {
     }
 });
 
+// Endpoint to delete a certification by id
 router.delete("/:id", async (req, res) => {
     try {
         const { id } = req.params;

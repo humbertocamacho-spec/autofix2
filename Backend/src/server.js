@@ -53,11 +53,11 @@ app.get('/test-db', async (req, res) => {
     const [rows] = await pool.query('SELECT NOW() AS fecha');
     res.json({ ok: true, serverTime: rows[0].fecha });
   } catch (error) {
-    console.error('Error al conectar con la base de datos:', error);
+    console.error('Error at the connection:', error);
     res.status(500).json({ ok: false, error: error.message });
   }
 });
 
 app.listen(config.server.port, () => {
-  console.log(`✅ Servidor corriendo en el puerto ${config.server.port}`);
+  console.log(`Server running on port ${config.server.port}`);
 });

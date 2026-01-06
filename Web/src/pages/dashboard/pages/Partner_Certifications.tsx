@@ -8,7 +8,6 @@ import Can from "../../../components/Can";
 
 export default function PartnersCertificationsTable() {
   const { t } = useTranslation();
-
   const [certifications, setCertifications] = useState<PartnerCertification[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -19,17 +18,17 @@ export default function PartnersCertificationsTable() {
   const [certificationId, setCertificationId] = useState<number | "">("");
   const [partners, setPartners] = useState<{ id: number; name: string }[]>([]);
   const [allCertifications, setAllCertifications] = useState<{ id: number; name: string }[]>([]);
-
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-
+  // Initial load of certifications and partners
   useEffect(() => {
     fetchCertifications();
     fetchPartners();
     fetchAllCertifications();
   }, []);
 
+  // Fetch certifications list
   const fetchCertifications = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/partner_certifications/all`);
@@ -42,6 +41,7 @@ export default function PartnersCertificationsTable() {
     }
   };
 
+  // Fetch partners list
   const fetchPartners = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/partners/select`, {
@@ -57,6 +57,7 @@ export default function PartnersCertificationsTable() {
     }
   };
 
+  // Fetch certifications list
   const fetchAllCertifications = async () => {
     try {
       const res = await fetch(`${VITE_API_URL}/api/certifications`);
@@ -67,6 +68,7 @@ export default function PartnersCertificationsTable() {
     }
   };
 
+  // Basic form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -82,7 +84,7 @@ export default function PartnersCertificationsTable() {
     return Object.keys(newErrors).length === 0;
   };
 
-
+  // Open create modal
   const openCreateModal = () => {
     setIsEditing(false);
     setCurrent(null);
@@ -93,6 +95,7 @@ export default function PartnersCertificationsTable() {
     setOpenModal(true);
   };
 
+  // Open edit modal
   const openEditModal = (item: PartnerCertification) => {
     setIsEditing(true);
     setCurrent(item);
@@ -103,6 +106,7 @@ export default function PartnersCertificationsTable() {
     setOpenModal(true);
   };
 
+  // Create or update certification
   const handleSave = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
@@ -131,6 +135,7 @@ export default function PartnersCertificationsTable() {
     }
   };
 
+  // Delete certification
   const handleDelete = async (id: number) => {
     if (!confirm("¿Deseas eliminar este registro?")) return;
     try {
@@ -141,15 +146,14 @@ export default function PartnersCertificationsTable() {
     }
   };
 
-  const filtered = certifications.filter((c) =>
-    c.partner_name.toLowerCase().includes(search.toLowerCase()) ||
-    c.certification_name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter certifications by name
+  const filtered = certifications.filter((c) => c.partner_name.toLowerCase().includes(search.toLowerCase()) || c.certification_name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("partner_certifications_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -166,6 +170,7 @@ export default function PartnersCertificationsTable() {
         </Can>
       </div>
 
+      {/* Certifications table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("partner_certifications_screen.loading")}</p>
@@ -205,9 +210,7 @@ export default function PartnersCertificationsTable() {
                 ))}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="text-center py-6 text-gray-500">
-                      {t("partner_certifications_screen.no_results")}
-                    </td>
+                    <td colSpan={4} className="text-center py-6 text-gray-500">{t("partner_certifications_screen.no_results")}</td>
                   </tr>
                 )}
               </tbody>
@@ -216,12 +219,11 @@ export default function PartnersCertificationsTable() {
         )}
       </div>
 
+      {/* Create / edit certification modal */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800">
-              {isEditing ? "Editar" : "Agregar"}
-            </h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">{isEditing ? "Editar" : "Agregar"}</h2>
 
             <div className="space-y-4">
               <div>
@@ -236,10 +238,7 @@ export default function PartnersCertificationsTable() {
                     <option key={p.id} value={p.id}>{p.name}</option>
                   ))}
                 </select>
-                {submitted && errors.partnerId && (
-                  <p className="text-red-500 text-xs mt-1">{errors.partnerId}</p>
-                )}
-
+                {submitted && errors.partnerId && (<p className="text-red-500 text-xs mt-1">{errors.partnerId}</p>)}
               </div>
 
               <div>
@@ -250,13 +249,9 @@ export default function PartnersCertificationsTable() {
                   onChange={(e) => { setCertificationId(Number(e.target.value)); setErrors((prev) => ({ ...prev, certificationId: "" })); }}
                 >
                   <option value="">{t("partner_certifications_screen.table.select_certification")}</option>
-                  {allCertifications.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
+                  {allCertifications.map((c) => ( <option key={c.id} value={c.id}>{c.name} </option>))}
                 </select>
-                {submitted && errors.certificationId && (
-                  <p className="text-red-500 text-xs mt-1">{errors.certificationId}</p>
-                )}
+                {submitted && errors.certificationId && ( <p className="text-red-500 text-xs mt-1">{errors.certificationId}</p>)}
               </div>
             </div>
 

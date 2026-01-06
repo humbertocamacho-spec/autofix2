@@ -22,16 +22,12 @@ export default function TicketsTable() {
     fetchTickets();
   }, [user]);
 
+  // Fetch tickets for the user
   const fetchTickets = async () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`${VITE_API_URL}/api/ticket`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await fetch(`${VITE_API_URL}/api/ticket`, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json",},});
 
       const data = await res.json();
       setTickets(Array.isArray(data) ? data : []);
@@ -42,6 +38,7 @@ export default function TicketsTable() {
     }
   };
 
+  // Filter tickets by name
   const filtered = tickets
     .filter(
       (t) =>
@@ -51,37 +48,35 @@ export default function TicketsTable() {
     )
     .sort((a, b) => a.id - b.id);
 
-    const deleteTicket = async (id: number) => {
-      if (!confirm(t("tickets_screen.confirm_delete"))) return; // Mensaje de confirmación
+    // Delete ticket
+  const deleteTicket = async (id: number) => {
+    if (!confirm(t("tickets_screen.confirm_delete"))) return;
 
-      try {
-        const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-        const res = await fetch(`${VITE_API_URL}/api/ticket/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+      const res = await fetch(`${VITE_API_URL}/api/ticket/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`,},
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (res.ok) {
-          fetchTickets(); // Actualizar la lista
-        } else {
-          alert(data.message || "Error al eliminar ticket");
-        }
-      } catch (error) {
-        console.error("Error eliminando ticket:", error);
+      if (res.ok) {
+        fetchTickets(); // Actualizar la lista
+      } else {
+        alert(data.message || "Error al eliminar ticket");
       }
-    };
-
+    } catch (error) {
+      console.error("Error eliminando ticket:", error);
+    }
+  };
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("tickets_screen.title")}</h1>
 
+      {/* Search input */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -92,6 +87,7 @@ export default function TicketsTable() {
         />
       </div>
 
+      {/* Tickets table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("tickets_screen.loading")}</p>
@@ -177,6 +173,8 @@ export default function TicketsTable() {
           </div>
         )}
       </div>
+
+      {/* Edit status modal */}
       {openStatusModal && currentTicket && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6">

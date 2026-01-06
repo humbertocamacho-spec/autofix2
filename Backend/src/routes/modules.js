@@ -3,6 +3,7 @@ import pool from "../config/db.js";
 
 const router = express.Router();
 
+// Endpoint to get all modules
 router.get("/", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT id, name, description FROM modules");
@@ -12,6 +13,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Endpoint to create a module
 router.post("/", async (req, res) => {
   try {
     const { name, description } = req.body;
@@ -38,6 +40,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Endpoint to get a module by id
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -66,6 +69,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Endpoint to delete a module by id
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;

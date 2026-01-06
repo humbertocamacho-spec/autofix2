@@ -2,6 +2,8 @@ import express from "express";
 import db from "../config/db.js";
 
 const router = express.Router();
+
+// Endpoint to get all car brands
 router.get("/", async (req, res) => {
     try {
         const [rows] = await db.query(`
@@ -14,6 +16,7 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Endpoint to create a car brand
 router.post("/", async (req, res) => {
     try {
         const { name } = req.body;
@@ -34,6 +37,7 @@ router.post("/", async (req, res) => {
     }
 });
 
+// Endpoint to get a car brand by id
 router.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -55,6 +59,7 @@ router.put("/:id", async (req, res) => {
     }
 });
 
+// Endpoint to delete a car brand by id
 router.delete("/:id", async (req, res) => {
     try {
         const { id } = req.params;

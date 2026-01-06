@@ -2,6 +2,8 @@ import express from "express";
 import db from "../config/db.js";
 
 const router = express.Router();
+
+// Endpoint to get all specialities
 router.get("/", async (req, res) => {
     try {
         const [rows] = await db.query(`
@@ -16,6 +18,7 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Endpoint to create a speciality
 router.post("/", async (req, res) => {
     const { name } = req.body;
 
@@ -29,9 +32,7 @@ router.post("/", async (req, res) => {
             [name]
         );
 
-        res.json({
-            message: "Especialidad creada",
-            id: result.insertId
+        res.json({  message: "Especialidad creada", id: result.insertId
         });
 
     } catch (error) {
@@ -40,6 +41,7 @@ router.post("/", async (req, res) => {
     }
 });
 
+// Endpoint to get a speciality by id
 router.put("/:id", async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
@@ -66,6 +68,7 @@ router.put("/:id", async (req, res) => {
     }
 });
 
+// Endpoint to delete a speciality by id
 router.delete("/:id", async (req, res) => {
     const { id } = req.params;
 

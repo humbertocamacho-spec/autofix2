@@ -3,6 +3,7 @@ import db from "../config/db.js";
 
 const router = express.Router();
 
+// Endpoint to get all clients
 router.get("/", async (req, res) => {
     try {
         const [rows] = await db.query(`
@@ -20,6 +21,7 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Endpoint to create a client
 router.post("/", async (req, res) => {
   try {
     const { user_id } = req.body;
@@ -39,6 +41,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Endpoint to get a client by id
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -56,6 +59,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Endpoint to delete a client by id
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;

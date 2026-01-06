@@ -4,15 +4,12 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// Get all tickets (App)
+// Endpoint to get all tickets (App)
 router.get("/app", authMiddleware, async (req, res) => {
     try {
         const { user_id } = req.user;
 
-        const [clientRows] = await db.query(
-            "SELECT id FROM clients WHERE user_id = ?",
-            [user_id]
-        );
+        const [clientRows] = await db.query( "SELECT id FROM clients WHERE user_id = ?", [user_id]);
 
         if (!clientRows.length) {
             return res.json([]);
@@ -49,7 +46,7 @@ router.get("/app", authMiddleware, async (req, res) => {
     }
 });
 
-// Get all tickets (Web)
+// Endpoint to get all tickets (Web)
 router.get("/", authMiddleware, async (req, res) => {
     try {
         const { role_name, user_id, client_id } = req.user;
@@ -86,11 +83,8 @@ router.get("/", authMiddleware, async (req, res) => {
         }
 
         if (role_name === "partner") {
-            // Obtener todos los talleres del usuario
-            const [partners] = await db.query(
-                "SELECT id FROM partners WHERE user_id = ?",
-                [user_id]
-            );
+            // Get all partners for the user
+            const [partners] = await db.query( "SELECT id FROM partners WHERE user_id = ?",[user_id]);
 
             const partnerIds = partners.map(p => p.id);
 
@@ -111,6 +105,7 @@ router.get("/", authMiddleware, async (req, res) => {
     }
 });
 
+// Endpoint to get tickets for a car
 router.get("/:car_id/:partner_id/:client_id", async (req, res) => {
     const { car_id, partner_id, client_id } = req.params;
 
@@ -154,6 +149,7 @@ router.get("/:car_id/:partner_id/:client_id", async (req, res) => {
     }
 });
 
+// Endpoint to get a ticket by id
 router.get("/by-id/:id", async (req, res) => {
     const { id } = req.params;
 
@@ -170,6 +166,7 @@ router.get("/by-id/:id", async (req, res) => {
     }
 });
 
+// Endpoint to create a ticket
 router.post("/", async (req, res) => {
     const { client_id, car_id, partner_id, date, notes } = req.body;
 
@@ -188,14 +185,12 @@ router.post("/", async (req, res) => {
     }
 });
 
+// Endpoint to delete a ticket
 router.delete("/:id", async (req, res) => {
     const { id } = req.params;
 
     try {
-        const [result] = await db.query(
-            "DELETE FROM tickets WHERE id = ?",
-            [id]
-        );
+        const [result] = await db.query( "DELETE FROM tickets WHERE id = ?", [id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ ok: false, message: "Ticket no encontrado" });
@@ -220,10 +215,7 @@ router.put("/:id/status", authMiddleware, async (req, res) => {
     }
 
     try {
-        const [result] = await db.query(
-            `UPDATE tickets SET status = ? WHERE id = ?`,
-            [status, id]
-        );
+        const [result] = await db.query( `UPDATE tickets SET status = ? WHERE id = ?`, [status, id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: "Ticket no encontrado" });
@@ -236,8 +228,7 @@ router.put("/:id/status", authMiddleware, async (req, res) => {
     }
 });
 
-
-
+// Endpoint to get the hours occupied by a partner for a specific date
 router.get("/occupied", async (req, res) => {
     try {
         const { partner_id, date } = req.query;

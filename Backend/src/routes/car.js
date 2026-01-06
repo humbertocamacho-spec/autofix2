@@ -3,6 +3,7 @@ import db from "../config/db.js";
 
 const router = express.Router();
 
+// Endpoint to get all cars
 router.get("/", async (req, res) => {
     try {
         const [rows] = await db.query("SELECT * FROM cars");
@@ -13,6 +14,7 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Endpoint to create a car
 router.post("/", async (req, res) => {
     const { name, car_brand_id, model, year, type, plate, client_id } = req.body;
 
@@ -57,6 +59,7 @@ router.post("/", async (req, res) => {
     }
 });
 
+// Endpoint to get a car by id
 router.put("/:id", async (req, res) => {
     const { id } = req.params;
     const { name, car_brand_id, model, year, type, plate } = req.body;
@@ -88,6 +91,7 @@ router.put("/:id", async (req, res) => {
     }
 });
 
+// Endpoint to delete a car by id
 router.delete("/:id", async (req, res) => {
     const { id } = req.params;
 

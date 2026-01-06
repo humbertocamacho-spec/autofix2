@@ -3,6 +3,7 @@ import db from "../config/db.js";
 
 const router = express.Router();
 
+// Endpoint to get all cars for a client
 router.get("/client/:client_id", async (req, res) => {
     const { client_id } = req.params;
 

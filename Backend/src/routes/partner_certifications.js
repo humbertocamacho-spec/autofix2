@@ -3,6 +3,7 @@ import db from "../config/db.js";
 
 const router = express.Router();
 
+// Endpoint to get all partner certifications
 router.get("/", async (req, res) => {
   try {
     const { partner_id } = req.query;
@@ -28,6 +29,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Endpoint to get all partner certifications
 router.get("/all", async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -49,6 +51,7 @@ router.get("/all", async (req, res) => {
   }
 });
 
+// Endpoint to create a partner certification
 router.post("/", async (req, res) => {
   try {
     const { partner_id, certification_id } = req.body;
@@ -63,6 +66,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Endpoint to update a partner certification
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -78,6 +82,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Endpoint to delete a partner certification
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
