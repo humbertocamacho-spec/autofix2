@@ -13,7 +13,7 @@ export default {
 
     ios: {
       supportsTablet: true,
-      "bundleIdentifier": "com.autofix.app",
+      bundleIdentifier: 'com.autofix.mx.autofixapp',
     },
 
     splash: {
@@ -23,7 +23,7 @@ export default {
     },
 
     android: {
-      package: 'com.autofix.app',
+      package: 'com.autofix.mx.autofixapp',
       "config": {
         "googleMaps": {
           "apiKey": process.env.GOOGLE_API_KEY,
