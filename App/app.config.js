@@ -14,6 +14,9 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.autofix.mx.autofixapp',
+      config: {
+        googleMapsApiKey: process.env.GOOGLE_API_KEY_IOS,
+      },
     },
 
     splash: {
