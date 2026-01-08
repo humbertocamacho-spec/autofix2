@@ -29,7 +29,7 @@ export default {
           "apiKey": process.env.GOOGLE_API_KEY,
         }
       },
-      versionCode: 4,
+      versionCode: 5,
       permissions: [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
