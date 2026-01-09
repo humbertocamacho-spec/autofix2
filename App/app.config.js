@@ -17,6 +17,9 @@ export default {
       config: {
         googleMapsApiKey: process.env.GOOGLE_API_KEY_IOS,
       },
+      infoPlist: {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
 
     splash: {
