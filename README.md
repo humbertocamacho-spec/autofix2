@@ -1,10 +1,10 @@
-# 🚗 AutoFix
+# AutoFix
 
 > **AutoFix** is a full‑stack platform (**Mobile App + Web System**) designed to help automotive workshops manage services, appointments, clients, and operations efficiently.
 <img width="1901" height="945" alt="Captura de pantalla 2026-01-13 194952" src="https://github.com/user-attachments/assets/5e19924f-71a0-469b-97ea-3fcdef3dbe2b" />
 ---
 
-## ✨ Overview
+## Overview
 
 AutoFix connects **drivers** and **automotive workshops** through a modern ecosystem focused on speed and convenience:
 
@@ -16,9 +16,9 @@ AutoFix is designed to reduce friction between customers and workshops, making s
 
 ---
 
-## 🧩 Features
+## Features
 
-### 👤 Users (Mobile App)
+### Users (Mobile App)
 
 * 📍 Find nearby automotive workshops in real time
 * 🔍 Browse available services
@@ -26,7 +26,7 @@ AutoFix is designed to reduce friction between customers and workshops, making s
 * 🚗 Register vehicles
 * 🔔 Track appointment status
 
-### 🏢 Workshops (Web System)
+### Workshops (Web System)
 
 * 📅 Manage and confirm appointments
 * 🧾 Configure services and availability
@@ -35,7 +35,7 @@ AutoFix is designed to reduce friction between customers and workshops, making s
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 ### Frontend
 
@@ -60,9 +60,9 @@ AutoFix is designed to reduce friction between customers and workshops, making s
 
 ---
 
-## 🌐 Live Website
+## Live Website
 
-👉 [https://www.autofix.lat](https://www.autofix.lat)
+[https://www.autofix.lat](https://www.autofix.lat)
 
 ---
 
@@ -74,7 +74,7 @@ AutoFix is designed to reduce friction between customers and workshops, making s
 </p>
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -98,7 +98,7 @@ npx expo start
 
 ---
 
-## 📌 Project Status
+## Project Status
 
 🚧 **In active development**
 
@@ -106,7 +106,7 @@ AutoFix is continuously evolving with new features and improvements.
 
 ---
 
-## 👨‍💻 Author
+## Author
 **Humberto Camacho**
 **Manuel Gutiérrez**
 **Lesly Mariza**
