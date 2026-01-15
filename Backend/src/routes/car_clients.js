@@ -1,11 +1,10 @@
 import express from "express";
 import db from "../config/db.js";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 // Endpoint to get all cars for a client
-router.get("/client/:client_id", authMiddleware, async (req, res) => {
+router.get("/client/:client_id", async (req, res) => {
     const { client_id } = req.params;
 
     try {
