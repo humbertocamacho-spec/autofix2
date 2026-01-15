@@ -6,6 +6,7 @@ import type { User } from "../../../types/users";
 import { useTranslation } from "react-i18next";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function AdminsTable() {
   const [admins, setAdmins] = useState<Admin[]>([]);
@@ -27,7 +28,7 @@ export default function AdminsTable() {
   // Fetch admins list
   const fetchAdmins = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/admins`);
+      const res = await authFetch(`${VITE_API_URL}/api/admins`);
       const data = await res.json();
       setAdmins(data.admins || []);
     } catch (error) {
@@ -40,9 +41,9 @@ export default function AdminsTable() {
   // Fetch users for the select input
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users`);
+      const res = await authFetch(`${VITE_API_URL}/api/users`);
       const data = await res.json();
-      setUsers(data);
+      setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -85,19 +86,25 @@ export default function AdminsTable() {
 
     const isEdit = isEditing && currentAdmin;
     const method = isEdit ? "PUT" : "POST";
-    const url = isEdit ? `${VITE_API_URL}/api/admins/${currentAdmin!.id}` : `${VITE_API_URL}/api/admins`;
-    const res = await fetch(url, {
+    const url = isEdit
+      ? `${VITE_API_URL}/api/admins/${currentAdmin!.id}`
+      : `${VITE_API_URL}/api/admins`;
+
+    const res = await authFetch(url, {
       method,
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId }),
     });
 
     if (!res.ok) {
-      alert(t( isEdit ? "admin_screen.errors.update" : "admin_screen.errors.create"));
+      alert(
+        t(isEdit ? "admin_screen.errors.update" : "admin_screen.errors.create")
+      );
       return;
     }
 
-    alert(t( isEdit ? "admin_screen.success.update" : "admin_screen.success.create"));
+    alert(
+      t(isEdit ? "admin_screen.success.update" : "admin_screen.success.create")
+    );
 
     setOpenModal(false);
     fetchAdmins();
@@ -105,12 +112,20 @@ export default function AdminsTable() {
 
   // Delete (deactivate) admin
   const deleteAdmin = async (admin: Admin) => {
-    const confirmed = window.confirm( t("admin_screen.confirm.deactivate", { name: admin.user_name }));
+    const confirmed = window.confirm(
+      t("admin_screen.confirm.deactivate", { name: admin.user_name })
+    );
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/admins/${admin.id}`, { method: "DELETE",});
+    const res = await authFetch(
+      `${VITE_API_URL}/api/admins/${admin.id}`,
+      { method: "DELETE" }
+    );
 
-    if (!res.ok) { alert(t("admin_screen.errors.deactivate")); return;}
+    if (!res.ok) {
+      alert(t("admin_screen.errors.deactivate"));
+      return;
+    }
 
     alert(t("admin_screen.success.deactivate"));
     fetchAdmins();

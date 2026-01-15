@@ -6,6 +6,7 @@ import type { User } from "../../../types/users";
 import { useTranslation } from "react-i18next";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function ClientsTable() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -39,9 +40,9 @@ export default function ClientsTable() {
   // Fetch users for the select input
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users`);
+      const res = await authFetch(`${VITE_API_URL}/api/users`);
       const data = await res.json();
-      setUsers(data);
+      setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
