@@ -27,9 +27,9 @@ export default function ClientsTable() {
   // Fetch clients list
   const fetchClients = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/client`);
+      const res = await authFetch(`${VITE_API_URL}/api/client`);
       const data = await res.json();
-      setClients(data);
+      setClients(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching clients:", error);
     } finally {
@@ -90,7 +90,7 @@ export default function ClientsTable() {
       ? `${VITE_API_URL}/api/client/${currentClient?.id}`
       : `${VITE_API_URL}/api/client`;
 
-    await fetch(url, {
+    await authFetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId }),
@@ -107,7 +107,7 @@ export default function ClientsTable() {
     );
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/client/${client.id}`, {
+    const res = await authFetch(`${VITE_API_URL}/api/client/${client.id}`, {
       method: "DELETE",
     });
 

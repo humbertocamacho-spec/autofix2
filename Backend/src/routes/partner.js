@@ -93,7 +93,7 @@ router.get("/", authMiddleware, async (req, res) => {
 });
 
 // Endpoint to create a partner
-router.post("/", async (req, res) => {
+router.post("/",authMiddleware, async (req, res) => {
   const connection = await db.getConnection();
   try {
     const {
@@ -164,7 +164,7 @@ router.post("/", async (req, res) => {
 });
 
 // Endpoint to update a partner
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -224,7 +224,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Endpoint to delete a partner
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -253,7 +253,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Endpoint to restore a partner
-router.patch("/:id/restore", async (req, res) => {
+router.patch("/:id/restore", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 

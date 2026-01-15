@@ -53,9 +53,9 @@ export default function PartnersTable() {
   const fetchPartners = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${VITE_API_URL}/api/partners`, { headers: { Authorization: `Bearer ${token}`, },});
+      const res = await authFetch(`${VITE_API_URL}/api/partners`, { headers: { Authorization: `Bearer ${token}`, },});
       const data: Partner[] = await res.json();
-      setPartners(data);
+      setPartners(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching partners:", error);
     } finally {
