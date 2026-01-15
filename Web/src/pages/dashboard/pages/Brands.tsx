@@ -5,6 +5,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { CarBrands } from "../../../types/car_brands";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function CarBrands() {
   const { t } = useTranslation();
@@ -25,9 +26,9 @@ export default function CarBrands() {
   // Fetch car brands list
   const fetchCarBrands = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/car_brands`);
+      const res = await authFetch(`${VITE_API_URL}/api/car_brands`);
       const data = await res.json();
-      setCarBrands(data);
+      setCarBrands(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching car brands:", error);
     } finally {
@@ -71,20 +72,34 @@ export default function CarBrands() {
   const saveBrand = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
+
     try {
-      const url = isEditing
-        ? `${VITE_API_URL}/api/car_brands/${currentBrand?.id}`
+      const isEdit = isEditing && currentBrand;
+      const url = isEdit
+        ? `${VITE_API_URL}/api/car_brands/${currentBrand!.id}`
         : `${VITE_API_URL}/api/car_brands`;
 
-      const method = isEditing ? "PUT" : "POST";
+      const method = isEdit ? "PUT" : "POST";
 
-      await fetch(url, {
+      const res = await authFetch(url, {
         method,
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ name }),
       });
+
+      if (!res.ok) {
+        alert(
+          t(isEdit
+            ? "car_brands_screen.errors.update"
+            : "car_brands_screen.errors.create")
+        );
+        return;
+      }
+
+      alert(
+        t(isEdit
+          ? "car_brands_screen.success.update"
+          : "car_brands_screen.success.create")
+      );
 
       setOpenModal(false);
       fetchCarBrands();
@@ -100,9 +115,10 @@ export default function CarBrands() {
     );
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/car_brands/${brand.id}`, {
-      method: "DELETE",
-    });
+    const res = await authFetch(
+      `${VITE_API_URL}/api/car_brands/${brand.id}`,
+      { method: "DELETE" }
+    );
 
     if (!res.ok) {
       alert(t("car_brands_screen.errors.deactivate"));
