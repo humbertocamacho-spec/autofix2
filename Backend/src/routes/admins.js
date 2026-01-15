@@ -1,6 +1,7 @@
 import express from "express";
 import pool from "../config/db.js";
 import { ROLES, getRoleId } from "../utils/roles.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
