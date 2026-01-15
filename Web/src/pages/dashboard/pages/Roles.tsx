@@ -8,6 +8,21 @@ import type { Modules } from "../../../types/modules";
 import type { PermissionsByRole } from "../../../types/permissions_by_role";
 import type { GroupedPermissions } from "../../../types/grouped_permissions";
 
+// Custom fetch function with token
+export const authFetch = async (url: string, options: RequestInit = {}) => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res;
+};
+
 export default function RolesTable() {
   const { t, i18n } = useTranslation();
   const [roles, setRoles] = useState<Roles[]>([]);
@@ -25,31 +40,59 @@ export default function RolesTable() {
 
   // Fetch roles list
   const fetchRoles = async () => {
-    const res = await fetch(`${VITE_API_URL}/api/roles`);
+    const res = await authFetch(`${VITE_API_URL}/api/roles`);
+
+    if (!res.ok) {
+      setRoles([]);
+      setLoading(false);
+      return;
+    }
+
     const data = await res.json();
-    setRoles(data);
+    setRoles(Array.isArray(data) ? data : []);
     setLoading(false);
   };
 
   // Fetch permissions list
   const fetchPermissions = async () => {
-    const res = await fetch(`${VITE_API_URL}/api/permissions`);
+    const res = await authFetch(`${VITE_API_URL}/api/permissions`);
+
+    if (!res.ok) {
+      setPermissions([]);
+      return;
+    }
+
     const data = await res.json();
-    setPermissions(data.permissions);
+    setPermissions(Array.isArray(data.permissions) ? data.permissions : []);
   };
 
   // Fetch modules list
   const fetchModules = async () => {
-    const res = await fetch(`${VITE_API_URL}/api/modules`);
+    const res = await authFetch(`${VITE_API_URL}/api/modules`);
+
+    if (!res.ok) {
+      setModules([]);
+      return;
+    }
+
     const data = await res.json();
-    setModules(data.modules);
+    setModules(Array.isArray(data.modules) ? data.modules : []);
   };
 
   // Fetch role permissions
   const loadRolePermissions = async (roleId: number) => {
-    const res = await fetch(`${VITE_API_URL}/api/roles/${roleId}/permissions`);
+    const res = await authFetch(`${VITE_API_URL}/api/roles/${roleId}/permissions`);
+
+    if (!res.ok) {
+      setSelectedPerms((prev) => ({ ...prev, [roleId]: [] }));
+      return;
+    }
+
     const data = await res.json();
-    setSelectedPerms((prev) => ({ ...prev, [roleId]: data.permissions }));
+    setSelectedPerms((prev) => ({
+      ...prev,
+      [roleId]: Array.isArray(data.permissions) ? data.permissions : [],
+    }));
   };
 
   const toggleExpand = (roleId: number) => {
@@ -75,11 +118,16 @@ export default function RolesTable() {
 
   // Save role permissions
   const savePermissions = async (roleId: number) => {
-    await fetch(`${VITE_API_URL}/api/roles/${roleId}/permissions`, {
+    const res = await authFetch(`${VITE_API_URL}/api/roles/${roleId}/permissions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ permissions: selectedPerms[roleId] || [] }),
     });
+
+    if (!res.ok) {
+      alert(t("roles_screen.error_saving"));
+      return;
+    }
 
     alert(t("roles_screen.saved_alert"));
   };

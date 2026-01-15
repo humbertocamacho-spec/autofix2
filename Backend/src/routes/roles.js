@@ -16,7 +16,7 @@ router.get("/",authMiddleware, async (req, res) => {
 });
 
 // Endpoint to create a role
-router.get("/:roleId/permissions", async (req, res) => {
+router.get("/:roleId/permissions",authMiddleware, async (req, res) => {
   const { roleId } = req.params;
 
   try {
@@ -34,7 +34,7 @@ router.get("/:roleId/permissions", async (req, res) => {
 });
 
 // Endpoint to create a role
-router.post("/:roleId/permissions", async (req, res) => {
+router.post("/:roleId/permissions",authMiddleware, async (req, res) => {
   const { roleId } = req.params;
   const { permissions } = req.body;
 
@@ -72,7 +72,7 @@ router.post("/:roleId/permissions", async (req, res) => {
 });
 
 // Endpoint to delete a role
-router.put("/update-role", async (req, res) => {
+router.put("/update-role",authMiddleware, async (req, res) => {
   let connection;
 
   try {
