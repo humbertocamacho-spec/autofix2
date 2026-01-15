@@ -6,19 +6,7 @@ import type { Modules } from "../../../types/modules";
 import type { Permission } from "../../../types/permission";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
-
-export const authFetch = async (url: string, options: RequestInit = {}) => {
-  const token = localStorage.getItem("token");
-
-  return fetch(url, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-      Authorization: `Bearer ${token}`,
-    },
-  });
-};
+import { authFetch } from "../../../utils/authFetch";
 
 export default function PermissionsTable() {
   const { t } = useTranslation();

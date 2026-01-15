@@ -7,21 +7,7 @@ import type { Roles } from "../../../types/roles";
 import type { Modules } from "../../../types/modules";
 import type { PermissionsByRole } from "../../../types/permissions_by_role";
 import type { GroupedPermissions } from "../../../types/grouped_permissions";
-
-// Custom fetch function with token
-export const authFetch = async (url: string, options: RequestInit = {}) => {
-  const token = localStorage.getItem("token");
-
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      ...(options.headers || {}),
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return res;
-};
+import { authFetch } from "../../../utils/authFetch";
 
 export default function RolesTable() {
   const { t, i18n } = useTranslation();
