@@ -7,6 +7,19 @@ import type { Permission } from "../../../types/permission";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
 
+export const authFetch = async (url: string, options: RequestInit = {}) => {
+  const token = localStorage.getItem("token");
+
+  return fetch(url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export default function PermissionsTable() {
   const { t } = useTranslation();
   const [permissions, setPermissions] = useState<Permission[]>([]);
@@ -30,7 +43,7 @@ export default function PermissionsTable() {
   // Fetch modules list
   const fetchModules = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/modules`);
+      const res = await authFetch(`${VITE_API_URL}/api/modules`);
       const data = await res.json();
       setModules(data.modules || []);
     } catch (error) {
@@ -41,7 +54,7 @@ export default function PermissionsTable() {
   // Fetch permissions list
   const fetchPermissions = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/permissions`);
+      const res = await authFetch(`${VITE_API_URL}/api/permissions`);
       const data = await res.json();
       setPermissions(data.permissions || []);
     } catch (error) {
@@ -95,9 +108,8 @@ export default function PermissionsTable() {
     const method = isEditing ? "PUT" : "POST";
     const url = isEditing ? `${VITE_API_URL}/api/permissions/${current?.id}` : `${VITE_API_URL}/api/permissions`;
 
-    await fetch(url, {
+    await authFetch(url, {
       method,
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, module_id: moduleId }),
     });
 
@@ -110,7 +122,10 @@ export default function PermissionsTable() {
     const confirmed = window.confirm(t("permissions_screen.confirm.deactivate", { name: permission.name,}));
     if (!confirmed) return;
 
-    const res = await fetch( `${VITE_API_URL}/api/permissions/${permission.id}`, { method: "DELETE" });
+    const res = await authFetch(
+      `${VITE_API_URL}/api/permissions/${permission.id}`,
+      { method: "DELETE" }
+    );
 
     if (!res.ok) { alert(t("permissions_screen.errors.deactivate")); return;}
 
