@@ -7,6 +7,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import type { Partner } from "../../../types/partner";
 import type { User } from "../../../types/users";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -52,9 +53,9 @@ export default function PartnersTable() {
   const fetchPartners = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${VITE_API_URL}/api/partners`, { headers: { Authorization: `Bearer ${token}`, },});
+      const res = await authFetch(`${VITE_API_URL}/api/partners`, { headers: { Authorization: `Bearer ${token}`, },});
       const data: Partner[] = await res.json();
-      setPartners(data);
+      setPartners(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching partners:", error);
     } finally {
@@ -65,9 +66,9 @@ export default function PartnersTable() {
   // Fetch users list
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users`);
+      const res = await authFetch(`${VITE_API_URL}/api/users`);
       const data = await res.json();
-      setUsers(data);
+      setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
