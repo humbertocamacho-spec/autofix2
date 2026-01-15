@@ -21,11 +21,33 @@ export default function UsersTable() {
   // Fetch users list
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users`);
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${VITE_API_URL}/api/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          console.warn("No autorizado");
+          setUsers([]);
+          return;
+        }
+      }
+
       const data = await res.json();
-      setUsers(data);
+
+      if (Array.isArray(data)) {
+        setUsers(data);
+      } else {
+        setUsers([]);
+      }
+
     } catch (error) {
       console.error(t("users_screen.errors.fetch"), error);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -107,11 +129,13 @@ export default function UsersTable() {
   };
 
   // Filter users by name
-  const filtered = users.filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = Array.isArray(users)
+  ? users.filter(
+      (u) =>
+        u.name.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase())
+    )
+  : [];
 
   return (
     <DashboardLayout>
