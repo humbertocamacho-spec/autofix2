@@ -4,7 +4,7 @@ import db from "../config/db.js";
 const router = express.Router();
 
 // Endpoint to get all car brands
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
     try {
         const [rows] = await db.query(`
         SELECT id, name FROM car_brands;
@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
 });
 
 // Endpoint to create a car brand
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
     try {
         const { name } = req.body;
 
@@ -38,7 +38,7 @@ router.post("/", async (req, res) => {
 });
 
 // Endpoint to get a car brand by id
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
         const { name } = req.body;
@@ -60,7 +60,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Endpoint to delete a car brand by id
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
 
