@@ -31,19 +31,24 @@ export default function DashboardLayout({ children }: Props) {
 
   // i18n handling
   const { t , i18n } = useTranslation();
-  const [userLanguage, setUserLanguage] = useState("es");
-  const changeLanguage = (lang: string) => { i18n.changeLanguage(lang); localStorage.setItem("lang", lang);};
+  const [userLanguage, setUserLanguage] = useState(() => {
+    const savedLang = user?.id ? localStorage.getItem(`lang_user_${user.id}`) : null;
+    return savedLang || i18n.language || "es";
+  });
+  const changeLanguage = (lang: string) => {
+    setUserLanguage(lang);
+    i18n.changeLanguage(lang);
+    if (user?.id) {
+      localStorage.setItem(`lang_user_${user.id}`, lang);
+    }
+  };
 
   // Load user language preference
   useEffect(() => {
-    if (user?.id) {
-      const savedLang = localStorage.getItem(`lang_user_${user.id}`);
-      if (savedLang) {
-        setUserLanguage(savedLang);
-        i18n.changeLanguage(savedLang);
-      }
+    if (i18n.language !== userLanguage) {
+      i18n.changeLanguage(userLanguage);
     }
-  }, [user?.id]);
+  }, [userLanguage, i18n]);
 
   // Persist user language
   useEffect(() => {
