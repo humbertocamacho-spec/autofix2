@@ -48,7 +48,7 @@ router.post("/", async (req, res) => {
 });
 
 // Endpoint to get all pending tickets
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const [rows] = await db.query(`
       SELECT 
