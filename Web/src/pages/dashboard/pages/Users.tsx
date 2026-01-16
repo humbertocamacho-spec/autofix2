@@ -115,7 +115,9 @@ export default function UsersTable() {
     if (!confirmRestore) return;
 
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users/${user.id}/restore`, { method: "PATCH",});
+      const res = await authFetch(`${VITE_API_URL}/api/users/${user.id}/restore`, {
+        method: "PATCH",
+      });
 
       const data = await res.json();
       if (!res.ok) {
