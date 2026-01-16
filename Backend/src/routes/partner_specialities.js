@@ -1,10 +1,11 @@
 import express from "express";
 import db from "../config/db.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 // Endpoint to get all partner specialities
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
     try {
         const [rows] = await db.query(`
         SELECT 

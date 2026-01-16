@@ -5,6 +5,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { PendingTicket } from "../../../types/pending_ticket";
 import { useAuthContext } from "../../../context/AuthContext";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function PendingTicketsTable() {
   const { t } = useTranslation();
@@ -52,7 +53,7 @@ export default function PendingTicketsTable() {
       if (user?.role_id === 3 && user?.client_id) {
         url = `${VITE_API_URL}/api/pending_tickets/${user.client_id}`;
       }
-      const res = await fetch(url);
+      const res = await authFetch(url);
       const data = await res.json();
       setTickets(Array.isArray(data) ? data : []);
     } catch (error) {
