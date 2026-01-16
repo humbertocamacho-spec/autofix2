@@ -1,21 +1,27 @@
 import express from "express";
 import db from "../config/db.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import moment from "moment";
 
 const router = express.Router();
 
 // Endpoint to create a ticket
 router.post("/", async (req, res) => {
   try {
-    let { client_id, car_id, partner_id, date, time, notes, logo_url, partner_name, partner_phone } = req.body;
+    const {
+      client_id,
+      car_id,
+      partner_id,
+      date,
+      time,
+      notes,
+      logo_url,
+      partner_name,
+      partner_phone
+    } = req.body;
 
     if (!client_id || !car_id || !partner_id || !date || !time) {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
-
-    const formattedDate = moment(date, "D-M-YYYY").format("YYYY-MM-DD");
-    const formattedTime = moment(time, ["hh:mm A", "HH:mm"]).format("HH:mm:ss");
 
     const [result] = await db.query(
       `INSERT INTO pending_tickets 
@@ -25,8 +31,8 @@ router.post("/", async (req, res) => {
         client_id,
         car_id,
         partner_id,
-        formattedDate,
-        formattedTime,
+        date,
+        time,
         notes || "",
         logo_url || "",
         partner_name || "",
@@ -34,8 +40,7 @@ router.post("/", async (req, res) => {
       ]
     );
 
-    console.log("✅ Insert result:", result);
-    res.json({ message: "Pending ticket creado", id: result.insertId });
+    res.json({ message: "Pending ticket creado", id: result.insertId});
 
   } catch (error) {
     console.error("Error insertando pending_ticket:", error);
@@ -44,7 +49,7 @@ router.post("/", async (req, res) => {
 });
 
 // Endpoint to get all pending tickets
-router.get("/", authMiddleware, async (req, res, next) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const [rows] = await db.query(`
       SELECT 
