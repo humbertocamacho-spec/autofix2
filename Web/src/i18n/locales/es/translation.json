@@ -353,6 +353,7 @@
       "deactivate": "¿Seguro que deseas eliminar la marca \"{{name}}\"?"
     },
     "success": {
+      "update": "Marca actualizada correctamente",
       "deactivate": "Marca eliminada correctamente"
     },
     "errors": {

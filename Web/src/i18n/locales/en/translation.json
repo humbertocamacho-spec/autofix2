@@ -354,6 +354,7 @@
       "deactivate": "Are you sure you want to delete the brand \"{{name}}\"?"
     },
     "success": {
+      "update": "Car updated successfully",
       "deactivate": "Brand deleted successfully"
     },
     "errors": {
