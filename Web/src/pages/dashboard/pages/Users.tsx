@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import type { User } from "../../../types/users";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function UsersTable() {
   const [users, setUsers] = useState<User[]>([]);
@@ -23,7 +24,7 @@ export default function UsersTable() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`${VITE_API_URL}/api/users`, {
+      const res = await authFetch(`${VITE_API_URL}/api/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -64,9 +65,8 @@ export default function UsersTable() {
     if (!currentUser) return;
 
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users/${currentUser.id}`, {
+      const res = await authFetch(`${VITE_API_URL}/api/users/${currentUser.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(currentUser),
       });
 
@@ -92,7 +92,9 @@ export default function UsersTable() {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users/${user.id}`, { method: "DELETE",});
+      const res = await authFetch(`${VITE_API_URL}/api/users/${user.id}`, {
+        method: "DELETE",
+      });
 
       const data = await res.json();
       if (!res.ok) {
