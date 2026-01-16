@@ -7,15 +7,19 @@ const router = express.Router();
 // Endpoint to create a ticket
 router.post("/", async (req, res) => {
   try {
-    console.log("🚀 Cuerpo recibido en backend:", req.body);
-
     const {
-      client_id, car_id, partner_id, date, time,
-      notes, logo_url, partner_name, partner_phone
+      client_id,
+      car_id,
+      partner_id,
+      date,
+      time,
+      notes,
+      logo_url,
+      partner_name,
+      partner_phone
     } = req.body;
 
     if (!client_id || !car_id || !partner_id || !date || !time) {
-      console.warn("🚨 Campos obligatorios faltantes", req.body);
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
 
@@ -24,17 +28,22 @@ router.post("/", async (req, res) => {
         (client_id, car_id, partner_id, date, time, notes, logo_url, partner_name, partner_phone)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        client_id, car_id, partner_id, date, time,
-        notes || "", logo_url || "", partner_name || "", partner_phone || ""
+        client_id,
+        car_id,
+        partner_id,
+        date,
+        time,
+        notes || "",
+        logo_url || "",
+        partner_name || "",
+        partner_phone || ""
       ]
     );
 
-    console.log("✅ Pending ticket insertado, insertId:", result.insertId);
-
-    res.json({ message: "Pending ticket creado", id: result.insertId });
+    res.json({ message: "Pending ticket creado", id: result.insertId});
 
   } catch (error) {
-    console.error("🔥 Error insertando pending_ticket:", error);
+    console.error("Error insertando pending_ticket:", error);
     res.status(500).json({ error: "Error en el servidor" });
   }
 });
