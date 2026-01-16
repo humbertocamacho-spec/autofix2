@@ -84,9 +84,9 @@ export default function PartnersTable() {
   // Fetch all partner specialities
   const fetchAllPartnerSpecialities = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/partner_specialities`);
+      const res = await authFetch(`${VITE_API_URL}/api/partner_specialities`);
       const data = await res.json();
-      setAllPartnerSpecialities(data);
+      setAllPartnerSpecialities(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching all relations:", error);
     }
