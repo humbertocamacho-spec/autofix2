@@ -1,5 +1,6 @@
 import { API_URL } from '../config/env';
 import { Cars } from "@backend-types/car";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BASE_URL = `${API_URL}/api/car`;
 
@@ -21,10 +22,15 @@ export async function getCars() {
 
 export async function createCar(carData: Cars) {
   try {
+    const token = await AsyncStorage.getItem("token");
+
     const res = await fetch(BASE_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(carData)
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(carData),
     });
 
     const json = await res.json();
@@ -34,6 +40,7 @@ export async function createCar(carData: Cars) {
     }
 
     return { ok: true, ...json };
+
   } catch (error: any) {
     console.error("Error en createCar:", error);
     return { ok: false, message: error.message };
@@ -42,10 +49,15 @@ export async function createCar(carData: Cars) {
 
 export async function updateCar(id: number, carData: Cars) {
   try {
+    const token = await AsyncStorage.getItem("token");
+
     const res = await fetch(`${BASE_URL}/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(carData)
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(carData),
     });
 
     const json = await res.json();
@@ -55,6 +67,7 @@ export async function updateCar(id: number, carData: Cars) {
     }
 
     return { ok: true, ...json };
+
   } catch (error: any) {
     console.error("Error en updateCar:", error);
     return { ok: false, message: error.message };
@@ -62,12 +75,21 @@ export async function updateCar(id: number, carData: Cars) {
 }
 
 export async function deleteCar(id: number) {
-    try {
-        const res = await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
-        return await res.json();
-    } catch (error) {
-        console.error("Error en deleteCar:", error);
-        return { ok: false };
-    }
+  try {
+    const token = await AsyncStorage.getItem("token");
+
+    const res = await fetch(`${BASE_URL}/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error en deleteCar:", error);
+    return { ok: false };
+  }
 }
+
 
