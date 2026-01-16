@@ -1,18 +1,30 @@
 import { API_URL } from '../config/env';
 
 export async function createPendingTicket(data: any) {
-    try {
-        const res = await fetch(`${API_URL}/api/pending_tickets/`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
+  console.log("🚀 createPendingTicket llamado con data:", data);
 
-        return await res.json();
-    } catch (error) {
-        console.error("Error creando pending_ticket:", error);
-        return null;
+  try {
+    const res = await fetch(`${API_URL}/api/pending_tickets/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    console.log("📡 Respuesta del servidor (create):", res.status, res.statusText);
+
+    const json = await res.json();
+    console.log("📄 JSON recibido (create):", json);
+
+    if (!res.ok) {
+      console.error("❌ createPendingTicket error:", json);
+      return null;
     }
+
+    return json;
+  } catch (error) {
+    console.error("❌ Error creando pending_ticket:", error);
+    return null;
+  }
 }
 
 export async function getPendingTicketsByClient(client_id: number) {

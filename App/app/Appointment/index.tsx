@@ -303,7 +303,7 @@ export default function AppointmentScreen() {
                   }
 
                   const fullDate = `${selectedDate}-${currentMonth + 1}-${currentYear}`;
-
+                  
                   router.push({
                     pathname: "/Vehicle",
                     params: {
