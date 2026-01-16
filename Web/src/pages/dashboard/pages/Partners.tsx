@@ -367,7 +367,7 @@ export default function PartnersTable() {
                         )}
 
                         {item.deleted_at && (
-                          <Can permission="update_partners">
+                          <Can permission="delete_partners">
                             <button className="px-2.5 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700" onClick={() => restorePartner(item)}>
                               {t("users_screen.restore")}
                             </button>
