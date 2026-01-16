@@ -5,6 +5,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Modules } from "../../../types/modules";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function ModulesTable() {
   const { t } = useTranslation();
@@ -21,23 +22,10 @@ export default function ModulesTable() {
 
   useEffect(() => { fetchModules(); }, []);
 
-  const authHeaders = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  };
-
   // Fetch modules list
   const fetchModules = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/modules`, {
-        headers: authHeaders,
-      });
-
-      if (res.status === 401) {
-        console.error("No autorizado");
-        return;
-      }
-
+      const res = await authFetch(`${VITE_API_URL}/api/modules`);
       const data = await res.json();
       setModules(data.modules || []);
     } catch (error) {
@@ -74,9 +62,8 @@ export default function ModulesTable() {
       : `${VITE_API_URL}/api/modules`;
 
     try {
-      const res = await fetch(url, {
+      const res = await authFetch(url, {
         method,
-        headers: authHeaders,
         body: JSON.stringify({ name, description }),
       });
 
@@ -97,12 +84,9 @@ export default function ModulesTable() {
     const confirmed = window.confirm(t("modules_screen.confirm.deactivate", { name: module.name }));
     if (!confirmed) return;
 
-    const res = await fetch(
+    const res = await authFetch(
       `${VITE_API_URL}/api/modules/${module.id}`,
-      {
-        method: "DELETE",
-        headers: authHeaders,
-      }
+      { method: "DELETE" }
     );
 
     if (!res.ok) { alert(t("modules_screen.errors.deactivate")); return;}

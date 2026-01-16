@@ -193,7 +193,7 @@ export default function PartnersTable() {
     const method = isEditing ? "PUT" : "POST";
     const token = localStorage.getItem("token");
 
-    const res = await fetch(url, {
+    const res = await authFetch(url, {
       method,
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
       body: JSON.stringify(body),
@@ -218,7 +218,7 @@ export default function PartnersTable() {
     const confirmed = window.confirm( t("partners_screen.confirm.deactivate", { name: partner.name }));
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/partners/${partner.id}`, { method: "DELETE",});
+    const res = await authFetch(`${VITE_API_URL}/api/partners/${partner.id}`, { method: "DELETE",});
 
     if (!res.ok) { alert(t("partners_screen.errors.deactivate")); return;}
 
@@ -231,7 +231,7 @@ export default function PartnersTable() {
     const confirmed = window.confirm( t("partners_screen.confirm.restore", { name: partner.name }));
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, { method: "PATCH",});
+    const res = await authFetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, { method: "PATCH",});
 
     if (!res.ok) { alert(t("partners_screen.errors.restore")); return;}
 
