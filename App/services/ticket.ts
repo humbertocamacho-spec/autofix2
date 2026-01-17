@@ -1,25 +1,13 @@
 import { Ticket } from "@backend-types/ticket";
 import { API_URL } from "../config/env";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { authFetch } from "../utils/authFetch";
 
 const BASE_URL = `${API_URL}/api/ticket`;
 
-async function getAuthHeaders() {
-  const token = await AsyncStorage.getItem("token");
-
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-}
 
 export async function getConfirmedTickets(): Promise<Ticket[]> {
   try {
-    const headers = await getAuthHeaders();
-
-    const res = await fetch(`${BASE_URL}/app`, {
-      headers,
-    });
+    const res = await authFetch(`${BASE_URL}/app`);
 
     if (!res.ok) {
       console.error("Error HTTP:", res.status);
@@ -36,20 +24,17 @@ export async function getConfirmedTickets(): Promise<Ticket[]> {
 
 export async function createTicket(ticketData: Ticket) {
   try {
-    const res = await fetch(BASE_URL, {
+    const res = await authFetch(BASE_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(ticketData),
     });
 
     if (!res.ok) {
-      const errorText = await res.text();
-      console.error("Error creando ticket:", errorText);
+      console.error("Error creando ticket:", await res.text());
       return { ok: false };
     }
 
-    const data = await res.json();
-    return { ok: true, data };
+    return { ok: true, data: await res.json() };
   } catch (error) {
     console.error("Error en createTicket:", error);
     return { ok: false };
@@ -58,11 +43,8 @@ export async function createTicket(ticketData: Ticket) {
 
 export async function deleteTicket(id: number): Promise<boolean> {
   try {
-    const headers = await getAuthHeaders();
-
-    const res = await fetch(`${BASE_URL}/${id}`, {
+    const res = await authFetch(`${BASE_URL}/${id}`, {
       method: "DELETE",
-      headers,
     });
 
     return res.ok;
@@ -72,9 +54,12 @@ export async function deleteTicket(id: number): Promise<boolean> {
   }
 }
 
-export async function getOccupiedHours(partner_id: number, date: string) {
+export async function getOccupiedHours(
+  partner_id: number,
+  date: string
+): Promise<string[]> {
   try {
-    const res = await fetch(
+    const res = await authFetch(
       `${BASE_URL}/occupied?partner_id=${partner_id}&date=${date}`
     );
 
