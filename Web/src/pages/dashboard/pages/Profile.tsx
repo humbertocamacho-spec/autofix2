@@ -3,6 +3,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import { useTranslation } from "react-i18next";
 import type { Profile } from "../../../types/profile";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
@@ -21,16 +22,12 @@ export default function ProfileScreen() {
   // Fetch user profile
   const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(`${VITE_API_URL}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const res = await authFetch(`${VITE_API_URL}/api/auth/me`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
 
+      if (!res.ok) throw new Error(data.message);
       setProfile(data.user);
+
     } catch {
       alert(t("error"));
     } finally {
@@ -44,13 +41,10 @@ export default function ProfileScreen() {
 
     setSaving(true);
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(`${VITE_API_URL}/api/auth/me`, {
+      const res = await authFetch(`${VITE_API_URL}/api/auth/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(profile),
       });
@@ -60,6 +54,7 @@ export default function ProfileScreen() {
 
       alert(t("profile.updated"));
       fetchProfile();
+
     } catch (error: any) {
       alert(error.message || t("error"));
     } finally {
