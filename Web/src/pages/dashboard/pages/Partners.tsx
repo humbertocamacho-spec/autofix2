@@ -78,7 +78,7 @@ export default function PartnersTable() {
   const fetchSpecialities = async () => {
     const res = await authFetch(`${VITE_API_URL}/api/specialities`);
     const data = await res.json();
-    setSpecialities(data);
+    setSpecialities(Array.isArray(data) ? data : []);
   };
 
   // Fetch all partner specialities
@@ -96,7 +96,7 @@ export default function PartnersTable() {
   const fetchPartnerSpecialities = async (partnerId: number) => {
     const res = await fetch(`${VITE_API_URL}/api/partner_specialities/${partnerId}`);
     const data: number[] = await res.json();
-    setSelectedSpecialities(data);
+    setSelectedSpecialities(Array.isArray(data) ? data : []);
   };
 
   // Helpers
