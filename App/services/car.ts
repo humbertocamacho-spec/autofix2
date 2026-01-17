@@ -1,35 +1,24 @@
 import { API_URL } from '@/config/env';
 import { Cars } from "@backend-types/car";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { authFetch } from "@/utils/authFetch";
 
 const BASE_URL = `${API_URL}/api/car`;
 
 export async function getCars() {
-    try {
-        const res = await fetch(BASE_URL);
-
-        if (!res.ok) {
-            console.error(`Error HTTP: ${res.status}`);
-            return [];
-        }
-
-        return await res.json();
-    } catch (error) {
-        console.error("Error en getCars:", error);
-        return [];
-    }
+  try {
+    const res = await authFetch(BASE_URL);
+    if (!res.ok) return [];
+    return await res.json();
+  } catch (error) {
+    console.error("Error en getCars:", error);
+    return [];
+  }
 }
 
 export async function createCar(carData: Cars) {
   try {
-    const token = await AsyncStorage.getItem("token");
-
-    const res = await fetch(BASE_URL, {
+    const res = await authFetch(BASE_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify(carData),
     });
 
@@ -40,7 +29,6 @@ export async function createCar(carData: Cars) {
     }
 
     return { ok: true, ...json };
-
   } catch (error: any) {
     console.error("Error en createCar:", error);
     return { ok: false, message: error.message };
@@ -49,14 +37,8 @@ export async function createCar(carData: Cars) {
 
 export async function updateCar(id: number, carData: Cars) {
   try {
-    const token = await AsyncStorage.getItem("token");
-
-    const res = await fetch(`${BASE_URL}/${id}`, {
+    const res = await authFetch(`${BASE_URL}/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify(carData),
     });
 
@@ -67,7 +49,6 @@ export async function updateCar(id: number, carData: Cars) {
     }
 
     return { ok: true, ...json };
-
   } catch (error: any) {
     console.error("Error en updateCar:", error);
     return { ok: false, message: error.message };
@@ -76,13 +57,8 @@ export async function updateCar(id: number, carData: Cars) {
 
 export async function deleteCar(id: number) {
   try {
-    const token = await AsyncStorage.getItem("token");
-
-    const res = await fetch(`${BASE_URL}/${id}`, {
+    const res = await authFetch(`${BASE_URL}/${id}`, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
 
     return await res.json();
@@ -91,5 +67,6 @@ export async function deleteCar(id: number) {
     return { ok: false };
   }
 }
+
 
 
