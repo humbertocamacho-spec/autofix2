@@ -1,6 +1,6 @@
 import { Ticket } from "@backend-types/ticket";
-import { API_URL } from "../config/env";
-import { authFetch } from "../utils/authFetch";
+import { API_URL } from "@/config/env";
+import { authFetch } from "@/utils/authFetch";
 
 const BASE_URL = `${API_URL}/api/ticket`;
 
