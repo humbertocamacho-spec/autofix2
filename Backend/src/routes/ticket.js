@@ -106,7 +106,7 @@ router.get("/", authMiddleware, async (req, res) => {
 });
 
 // Endpoint to get tickets for a car
-router.get("/:car_id/:partner_id/:client_id", async (req, res) => {
+router.get("/:car_id/:partner_id/:client_id", authMiddleware, async (req, res) => {
     const { car_id, partner_id, client_id } = req.params;
 
     try {
@@ -150,7 +150,7 @@ router.get("/:car_id/:partner_id/:client_id", async (req, res) => {
 });
 
 // Endpoint to get a ticket by id
-router.get("/by-id/:id", async (req, res) => {
+router.get("/by-id/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -167,7 +167,7 @@ router.get("/by-id/:id", async (req, res) => {
 });
 
 // Endpoint to create a ticket
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
     const { client_id, car_id, partner_id, date, notes } = req.body;
 
     try {
@@ -186,7 +186,7 @@ router.post("/", async (req, res) => {
 });
 
 // Endpoint to delete a ticket
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -204,6 +204,7 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
+// Endpoint to update a ticket status
 router.put("/:id/status", authMiddleware, async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
