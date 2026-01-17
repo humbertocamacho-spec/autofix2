@@ -5,7 +5,7 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 // Endpoint to create a ticket
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
   try {
     const {
       client_id,
@@ -79,7 +79,7 @@ router.get("/", authMiddleware, async (req, res) => {
 });
 
 // Endpoint to get pending tickets for a client
-router.get("/:client_id", async (req, res) => {
+router.get("/:client_id", authMiddleware, async (req, res) => {
   try {
     const { client_id } = req.params;
     const [rows] = await db.query(`
@@ -111,7 +111,7 @@ router.get("/:client_id", async (req, res) => {
 });
 
 // Endpoint to delete a pending ticket
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const idNum = Number(req.params.id);
     if (isNaN(idNum)) return res.status(400).json({ error: "ID inválido" });
@@ -134,7 +134,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Endpoint to update a pending ticket
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const id = Number(req.params.id);
     if (!id || isNaN(id)) {
