@@ -5,6 +5,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { PartnerCertification } from "../../../types/partner_certification";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function PartnersCertificationsTable() {
   const { t } = useTranslation();
@@ -31,7 +32,7 @@ export default function PartnersCertificationsTable() {
   // Fetch certifications list
   const fetchCertifications = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/partner_certifications/all`);
+      const res = await authFetch(`${VITE_API_URL}/api/partner_certifications/all`);
       const data = await res.json();
       setCertifications(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -44,7 +45,7 @@ export default function PartnersCertificationsTable() {
   // Fetch partners list
   const fetchPartners = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/partners/select`, {
+      const res = await authFetch(`${VITE_API_URL}/api/partners/select`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -60,7 +61,7 @@ export default function PartnersCertificationsTable() {
   // Fetch certifications list
   const fetchAllCertifications = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/certifications`);
+      const res = await authFetch(`${VITE_API_URL}/api/certifications`);
       const data = await res.json();
       setAllCertifications(Array.isArray(data.certifications) ? data.certifications : []);
     } catch (error) {
@@ -113,13 +114,13 @@ export default function PartnersCertificationsTable() {
 
     try {
       if (isEditing && current) {
-        await fetch(`${VITE_API_URL}/api/partner_certifications/${current.id}`, {
+        await authFetch(`${VITE_API_URL}/api/partner_certifications/${current.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ partner_id: partnerId, certification_id: certificationId }),
         });
       } else {
-        await fetch(`${VITE_API_URL}/api/partner_certifications`, {
+        await authFetch(`${VITE_API_URL}/api/partner_certifications`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ partner_id: partnerId, certification_id: certificationId }),
@@ -139,7 +140,7 @@ export default function PartnersCertificationsTable() {
   const handleDelete = async (id: number) => {
     if (!confirm("¿Deseas eliminar este registro?")) return;
     try {
-      await fetch(`${VITE_API_URL}/api/partner_certifications/${id}`, { method: "DELETE" });
+      await authFetch(`${VITE_API_URL}/api/partner_certifications/${id}`, { method: "DELETE" });
       fetchCertifications();
     } catch (error) {
       console.error("Error deleting certification:", error);
