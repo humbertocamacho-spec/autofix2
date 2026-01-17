@@ -22,7 +22,7 @@ router.get("/", authMiddleware, async (req, res) => {
 });
 
 // Endpoint to get all partner specialities
-router.get("/:partnerId", async (req, res) => {
+router.get("/:partnerId", authMiddleware, async (req, res) => {
   const { partnerId } = req.params;
 
   try {
@@ -43,7 +43,7 @@ router.get("/:partnerId", async (req, res) => {
 });
 
 // Endpoint to create a partner speciality
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
   const { partner_id, speciality_ids } = req.body;
 
   if (!partner_id || !Array.isArray(speciality_ids)) {
