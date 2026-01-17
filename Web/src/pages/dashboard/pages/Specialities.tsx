@@ -5,6 +5,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Specialities } from "../../../types/specialities";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function SpecialitiesTable() {
   const { t } = useTranslation();
@@ -27,7 +28,7 @@ export default function SpecialitiesTable() {
   // Fetch specialities list
   const fetchSpecialities = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/specialities`);
+      const res = await authFetch(`${VITE_API_URL}/api/specialities`);
       const data = await res.json();
       setSpecialities(data);
     } catch (error) {
@@ -55,7 +56,7 @@ export default function SpecialitiesTable() {
     if (!validateForm()) return;
 
     try {
-      await fetch(`${VITE_API_URL}/api/specialities`, {
+      await authFetch(`${VITE_API_URL}/api/specialities`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
@@ -77,7 +78,7 @@ export default function SpecialitiesTable() {
     if (!validateForm()) return;
 
     try {
-      await fetch(`${VITE_API_URL}/api/specialities/${current.id}`, {
+      await authFetch(`${VITE_API_URL}/api/specialities/${current.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
@@ -99,7 +100,7 @@ export default function SpecialitiesTable() {
     );
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/specialities/${item.id}`, {
+    const res = await authFetch(`${VITE_API_URL}/api/specialities/${item.id}`, {
       method: "DELETE",
     });
 
