@@ -76,7 +76,7 @@ export default function PartnersTable() {
 
   // Fetch specialities list
   const fetchSpecialities = async () => {
-    const res = await fetch(`${VITE_API_URL}/api/specialities`);
+    const res = await authFetch(`${VITE_API_URL}/api/specialities`);
     const data = await res.json();
     setSpecialities(data);
   };

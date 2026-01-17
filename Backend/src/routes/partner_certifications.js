@@ -4,7 +4,7 @@ import db from "../config/db.js";
 const router = express.Router();
 
 // Endpoint to get all partner certifications
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const { partner_id } = req.query;
     if (!partner_id) return res.status(400).json({ message: "partner_id es requerido" });
@@ -30,7 +30,7 @@ router.get("/", async (req, res) => {
 });
 
 // Endpoint to get all partner certifications
-router.get("/all", async (req, res) => {
+router.get("/all", authMiddleware, async (req, res) => {
   try {
     const [rows] = await db.query(`
       SELECT
@@ -52,7 +52,7 @@ router.get("/all", async (req, res) => {
 });
 
 // Endpoint to create a partner certification
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
   try {
     const { partner_id, certification_id } = req.body;
     const [result] = await db.query(
@@ -67,7 +67,7 @@ router.post("/", async (req, res) => {
 });
 
 // Endpoint to update a partner certification
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const { partner_id, certification_id } = req.body;
@@ -83,7 +83,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Endpoint to delete a partner certification
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     await db.query("DELETE FROM partners_certifications WHERE id=?", [id]);
