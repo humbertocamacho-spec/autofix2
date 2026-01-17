@@ -5,6 +5,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Certification } from "../../../types/certification";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function CertificationsTable() {
   const { t } = useTranslation();
@@ -25,7 +26,7 @@ export default function CertificationsTable() {
   // Fetch certifications from API
   const fetchCertifications = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/certifications`);
+      const res = await authFetch(`${VITE_API_URL}/api/certifications`);
       const data = await res.json();
       setCertifications(data.certifications || []);
     } catch (error) {
@@ -73,7 +74,7 @@ export default function CertificationsTable() {
     const method = isEditing ? "PUT" : "POST";
     const url = isEditing ? `${VITE_API_URL}/api/certifications/${current?.id}` : `${VITE_API_URL}/api/certifications`;
 
-    await fetch(url, {
+    await authFetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
@@ -88,7 +89,7 @@ export default function CertificationsTable() {
     const confirmed = window.confirm(t("certifications_screen.confirm.deactivate", { name: certification.name,}));
     if (!confirmed) return;
 
-    const res = await fetch( `${VITE_API_URL}/api/certifications/${certification.id}`, { method: "DELETE" });
+    const res = await authFetch( `${VITE_API_URL}/api/certifications/${certification.id}`, { method: "DELETE" });
 
     if (!res.ok) { alert(t("certifications_screen.errors.deactivate")); return;}
 
