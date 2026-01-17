@@ -5,6 +5,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Ticket } from "../../../types/ticket";
 import { useAuthContext } from "../../../context/AuthContext";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function TicketsTable() {
   const { t } = useTranslation();
@@ -27,7 +28,7 @@ export default function TicketsTable() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`${VITE_API_URL}/api/ticket`, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json",},});
+      const res = await authFetch(`${VITE_API_URL}/api/ticket`, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json",},});
 
       const data = await res.json();
       setTickets(Array.isArray(data) ? data : []);
@@ -48,14 +49,14 @@ export default function TicketsTable() {
     )
     .sort((a, b) => a.id - b.id);
 
-    // Delete ticket
+  // Delete ticket
   const deleteTicket = async (id: number) => {
     if (!confirm(t("tickets_screen.confirm_delete"))) return;
 
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`${VITE_API_URL}/api/ticket/${id}`, {
+      const res = await authFetch(`${VITE_API_URL}/api/ticket/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`,},
       });
