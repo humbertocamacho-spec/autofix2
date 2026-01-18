@@ -107,6 +107,19 @@
       "year_error": "Este campo es obligatorio",
       "type_error": "Este campo es obligatorio",
       "plate_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "deactivate": "¿Seguro que deseas eliminar este vehículo?\n\nEl vehículo ya no aparecerá en tu lista, pero se mantendrá en el historial de servicio."
+    },
+    "success": {
+      "create": "Vehículo creado correctamente",
+      "update": "Vehículo actualizado correctamente",
+      "deactivate": "Vehículo eliminado correctamente"
+    },
+    "errors": {
+      "create": "Error creando el vehículo",
+      "update": "Error actualizado el vehículo",
+      "deactivate": "Error eliminado el vehículo"
     }
   },
 

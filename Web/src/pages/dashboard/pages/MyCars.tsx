@@ -132,13 +132,13 @@ export default function MyCarsTable() {
             return;
         }
 
-        alert("Vehículo creado correctamente");
+        alert(t("myCars_screen.success.create"));
         setOpenModal(false);
         fetchCars();
 
     } catch (error) {
         console.error("Error creating car:", error);
-        alert("Error creando el vehículo");
+        alert(t("myCars_screen.errors.create"));
     }
   };
 
@@ -166,19 +166,19 @@ export default function MyCarsTable() {
 
         if (!res.ok) { alert(data.message || "Error al actualizar"); return; }
 
-        alert("Vehículo actualizado correctamente");
+        alert(t("myCars_screen.success.update"));
         setOpenModal(false);
         fetchCars();
 
     } catch (error) {
         console.error("Error updating car:", error);
-        alert("Error actualizando el vehículo");
+        alert(t("myCars_screen.errors.update"));
     }
   };
 
   // Delete car
   const handleDelete = async (id: number) => {
-      if (!confirm("¿Seguro que deseas eliminar este vehículo?")) return;
+      if (!confirm(t("myCars_screen.confirm.deactivate", { name: currentCar?.name }))) return;
 
       try {
           const res = await authFetch(`${VITE_API_URL}/api/car/${id}`, {
@@ -192,12 +192,12 @@ export default function MyCarsTable() {
               return;
           }
 
-          alert("Vehículo eliminado correctamente");
+          alert(t("myCars_screen.success.deactivate"));
           fetchCars();
 
       } catch (error) {
           console.error("Error deleting car:", error);
-          alert("Error eliminando el vehículo");
+          alert(t("myCars_screen.errors.deactivate"));
       }
   };
 

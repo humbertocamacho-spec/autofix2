@@ -107,6 +107,19 @@
       "year_error": "This field is required",
       "type_error": "This field is required",
       "plate_error": "This field is required"
+    },
+    "confirm": {
+      "deactivate": "Are you sure you want to remove this vehicle?\n\nThe car will no longer appear in your list, but it will be kept in the service history."
+    },
+    "success": {
+      "create": "Car created successfully",
+      "update": "Car updated successfully",
+      "deactivate": "Car deactivated successfully"
+    },
+    "errors": {
+      "create": "Error creating car",
+      "update": "Error updating car",
+      "deactivate": "Error deactivating car"
     }
   },
 
