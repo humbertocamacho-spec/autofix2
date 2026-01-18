@@ -164,7 +164,7 @@ export default function TicketsTable() {
 
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="text-center py-6 text-gray-500">
+                    <td colSpan={10} className="text-center py-6 text-gray-500">
                       {t("tickets_screen.no_results")}
                     </td>
                   </tr>

@@ -381,7 +381,7 @@ export default function PartnersTable() {
 
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="text-center py-6 text-gray-500">{t("partners_screen.no_results")}</td>
+                    <td colSpan={13} className="text-center py-6 text-gray-500">{t("partners_screen.no_results")}</td>
                   </tr>
                 )}
               </tbody>
