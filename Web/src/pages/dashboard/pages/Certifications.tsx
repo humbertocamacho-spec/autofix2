@@ -71,29 +71,43 @@ export default function CertificationsTable() {
     setSubmitted(true);
     if (!validateForm()) return;
 
-    const method = isEditing ? "PUT" : "POST";
-    const url = isEditing ? `${VITE_API_URL}/api/certifications/${current?.id}` : `${VITE_API_URL}/api/certifications`;
+    const isEdit = isEditing && current;
+    const method = isEdit ? "PUT" : "POST";
+    const url = isEdit ? `${VITE_API_URL}/api/certifications/${current!.id}` : `${VITE_API_URL}/api/certifications`;
 
-    await authFetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
-    });
+    try {
+      await authFetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
 
-    setOpenModal(false);
-    fetchCertifications();
+      alert(
+        t( isEdit ? "certifications_screen.success.update" : "certifications_screen.success.create")
+      );
+
+      setOpenModal(false);
+      setSubmitted(false);
+      fetchCertifications();
+    } catch (error) {
+      console.error("Error saving certification:", error);
+
+      alert(
+        t( isEdit ? "certifications_screen.errors.update" : "certifications_screen.errors.create")
+      );
+    }
   };
 
   // Delete certification
   const deleteCertification = async (certification: Certification) => {
-    const confirmed = window.confirm(t("certifications_screen.confirm.deactivate", { name: certification.name,}));
+    const confirmed = window.confirm(t("certifications_screen.confirm.delete", { name: certification.name,}));
     if (!confirmed) return;
 
     const res = await authFetch( `${VITE_API_URL}/api/certifications/${certification.id}`, { method: "DELETE" });
 
-    if (!res.ok) { alert(t("certifications_screen.errors.deactivate")); return;}
+    if (!res.ok) { alert(t("certifications_screen.errors.delete")); return;}
 
-    alert(t("certifications_screen.success.deactivate"));
+    alert(t("certifications_screen.success.delete"));
     fetchCertifications();
   };
 

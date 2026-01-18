@@ -133,7 +133,7 @@ export default function MyCarsTable() {
       const data = await res.json();
 
       if (!res.ok) {
-          alert(data.message || "Error al crear vehículo");
+          alert(data.message || t("myCars_screen.errors.create"));
           return;
       }
 
@@ -182,11 +182,11 @@ export default function MyCarsTable() {
   };
 
   // Delete car
-  const handleDelete = async (id: number) => {
-    if (!confirm(t("myCars_screen.confirm.deactivate", { name: currentCar?.name }))) return;
+  const handleDelete = async (car: Cars) => {
+    if (!confirm(t("myCars_screen.confirm.delete", { name: car.name }))) return;
 
     try {
-      const res = await authFetch(`${VITE_API_URL}/api/car/${id}`, {
+      const res = await authFetch(`${VITE_API_URL}/api/car/${car.id}`, {
         method: "DELETE",
       });
 
@@ -197,12 +197,12 @@ export default function MyCarsTable() {
         return;
       }
 
-      alert(t("myCars_screen.success.deactivate"));
+      alert(t("myCars_screen.success.delete"));
       fetchCars();
 
     } catch (error) {
         console.error("Error deleting car:", error);
-        alert(t("myCars_screen.errors.deactivate"));
+        alert(t("myCars_screen.errors.delete"));
     }
   };
 
@@ -277,7 +277,7 @@ export default function MyCarsTable() {
                                   </Can>
 
                                   <Can permission="delete_cars_clients">
-                                    <button onClick={() => handleDelete(car.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                                    <button onClick={() => handleDelete(car)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                                         {t("myCars_screen.delete")}
                                     </button>
                                   </Can>

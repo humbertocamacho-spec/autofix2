@@ -208,6 +208,7 @@ export default function PartnersTable() {
       body: JSON.stringify({ partner_id: partnerId, speciality_ids: selectedSpecialities,}),
     });
 
+    alert(t(isEditing ? "partners_screen.success.update" : "partners_screen.success.create"));
     setOpenModal(false);
     fetchPartners();
     fetchAllPartnerSpecialities();

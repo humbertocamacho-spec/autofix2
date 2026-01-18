@@ -50,7 +50,7 @@ export default function SpecialitiesTable() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Create or update speciality
+  // Create speciality
   const handleCreate = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
@@ -62,6 +62,7 @@ export default function SpecialitiesTable() {
         body: JSON.stringify({ name }),
       });
 
+      alert(t("specialities_screen.success.create"));
       setOpenModal(false);
       setSubmitted(false);
       setErrors({});
@@ -84,6 +85,7 @@ export default function SpecialitiesTable() {
         body: JSON.stringify({ name }),
       });
 
+      alert(t("specialities_screen.success.update"));
       setOpenModal(false);
       setSubmitted(false);
       setErrors({});
@@ -96,7 +98,7 @@ export default function SpecialitiesTable() {
   // Delete speciality
   const handleDelete = async (item: Specialities) => {
     const confirmed = window.confirm(
-      t("specialities_screen.confirm.deactivate", { name: item.name })
+      t("specialities_screen.confirm.delete", { name: item.name })
     );
     if (!confirmed) return;
 
@@ -105,11 +107,11 @@ export default function SpecialitiesTable() {
     });
 
     if (!res.ok) {
-      alert(t("specialities_screen.errors.deactivate"));
+      alert(t("specialities_screen.errors.delete"));
       return;
     }
 
-    alert(t("specialities_screen.success.deactivate"));
+    alert(t("specialities_screen.success.delete"));
     fetchSpecialities();
   };
 

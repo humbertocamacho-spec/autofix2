@@ -96,14 +96,15 @@ export default function ClientsTable() {
       body: JSON.stringify({ user_id: userId }),
     });
 
+    alert(t(isEditing ? "clients_screen.success.update" : "clients_screen.success.create"));
     setOpenModal(false);
     fetchClients();
   };
 
-  // Delete (deactivate) client
+  // Delete client
   const deleteClient = async (client: Client) => {
     const confirmed = window.confirm(
-      t("clients_screen.confirm.deactivate", { name: client.user_name })
+      t("clients_screen.confirm.delete", { name: client.user_name })
     );
     if (!confirmed) return;
 
@@ -112,11 +113,11 @@ export default function ClientsTable() {
     });
 
     if (!res.ok) {
-      alert(t("clients_screen.errors.deactivate"));
+      alert(t("clients_screen.errors.delete"));
       return;
     }
 
-    alert(t("clients_screen.success.deactivate"));
+    alert(t("clients_screen.success.delete"));
     fetchClients();
   };
 

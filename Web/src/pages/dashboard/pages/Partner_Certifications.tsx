@@ -112,38 +112,64 @@ export default function PartnersCertificationsTable() {
     setSubmitted(true);
     if (!validateForm()) return;
 
+    const isEdit = isEditing && current;
+
     try {
-      if (isEditing && current) {
+      if (isEdit) {
         await authFetch(`${VITE_API_URL}/api/partner_certifications/${current.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ partner_id: partnerId, certification_id: certificationId }),
+          body: JSON.stringify({
+            partner_id: partnerId,
+            certification_id: certificationId,
+          }),
         });
+
+        alert(t("partner_certifications_screen.success.update"));
       } else {
         await authFetch(`${VITE_API_URL}/api/partner_certifications`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ partner_id: partnerId, certification_id: certificationId }),
+          body: JSON.stringify({
+            partner_id: partnerId,
+            certification_id: certificationId,
+          }),
         });
+
+        alert(t("partner_certifications_screen.success.create"));
       }
 
       setOpenModal(false);
       setErrors({});
       setSubmitted(false);
       fetchCertifications();
+
     } catch (error) {
       console.error("Error saving certification:", error);
+
+      alert(
+        t( isEdit ? "partner_certifications_screen.errors.update" : "partner_certifications_screen.errors.create")
+      );
     }
   };
 
   // Delete certification
-  const handleDelete = async (id: number) => {
-    if (!confirm("¿Deseas eliminar este registro?")) return;
+  const handleDelete = async (item: PartnerCertification) => {
+    if (
+      !confirm(
+        t("partner_certifications_screen.confirm.delete", { name: item.certification_name,})
+      )
+    )
+      return;
+
     try {
-      await authFetch(`${VITE_API_URL}/api/partner_certifications/${id}`, { method: "DELETE" });
+      await authFetch(`${VITE_API_URL}/api/partner_certifications/${item.id}`,{ method: "DELETE" }
+      );
+      alert(t("partner_certifications_screen.success.delete"));
       fetchCertifications();
     } catch (error) {
       console.error("Error deleting certification:", error);
+      alert(t("partner_certifications_screen.errors.delete"));
     }
   };
 
@@ -201,7 +227,7 @@ export default function PartnersCertificationsTable() {
                         </Can>
 
                         <Can permission="delete_partner_certifications">
-                          <button onClick={() => handleDelete(item.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                          <button onClick={() => handleDelete(item)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                             {t("partner_certifications_screen.delete")}
                           </button>
                         </Can>

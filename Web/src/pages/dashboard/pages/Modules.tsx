@@ -81,7 +81,7 @@ export default function ModulesTable() {
   
   // Delete module
   const handleDelete = async (module: Modules) => {
-    const confirmed = window.confirm(t("modules_screen.confirm.deactivate", { name: module.name }));
+    const confirmed = window.confirm(t("modules_screen.confirm.delete", { name: module.name }));
     if (!confirmed) return;
 
     const res = await authFetch(
@@ -89,9 +89,9 @@ export default function ModulesTable() {
       { method: "DELETE" }
     );
 
-    if (!res.ok) { alert(t("modules_screen.errors.deactivate")); return;}
+    if (!res.ok) { alert(t("modules_screen.errors.delete")); return;}
 
-    alert(t("modules_screen.success.deactivate"));
+    alert(t("modules_screen.success.delete"));
     fetchModules();
   };
 

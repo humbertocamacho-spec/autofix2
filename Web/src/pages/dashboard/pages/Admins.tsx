@@ -96,16 +96,11 @@ export default function AdminsTable() {
     });
 
     if (!res.ok) {
-      alert(
-        t(isEdit ? "admin_screen.errors.update" : "admin_screen.errors.create")
-      );
+      alert( t(isEdit ? "admin_screen.errors.update" : "admin_screen.errors.create"));
       return;
     }
 
-    alert(
-      t(isEdit ? "admin_screen.success.update" : "admin_screen.success.create")
-    );
-
+    alert( t(isEdit ? "admin_screen.success.update" : "admin_screen.success.create"));
     setOpenModal(false);
     fetchAdmins();
   };
@@ -113,7 +108,7 @@ export default function AdminsTable() {
   // Delete (deactivate) admin
   const deleteAdmin = async (admin: Admin) => {
     const confirmed = window.confirm(
-      t("admin_screen.confirm.deactivate", { name: admin.user_name })
+      t("admin_screen.confirm.delete", { name: admin.user_name })
     );
     if (!confirmed) return;
 
@@ -123,11 +118,11 @@ export default function AdminsTable() {
     );
 
     if (!res.ok) {
-      alert(t("admin_screen.errors.deactivate"));
+      alert(t("admin_screen.errors.delete"));
       return;
     }
 
-    alert(t("admin_screen.success.deactivate"));
+    alert(t("admin_screen.success.delete"));
     fetchAdmins();
   };
 

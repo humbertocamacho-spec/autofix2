@@ -75,10 +75,7 @@ export default function CarBrands() {
 
     try {
       const isEdit = isEditing && currentBrand;
-      const url = isEdit
-        ? `${VITE_API_URL}/api/car_brands/${currentBrand!.id}`
-        : `${VITE_API_URL}/api/car_brands`;
-
+      const url = isEdit ? `${VITE_API_URL}/api/car_brands/${currentBrand!.id}` : `${VITE_API_URL}/api/car_brands`;
       const method = isEdit ? "PUT" : "POST";
 
       const res = await authFetch(url, {
@@ -87,19 +84,11 @@ export default function CarBrands() {
       });
 
       if (!res.ok) {
-        alert(
-          t(isEdit
-            ? "car_brands_screen.errors.update"
-            : "car_brands_screen.errors.create")
-        );
+        alert(t(isEdit ? "car_brands_screen.errors.update" : "car_brands_screen.errors.create"));
         return;
       }
 
-      alert(
-        t(isEdit
-          ? "car_brands_screen.success.update"
-          : "car_brands_screen.success.create")
-      );
+      alert( t(isEdit ? "car_brands_screen.success.update" : "car_brands_screen.success.create"));
 
       setOpenModal(false);
       fetchCarBrands();
@@ -110,22 +99,17 @@ export default function CarBrands() {
 
   // Delete car brand
   const handleDelete = async (brand: CarBrands) => {
-    const confirmed = window.confirm(
-      t("car_brands_screen.confirm.deactivate", { name: brand.name })
-    );
+    const confirmed = window.confirm( t("car_brands_screen.confirm.delete", { name: brand.name }));
     if (!confirmed) return;
 
-    const res = await authFetch(
-      `${VITE_API_URL}/api/car_brands/${brand.id}`,
-      { method: "DELETE" }
-    );
+    const res = await authFetch(`${VITE_API_URL}/api/car_brands/${brand.id}`,{ method: "DELETE" });
 
     if (!res.ok) {
-      alert(t("car_brands_screen.errors.deactivate"));
+      alert(t("car_brands_screen.errors.delete"));
       return;
     }
 
-    alert(t("car_brands_screen.success.deactivate"));
+    alert(t("car_brands_screen.success.delete"));
     fetchCarBrands();
   };
 

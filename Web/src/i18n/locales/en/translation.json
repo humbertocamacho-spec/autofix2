@@ -22,17 +22,17 @@
       "user_error": "This field is required"
     },
     "confirm": {
-      "deactivate": "Are you sure you want to deactivate the admin \"{{name}}\"?"
+      "delete": "Are you sure you want to delete the admin \"{{name}}\"?"
     },
     "success": {
       "create": "Admin created successfully",
       "update": "Admin updated successfully",
-      "deactivate": "Admin deactivated successfully"
+      "delete": "Admin deleted successfully"
     },
     "errors": {
       "create": "Error creating admin",
       "update": "Error updating admin",
-      "deactivate": "Error deactivating admin"
+      "delete": "Error deleting admin"
     }
   },
 
@@ -62,13 +62,17 @@
       "user_error": "This field is required"
     },
     "confirm": {
-      "deactivate": "Are you sure you want to deactivate the client \"{{name}}\"?"
+      "delete": "Are you sure you want to delete the client \"{{name}}\"?"
     },
     "success": {
-      "deactivate": "Client deactivated successfully"
+      "create": "Client created successfully",
+      "update": "Client updated successfully",
+      "delete": "Client deleted successfully"
     },
     "errors": {
-      "deactivate": "Error deactivating client"
+      "create": "Error creating client",
+      "update": "Error updating client",
+      "delete": "Error deleting client"
     }
   },
 
@@ -109,17 +113,17 @@
       "plate_error": "This field is required"
     },
     "confirm": {
-      "deactivate": "Are you sure you want to remove this vehicle?\n\nThe car will no longer appear in your list, but it will be kept in the service history."
+      "delete": "Are you sure you want to remove this vehicle \"{{name}}\"?\n\nThe car will no longer appear in your list, but it will be kept in the service history."
     },
     "success": {
       "create": "Car created successfully",
       "update": "Car updated successfully",
-      "deactivate": "Car deactivated successfully"
+      "delete": "Car deleted successfully"
     },
     "errors": {
       "create": "Error creating car",
       "update": "Error updating car",
-      "deactivate": "Error deactivating car"
+      "delete": "Error deleting car"
     }
   },
 
@@ -253,6 +257,19 @@
       "select_certification": "Select Certification",
       "partner_error": "This field is required",
       "certification_error": "This field is required"
+    },
+    "confirm": {
+      "delete": "Are you sure you want to delete the certification \"{{name}}\"?"
+    },
+    "errors": {
+      "create": "Error creating certification",
+      "update": "Error updating certification",
+      "delete": "Error deleting admin"  
+    },
+    "success": {
+      "create": "Certification created successfully", 
+      "update": "Certification updated successfully",
+      "delete": "Certification delete successfully"  
     }
   },
 
@@ -334,13 +351,17 @@
       "name_error": "This field is required"
     },
     "confirm": {
-      "deactivate": "Are you sure you want to delete the speciality \"{{name}}\"?"
+      "delete": "Are you sure you want to delete the speciality \"{{name}}\"?"
     },
     "success": {
-      "deactivate": "Speciality deleted successfully"
+      "create": "Speciality created successfully",
+      "update": "Speciality updated successfully",
+      "delete": "Speciality deleted successfully"
     },
     "errors": {
-      "deactivate": "Error deleting speciality"
+      "create": "Error creating speciality",
+      "update": "Error updating speciality",
+      "delete": "Error deleting speciality"
     }
   },
 
@@ -364,14 +385,17 @@
       "name_error": "This field is required"
     },
     "confirm": {
-      "deactivate": "Are you sure you want to delete the brand \"{{name}}\"?"
+      "delete": "Are you sure you want to delete the brand \"{{name}}\"?"
     },
     "success": {
+      "create": "Brand created successfully",
       "update": "Car updated successfully",
-      "deactivate": "Brand deleted successfully"
+      "delete": "Brand deleted successfully"
     },
     "errors": {
-      "deactivate": "Error deleting brand"
+      "create": "Error creating brand",
+      "update": "Error updating brand",
+      "delete": "Error deleting brand"
     }
   },
 
@@ -396,13 +420,17 @@
       "name_error": "This field is required"
     },
     "confirm": {
-      "deactivate": "Are you sure you want to delete the certification \"{{name}}\"?"
+      "delete": "Are you sure you want to delete the certification \"{{name}}\"?"
     },
     "success": {
-      "deactivate": "Certification deleted successfully"
+      "create": "Certification created successfully",
+      "update": "Certification updated successfully",
+      "delete": "Certification deleted successfully"
     },
     "errors": {
-      "deactivate": "Error deleting certification"
+      "create": "Error creating certification",
+      "update": "Error updating certification",
+      "delete": "Error deleting certification"
     }
   },
 
@@ -428,13 +456,17 @@
       "description_error": "This field is required"
     },
     "confirm": {
-      "deactivate": "Are you sure you want to delete the module \"{{name}}\"?"
+      "delete": "Are you sure you want to delete the module \"{{name}}\"?"
     },
     "success": {
-      "deactivate": "Module deleted successfully"
+      "create": "Module created successfully",
+      "update": "Module updated successfully",
+      "delete": "Module deleted successfully"
     },
     "errors": {
-      "deactivate": "Error deleting module"
+      "create": "Error creating module",
+      "update": "Error updating module",
+      "delete": "Error deleting module"
     }
   },
 
@@ -464,13 +496,17 @@
       "module_error": "This field is required"
     },
     "confirm": {
-      "deactivate": "Are you sure you want to delete the permission \"{{name}}\"?"
+      "delete": "Are you sure you want to delete the permission \"{{name}}\"?"
     },
     "success": {
-      "deactivate": "Permission deleted successfully"
+      "create": "Permission created successfully",
+      "update": "Permission updated successfully",
+      "delete": "Permission deleted successfully"
     },
     "errors": {
-      "deactivate": "Error deleting permission"
+      "create": "Error creating permission",
+      "update": "Error updating permission",
+      "delete": "Error deleting permission"
     }
   },
 

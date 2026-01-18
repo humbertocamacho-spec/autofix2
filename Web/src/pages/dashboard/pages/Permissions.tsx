@@ -107,7 +107,7 @@ export default function PermissionsTable() {
 
   // Delete permission
   const deletePermission = async (permission: Permission) => {
-    const confirmed = window.confirm(t("permissions_screen.confirm.deactivate", { name: permission.name,}));
+    const confirmed = window.confirm(t("permissions_screen.confirm.delete", { name: permission.name,}));
     if (!confirmed) return;
 
     const res = await authFetch(
@@ -115,9 +115,9 @@ export default function PermissionsTable() {
       { method: "DELETE" }
     );
 
-    if (!res.ok) { alert(t("permissions_screen.errors.deactivate")); return;}
+    if (!res.ok) { alert(t("permissions_screen.errors.delete")); return;}
 
-    alert(t("permissions_screen.success.deactivate"));
+    alert(t("permissions_screen.success.delete"));
     fetchPermissions();
   };
 
