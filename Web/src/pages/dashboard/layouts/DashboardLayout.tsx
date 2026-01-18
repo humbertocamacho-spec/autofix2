@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
 import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineLogout, HiOutlineChevronDown, HiOutlineKey,HiOutlineDocumentDuplicate,
-  HiOutlineEye,HiOutlineTranslate,HiOutlineChevronRight, HiOutlineMenu, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, 
+  HiOutlineEye,HiOutlineTranslate,HiOutlineChevronRight, HiOutlineMenu, HiOutlineUserGroup, HiOutlineBriefcase, 
   HiOutlineShieldCheck,HiOutlineIdentification,HiOutlineThumbUp
 } from "react-icons/hi";
+import { IoCarOutline } from "react-icons/io5";
+import { TbBrandVolkswagen } from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 import type { Props } from "../../../types/props";
 import { ROLES } from "../../../constants/roles";
@@ -214,7 +216,7 @@ export default function DashboardLayout({ children }: Props) {
 
               {CheckPermissionForModule("myCars") && (
                 <Link to="/dashboard/my-cars" className={linkClass("/dashboard/my-cars")}>
-                  <HiOutlineTruck size={iconSize} />
+                  <IoCarOutline size={iconSize} />
                   <span className={textClass()}>{t("myCars")}</span>
                   {!sidebarOpen && <Tooltip>{t("myCars")}</Tooltip>}
                 </Link>
@@ -274,7 +276,7 @@ export default function DashboardLayout({ children }: Props) {
 
               {CheckPermissionForModule("brands") && (
                 <Link to="/dashboard/brands" className={linkClass("/dashboard/brands")}>
-                  <HiOutlineTruck size={iconSize} />
+                  <TbBrandVolkswagen size={iconSize} />
                   <span className={textClass()}>{t("brands")}</span>
                   {!sidebarOpen && <Tooltip>{t("brands")}</Tooltip>}
                 </Link>
