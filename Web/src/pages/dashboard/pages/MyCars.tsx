@@ -53,7 +53,12 @@ export default function MyCarsTable() {
     try {
         const res = await authFetch(`${VITE_API_URL}/api/car_brands`);
         const data = await res.json();
-        setBrands(Array.isArray(data) ? data : []);
+
+        const sortedBrands = Array.isArray(data)
+        ? [...data].sort((a, b) => a.name.localeCompare(b.name, "es", { sensitivity: "base" }))
+        : [];
+
+        setBrands(sortedBrands);
     } catch (error) {
         console.error("Error fetching brands:", error);
     }
@@ -111,34 +116,34 @@ export default function MyCarsTable() {
     if (!validateForm()) return;
 
     try {
-        const res = await authFetch(`${VITE_API_URL}/api/car`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                name,
-                car_brand_id,
-                model,
-                year: Number(year),
-                type,
-                plate,
-                client_id: user.id,
-            }),
-        });
+      const res = await authFetch(`${VITE_API_URL}/api/car`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            name,
+            car_brand_id,
+            model,
+            year: Number(year),
+            type,
+            plate,
+            client_id: user.id,
+        }),
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (!res.ok) {
-            alert(data.message || "Error al crear vehículo");
-            return;
-        }
+      if (!res.ok) {
+          alert(data.message || "Error al crear vehículo");
+          return;
+      }
 
-        alert(t("myCars_screen.success.create"));
-        setOpenModal(false);
-        fetchCars();
+      alert(t("myCars_screen.success.create"));
+      setOpenModal(false);
+      fetchCars();
 
-    } catch (error) {
-        console.error("Error creating car:", error);
-        alert(t("myCars_screen.errors.create"));
+    }catch (error) {
+      console.error("Error creating car:", error);
+      alert(t("myCars_screen.errors.create"));
     }
   };
 
@@ -149,26 +154,26 @@ export default function MyCarsTable() {
     if (!validateForm()) return;
 
     try {
-        const res = await authFetch(`${VITE_API_URL}/api/car/${currentCar.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                name,
-                car_brand_id,
-                model,
-                year: Number(year),
-                type,
-                plate,
-            }),
-        });
+      const res = await authFetch(`${VITE_API_URL}/api/car/${currentCar.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            name,
+            car_brand_id,
+            model,
+            year: Number(year),
+            type,
+            plate,
+        }),
+      });
 
-        const data = await res.json();
+      const data = await res.json();
 
-        if (!res.ok) { alert(data.message || "Error al actualizar"); return; }
+      if (!res.ok) { alert(data.message || "Error al actualizar"); return; }
 
-        alert(t("myCars_screen.success.update"));
-        setOpenModal(false);
-        fetchCars();
+      alert(t("myCars_screen.success.update"));
+      setOpenModal(false);
+      fetchCars();
 
     } catch (error) {
         console.error("Error updating car:", error);
@@ -178,117 +183,117 @@ export default function MyCarsTable() {
 
   // Delete car
   const handleDelete = async (id: number) => {
-      if (!confirm(t("myCars_screen.confirm.deactivate", { name: currentCar?.name }))) return;
+    if (!confirm(t("myCars_screen.confirm.deactivate", { name: currentCar?.name }))) return;
 
-      try {
-          const res = await authFetch(`${VITE_API_URL}/api/car/${id}`, {
-              method: "DELETE",
-          });
+    try {
+      const res = await authFetch(`${VITE_API_URL}/api/car/${id}`, {
+        method: "DELETE",
+      });
 
-          const data = await res.json();
+      const data = await res.json();
 
-          if (!res.ok) {
-              alert(data.message || "Error al eliminar");
-              return;
-          }
-
-          alert(t("myCars_screen.success.deactivate"));
-          fetchCars();
-
-      } catch (error) {
-          console.error("Error deleting car:", error);
-          alert(t("myCars_screen.errors.deactivate"));
+      if (!res.ok) {
+        alert(data.message || "Error al eliminar");
+        return;
       }
+
+      alert(t("myCars_screen.success.deactivate"));
+      fetchCars();
+
+    } catch (error) {
+        console.error("Error deleting car:", error);
+        alert(t("myCars_screen.errors.deactivate"));
+    }
   };
 
   // Filter cars by name, brand, model or plate
   const filtered = cars.filter((c) =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.brand_name?.toLowerCase().includes(search.toLowerCase()) ||
-      c.model.toLowerCase().includes(search.toLowerCase()) ||
-      c.plate.toLowerCase().includes(search.toLowerCase())
+    c.name.toLowerCase().includes(search.toLowerCase()) ||
+    c.brand_name?.toLowerCase().includes(search.toLowerCase()) ||
+    c.model.toLowerCase().includes(search.toLowerCase()) ||
+    c.plate.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
       <DashboardLayout>
-          {!user ? (
-            <p className="text-center py-10">{t("myCars_screen.loading")}</p>
-          ) : (
-            <>
-              <h1 className="text-3xl font-bold mb-6">{t("myCars_screen.title")}</h1>
+        {!user ? (
+          <p className="text-center py-10">{t("myCars_screen.loading")}</p>
+        ) : (
+          <>
+            <h1 className="text-3xl font-bold mb-6">{t("myCars_screen.title")}</h1>
 
-                {/* Search input and create button */}
-                <div className="mb-6 flex justify-between">
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        className="w-80 px-4 py-2 rounded-lg border border-gray-300"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
+              {/* Search input and create button */}
+              <div className="mb-6 flex justify-between">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="w-80 px-4 py-2 rounded-lg border border-gray-300"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
 
-                    <Can permission="create_cars_clients">
-                        <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                            {t("myCars_screen.add_button")}
-                        </button>
-                    </Can>
-                </div>
+                <Can permission="create_cars_clients">
+                  <button onClick={openCreateModal} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                      {t("myCars_screen.add_button")}
+                  </button>
+                </Can>
+              </div>
 
-                {/* Cars table */}
-                <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
-                    {loading ? (
-                        <p className="text-center py-10 text-gray-500">{t("myCars_screen.loading")}</p>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead>
-                                    <tr className="text-gray-600 border-b">
-                                        <th className="pb-3">{t("myCars_screen.table.name")}</th>
-                                        <th className="pb-3">{t("myCars_screen.table.brand")}</th>
-                                        <th className="pb-3">{t("myCars_screen.table.model")}</th>
-                                        <th className="pb-3">{t("myCars_screen.table.year")}</th>
-                                        <th className="pb-3">{t("myCars_screen.table.type")}</th>
-                                        <th className="pb-3">{t("myCars_screen.table.plate")}</th>
-                                        <th className="pb-3 text-right w-40 pr-6">{t("myCars_screen.table.actions")}</th>
-                                    </tr>
-                                </thead>
+              {/* Cars table */}
+              <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
+                {loading ? (
+                  <p className="text-center py-10 text-gray-500">{t("myCars_screen.loading")}</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="text-gray-600 border-b">
+                                <th className="pb-3">{t("myCars_screen.table.name")}</th>
+                                <th className="pb-3">{t("myCars_screen.table.brand")}</th>
+                                <th className="pb-3">{t("myCars_screen.table.model")}</th>
+                                <th className="pb-3">{t("myCars_screen.table.year")}</th>
+                                <th className="pb-3">{t("myCars_screen.table.type")}</th>
+                                <th className="pb-3">{t("myCars_screen.table.plate")}</th>
+                                <th className="pb-3 text-right w-40 pr-6">{t("myCars_screen.table.actions")}</th>
+                            </tr>
+                        </thead>
 
-                                <tbody>
-                                    {filtered.map((car) => (
-                                        <tr key={car.id} className="border-b hover:bg-gray-50 text-gray-700">
-                                            <td className="py-3">{car.name}</td>
-                                            <td className="py-3">{car.brand_name}</td>
-                                            <td className="py-3">{car.model}</td>
-                                            <td className="py-3">{car.year}</td>
-                                            <td className="py-3">{car.type}</td>
-                                            <td className="py-3">{car.plate}</td>
+                        <tbody>
+                          {filtered.map((car) => (
+                            <tr key={car.id} className="border-b hover:bg-gray-50 text-gray-700">
+                              <td className="py-3">{car.name}</td>
+                              <td className="py-3">{car.brand_name}</td>
+                              <td className="py-3">{car.model}</td>
+                              <td className="py-3">{car.year}</td>
+                              <td className="py-3">{car.type}</td>
+                              <td className="py-3">{car.plate}</td>
 
-                                            <td className="py-3 text-right pr-6">
-                                                <div className="flex justify-end space-x-2">
-                                                    <Can permission="update_cars_clients">
-                                                        <button onClick={() => openEditModal(car)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
-                                                            {t("myCars_screen.edit")}
-                                                        </button>
-                                                    </Can>
+                              <td className="py-3 text-right pr-6">
+                                <div className="flex justify-end space-x-2">
+                                  <Can permission="update_cars_clients">
+                                    <button onClick={() => openEditModal(car)} className="px-3 py-1 bg-yellow-500 text-white rounded-lg text-sm hover:bg-yellow-600">
+                                        {t("myCars_screen.edit")}
+                                    </button>
+                                  </Can>
 
-                                                    <Can permission="delete_cars_clients">
-                                                        <button onClick={() => handleDelete(car.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
-                                                            {t("myCars_screen.delete")}
-                                                        </button>
-                                                    </Can>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                  <Can permission="delete_cars_clients">
+                                    <button onClick={() => handleDelete(car.id)} className="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
+                                        {t("myCars_screen.delete")}
+                                    </button>
+                                  </Can>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                    </table>
 
-                            {filtered.length === 0 && (
-                                <p className="text-center py-6 text-gray-500">{t("myCars_screen.no_results")}</p>
-                            )}
-                        </div>
+                    {filtered.length === 0 && (
+                        <p className="text-center py-6 text-gray-500">{t("myCars_screen.no_results")}</p>
                     )}
-                </div>
+                  </div>
+                )}
+              </div>
 
                 {/* Create / edit car modal */}
                 {openModal && (
@@ -360,9 +365,9 @@ export default function MyCarsTable() {
                         <div>
                           <RequiredLabel required>{t("myCars_screen.table.type")}</RequiredLabel>
                           <input className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.type ? "border-red-500" : "border-gray-300"}`}
-                              value={type}
-                              onChange={(e) => { setType(e.target.value); setErrors((prev) => ({ ...prev, type: "" })); }}
-                              placeholder="Ej. Sedán"
+                            value={type}
+                            onChange={(e) => { setType(e.target.value); setErrors((prev) => ({ ...prev, type: "" })); }}
+                            placeholder="Ej. Sedán"
                           />
                           {submitted && errors.type && (<p className="text-red-500 text-xs mt-1">{errors.type}</p>)}
                         </div>
@@ -370,12 +375,12 @@ export default function MyCarsTable() {
                         <div>
                           <RequiredLabel required>{t("myCars_screen.table.plate")}</RequiredLabel>
                           <input className={`w-full px-3 py-2 rounded-lg border  ${submitted && errors.plate ? "border-red-500" : "border-gray-300"} `}
-                              value={plate}
-                              onChange={(e) => { setPlate(e.target.value.toUpperCase()); setErrors((prev) => ({ ...prev, plate: "" })); }}
-                              placeholder="Ej. ABC1234"
+                            value={plate}
+                            onChange={(e) => { setPlate(e.target.value.toUpperCase()); setErrors((prev) => ({ ...prev, plate: "" })); }}
+                            placeholder="Ej. ABC1234"
                           />
                           {submitted && errors.plate && (
-                              <p className="text-red-500 text-xs mt-1">{errors.plate}</p>
+                            <p className="text-red-500 text-xs mt-1">{errors.plate}</p>
                           )}
                         </div>
                       </div>
@@ -387,9 +392,9 @@ export default function MyCarsTable() {
                         </button>
 
                         <Can permission={isEditing ? "update_cars_clients" : "create_cars_clients"}>
-                            <button onClick={isEditing ? handleUpdate : handleCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
-                                {isEditing ? t("myCars_screen.save") : t("myCars_screen.create")}
-                            </button>
+                          <button onClick={isEditing ? handleUpdate : handleCreate} className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+                              {isEditing ? t("myCars_screen.save") : t("myCars_screen.create")}
+                          </button>
                         </Can>
                       </div>
                     </div>
