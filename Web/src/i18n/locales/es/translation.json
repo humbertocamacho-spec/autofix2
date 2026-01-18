@@ -286,7 +286,7 @@
     "add_button": "Agregar Usuario",
     "delete": "Desactivar",
     "edit": "Editar",
-    "loading": "Cargando usuarios...",
+    "loading": "Cargando ...",
     "restore": "Restaurar",
     "modal": {
       "cancel": "Cancelar",
@@ -437,7 +437,7 @@
     "title": "Módulos",
     "search_placeholder": "Buscar módulo...",
     "add_button": "Agregar Módulo",
-    "loading": "Cargando módulos...",
+    "loading": "Cargando ...",
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron módulos",
@@ -473,7 +473,7 @@
     "title": "Permisos",
     "search_placeholder": "Buscar permiso...",
     "add_button": "Agregar Permiso",
-    "loading": "Cargando permisos...",
+    "loading": "Cargando ...",
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron permisos",
@@ -511,7 +511,7 @@
 
    "roles_screen": {
     "title": "Gestión de Roles y Permisos",
-    "loading_roles": "Cargando roles...",
+    "loading_roles": "Cargando ...",
     "assigned_permissions": "Permisos asignados a",
     "save_button": "Guardar Cambios",
     "saved_alert": "Permisos guardados",
@@ -586,6 +586,31 @@
     "catalogs": "Catálogos",
     "pending": "Pendientes",
     "confirmed": "Confirmados"
+  },
+
+  "profile": {
+    "title": "Perfil",
+    "email": "Correo",
+    "name": "Nombre",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "role": "Rol",
+    "save": "Guardar",
+    "changePhoto": "Cambiar foto",
+    "updated": "Perfil actualizado",
+    "cancel": "Cancelar",
+    "paste_url": "Pega la URL de la foto"
+  },
+
+  "password": {
+    "title": "Cambiar contraseña",
+    "current": "Contraseña actual",
+    "new": "Nueva contraseña",
+    "confirm": "Confirmar contraseña",
+    "save": "Guardar",
+    "mismatch": "Las contraseñas no coinciden",
+    "description": "Cambia tu contraseña para acceder a tu cuenta.",
+    "updated": "Contraseña actualizada"
   },
 
   "unauthorized_page": {

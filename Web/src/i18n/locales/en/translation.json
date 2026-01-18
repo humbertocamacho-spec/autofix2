@@ -286,7 +286,7 @@
     "add_button": "Add User",
     "delete": "Deactivate",
     "edit": "Edit",
-    "loading": "Loading users...",
+    "loading": "Loading ...",
     "restore": "Restore",
     "modal": {
       "cancel": "Cancel",
@@ -438,7 +438,7 @@
     "title": "Modules",
     "search_placeholder": "Search module...",
     "add_button": "Add Module",
-    "loading": "Loading modules...",
+    "loading": "Loading ...",
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No modules found",
@@ -474,7 +474,7 @@
     "title": "Permissions",
     "search_placeholder": "Search permission...",
     "add_button": "Add Permission",
-    "loading": "Loading permissions...",
+    "loading": "Loading ...",
     "edit": "Edit",
     "delete": "Delete",
     "no_results": "No permissions found",
@@ -512,7 +512,7 @@
 
   "roles_screen": {
     "title": "Role and Permissions Management",
-    "loading_roles": "Loading roles...",
+    "loading_roles": "Loading ...",
     "assigned_permissions": "Permissions assigned to",
     "save_button": "Save Changes",
     "saved_alert": "Permissions saved",
@@ -600,7 +600,8 @@
     "save": "Save",
     "changePhoto": "Change Photo",
     "updated": "Profile updated",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "paste_url": "Paste the URL of the photo"
   },
 
   "password": {

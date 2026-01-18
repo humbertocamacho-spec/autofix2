@@ -175,7 +175,7 @@ export default function ProfileScreen() {
             <input
               type="text"
               className="w-full rounded-lg border px-3 py-2 mb-4 outline-none"
-              placeholder="Pega la URL de la foto"
+              placeholder={t("profile.paste_url")}
               value={photoInput}
               onChange={(e) => setPhotoInput(e.target.value)}
             />
