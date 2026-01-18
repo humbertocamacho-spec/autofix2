@@ -75,7 +75,7 @@ router.put("/:id",authMiddleware, async (req, res) => {
   );
 
   if (existPlate.length > 0) {
-      return res.status(409).json({ message: "Otra unidad ya usa esta placa" });
+      return res.status(409).json({ message: "La placa ya está registrada en otro vehículo" });
   }
 
   try {
