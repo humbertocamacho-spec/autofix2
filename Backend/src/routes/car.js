@@ -97,16 +97,26 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
 
   try {
+    // Quitar el auto del cliente
+    await db.query(
+      "DELETE FROM cars_clients WHERE car_id = ?",
+      [id]
+    );
 
-      await db.query("DELETE FROM cars_clients WHERE car_id = ?", [id]);
+    // Marcar el auto como inactivo
+    await db.query(
+      "UPDATE cars SET active = 0 WHERE id = ?",
+      [id]
+    );
 
-      await db.query("DELETE FROM cars WHERE id = ?", [id]);
-
-      res.json({ ok: true, message: "Vehículo eliminado" });
+    res.json({
+      ok: true,
+      message: "Vehículo eliminado de tu lista"
+    });
 
   } catch (error) {
-      console.error("Error al eliminar vehículo:", error);
-      res.status(500).json({ message: "Error al eliminar vehículo" });
+    console.error("Error al eliminar vehículo:", error);
+    res.status(500).json({ message: "Error al eliminar vehículo" });
   }
 });
 

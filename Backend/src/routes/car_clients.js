@@ -21,12 +21,19 @@ router.get("/client/:client_id", authMiddleware, async (req, res) => {
   try {
     const [rows] = await db.query(`
       SELECT 
-        c.id, c.name, c.car_brand_id, c.model, c.year, c.type, c.plate,
+        c.id,
+        c.name,
+        c.car_brand_id,
+        c.model,
+        c.year,
+        c.type,
+        c.plate,
         cb.name AS brand_name
       FROM cars_clients cc
       INNER JOIN cars c ON c.id = cc.car_id
       LEFT JOIN car_brands cb ON cb.id = c.car_brand_id
       WHERE cc.client_id = ?
+        AND c.active = 1
     `, [client_id]);
 
     res.json(rows);
