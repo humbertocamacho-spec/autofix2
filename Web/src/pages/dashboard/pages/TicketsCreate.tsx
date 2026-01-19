@@ -28,7 +28,7 @@ export default function TicketsTable() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await authFetch(`${VITE_API_URL}/api/ticket`, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json",},});
+      const res = await authFetch(`${VITE_API_URL}/api/ticket`, { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", }, });
 
       const data = await res.json();
       setTickets(Array.isArray(data) ? data : []);
@@ -58,7 +58,7 @@ export default function TicketsTable() {
 
       const res = await authFetch(`${VITE_API_URL}/api/ticket/${id}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`,},
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
       });
 
       const data = await res.json();
@@ -122,7 +122,16 @@ export default function TicketsTable() {
                       <img src={item.logo_url || "/images/no-logo.png"} className="h-8 w-8 rounded-full border" />
                       <span>{item.partner_name}</span>
                     </td>
-                    <td className="py-3">{new Date(item.date).toLocaleString()}</td>
+                    <td className="py-3">{new Date(item.date).toLocaleString("es-ES", {
+                      timeZone: "UTC",
+                      year: "numeric",
+                      month: "numeric",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                      //second: "2-digit",
+                      hour12: true,
+                    })}</td>
                     <td className="py-3 max-w-xs whitespace-normal">{item.notes || "—"}</td>
                     <td className="py-3">
                       <span
