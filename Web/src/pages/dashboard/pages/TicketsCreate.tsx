@@ -122,7 +122,7 @@ export default function TicketsTable() {
                       <img src={item.logo_url || "/images/no-logo.png"} className="h-8 w-8 rounded-full border" />
                       <span>{item.partner_name}</span>
                     </td>
-                    <td className="py-3">{new Date(item.date).toLocaleString("es-MX")}</td>
+                    <td className="py-3">{new Date(item.date).toLocaleString()}</td>
                     <td className="py-3 max-w-xs whitespace-normal">{item.notes || "—"}</td>
                     <td className="py-3">
                       <span

@@ -9,7 +9,7 @@ router.get("/app", authMiddleware, async (req, res) => {
     try {
         const { user_id } = req.user;
 
-        const [clientRows] = await db.query("SELECT id FROM clients WHERE user_id = ?", [user_id]);
+        const [clientRows] = await db.query( "SELECT id FROM clients WHERE user_id = ?", [user_id]);
 
         if (!clientRows.length) {
             return res.json([]);
@@ -84,7 +84,7 @@ router.get("/", authMiddleware, async (req, res) => {
 
         if (role_name === "partner") {
             // Get all partners for the user
-            const [partners] = await db.query("SELECT id FROM partners WHERE user_id = ?", [user_id]);
+            const [partners] = await db.query( "SELECT id FROM partners WHERE user_id = ?",[user_id]);
 
             const partnerIds = partners.map(p => p.id);
 
@@ -169,15 +169,12 @@ router.get("/by-id/:id", authMiddleware, async (req, res) => {
 // Endpoint to create a ticket
 router.post("/", authMiddleware, async (req, res) => {
     const { client_id, car_id, partner_id, date, notes } = req.body;
-    
-    const mysqlDate = date.replace("T", ":00 ").replace(" ", "");
-
 
     try {
         const [result] = await db.query(
             `INSERT INTO tickets (client_id, car_id, partner_id, date, notes)
              VALUES (?, ?, ?, ?, ?)`,
-            [client_id, car_id, partner_id, mysqlDate, notes]
+            [client_id, car_id, partner_id, date, notes]
         );
 
         res.json({ message: "Ticket creado", id: result.insertId });
@@ -193,7 +190,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
     const { id } = req.params;
 
     try {
-        const [result] = await db.query("DELETE FROM tickets WHERE id = ?", [id]);
+        const [result] = await db.query( "DELETE FROM tickets WHERE id = ?", [id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ ok: false, message: "Ticket no encontrado" });
@@ -219,7 +216,7 @@ router.put("/:id/status", authMiddleware, async (req, res) => {
     }
 
     try {
-        const [result] = await db.query(`UPDATE tickets SET status = ? WHERE id = ?`, [status, id]);
+        const [result] = await db.query( `UPDATE tickets SET status = ? WHERE id = ?`, [status, id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: "Ticket no encontrado" });
