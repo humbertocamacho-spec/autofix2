@@ -169,9 +169,8 @@ router.get("/by-id/:id", authMiddleware, async (req, res) => {
 // Endpoint to create a ticket
 router.post("/", authMiddleware, async (req, res) => {
     const { client_id, car_id, partner_id, date, notes } = req.body;
-
-    const utcDate = new Date(date);
-    const mysqlDate = utcDate.toISOString().slice(0, 19).replace("T", " ");
+    
+    const mysqlDate = date.replace("T", ":00 ").replace(" ", "");
 
 
     try {
