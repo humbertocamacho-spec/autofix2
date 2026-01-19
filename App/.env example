@@ -1,3 +1,6 @@
-API_URL=
-GOOGLE_API_KEY=
-GOOGLE_API_KEY_IOS=
+# API URL del backend
+API_URL=   # Cambiar al URL real en desarrollo o producción
+
+# Google APIs
+GOOGLE_API_KEY=your_google_api_key_here
+GOOGLE_API_KEY_IOS=your_google_api_key_ios_here

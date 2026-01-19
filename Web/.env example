@@ -1,1 +1,6 @@
-VITE_API_URL=
+# URL de la API
+# Para producción: reemplazar con la URL real de producción
+VITE_API_URL=/api
+
+# Para desarrollo local, usar algo como:
+# VITE_API_URL=https://prolific-happiness-production.up.railway.app
