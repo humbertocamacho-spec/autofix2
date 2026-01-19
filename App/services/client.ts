@@ -1,6 +1,6 @@
 import { API_URL } from '@/config/env';
 
-const BASE_URL = `${API_URL}/api/client`;
+const BASE_URL = `${API_URL}/client`;
 
 export async function getClients() {
     try {

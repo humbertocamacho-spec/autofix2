@@ -1,7 +1,7 @@
 import { API_URL } from '@/config/env';
 import { authFetch } from "@/utils/authFetch";
 
-const BASE_URL = `${API_URL}/api/car_clients`;
+const BASE_URL = `${API_URL}/car_clients`;
 
 export async function getCarsByClient(client_id: number) {
     try {

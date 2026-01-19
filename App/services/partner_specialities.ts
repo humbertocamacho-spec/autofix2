@@ -3,7 +3,7 @@ import { authFetch } from '@/utils/authFetch';
 
 export async function getPartnerSpecialities() {
   try {
-    const res = await authFetch(`${API_URL}/api/partner_specialities`);
+    const res = await authFetch(`${API_URL}/partner_specialities`);
 
     if (!res.ok) {
       console.error(`Error HTTP: ${res.status}`);

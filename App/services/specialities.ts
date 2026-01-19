@@ -3,7 +3,7 @@ import { API_URL } from '@/config/env';
 
 export async function getSpecialities() {
   try {
-    const res = await authFetch(`${API_URL}/api/specialities`);
+    const res = await authFetch(`${API_URL}/specialities`);
 
     if (!res.ok) {
       console.error(`Error HTTP: ${res.status} al obtener specialities`);
