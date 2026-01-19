@@ -54,10 +54,60 @@ export default function UsersTable() {
     }
   };
 
+  // Open create modal
+  const handleOpenCreate = () => {
+    setCurrentUser({
+      name: "",
+      email: "",
+      phone: "",
+      address: "",
+      role_id: 3,
+      gender_id: null,
+      photo_url: null,
+    } as User);
+
+    setOpenEdit(true);
+  };
+
   // Open edit modal
   const handleOpenEdit = (user: User) => {
     setCurrentUser(user);
     setOpenEdit(true);
+  };
+
+  const handleSaveUser = async () => {
+    if (currentUser?.id) {
+      await handleUpdateUser();
+    } else {
+      await handleCreateUser();
+    }
+  };
+
+  // Create user
+  const handleCreateUser = async () => {
+    if (!currentUser) return;
+
+    try {
+      const res = await authFetch(`${VITE_API_URL}/api/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(currentUser),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || t("users_screen.errors.create"));
+        return;
+      }
+
+      alert(t("users_screen.success.create"));
+      setOpenEdit(false);
+      setCurrentUser(null);
+      fetchUsers();
+    } catch (error) {
+      console.error(t("users_screen.errors.create"), error);
+    }
   };
 
   // Update user
@@ -156,7 +206,8 @@ export default function UsersTable() {
         />
 
         <Can permission="create_users">
-          <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+          <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition" 
+          onClick={handleOpenCreate}>
             {t("users_screen.add_button")}
           </button>
         </Can>
@@ -302,7 +353,7 @@ export default function UsersTable() {
               </button>
 
               <Can permission="update_users">
-                <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition" onClick={handleUpdateUser}>
+                <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition" onClick={handleSaveUser}>
                   {t("users_screen.modal.save")}
                 </button>
               </Can>
