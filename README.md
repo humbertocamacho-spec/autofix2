@@ -71,8 +71,8 @@ AutoFix is designed to reduce friction between customers and workshops, making s
 ## Screenshots
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/b1c914f9-480e-49da-9ad2-799af809f8de" width="220" />
-  <img src="https://github.com/user-attachments/assets/4653dd2a-6dc9-40a9-b52e-a3ee4aa205df" width="220" />
-  <img src="https://github.com/user-attachments/assets/f320ed31-f9bb-4675-a9c3-0951eb29a57d" width="220" />
-  <img src="https://github.com/user-attachments/assets/8d7d85a0-e921-471f-ae7a-f5252859dc72" width="220" />
+  <img src="https://github.com/user-attachments/assets/b1c914f9-480e-49da-9ad2-799af809f8de" width="200" />
+  <img src="https://github.com/user-attachments/assets/4653dd2a-6dc9-40a9-b52e-a3ee4aa205df" width="200" />
+  <img src="https://github.com/user-attachments/assets/f320ed31-f9bb-4675-a9c3-0951eb29a57d" width="200" />
+  <img src="https://github.com/user-attachments/assets/8d7d85a0-e921-471f-ae7a-f5252859dc72" width="200" />
 </p>
