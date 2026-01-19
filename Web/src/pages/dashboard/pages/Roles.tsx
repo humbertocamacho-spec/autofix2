@@ -8,6 +8,7 @@ import type { Modules } from "../../../types/modules";
 import type { PermissionsByRole } from "../../../types/permissions_by_role";
 import type { GroupedPermissions } from "../../../types/grouped_permissions";
 import { authFetch } from "../../../utils/authFetch";
+import { useAuthContext } from "../../../context/AuthContext";
 
 export default function RolesTable() {
   const { t, i18n } = useTranslation();
@@ -17,6 +18,7 @@ export default function RolesTable() {
   const [expandedRole, setExpandedRole] = useState<number | null>(null);
   const [selectedPerms, setSelectedPerms] = useState<PermissionsByRole>({});
   const [loading, setLoading] = useState(true);
+  const { user, reloadUser } = useAuthContext();
 
   useEffect(() => {
     fetchRoles();
@@ -113,6 +115,12 @@ export default function RolesTable() {
     if (!res.ok) {
       alert(t("roles_screen.error_saving"));
       return;
+    }
+
+    if (user?.role_id === roleId) {
+      setTimeout(() => {
+        reloadUser(); // Reload user to update permissions
+      }, 300);
     }
 
     alert(t("roles_screen.saved_alert"));

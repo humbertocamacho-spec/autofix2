@@ -515,7 +515,10 @@
     "assigned_permissions": "Permisos asignados a",
     "save_button": "Guardar Cambios",
     "saved_alert": "Permisos guardados",
-    "unknown_module": "Desconocido"
+    "unknown_module": "Desconocido",
+    "confirm_changes": "¿Seguro que deseas cambiar los permisos de este rol?",
+    "added": "Permisos añadidos:",
+    "removed": "Permisos eliminados:"
   },
 
   "tickets_screen": {

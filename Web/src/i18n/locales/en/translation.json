@@ -516,7 +516,10 @@
     "assigned_permissions": "Permissions assigned to",
     "save_button": "Save Changes",
     "saved_alert": "Permissions saved",
-    "unknown_module": "Unknown"
+    "unknown_module": "Unknown",
+    "confirm_changes": "Are you sure you want to change the permissions for this role?",
+    "added": "Added permissions:",
+    "removed": "Removed permissions:"
   },
 
   "tickets_screen": {
@@ -619,6 +622,6 @@
     "title": "Unauthorized",
     "description": "You are not authorized to access this page.",
     "button": "Go to Dashboard"
-  } 
+  }
 }
 
