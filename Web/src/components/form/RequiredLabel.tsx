@@ -1,5 +1,6 @@
 import type { RequiredLabelProps } from "../../types/required_label";
 
+// Required label component
 export function RequiredLabel({
   children,
   required = false,

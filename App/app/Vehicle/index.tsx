@@ -36,7 +36,6 @@ export default function VehicleScreen() {
   const date = params.date;
   const time = params.time;
 
-
   useEffect(() => {
     const loadData = async () => {
       const brands = await getCarBrands();

@@ -6,6 +6,7 @@ import type { User } from "../../../types/users";
 import { useTranslation } from "react-i18next";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function ClientsTable() {
   const [clients, setClients] = useState<Client[]>([]);
@@ -16,23 +17,19 @@ export default function ClientsTable() {
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentClient, setCurrentClient] = useState<Client | null>(null);
-
   const [userId, setUserId] = useState<number | null>(null);
-
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
+  // Initial load of clients and users
+  useEffect(() => { fetchClients(); fetchUsers();}, []);
 
-  useEffect(() => {
-    fetchClients();
-    fetchUsers();
-  }, []);
-
+  // Fetch clients list
   const fetchClients = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/client`);
+      const res = await authFetch(`${VITE_API_URL}/api/client`);
       const data = await res.json();
-      setClients(data);
+      setClients(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching clients:", error);
     } finally {
@@ -40,16 +37,18 @@ export default function ClientsTable() {
     }
   };
 
+  // Fetch users for the select input
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users`);
+      const res = await authFetch(`${VITE_API_URL}/api/users`);
       const data = await res.json();
-      setUsers(data);
+      setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
 
+  // Basic form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -61,6 +60,7 @@ export default function ClientsTable() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Open modal in create mode
   const openCreate = () => {
     setIsEditing(false);
     setCurrentClient(null);
@@ -70,6 +70,7 @@ export default function ClientsTable() {
     setOpenModal(true);
   };
 
+  // Open modal in edit mode
   const openEdit = (client: Client) => {
     setIsEditing(true);
     setCurrentClient(client);
@@ -79,6 +80,7 @@ export default function ClientsTable() {
     setOpenModal(true);
   };
 
+  // Create or update client
   const saveClient = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
@@ -88,43 +90,45 @@ export default function ClientsTable() {
       ? `${VITE_API_URL}/api/client/${currentClient?.id}`
       : `${VITE_API_URL}/api/client`;
 
-    await fetch(url, {
+    await authFetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId }),
     });
 
+    alert(t(isEditing ? "clients_screen.success.update" : "clients_screen.success.create"));
     setOpenModal(false);
     fetchClients();
   };
 
+  // Delete client
   const deleteClient = async (client: Client) => {
     const confirmed = window.confirm(
-      t("clients_screen.confirm.deactivate", { name: client.user_name })
+      t("clients_screen.confirm.delete", { name: client.user_name })
     );
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/client/${client.id}`, {
+    const res = await authFetch(`${VITE_API_URL}/api/client/${client.id}`, {
       method: "DELETE",
     });
 
     if (!res.ok) {
-      alert(t("clients_screen.errors.deactivate"));
+      alert(t("clients_screen.errors.delete"));
       return;
     }
 
-    alert(t("clients_screen.success.deactivate"));
+    alert(t("clients_screen.success.delete"));
     fetchClients();
   };
 
-  const filtered = clients.filter((c) =>
-    c.user_name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter clients by name
+  const filtered = clients.filter((c) => c.user_name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("clients_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -141,6 +145,7 @@ export default function ClientsTable() {
         </Can>
       </div>
 
+      {/* Clients table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("clients_screen.loading")}</p>
@@ -186,6 +191,7 @@ export default function ClientsTable() {
         )}
       </div>
 
+      {/* Create / edit client modal */} 
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white w-[450px] p-6 rounded-2xl shadow-xl border border-gray-200">

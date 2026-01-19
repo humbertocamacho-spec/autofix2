@@ -21,6 +21,7 @@ import PartnersCertificationsTable from "../pages/dashboard/pages/Partner_Certif
 import ProfilePage from "../pages/dashboard/pages/Profile";
 import ChangePasswordPage from "../pages/dashboard/pages/Change-Password";
 
+// Routes for the web app
 export default function WebRoutes() {
   return (
     <Routes>

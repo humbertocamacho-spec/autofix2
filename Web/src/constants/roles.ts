@@ -1,3 +1,4 @@
+// Roles constants
 export const ROLES = {
   ADMIN: "admin",
   PARTNER: "partner",

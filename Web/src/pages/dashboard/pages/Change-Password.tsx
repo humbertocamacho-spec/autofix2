@@ -2,15 +2,16 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { useState } from "react";
 import { VITE_API_URL } from "../../../config/env";
 import { useTranslation } from "react-i18next";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function ChangePasswordScreen() {
   const { t } = useTranslation();
-
   const [current, setCurrent] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Handles password update request
   const changePassword = async () => {
     if (password !== confirm) {
       return alert(t("password.mismatch"));
@@ -19,13 +20,10 @@ export default function ChangePasswordScreen() {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(`${VITE_API_URL}/api/auth/change-password`, {
+      const res = await authFetch(`${VITE_API_URL}/api/auth/change-password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           current_password: current,
@@ -43,6 +41,7 @@ export default function ChangePasswordScreen() {
       setCurrent("");
       setPassword("");
       setConfirm("");
+
     } catch (error: any) {
       alert(error.message || t("error"));
     } finally {
@@ -56,12 +55,10 @@ export default function ChangePasswordScreen() {
         {t("password.title")}
       </h1>
 
+      {/* Change password form */}
       <div className="mx-auto max-w-md rounded-2xl bg-white p-10 shadow-2xl">
-
         <p className="mb-6 text-gray-600">{t("password.description")}</p>
-
         <div className="space-y-5">
-
           <div>
             <label className="text-sm font-medium text-gray-700">{t("password.current")}</label>
             <input
@@ -94,6 +91,7 @@ export default function ChangePasswordScreen() {
 
         </div>
 
+        {/* Submit Action */}
         <div className="mt-10 flex justify-end">
           <button
             onClick={changePassword}

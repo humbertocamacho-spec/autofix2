@@ -5,6 +5,7 @@ export default function UnauthorizedPage() {
     <div className="flex items-center justify-center min-h-screen bg-gray-50 p-6">
       <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-10 text-center border border-gray-200">
         
+        {/* Error icon */}
         <div className="mx-auto mb-6 flex items-center justify-center w-20 h-20 rounded-full bg-red-100">
           <span className="text-red-500 text-5xl font-bold">!</span>
         </div>

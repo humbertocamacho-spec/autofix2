@@ -1,5 +1,6 @@
 import pool from "../config/db.js";
 
+// Roles constants
 export const ROLES = Object.freeze({
   ADMIN: "admin",
   PARTNER: "partner",
@@ -8,6 +9,7 @@ export const ROLES = Object.freeze({
 
 const roleCache = {};
 
+// Get role id by name
 export async function getRoleId(roleName) {
   if (roleCache[roleName]) return roleCache[roleName];
 

@@ -22,17 +22,17 @@
       "user_error": "Este campo es obligatorio"
     },
     "confirm": {
-      "deactivate": "¿Seguro que deseas eliminar al administrador \"{{name}}\"?"
+      "delete": "¿Seguro que deseas eliminar al administrador \"{{name}}\"?"
     },
     "success": {
       "create": "Administrador creado correctamente",
       "update": "Administrador actualizado correctamente",
-      "deactivate": "Administrador eliminado correctamente"
+      "delete": "Administrador eliminado correctamente"
     },
     "errors": {
       "create": "Error al crear el administrador",
       "update": "Error al actualizar el administrador",
-      "deactivate": "Error al eliminar el administrador"
+      "delete": "Error al eliminar el administrador"
     }
   },
 
@@ -62,13 +62,17 @@
       "user_error": "Este campo es obligatorio"
     },
     "confirm": {
-      "deactivate": "¿Seguro que deseas eliminar al cliente \"{{name}}\"?"
+      "delete": "¿Seguro que deseas eliminar al cliente \"{{name}}\"?"
     },
     "success": {
-      "deactivate": "Cliente eliminado correctamente"
+      "create": "Cliente creado correctamente",
+      "update": "Cliente actualizado correctamente",
+      "delete": "Cliente eliminado correctamente"
     },
     "errors": {
-      "deactivate": "Error al eliminar el cliente"
+      "create": "Error creando el cliente",
+      "update": "Error actualizando el cliente",
+      "delete": "Error al eliminar el cliente"
     }
   },
 
@@ -107,6 +111,19 @@
       "year_error": "Este campo es obligatorio",
       "type_error": "Este campo es obligatorio",
       "plate_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "delete": "¿Seguro que deseas eliminar este vehículo \"{{name}}\"?\n\nEl vehículo ya no aparecerá en tu lista, pero se mantendrá en el historial de servicio."
+    },
+    "success": {
+      "create": "Vehículo creado correctamente",
+      "update": "Vehículo actualizado correctamente",
+      "delete": "Vehículo eliminado correctamente"
+    },
+    "errors": {
+      "create": "Error creando el vehículo",
+      "update": "Error actualizado el vehículo",
+      "delete": "Error al eliminar el vehículo"
     }
   },
 
@@ -240,6 +257,19 @@
       "select_certification": "Seleccionar Certificación",
       "partner_error": "Este campo es obligatorio",
       "certification_error": "Este campo es obligatorio"
+    },
+    "confirm": {
+      "delete": "¿Seguro que deseas eliminar la certificación \"{{name}}\"?"
+    },
+    "errors": {
+      "create": "Error al crear la certificación",
+      "update": "Error al actualizar la certificación",
+      "delete": "Error al eliminar la certificación"
+    },
+    "success": {
+      "create": "Certificación creada correctamente",
+      "update": "Certificación actualizada correctamente",
+      "delete": "Certificación eliminada correctamente"
     }
   },
 
@@ -256,7 +286,7 @@
     "add_button": "Agregar Usuario",
     "delete": "Desactivar",
     "edit": "Editar",
-    "loading": "Cargando usuarios...",
+    "loading": "Cargando ...",
     "restore": "Restaurar",
     "modal": {
       "cancel": "Cancelar",
@@ -319,13 +349,17 @@
       "name_error": "Este campo es obligatorio"
     },
     "confirm": {
-      "deactivate": "¿Seguro que deseas eliminar la especialidad \"{{name}}\"?"
+      "delete": "¿Seguro que deseas eliminar la especialidad \"{{name}}\"?"
     },
     "success": {
-      "deactivate": "Especialidad eliminada correctamente"
+      "create": "Especialidad creada correctamente",
+      "update": "Especialidad actualizada correctamente",
+      "delete": "Especialidad eliminada correctamente"
     },
     "errors": {
-      "deactivate": "Error al eliminar la especialidad"
+      "create": "Error creando la especialidad",
+      "update": "Error actualizando la especialidad",
+      "delete": "Error al eliminar la especialidad"
     }
   },
 
@@ -350,13 +384,17 @@
       "name_error": "Este campo es obligatorio"
     },
     "confirm": {
-      "deactivate": "¿Seguro que deseas eliminar la marca \"{{name}}\"?"
+      "delete": "¿Seguro que deseas eliminar la marca \"{{name}}\"?"
     },
     "success": {
-      "deactivate": "Marca eliminada correctamente"
+      "create": "Marca creada correctamente",
+      "update": "Marca actualizada correctamente",
+      "delete": "Marca eliminada correctamente"
     },
     "errors": {
-      "deactivate": "Error al eliminar la marca"
+      "create": "Error creando la marca",
+      "update": "Error actualizando la marca",
+      "delete": "Error al eliminar la marca"
     }
   },
 
@@ -381,13 +419,17 @@
       "name_error": "Este campo es obligatorio"
     },
     "confirm": {
-      "deactivate": "¿Seguro que deseas eliminar la certificación \"{{name}}\"?"
+      "delete": "¿Seguro que deseas eliminar la certificación \"{{name}}\"?"
     },
     "success": {
-      "deactivate": "Certificación eliminada correctamente"
+      "create": "Certificación creada correctamente",
+      "update": "Certificación actualizada correctamente",
+      "delete": "Certificación eliminada correctamente"
     },
     "errors": {
-      "deactivate": "Error al eliminar la certificación"
+      "create": "Error creando la certificación",
+      "update": "Error actualizando la certificación",
+      "delete": "Error al eliminar la certificación"
     }
   },
 
@@ -395,7 +437,7 @@
     "title": "Módulos",
     "search_placeholder": "Buscar módulo...",
     "add_button": "Agregar Módulo",
-    "loading": "Cargando módulos...",
+    "loading": "Cargando ...",
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron módulos",
@@ -413,13 +455,17 @@
       "description_error": "Este campo es obligatorio"
     },
     "confirm": {
-      "deactivate": "¿Seguro que deseas eliminar el módulo \"{{name}}\"?"
+      "delete": "¿Seguro que deseas eliminar el módulo \"{{name}}\"?"
     },
     "success": {
-      "deactivate": "Módulo eliminado correctamente"
+      "create": "Módulo creado correctamente",
+      "update": "Módulo actualizado correctamente",
+      "delete": "Módulo eliminado correctamente"
     },
     "errors": {
-      "deactivate": "Error al eliminar el módulo"
+      "create": "Error creando el módulo",
+      "update": "Error actualizando el módulo",
+      "delete": "Error al eliminar el módulo"
     }
   },
 
@@ -427,7 +473,7 @@
     "title": "Permisos",
     "search_placeholder": "Buscar permiso...",
     "add_button": "Agregar Permiso",
-    "loading": "Cargando permisos...",
+    "loading": "Cargando ...",
     "edit": "Editar",
     "delete": "Eliminar",
     "no_results": "No se encontraron permisos",
@@ -449,23 +495,30 @@
       "module_error": "Este campo es obligatorio"
     },
     "confirm": {
-      "deactivate": "¿Seguro que deseas eliminar el permiso \"{{name}}\"?"
+      "delete": "¿Seguro que deseas eliminar el permiso \"{{name}}\"?"
     },
     "success": {
-      "deactivate": "Permiso eliminado correctamente"
+      "create": "Permiso creado correctamente",
+      "update": "Permiso actualizado correctamente",
+      "delete": "Permiso eliminado correctamente"
     },
     "errors": {
-      "deactivate": "Error al eliminar el permiso"
+      "create": "Error creando el permiso",
+      "update": "Error actualizando el permiso",
+      "delete": "Error al eliminar el permiso"
     }
   },
 
    "roles_screen": {
     "title": "Gestión de Roles y Permisos",
-    "loading_roles": "Cargando roles...",
+    "loading_roles": "Cargando ...",
     "assigned_permissions": "Permisos asignados a",
     "save_button": "Guardar Cambios",
     "saved_alert": "Permisos guardados",
-    "unknown_module": "Desconocido"
+    "unknown_module": "Desconocido",
+    "confirm_changes": "¿Seguro que deseas cambiar los permisos de este rol?",
+    "added": "Permisos añadidos:",
+    "removed": "Permisos eliminados:"
   },
 
   "tickets_screen": {
@@ -536,6 +589,31 @@
     "catalogs": "Catálogos",
     "pending": "Pendientes",
     "confirmed": "Confirmados"
+  },
+
+  "profile": {
+    "title": "Perfil",
+    "email": "Correo",
+    "name": "Nombre",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "role": "Rol",
+    "save": "Guardar",
+    "changePhoto": "Cambiar foto",
+    "updated": "Perfil actualizado",
+    "cancel": "Cancelar",
+    "paste_url": "Pega la URL de la foto"
+  },
+
+  "password": {
+    "title": "Cambiar contraseña",
+    "current": "Contraseña actual",
+    "new": "Nueva contraseña",
+    "confirm": "Confirmar contraseña",
+    "save": "Guardar",
+    "mismatch": "Las contraseñas no coinciden",
+    "description": "Cambia tu contraseña para acceder a tu cuenta.",
+    "updated": "Contraseña actualizada"
   },
 
   "unauthorized_page": {

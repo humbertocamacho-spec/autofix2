@@ -1,9 +1,11 @@
 import express from "express";
 import db from "../config/db.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+// Endpoint to get all roles
+router.get("/",authMiddleware, async (req, res) => {
   try {
     const [rows] = await db.query("SELECT * FROM roles ORDER BY id ASC");
     res.json(rows);
@@ -13,7 +15,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:roleId/permissions", async (req, res) => {
+// Endpoint to create a role
+router.get("/:roleId/permissions",authMiddleware, async (req, res) => {
   const { roleId } = req.params;
 
   try {
@@ -22,10 +25,7 @@ router.get("/:roleId/permissions", async (req, res) => {
       [roleId]
     );
 
-    res.json({
-      ok: true,
-      permissions: rows.map(r => r.permission_id)
-    });
+    res.json({ ok: true, permissions: rows.map(r => r.permission_id)});
 
   } catch (error) {
     console.error("Error al obtener permisos del rol:", error);
@@ -33,7 +33,8 @@ router.get("/:roleId/permissions", async (req, res) => {
   }
 });
 
-router.post("/:roleId/permissions", async (req, res) => {
+// Endpoint to create a role
+router.post("/:roleId/permissions",authMiddleware, async (req, res) => {
   const { roleId } = req.params;
   const { permissions } = req.body;
 
@@ -47,10 +48,7 @@ router.post("/:roleId/permissions", async (req, res) => {
     connection = await db.getConnection();
     await connection.beginTransaction();
 
-    await connection.query(
-      "DELETE FROM roles_permissions WHERE role_id = ?",
-      [roleId]
-    );
+    await connection.query( "DELETE FROM roles_permissions WHERE role_id = ?", [roleId]);
 
     for (const perm of permissions) {
       await connection.query(
@@ -73,7 +71,8 @@ router.post("/:roleId/permissions", async (req, res) => {
   }
 });
 
-router.put("/update-role", async (req, res) => {
+// Endpoint to delete a role
+router.put("/update-role",authMiddleware, async (req, res) => {
   let connection;
 
   try {
@@ -122,11 +121,7 @@ router.put("/update-role", async (req, res) => {
     if (newRoleId === 1)
       await connection.query("INSERT INTO admins (user_id) VALUES (?)", [userId]);
 
-    await connection.query(
-      "UPDATE users SET role_id = ? WHERE id = ?",
-      [newRoleId, userId]
-    );
-
+    await connection.query( "UPDATE users SET role_id = ? WHERE id = ?", [newRoleId, userId]);
     await connection.commit();
 
     res.json({ ok: true, message: "Rol actualizado exitosamente" });
@@ -135,7 +130,6 @@ router.put("/update-role", async (req, res) => {
     console.error(error);
 
     if (connection) await connection.rollback();
-
     res.status(500).json({ ok: false, message: "Error al actualizar rol" });
 
   } finally {

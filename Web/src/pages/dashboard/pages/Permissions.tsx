@@ -6,6 +6,7 @@ import type { Modules } from "../../../types/modules";
 import type { Permission } from "../../../types/permission";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function PermissionsTable() {
   const { t } = useTranslation();
@@ -21,14 +22,16 @@ export default function PermissionsTable() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
+  // Initial load of modules and permissions
   useEffect(() => {
     fetchModules();
     fetchPermissions();
   }, []);
 
+  // Fetch modules list
   const fetchModules = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/modules`);
+      const res = await authFetch(`${VITE_API_URL}/api/modules`);
       const data = await res.json();
       setModules(data.modules || []);
     } catch (error) {
@@ -36,9 +39,10 @@ export default function PermissionsTable() {
     }
   };
 
+  // Fetch permissions list
   const fetchPermissions = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/permissions`);
+      const res = await authFetch(`${VITE_API_URL}/api/permissions`);
       const data = await res.json();
       setPermissions(data.permissions || []);
     } catch (error) {
@@ -48,6 +52,7 @@ export default function PermissionsTable() {
     }
   };
 
+  // Basic form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -58,8 +63,10 @@ export default function PermissionsTable() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Get module name
   const getModuleName = (id: number) => modules.find((m) => m.id === id)?.name || t("permissions_screen.unknown_module");
 
+  // Open create modal
   const openCreate = () => {
     setIsEditing(false);
     setCurrent(null);
@@ -70,6 +77,7 @@ export default function PermissionsTable() {
     setOpenModal(true);
   };
 
+  // Open edit modal
   const openEdit = (perm: Permission) => {
     setIsEditing(true);
     setCurrent(perm);
@@ -80,6 +88,7 @@ export default function PermissionsTable() {
     setOpenModal(true);
   };
 
+  // Create or update permission
   const savePermission = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
@@ -87,9 +96,8 @@ export default function PermissionsTable() {
     const method = isEditing ? "PUT" : "POST";
     const url = isEditing ? `${VITE_API_URL}/api/permissions/${current?.id}` : `${VITE_API_URL}/api/permissions`;
 
-    await fetch(url, {
+    await authFetch(url, {
       method,
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, module_id: moduleId }),
     });
 
@@ -97,24 +105,30 @@ export default function PermissionsTable() {
     fetchPermissions();
   };
 
+  // Delete permission
   const deletePermission = async (permission: Permission) => {
-    const confirmed = window.confirm(t("permissions_screen.confirm.deactivate", { name: permission.name,}));
+    const confirmed = window.confirm(t("permissions_screen.confirm.delete", { name: permission.name,}));
     if (!confirmed) return;
 
-    const res = await fetch( `${VITE_API_URL}/api/permissions/${permission.id}`, { method: "DELETE" });
+    const res = await authFetch(
+      `${VITE_API_URL}/api/permissions/${permission.id}`,
+      { method: "DELETE" }
+    );
 
-    if (!res.ok) { alert(t("permissions_screen.errors.deactivate")); return;}
+    if (!res.ok) { alert(t("permissions_screen.errors.delete")); return;}
 
-    alert(t("permissions_screen.success.deactivate"));
+    alert(t("permissions_screen.success.delete"));
     fetchPermissions();
   };
 
+  // Filter permissions by name
   const filtered = permissions.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("permissions_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -131,6 +145,7 @@ export default function PermissionsTable() {
         </Can>
       </div>
 
+      {/* Permissions table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (<p className="text-center py-10 text-gray-500">{t("permissions_screen.loading")}</p>
         ) : (
@@ -173,6 +188,7 @@ export default function PermissionsTable() {
         )}
       </div>
 
+      {/* Create / edit permission modal */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
@@ -199,13 +215,9 @@ export default function PermissionsTable() {
                 >
                   <option value="">{t("permissions_screen.select_module")}</option>
 
-                  {modules.map((m) => (
-                    <option key={m.id} value={m.id}>{m.name}</option>
-                  ))}
+                  {modules.map((m) => ( <option key={m.id} value={m.id}>{m.name}</option>))}
                 </select>
-                {submitted && errors.moduleId && (
-                  <p className="text-red-500 text-xs mt-1">{errors.moduleId}</p>
-                )}
+                {submitted && errors.moduleId && (<p className="text-red-500 text-xs mt-1">{errors.moduleId}</p>)}
               </div>
             </div>
 

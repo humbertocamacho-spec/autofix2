@@ -7,6 +7,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import type { Partner } from "../../../types/partner";
 import type { User } from "../../../types/users";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -40,6 +41,7 @@ export default function PartnersTable() {
   const { user } = useAuthContext();
   const { t } = useTranslation();
 
+  // Initial load of partners, users and specialities
   useEffect(() => {
     fetchPartners();
     fetchUsers();
@@ -47,13 +49,13 @@ export default function PartnersTable() {
     fetchAllPartnerSpecialities();
   }, []);
 
-  // Fetch
+  // Fetch partners list
   const fetchPartners = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${VITE_API_URL}/api/partners`, { headers: { Authorization: `Bearer ${token}`, },});
+      const res = await authFetch(`${VITE_API_URL}/api/partners`, { headers: { Authorization: `Bearer ${token}`, },});
       const data: Partner[] = await res.json();
-      setPartners(data);
+      setPartners(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching partners:", error);
     } finally {
@@ -61,36 +63,40 @@ export default function PartnersTable() {
     }
   };
 
+  // Fetch users list
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users`);
+      const res = await authFetch(`${VITE_API_URL}/api/users`);
       const data = await res.json();
-      setUsers(data);
+      setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
 
+  // Fetch specialities list
   const fetchSpecialities = async () => {
-    const res = await fetch(`${VITE_API_URL}/api/specialities`);
+    const res = await authFetch(`${VITE_API_URL}/api/specialities`);
     const data = await res.json();
-    setSpecialities(data);
+    setSpecialities(Array.isArray(data) ? data : []);
   };
 
+  // Fetch all partner specialities
   const fetchAllPartnerSpecialities = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/partner_specialities`);
+      const res = await authFetch(`${VITE_API_URL}/api/partner_specialities`);
       const data = await res.json();
-      setAllPartnerSpecialities(data);
+      setAllPartnerSpecialities(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching all relations:", error);
     }
   };
 
+  // Fetch partner specialities
   const fetchPartnerSpecialities = async (partnerId: number) => {
-    const res = await fetch(`${VITE_API_URL}/api/partner_specialities/${partnerId}`);
+    const res = await authFetch(`${VITE_API_URL}/api/partner_specialities/${partnerId}`);
     const data: number[] = await res.json();
-    setSelectedSpecialities(data);
+    setSelectedSpecialities(Array.isArray(data) ? data : []);
   };
 
   // Helpers
@@ -106,11 +112,13 @@ export default function PartnersTable() {
     return text.length > max ? text.slice(0, max) + "..." : text;
   };
 
+  // Change priority
   const handlePriorityChange = (value: number) => {
     if (Number.isNaN(value)) return;
     setPriority(Math.min(10, Math.max(1, value)));
   };
 
+  // Basic form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -127,6 +135,7 @@ export default function PartnersTable() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Open create modal
   const openCreate = () => {
     setIsEditing(false);
     setSubmitted(false);
@@ -152,6 +161,7 @@ export default function PartnersTable() {
     setOpenModal(true);
   };
 
+  // Open edit modal
   const openEdit = (partner: Partner) => {
     setIsEditing(true);
     setSubmitted(false);
@@ -173,6 +183,7 @@ export default function PartnersTable() {
     setOpenModal(true);
   };
 
+  // Create or update partner
   const savePartner = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
@@ -182,7 +193,7 @@ export default function PartnersTable() {
     const method = isEditing ? "PUT" : "POST";
     const token = localStorage.getItem("token");
 
-    const res = await fetch(url, {
+    const res = await authFetch(url, {
       method,
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
       body: JSON.stringify(body),
@@ -197,6 +208,7 @@ export default function PartnersTable() {
       body: JSON.stringify({ partner_id: partnerId, speciality_ids: selectedSpecialities,}),
     });
 
+    alert(t(isEditing ? "partners_screen.success.update" : "partners_screen.success.create"));
     setOpenModal(false);
     fetchPartners();
     fetchAllPartnerSpecialities();
@@ -207,7 +219,7 @@ export default function PartnersTable() {
     const confirmed = window.confirm( t("partners_screen.confirm.deactivate", { name: partner.name }));
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/partners/${partner.id}`, { method: "DELETE",});
+    const res = await authFetch(`${VITE_API_URL}/api/partners/${partner.id}`, { method: "DELETE",});
 
     if (!res.ok) { alert(t("partners_screen.errors.deactivate")); return;}
 
@@ -215,11 +227,12 @@ export default function PartnersTable() {
     fetchPartners();
   };
 
+  // Restore partner
   const restorePartner = async (partner: Partner) => {
     const confirmed = window.confirm( t("partners_screen.confirm.restore", { name: partner.name }));
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, { method: "PATCH",});
+    const res = await authFetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, { method: "PATCH",});
 
     if (!res.ok) { alert(t("partners_screen.errors.restore")); return;}
 
@@ -227,14 +240,14 @@ export default function PartnersTable() {
     fetchPartners();
   };
 
-  const filtered = partners
-    .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => a.id - b.id);
+  // Filter partners by name
+  const filtered = partners .filter((p) => p.name.toLowerCase().includes(search.toLowerCase())) .sort((a, b) => a.id - b.id);
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("partners_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -251,6 +264,7 @@ export default function PartnersTable() {
         </Can>
       </div>
 
+      {/* Partners table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("partners_screen.loading")}</p>
@@ -310,9 +324,7 @@ export default function PartnersTable() {
                       {(() => {
                         const specs = getPartnerSpecialities(item.id);
 
-                        if (specs.length === 0) {
-                          return <span className="text-gray-400 text-sm">-</span>;
-                        }
+                        if (specs.length === 0) { return <span className="text-gray-400 text-sm">-</span>;}
 
                         const visible = specs.slice(0, 2);
                         const hiddenCount = specs.length - visible.length;
@@ -320,14 +332,8 @@ export default function PartnersTable() {
                         return (
                           <div className="text-sm text-gray-700" title={specs.join("\n")}>
                             <ul className="list-disc list-outside pl-4 space-y-0.5 leading-snug">
-
-                              {visible.map((name, idx) => (
-                                <li key={idx}>{name}</li>
-                              ))}
-
-                              {hiddenCount > 0 && (
-                                <li className="text-gray-400 italic"> +{hiddenCount} {t("partners_screen.table.hidden")}</li>
-                              )}
+                              {visible.map((name, idx) => ( <li key={idx}>{name}</li>))}
+                              {hiddenCount > 0 && (<li className="text-gray-400 italic"> +{hiddenCount} {t("partners_screen.table.hidden")}</li>)}
                             </ul>
                           </div>
                         );
@@ -362,7 +368,7 @@ export default function PartnersTable() {
                         )}
 
                         {item.deleted_at && (
-                          <Can permission="update_partners">
+                          <Can permission="delete_partners">
                             <button className="px-2.5 py-1 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700" onClick={() => restorePartner(item)}>
                               {t("users_screen.restore")}
                             </button>
@@ -375,7 +381,7 @@ export default function PartnersTable() {
 
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="text-center py-6 text-gray-500">{t("partners_screen.no_results")}</td>
+                    <td colSpan={13} className="text-center py-6 text-gray-500">{t("partners_screen.no_results")}</td>
                   </tr>
                 )}
               </tbody>
@@ -384,6 +390,7 @@ export default function PartnersTable() {
         )}
       </div>
 
+      {/* Create / edit partner modal */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] max-h-[90vh] rounded-2xl p-6 shadow-xl border border-gray-200 overflow-y-auto">

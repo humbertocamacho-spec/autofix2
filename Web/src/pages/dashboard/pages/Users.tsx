@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import type { User } from "../../../types/users";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function UsersTable() {
   const [users, setUsers] = useState<User[]>([]);
@@ -17,31 +18,55 @@ export default function UsersTable() {
   useEffect(() => {
     fetchUsers();
   }, []);
-
+  
+  // Fetch users list
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users`);
+      const token = localStorage.getItem("token");
+
+      const res = await authFetch(`${VITE_API_URL}/api/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          console.warn("No autorizado");
+          setUsers([]);
+          return;
+        }
+      }
+
       const data = await res.json();
-      setUsers(data);
+
+      if (Array.isArray(data)) {
+        setUsers(data);
+      } else {
+        setUsers([]);
+      }
+
     } catch (error) {
       console.error(t("users_screen.errors.fetch"), error);
+      setUsers([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // Open edit modal
   const handleOpenEdit = (user: User) => {
     setCurrentUser(user);
     setOpenEdit(true);
   };
 
+  // Update user
   const handleUpdateUser = async () => {
     if (!currentUser) return;
 
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users/${currentUser.id}`, {
+      const res = await authFetch(`${VITE_API_URL}/api/users/${currentUser.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(currentUser),
       });
 
@@ -59,6 +84,7 @@ export default function UsersTable() {
     }
   };
 
+  // Delete user
   const handleDeleteUser = async (user: User) => {
     const confirmDelete = window.confirm(
       t("users_screen.confirm.deactivate", { name: user.name })
@@ -66,7 +92,9 @@ export default function UsersTable() {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users/${user.id}`, { method: "DELETE",});
+      const res = await authFetch(`${VITE_API_URL}/api/users/${user.id}`, {
+        method: "DELETE",
+      });
 
       const data = await res.json();
       if (!res.ok) {
@@ -81,12 +109,15 @@ export default function UsersTable() {
     }
   };
 
+  // Restore user
   const handleRestoreUser = async (user: User) => {
     const confirmRestore = window.confirm( t("users_screen.confirm.restore", { name: user.name }));
     if (!confirmRestore) return;
 
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users/${user.id}/restore`, { method: "PATCH",});
+      const res = await authFetch(`${VITE_API_URL}/api/users/${user.id}/restore`, {
+        method: "PATCH",
+      });
 
       const data = await res.json();
       if (!res.ok) {
@@ -101,16 +132,20 @@ export default function UsersTable() {
     }
   };
 
-  const filtered = users.filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter users by name
+  const filtered = Array.isArray(users)
+  ? users.filter(
+      (u) =>
+        u.name.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase())
+    )
+  : [];
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("users_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -121,12 +156,13 @@ export default function UsersTable() {
         />
 
         <Can permission="create_users">
-          <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition">
+          <button className="px-4 py-2 bg-[#27B9BA] text-white rounded-lg shadow hover:bg-[#1da5a6] transition" >
             {t("users_screen.add_button")}
           </button>
         </Can>
       </div>
 
+      {/* Users table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("users_screen.loading")}</p>
@@ -192,7 +228,7 @@ export default function UsersTable() {
 
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="text-center py-6 text-gray-500">{t("users_screen.no_results")}</td>
+                  <td colSpan={7} className="text-center py-6 text-gray-500">{t("users_screen.no_results")}</td>
                 </tr>
               )}
             </tbody>
@@ -200,6 +236,7 @@ export default function UsersTable() {
         )}
       </div>
 
+      {/* Create / edit user modal */}
       {openEdit && currentUser && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">

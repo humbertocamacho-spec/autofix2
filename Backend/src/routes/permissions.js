@@ -1,9 +1,11 @@
 import express from "express";
 import pool from "../config/db.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+// Endpoint to get all permissions
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const [permissions] = await pool.query(
       "SELECT id, name, module_id FROM permissions"
@@ -15,7 +17,9 @@ router.get("/", async (req, res) => {
     res.status(500).json({ ok: false, message: "Error al obtener permisos" });
   }
 });
-router.post("/", async (req, res) => {
+
+// Endpoint to create a permission
+router.post("/", authMiddleware, async (req, res) => {
   try {
     const { name, module_id } = req.body;
 
@@ -35,7 +39,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+// Endpoint to get a permission by id
+router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const { name, module_id } = req.body;
@@ -52,7 +57,8 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+// Endpoint to delete a permission by id
+router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 

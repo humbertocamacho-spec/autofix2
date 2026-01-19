@@ -3,6 +3,7 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import { VITE_API_URL } from "../../../config/env";
 import { useTranslation } from "react-i18next";
 import type { Profile } from "../../../types/profile";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
@@ -18,18 +19,15 @@ export default function ProfileScreen() {
     fetchProfile();
   }, []);
 
+  // Fetch user profile
   const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(`${VITE_API_URL}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const res = await authFetch(`${VITE_API_URL}/api/auth/me`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
 
+      if (!res.ok) throw new Error(data.message);
       setProfile(data.user);
+
     } catch {
       alert(t("error"));
     } finally {
@@ -37,18 +35,16 @@ export default function ProfileScreen() {
     }
   };
 
+  // Update user profile
   const saveProfile = async () => {
     if (!profile) return;
 
     setSaving(true);
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(`${VITE_API_URL}/api/auth/me`, {
+      const res = await authFetch(`${VITE_API_URL}/api/auth/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(profile),
       });
@@ -58,6 +54,7 @@ export default function ProfileScreen() {
 
       alert(t("profile.updated"));
       fetchProfile();
+
     } catch (error: any) {
       alert(error.message || t("error"));
     } finally {
@@ -65,17 +62,20 @@ export default function ProfileScreen() {
     }
   };
 
+  // Open photo modal
   const openPhotoModal = () => {
     setPhotoInput(profile?.photo_url || "");
     setShowPhotoModal(true);
   };
 
+  // Save photo url
   const savePhotoUrl = () => {
     if (!profile) return;
     setProfile({ ...profile, photo_url: photoInput });
     setShowPhotoModal(false);
   };
 
+  // Loading state
   if (loading) {
     return (
       <DashboardLayout>
@@ -92,8 +92,10 @@ export default function ProfileScreen() {
     <DashboardLayout>
       <h1 className="mb-6 text-3xl font-bold">{t("profile.title")}</h1>
 
+      {/* Profile image and buttons */}
       <div className="mx-auto max-w-3xl rounded-2xl bg-white p-10 shadow-2xl">
 
+        {/* Profile image */}
         <div className="mb-10 flex flex-col items-center">
           <img
             src={profile.photo_url || "/assets/images/profile.png"}
@@ -106,9 +108,8 @@ export default function ProfileScreen() {
           </button>
         </div>
 
-
+        {/* Profile form */}
         <div className="grid grid-cols-2 gap-6">
-
           <div className="col-span-2">
             <label className="text-sm font-medium text-gray-700">{t("profile.name")}</label>
             <input
@@ -164,8 +165,9 @@ export default function ProfileScreen() {
             {saving ? t("saving") : t("profile.save")}
           </button>
         </div>
-      </div>
+      </div>    
 
+      {/* Photo modal */} 
       {showPhotoModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="w-96 rounded-xl bg-white p-6">
@@ -173,7 +175,7 @@ export default function ProfileScreen() {
             <input
               type="text"
               className="w-full rounded-lg border px-3 py-2 mb-4 outline-none"
-              placeholder="Pega la URL de la foto"
+              placeholder={t("profile.paste_url")}
               value={photoInput}
               onChange={(e) => setPhotoInput(e.target.value)}
             />

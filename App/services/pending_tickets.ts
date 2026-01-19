@@ -1,24 +1,37 @@
-import { API_URL } from '../config/env';
+import { API_URL } from '@/config/env';
+import { authFetch } from "@/utils/authFetch";
+
+const BASE_URL = `${API_URL}/api/pending_tickets`;
 
 export async function createPendingTicket(data: any) {
-    try {
-        const res = await fetch(`${API_URL}/api/pending_tickets/`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
+  try {
+    const res = await authFetch(`${BASE_URL}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
 
-        return await res.json();
-    } catch (error) {
-        console.error("Error creando pending_ticket:", error);
-        return null;
+    if (!res.ok) {
+      console.error("Error creando pending_ticket:", await res.text());
+      return null;
     }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error creando pending_ticket:", error);
+    return null;
+  }
 }
 
 export async function getPendingTicketsByClient(client_id: number) {
   try {
-    const res = await fetch(`${API_URL}/api/pending_tickets/${client_id}`
-    );
+    const res = await authFetch(`${BASE_URL}/${client_id}`);
+
+    if (!res.ok) {
+      console.error("Error trayendo pending tickets:", res.status);
+      return [];
+    }
+
     return await res.json();
   } catch (error) {
     console.error("Error trayendo pending tickets:", error);
@@ -33,16 +46,15 @@ export async function deletePendingTicket(id: number) {
   }
 
   try {
-    const res = await fetch(`${API_URL}/api/pending_tickets/${id}`,
-      { method: "DELETE" }
-    );
+    const res = await authFetch(`${BASE_URL}/${id}`, {
+      method: "DELETE",
+    });
 
     if (!res.ok) {
-      const text = await res.text();
+      console.error("Error eliminando pending_ticket:", await res.text());
       return false;
     }
 
-    const data = await res.json();
     return true;
   } catch (error) {
     console.error("Error eliminando pending_ticket:", error);
@@ -52,13 +64,11 @@ export async function deletePendingTicket(id: number) {
 
 export async function updatePendingTicket(id: number, data: any) {
   try {
-    const res = await fetch(`${API_URL}/api/pending_tickets/${id}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      }
-    );
+    const res = await authFetch(`${BASE_URL}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
 
     if (!res.ok) {
       console.error("Error actualizando pending_ticket:", await res.text());

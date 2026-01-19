@@ -1,5 +1,7 @@
+// API URL
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Login
 export async function login(email: string, password: string) {
   const res = await fetch(`${API_URL}/api/auth/login`, {
     method: "POST",
@@ -10,6 +12,7 @@ export async function login(email: string, password: string) {
   return data;
 }
 
+// Register
 export async function register(name: string, phone: string, email: string, password: string) {
   const res = await fetch(`${API_URL}/api/auth/register`, {
     method: 'POST',
@@ -19,6 +22,7 @@ export async function register(name: string, phone: string, email: string, passw
   return res.json();
 }
 
+// Get user info
 export async function me(token: string) {
   const res = await fetch(`${API_URL}/api/auth/me`, {
     method: "GET",

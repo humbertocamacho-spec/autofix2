@@ -1,12 +1,8 @@
 import { Navigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
-import type { JSX } from "react";
+import type { ProtectedRouteProps } from "../types/protected_route";
 
-interface ProtectedRouteProps {
-  children: JSX.Element;
-  permission?: string;
-}
-
+// Route that checks if the user is logged in and has the required permission
 export default function ProtectedRoute({ children, permission }: ProtectedRouteProps) {
   const { user, loading, ready, hasPermission } = useAuthContext();
 

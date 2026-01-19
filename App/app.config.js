@@ -13,7 +13,13 @@ export default {
 
     ios: {
       supportsTablet: true,
-      "bundleIdentifier": "com.autofix.app",
+      bundleIdentifier: 'com.autofix.mx.autofixapp',
+      config: {
+        googleMapsApiKey: process.env.GOOGLE_API_KEY_IOS,
+      },
+      infoPlist: {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
 
     splash: {
@@ -23,13 +29,13 @@ export default {
     },
 
     android: {
-      package: 'com.autofix.app',
+      package: 'com.autofix.mx.autofixapp',
       "config": {
         "googleMaps": {
           "apiKey": process.env.GOOGLE_API_KEY,
         }
       },
-      versionCode: 1,
+      versionCode: 6,
       permissions: [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",

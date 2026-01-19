@@ -6,6 +6,7 @@ import type { User } from "../../../types/users";
 import { useTranslation } from "react-i18next";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function AdminsTable() {
   const [admins, setAdmins] = useState<Admin[]>([]);
@@ -21,14 +22,13 @@ export default function AdminsTable() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-  useEffect(() => {
-    fetchAdmins();
-    fetchUsers();
-  }, []);
+  // Initial load of admins and users
+  useEffect(() => { fetchAdmins(); fetchUsers();}, []);
 
+  // Fetch admins list
   const fetchAdmins = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/admins`);
+      const res = await authFetch(`${VITE_API_URL}/api/admins`);
       const data = await res.json();
       setAdmins(data.admins || []);
     } catch (error) {
@@ -38,16 +38,18 @@ export default function AdminsTable() {
     }
   };
 
+  // Fetch users for the select input
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/users`);
+      const res = await authFetch(`${VITE_API_URL}/api/users`);
       const data = await res.json();
-      setUsers(data);
+      setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
 
+  // Basic form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -57,6 +59,7 @@ export default function AdminsTable() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Open modal in create mode
   const openCreate = () => {
     setIsEditing(false);
     setCurrentAdmin(null);
@@ -66,6 +69,7 @@ export default function AdminsTable() {
     setOpenModal(true);
   };
 
+  // Open modal in edit mode
   const openEdit = (admin: Admin) => {
     setIsEditing(true);
     setCurrentAdmin(admin);
@@ -75,48 +79,61 @@ export default function AdminsTable() {
     setOpenModal(true);
   };
 
+  // Create or update admin
   const saveAdmin = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
 
     const isEdit = isEditing && currentAdmin;
     const method = isEdit ? "PUT" : "POST";
-    const url = isEdit ? `${VITE_API_URL}/api/admins/${currentAdmin!.id}` : `${VITE_API_URL}/api/admins`;
-    const res = await fetch(url, {
+    const url = isEdit
+      ? `${VITE_API_URL}/api/admins/${currentAdmin!.id}`
+      : `${VITE_API_URL}/api/admins`;
+
+    const res = await authFetch(url, {
       method,
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: userId }),
     });
 
     if (!res.ok) {
-      alert(t( isEdit ? "admin_screen.errors.update" : "admin_screen.errors.create"));
+      alert( t(isEdit ? "admin_screen.errors.update" : "admin_screen.errors.create"));
       return;
     }
 
-    alert(t( isEdit ? "admin_screen.success.update" : "admin_screen.success.create"));
-
+    alert( t(isEdit ? "admin_screen.success.update" : "admin_screen.success.create"));
     setOpenModal(false);
     fetchAdmins();
   };
 
+  // Delete (deactivate) admin
   const deleteAdmin = async (admin: Admin) => {
-    const confirmed = window.confirm( t("admin_screen.confirm.deactivate", { name: admin.user_name }));
+    const confirmed = window.confirm(
+      t("admin_screen.confirm.delete", { name: admin.user_name })
+    );
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/admins/${admin.id}`, { method: "DELETE",});
+    const res = await authFetch(
+      `${VITE_API_URL}/api/admins/${admin.id}`,
+      { method: "DELETE" }
+    );
 
-    if (!res.ok) { alert(t("admin_screen.errors.deactivate")); return;}
+    if (!res.ok) {
+      alert(t("admin_screen.errors.delete"));
+      return;
+    }
 
-    alert(t("admin_screen.success.deactivate"));
+    alert(t("admin_screen.success.delete"));
     fetchAdmins();
   };
 
+  // Filter admins by name
   const filtered = admins.filter((a) => a.user_name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("admin_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -133,6 +150,7 @@ export default function AdminsTable() {
         </Can>
       </div>
 
+      {/* Admins table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("admin_screen.loading")}</p>
@@ -176,6 +194,7 @@ export default function AdminsTable() {
         )}
       </div>
 
+      {/* Create / edit admin modal */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">

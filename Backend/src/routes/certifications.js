@@ -1,9 +1,11 @@
 import express from "express";
 import pool from "../config/db.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+// Endpoint to get all certifications
+router.get("/", authMiddleware, async (req, res) => {
     try {
         const [certifications] = await pool.query(
             "SELECT id,name FROM certifications"
@@ -16,7 +18,8 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.post("/", async (req, res) => {
+// Endpoint to create a certification
+router.post("/", authMiddleware, async (req, res) => {
     try {
         const { name } = req.body;
 
@@ -36,7 +39,8 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:id", async (req, res) => {
+// Endpoint to get a certification by id
+router.put("/:id", authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
         const { name } = req.body;
@@ -53,7 +57,8 @@ router.put("/:id", async (req, res) => {
     }
 });
 
-router.delete("/:id", async (req, res) => {
+// Endpoint to delete a certification by id
+router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
 

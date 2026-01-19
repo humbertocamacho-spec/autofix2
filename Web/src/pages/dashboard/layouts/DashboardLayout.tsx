@@ -2,14 +2,17 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
 import { HiOutlineHome, HiOutlineUser, HiOutlineUsers, HiOutlineTicket, HiOutlineLogout, HiOutlineChevronDown, HiOutlineKey,HiOutlineDocumentDuplicate,
-  HiOutlineEye,HiOutlineTranslate,HiOutlineChevronRight, HiOutlineMenu, HiOutlineUserGroup, HiOutlineBriefcase, HiOutlineTruck, 
+  HiOutlineEye,HiOutlineTranslate,HiOutlineChevronRight, HiOutlineMenu, HiOutlineUserGroup, HiOutlineBriefcase, 
   HiOutlineShieldCheck,HiOutlineIdentification,HiOutlineThumbUp
 } from "react-icons/hi";
+import { IoCarOutline } from "react-icons/io5";
+import { TbBrandVolkswagen } from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 import type { Props } from "../../../types/props";
 import { ROLES } from "../../../constants/roles";
 
 export default function DashboardLayout({ children }: Props) {
+  // Sidebar state persisted in localStorage
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     const saved = localStorage.getItem("sidebarOpen");
     return saved ? JSON.parse(saved) : true;
@@ -18,33 +21,43 @@ export default function DashboardLayout({ children }: Props) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, loading, logout } = useAuthContext();
+  // Layout key forces rerender when user changes
   const layoutKey = user?.id ? `user-${user.id}` : "guest";
+  // Role helpers
   const isPartner = user?.role_name === ROLES.PARTNER;
   const isAdmin = user?.role_name === ROLES.ADMIN;
-
   const iconSize = sidebarOpen ? 22 : 20;
-  const { t , i18n } = useTranslation();
+  
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [floatingMenu, setFloatingMenu] = useState<string | null>(null);
 
-  const [userLanguage, setUserLanguage] = useState("es");
-
-  const changeLanguage = (lang: string) => { i18n.changeLanguage(lang); localStorage.setItem("lang", lang);};
-
-  useEffect(() => {
+  // i18n handling
+  const { t , i18n } = useTranslation();
+  const [userLanguage, setUserLanguage] = useState(() => {
+    const savedLang = user?.id ? localStorage.getItem(`lang_user_${user.id}`) : null;
+    return savedLang || i18n.language || "es";
+  });
+  const changeLanguage = (lang: string) => {
+    setUserLanguage(lang);
+    i18n.changeLanguage(lang);
     if (user?.id) {
-      const savedLang = localStorage.getItem(`lang_user_${user.id}`);
-      if (savedLang) {
-        setUserLanguage(savedLang);
-        i18n.changeLanguage(savedLang);
-      }
+      localStorage.setItem(`lang_user_${user.id}`, lang);
     }
-  }, [user?.id]);
+  };
 
+  // Load user language preference
+  useEffect(() => {
+    if (i18n.language !== userLanguage) {
+      i18n.changeLanguage(userLanguage);
+    }
+  }, [userLanguage, i18n]);
+
+  // Persist user language
   useEffect(() => {
     if (user?.id) { i18n.changeLanguage(userLanguage); localStorage.setItem(`lang_user_${user.id}`, userLanguage);}
   }, [userLanguage, user?.id]);
 
+  // Persist sidebar state
   useEffect(() => { localStorage.setItem("sidebarOpen", JSON.stringify(sidebarOpen));
   }, [sidebarOpen]);
 
@@ -53,35 +66,39 @@ export default function DashboardLayout({ children }: Props) {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Logout handler
   const handleLogout = () => {
     logout();
     setOpenMenu(null);
     navigate("/login", { replace: true });
   };
 
+  // Permissions map per module
   const modulesPermissions: Record<string, string[]> = {
-    dashboard: [], // siempre visible
-    users: ["read_users"], // Admin
-    admins: ["read_admins"], // Admin
-    partners: ["read_partners"], // Admin
-    partner_certifications: ["read_partner_certifications"], // Admin
-    clients: ["read_clients"], // Admin
-    specialities: ["read_specialities"], // Admin
-    certifications: ["read_certifications"], // Admin
-    brands: ["read_brands"], // Admin
-    roles: ["read_roles"], // Admin
-    modules: ["read_modules"], // Admin
-    permissions: ["read_permissions"], // Admin
-    tickets: ["read_tickets", "read_pending_tickets"], // Partner y Cliente
-    myCars: ["read_cars_clients"], // Cliente
+    dashboard: [],
+    users: ["read_users"],
+    admins: ["read_admins"],
+    partners: ["read_partners"],
+    partner_certifications: ["read_partner_certifications"],
+    clients: ["read_clients"],
+    specialities: ["read_specialities"],
+    certifications: ["read_certifications"],
+    brands: ["read_brands"],
+    roles: ["read_roles"],
+    modules: ["read_modules"],
+    permissions: ["read_permissions"],
+    tickets: ["read_tickets", "read_pending_tickets"],
+    myCars: ["read_cars_clients"], 
   };
 
+  // Permission check for menu rendering
   const CheckPermissionForModule = (module: string) => {
     const requiredPermissions = modulesPermissions[module] || [];
     if (requiredPermissions.length === 0) return true;
     return requiredPermissions.some((p) => user?.permissions?.includes(p));
   };
 
+  // Role badge renderer
   const roleBadge = () => {
     if (user?.role_name === ROLES.ADMIN)
       return (
@@ -104,6 +121,7 @@ export default function DashboardLayout({ children }: Props) {
     return null;
   };
 
+  // Loading state
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -112,6 +130,7 @@ export default function DashboardLayout({ children }: Props) {
     );
   }
 
+  // Shared class helpers
   function linkClass(path: string) {
     return `group relative flex items-center justify-center lg:justify-start gap-4 rounded-xl px-4 py-3.5 transition-all ${
       isActive(path) ? "bg-[#27B9BA] text-white shadow-lg shadow-[#27B9BA]/30" : "text-gray-700 hover:bg-gray-100"}`;
@@ -197,7 +216,7 @@ export default function DashboardLayout({ children }: Props) {
 
               {CheckPermissionForModule("myCars") && (
                 <Link to="/dashboard/my-cars" className={linkClass("/dashboard/my-cars")}>
-                  <HiOutlineTruck size={iconSize} />
+                  <IoCarOutline size={iconSize} />
                   <span className={textClass()}>{t("myCars")}</span>
                   {!sidebarOpen && <Tooltip>{t("myCars")}</Tooltip>}
                 </Link>
@@ -257,7 +276,7 @@ export default function DashboardLayout({ children }: Props) {
 
               {CheckPermissionForModule("brands") && (
                 <Link to="/dashboard/brands" className={linkClass("/dashboard/brands")}>
-                  <HiOutlineTruck size={iconSize} />
+                  <TbBrandVolkswagen size={iconSize} />
                   <span className={textClass()}>{t("brands")}</span>
                   {!sidebarOpen && <Tooltip>{t("brands")}</Tooltip>}
                 </Link>

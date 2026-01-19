@@ -7,9 +7,11 @@ export async function seed(knex) {
   const permissions = [];
 
   modules.forEach((m) => {
+    const moduleName = m.name.toLowerCase();
+
     functions.forEach((f) => {
       permissions.push({
-        name: `${f.name}_${m.id}`,
+        name: `${f.name}_${moduleName}`,
         module_id: m.id,
         function_id: f.id,
       });

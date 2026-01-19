@@ -1,11 +1,12 @@
 import express from "express";
 import pool from "../config/db.js";
 import { ROLES, getRoleId } from "../utils/roles.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 // Get admins
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const [admins] = await pool.query(`
       SELECT 
@@ -24,7 +25,7 @@ router.get("/", async (req, res) => {
 });
 
 // Create admin
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
   const connection = await pool.getConnection();
 
   try {
@@ -62,7 +63,7 @@ router.post("/", async (req, res) => {
 });
 
 // Update admin
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
   const connection = await pool.getConnection();
 
   try {
@@ -105,7 +106,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // Delete admin
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
   const connection = await pool.getConnection();
 
   try {

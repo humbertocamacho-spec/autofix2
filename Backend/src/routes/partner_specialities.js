@@ -1,8 +1,11 @@
 import express from "express";
 import db from "../config/db.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
-router.get("/", async (req, res) => {
+
+// Endpoint to get all partner specialities
+router.get("/", authMiddleware, async (req, res) => {
     try {
         const [rows] = await db.query(`
         SELECT 
@@ -18,8 +21,8 @@ router.get("/", async (req, res) => {
     }
 });
 
-//Obtener especialidades por partner
-router.get("/:partnerId", async (req, res) => {
+// Endpoint to get all partner specialities
+router.get("/:partnerId", authMiddleware, async (req, res) => {
   const { partnerId } = req.params;
 
   try {
@@ -39,8 +42,8 @@ router.get("/:partnerId", async (req, res) => {
   }
 });
 
-//Guardar especialidades de un partner
-router.post("/", async (req, res) => {
+// Endpoint to create a partner speciality
+router.post("/", authMiddleware, async (req, res) => {
   const { partner_id, speciality_ids } = req.body;
 
   if (!partner_id || !Array.isArray(speciality_ids)) {
@@ -48,13 +51,11 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    //Eliminar relaciones anteriores
     await db.query(
       `DELETE FROM partners_specialities WHERE partner_id = ?`,
       [partner_id]
     );
 
-    //Insertar nuevas relaciones
     if (speciality_ids.length > 0) {
       const values = speciality_ids.map(id => [partner_id, id]);
       await db.query(

@@ -1,9 +1,11 @@
 import express from "express";
 import pool from "../config/db.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+// Endpoint to get all modules
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT id, name, description FROM modules");
     res.json({ modules: rows });
@@ -12,7 +14,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+// Endpoint to create a module
+router.post("/", authMiddleware, async (req, res) => {
   try {
     const { name, description } = req.body;
 
@@ -38,7 +41,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+// Endpoint to get a module by id
+router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const { name, description } = req.body;
@@ -66,7 +70,8 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+// Endpoint to delete a module by id
+router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 

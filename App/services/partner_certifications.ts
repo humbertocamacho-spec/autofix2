@@ -1,8 +1,9 @@
-import { API_URL } from '../config/env';
+import { API_URL } from '@/config/env';
+import { authFetch } from "@/utils/authFetch";
 
 export async function getPartnerCertifications(partner_id: number) {
   try {
-    const res = await fetch(`${API_URL}/api/partner_certifications?partner_id=${partner_id}`,
+    const res = await authFetch(`${API_URL}/api/partner_certifications?partner_id=${partner_id}`,
       {
         method: "GET",
         headers: {

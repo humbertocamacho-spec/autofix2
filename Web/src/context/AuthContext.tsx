@@ -4,6 +4,7 @@ import { api } from "../services/api";
 import type { User } from "../types";
 import type { AuthContextType } from "../types/auth_context_type";
 
+// Auth context provider
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -12,6 +13,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [ready, setReady] = useState<boolean>(false);
 
+  // Logout
   const logout = useCallback(() => {
     localStorage.removeItem("token");
     setToken(null);
@@ -20,6 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setReady(false);
   }, []);
 
+  // Load user from token
   const loadUserFromToken = useCallback(
     async (tok?: string) => {
       const actualToken = tok ?? token;
@@ -65,6 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     [token, logout]
   );
 
+  // Login
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
@@ -104,12 +108,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Reload user
   const reloadUser = async () => {
     setLoading(true);
     await loadUserFromToken();
     setLoading(false);
   };
 
+  // Check if the user has a specific permission
   const hasPermission = useCallback(
     (permission: string) => {
       if (!user) return false;
@@ -118,6 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     [user]
   );
 
+  // Check if the user is logged in
   useEffect(() => {
     (async () => {
       if (token) {
@@ -137,6 +144,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// Get the auth context
 export const useAuthContext = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuthContext must be used inside AuthProvider");

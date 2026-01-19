@@ -82,7 +82,6 @@ export default function TicketsPending() {
     );
   };
 
-
   const formatToMySQL = (date: string, time: string) => {
     const [day, month, year] = date.split("-");
     let [hour, minutes] = time.replace(" AM", "").replace(" PM", "").split(":");
@@ -167,10 +166,7 @@ export default function TicketsPending() {
           <Ionicons name="trash-outline" size={22} color="#fff" />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => handleEditAppointment(item, index)}
-        >
+        <TouchableOpacity style={styles.editButton} onPress={() => handleEditAppointment(item, index)}>
           <Ionicons name="pencil" size={22} color="#fff" />
         </TouchableOpacity>
 

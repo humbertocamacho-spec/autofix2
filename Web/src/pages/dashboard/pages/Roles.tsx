@@ -7,6 +7,8 @@ import type { Roles } from "../../../types/roles";
 import type { Modules } from "../../../types/modules";
 import type { PermissionsByRole } from "../../../types/permissions_by_role";
 import type { GroupedPermissions } from "../../../types/grouped_permissions";
+import { authFetch } from "../../../utils/authFetch";
+import { useAuthContext } from "../../../context/AuthContext";
 
 export default function RolesTable() {
   const { t, i18n } = useTranslation();
@@ -16,6 +18,7 @@ export default function RolesTable() {
   const [expandedRole, setExpandedRole] = useState<number | null>(null);
   const [selectedPerms, setSelectedPerms] = useState<PermissionsByRole>({});
   const [loading, setLoading] = useState(true);
+  const { user, reloadUser } = useAuthContext();
 
   useEffect(() => {
     fetchRoles();
@@ -23,29 +26,61 @@ export default function RolesTable() {
     fetchModules();
   }, []);
 
+  // Fetch roles list
   const fetchRoles = async () => {
-    const res = await fetch(`${VITE_API_URL}/api/roles`);
+    const res = await authFetch(`${VITE_API_URL}/api/roles`);
+
+    if (!res.ok) {
+      setRoles([]);
+      setLoading(false);
+      return;
+    }
+
     const data = await res.json();
-    setRoles(data);
+    setRoles(Array.isArray(data) ? data : []);
     setLoading(false);
   };
 
+  // Fetch permissions list
   const fetchPermissions = async () => {
-    const res = await fetch(`${VITE_API_URL}/api/permissions`);
+    const res = await authFetch(`${VITE_API_URL}/api/permissions`);
+
+    if (!res.ok) {
+      setPermissions([]);
+      return;
+    }
+
     const data = await res.json();
-    setPermissions(data.permissions);
+    setPermissions(Array.isArray(data.permissions) ? data.permissions : []);
   };
 
+  // Fetch modules list
   const fetchModules = async () => {
-    const res = await fetch(`${VITE_API_URL}/api/modules`);
+    const res = await authFetch(`${VITE_API_URL}/api/modules`);
+
+    if (!res.ok) {
+      setModules([]);
+      return;
+    }
+
     const data = await res.json();
-    setModules(data.modules);
+    setModules(Array.isArray(data.modules) ? data.modules : []);
   };
 
+  // Fetch role permissions
   const loadRolePermissions = async (roleId: number) => {
-    const res = await fetch(`${VITE_API_URL}/api/roles/${roleId}/permissions`);
+    const res = await authFetch(`${VITE_API_URL}/api/roles/${roleId}/permissions`);
+
+    if (!res.ok) {
+      setSelectedPerms((prev) => ({ ...prev, [roleId]: [] }));
+      return;
+    }
+
     const data = await res.json();
-    setSelectedPerms((prev) => ({ ...prev, [roleId]: data.permissions }));
+    setSelectedPerms((prev) => ({
+      ...prev,
+      [roleId]: Array.isArray(data.permissions) ? data.permissions : [],
+    }));
   };
 
   const toggleExpand = (roleId: number) => {
@@ -69,12 +104,24 @@ export default function RolesTable() {
     }));
   };
 
+  // Save role permissions
   const savePermissions = async (roleId: number) => {
-    await fetch(`${VITE_API_URL}/api/roles/${roleId}/permissions`, {
+    const res = await authFetch(`${VITE_API_URL}/api/roles/${roleId}/permissions`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ permissions: selectedPerms[roleId] || [] }),
     });
+
+    if (!res.ok) {
+      alert(t("roles_screen.error_saving"));
+      return;
+    }
+
+    if (user?.role_id === roleId) {
+      setTimeout(() => {
+        reloadUser(); // Reload user to update permissions
+      }, 300);
+    }
 
     alert(t("roles_screen.saved_alert"));
   };
@@ -88,10 +135,12 @@ export default function RolesTable() {
     {} as GroupedPermissions
   );
 
+  // Get module name
   const getModuleName = (moduleId: number) => {
     return modules.find((m) => m.id === moduleId)?.name || t("roles_screen.unknown_module");
   };
 
+  // Sort modules by name
   const sortedModuleIds = Object.keys(grouped)
     .map(Number)
     .sort((a, b) =>
@@ -102,6 +151,7 @@ export default function RolesTable() {
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6 text-gray-800">{t("roles_screen.title")}</h1>
 
+      {/* Roles table */}
       <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
         {loading ? (
           <p className="text-gray-500 text-center py-10">{t("roles_screen.loading_roles")}</p>
@@ -123,6 +173,7 @@ export default function RolesTable() {
                   <span className="text-gray-600 text-xl">{expandedRole === role.id ? "−" : "+"}</span>
                 </button>
 
+                {/* Permissions assigned to the role */}
                 {expandedRole === role.id && (
                   <div className="p-6 bg-white rounded-b-xl border-t border-gray-200 animate-fadeIn">
                     <h3 className="text-xl font-medium text-gray-700 mb-6">
@@ -171,6 +222,7 @@ export default function RolesTable() {
         )}
       </div>
 
+      {/* Styles */}
       <style>
         {`
           .animate-fadeIn {

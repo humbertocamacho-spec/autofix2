@@ -1,11 +1,12 @@
 import express from "express";
 import db from "../config/db.js";
 import { ROLES, getRoleId } from "../utils/roles.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-//Get users
-router.get("/", async (req, res) => {
+// Endpoint to get all users
+router.get("/", authMiddleware, async (req, res) => {
   try {
     const [rows] = await db.query(`
       SELECT 
@@ -32,8 +33,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Update user
-router.put("/:id", async (req, res) => {
+// Endpoint to update a user
+router.put("/:id", authMiddleware, async (req, res) => {
   const connection = await db.getConnection();
 
   try {
@@ -108,8 +109,8 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Delete user
-router.delete("/:id", async (req, res) => {
+// Endpoint to delete a user
+router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -142,8 +143,8 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Restore user
-router.patch("/:id/restore", async (req, res) => {
+// Endpoint to restore a user
+router.patch("/:id/restore", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
 

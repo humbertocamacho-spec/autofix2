@@ -7,6 +7,7 @@ import "./index.css";
 import "./i18n/i18n";
 import "leaflet/dist/leaflet.css";
 
+// Render the app
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>

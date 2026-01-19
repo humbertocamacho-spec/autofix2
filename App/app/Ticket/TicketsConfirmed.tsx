@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 25, fontWeight: "bold", textAlign: "center", marginVertical: 10, },
   card: { padding: 15, borderRadius: 12, marginBottom: 12, overflow: "hidden", paddingBottom: 0, paddingRight: 48},
   row: { flexDirection: "row", alignItems: "center" },
-  logo: { width: 50, height: 50, borderRadius: 10, marginRight: 10, backgroundColor: "#fff", },
+  logo: { width: 50, height: 50, borderRadius: 10, marginRight: 10, backgroundColor: "#fff", resizeMode: 'contain', },
   partnerName: { color: "#fff", fontSize: 18, fontWeight: "bold" },
   phone: { color: "#fff" },
   dateTimeRow: { flexDirection: "row", alignItems: "center", marginTop: 10 },

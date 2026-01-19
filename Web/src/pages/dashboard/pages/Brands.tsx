@@ -5,6 +5,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { CarBrands } from "../../../types/car_brands";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function CarBrands() {
   const { t } = useTranslation();
@@ -19,16 +20,15 @@ export default function CarBrands() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
+  // Initial load
+  useEffect(() => { fetchCarBrands(); }, []);
 
-  useEffect(() => {
-    fetchCarBrands();
-  }, []);
-
+  // Fetch car brands list
   const fetchCarBrands = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/car_brands`);
+      const res = await authFetch(`${VITE_API_URL}/api/car_brands`);
       const data = await res.json();
-      setCarBrands(data);
+      setCarBrands(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching car brands:", error);
     } finally {
@@ -36,6 +36,7 @@ export default function CarBrands() {
     }
   };
 
+  // Basic form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -47,6 +48,7 @@ export default function CarBrands() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Open modal in create mode
   const handleCreate = () => {
     setIsEditing(false);
     setCurrentBrand(null);
@@ -56,6 +58,7 @@ export default function CarBrands() {
     setOpenModal(true);
   };
 
+  // Open modal in edit mode
   const handleEdit = (brand: CarBrands) => {
     setIsEditing(true);
     setCurrentBrand(brand);
@@ -65,23 +68,27 @@ export default function CarBrands() {
     setOpenModal(true);
   };
 
+  // Create or update car brand
   const saveBrand = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
+
     try {
-      const url = isEditing
-        ? `${VITE_API_URL}/api/car_brands/${currentBrand?.id}`
-        : `${VITE_API_URL}/api/car_brands`;
+      const isEdit = isEditing && currentBrand;
+      const url = isEdit ? `${VITE_API_URL}/api/car_brands/${currentBrand!.id}` : `${VITE_API_URL}/api/car_brands`;
+      const method = isEdit ? "PUT" : "POST";
 
-      const method = isEditing ? "PUT" : "POST";
-
-      await fetch(url, {
+      const res = await authFetch(url, {
         method,
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ name }),
       });
+
+      if (!res.ok) {
+        alert(t(isEdit ? "car_brands_screen.errors.update" : "car_brands_screen.errors.create"));
+        return;
+      }
+
+      alert( t(isEdit ? "car_brands_screen.success.update" : "car_brands_screen.success.create"));
 
       setOpenModal(false);
       fetchCarBrands();
@@ -90,33 +97,30 @@ export default function CarBrands() {
     }
   };
 
+  // Delete car brand
   const handleDelete = async (brand: CarBrands) => {
-    const confirmed = window.confirm(
-      t("car_brands_screen.confirm.deactivate", { name: brand.name })
-    );
+    const confirmed = window.confirm( t("car_brands_screen.confirm.delete", { name: brand.name }));
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/car_brands/${brand.id}`, {
-      method: "DELETE",
-    });
+    const res = await authFetch(`${VITE_API_URL}/api/car_brands/${brand.id}`,{ method: "DELETE" });
 
     if (!res.ok) {
-      alert(t("car_brands_screen.errors.deactivate"));
+      alert(t("car_brands_screen.errors.delete"));
       return;
     }
 
-    alert(t("car_brands_screen.success.deactivate"));
+    alert(t("car_brands_screen.success.delete"));
     fetchCarBrands();
   };
 
-  const filtered = carBrands.filter((s) =>
-    s.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter car brands by name
+  const filtered = carBrands.filter((s) => s.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("car_brands_screen.title")}</h1>
 
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -133,6 +137,7 @@ export default function CarBrands() {
         </Can>
       </div>
 
+      {/* Car brands table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("car_brands_screen.loading")}</p>
@@ -181,6 +186,7 @@ export default function CarBrands() {
         )}
       </div>
 
+      {/* Create / edit car brand modal */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">

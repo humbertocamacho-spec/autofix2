@@ -1,6 +1,7 @@
 import mysql from 'mysql2/promise';
 import { config } from './env.js';
 
+// Create a connection pool
 const pool = mysql.createPool({
   host: config.db.host,
   port: config.db.port,

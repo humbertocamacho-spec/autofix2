@@ -5,6 +5,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { PendingTicket } from "../../../types/pending_ticket";
 import { useAuthContext } from "../../../context/AuthContext";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function PendingTicketsTable() {
   const { t } = useTranslation();
@@ -13,12 +14,12 @@ export default function PendingTicketsTable() {
   const [search, setSearch] = useState("");
   const { user } = useAuthContext();
 
-
   useEffect(() => {
     if (!user) return;
     fetchPendingTickets();
   }, [user]);
 
+  // Format date
   const formatDate = (date?: string | null) => {
     if (!date) return "—";
 
@@ -45,13 +46,14 @@ export default function PendingTicketsTable() {
     return parsed.toLocaleDateString();
   };
 
+  // Fetch pending tickets for the user
   const fetchPendingTickets = async () => {
     try {
       let url = `${VITE_API_URL}/api/pending_tickets`;
       if (user?.role_id === 3 && user?.client_id) {
         url = `${VITE_API_URL}/api/pending_tickets/${user.client_id}`;
       }
-      const res = await fetch(url);
+      const res = await authFetch(url);
       const data = await res.json();
       setTickets(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -61,6 +63,7 @@ export default function PendingTicketsTable() {
     }
   };
 
+  // Filter pending tickets by name
   const filtered = tickets
     .filter((t) =>
       (t.partner_name?.toLowerCase() || "").includes(search.toLowerCase()) ||
@@ -73,6 +76,7 @@ export default function PendingTicketsTable() {
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("pending_tickets_table.title")}</h1>
 
+      {/* Search input */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -83,6 +87,7 @@ export default function PendingTicketsTable() {
         />
       </div>
 
+      {/* Pending tickets table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("pending_tickets_table.loading")}</p>

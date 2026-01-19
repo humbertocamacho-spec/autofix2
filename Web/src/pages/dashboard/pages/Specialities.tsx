@@ -5,6 +5,7 @@ import { VITE_API_URL } from "../../../config/env";
 import type { Specialities } from "../../../types/specialities";
 import { RequiredLabel } from "../../../components/form/RequiredLabel";
 import Can from "../../../components/Can";
+import { authFetch } from "../../../utils/authFetch";
 
 export default function SpecialitiesTable() {
   const { t } = useTranslation();
@@ -20,16 +21,16 @@ export default function SpecialitiesTable() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-
   useEffect(() => {
     fetchSpecialities();
   }, []);
 
+  // Fetch specialities list
   const fetchSpecialities = async () => {
     try {
-      const res = await fetch(`${VITE_API_URL}/api/specialities`);
+      const res = await authFetch(`${VITE_API_URL}/api/specialities`);
       const data = await res.json();
-      setSpecialities(data);
+      setSpecialities(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching specialities:", error);
     } finally {
@@ -37,6 +38,7 @@ export default function SpecialitiesTable() {
     }
   };
 
+  // Basic form validation
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -48,17 +50,19 @@ export default function SpecialitiesTable() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Create speciality
   const handleCreate = async () => {
     setSubmitted(true);
     if (!validateForm()) return;
 
     try {
-      await fetch(`${VITE_API_URL}/api/specialities`, {
+      await authFetch(`${VITE_API_URL}/api/specialities`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
       });
 
+      alert(t("specialities_screen.success.create"));
       setOpenModal(false);
       setSubmitted(false);
       setErrors({});
@@ -68,18 +72,20 @@ export default function SpecialitiesTable() {
     }
   };
 
+  // Update speciality
   const handleUpdate = async () => {
     if (!current) return;
     setSubmitted(true);
     if (!validateForm()) return;
 
     try {
-      await fetch(`${VITE_API_URL}/api/specialities/${current.id}`, {
+      await authFetch(`${VITE_API_URL}/api/specialities/${current.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
       });
 
+      alert(t("specialities_screen.success.update"));
       setOpenModal(false);
       setSubmitted(false);
       setErrors({});
@@ -89,25 +95,27 @@ export default function SpecialitiesTable() {
     }
   };
 
+  // Delete speciality
   const handleDelete = async (item: Specialities) => {
     const confirmed = window.confirm(
-      t("specialities_screen.confirm.deactivate", { name: item.name })
+      t("specialities_screen.confirm.delete", { name: item.name })
     );
     if (!confirmed) return;
 
-    const res = await fetch(`${VITE_API_URL}/api/specialities/${item.id}`, {
+    const res = await authFetch(`${VITE_API_URL}/api/specialities/${item.id}`, {
       method: "DELETE",
     });
 
     if (!res.ok) {
-      alert(t("specialities_screen.errors.deactivate"));
+      alert(t("specialities_screen.errors.delete"));
       return;
     }
 
-    alert(t("specialities_screen.success.deactivate"));
+    alert(t("specialities_screen.success.delete"));
     fetchSpecialities();
   };
 
+  // Open create modal
   const openCreateModal = () => {
     setIsEditing(false);
     setName("");
@@ -117,6 +125,7 @@ export default function SpecialitiesTable() {
     setOpenModal(true);
   };
 
+  // Open edit modal
   const openEditModal = (item: Specialities) => {
     setIsEditing(true);
     setCurrent(item);
@@ -126,13 +135,13 @@ export default function SpecialitiesTable() {
     setOpenModal(true);
   };
 
-  const filtered = specialities.filter((s) =>
-    s.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter specialities by name
+  const filtered = specialities.filter((s) => s.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <DashboardLayout>
       <h1 className="text-3xl font-bold mb-6">{t("specialities_screen.title")}</h1>
+      {/* Search input and create button */}
       <div className="mb-6 flex justify-between">
         <input
           type="text"
@@ -148,6 +157,7 @@ export default function SpecialitiesTable() {
         </Can>
       </div>
 
+      {/* Specialities table */}
       <div className="bg-white p-6 rounded-xl shadow border border-gray-200">
         {loading ? (
           <p className="text-center py-10 text-gray-500">{t("specialities_screen.loading")}</p>
@@ -198,6 +208,7 @@ export default function SpecialitiesTable() {
         )}
       </div>
 
+      {/* Create / edit speciality modal */}
       {openModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white w-[450px] rounded-2xl p-6 shadow-xl border border-gray-200">
