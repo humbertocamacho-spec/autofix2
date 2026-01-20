@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   titleContainer: { textAlign: "center", width: "100%", marginTop: -5, },
   title: { fontSize: 25, fontWeight: 'bold', color: '#000', textAlign: 'center', margin: 10 },
   header: { paddingTop: 50, paddingBottom: 20, paddingHorizontal: 15, backgroundColor: "#27B9BA" },
-  subTitle: { fontSize: 18, fontWeight: "bold" },
+  subTitle: { fontSize: 18, fontWeight: "bold", textAlign: "center"},
   label: { marginTop: 10, fontWeight: "600", color: "#27B9BA" },
   input: { backgroundColor: "#eee", padding: 12, borderRadius: 10, marginTop: 5 },
   inputSelect: { backgroundColor: "#eee", padding: 12, borderRadius: 10, marginTop: 5, flexDirection: "row", justifyContent: "space-between" },

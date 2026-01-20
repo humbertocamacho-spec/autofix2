@@ -140,13 +140,15 @@ export default function TicketsConfirmed() {
         <Text style={styles.title}>Citas Confirmadas</Text>
 
         {loading ? (
-          <View style={styles.center}>
+          <View style={{ padding: 20, alignItems: "center" }}>
             <ActivityIndicator size="large" color="#27B9BA" />
             <Text>Cargando citas...</Text>
           </View>
         ) : tickets.length === 0 ? (
-          <View style={styles.center}>
-            <Text>No tienes citas confirmadas</Text>
+          <View style={{ padding: 20 }}>
+            <Text style={{ fontSize: 15, fontWeight: "bold", color: "#cacacaff", textAlign: "center" }}>
+              <Text>No tienes citas confirmadas</Text>
+            </Text>
           </View>
         ) : (
           <FlatList
@@ -175,7 +177,6 @@ const styles = StyleSheet.create({
   infoText: { color: "#fff", marginLeft: 6 },
   notesText: { color: "#fff", marginTop: 10, fontStyle: "italic" },
   cancelButton: { position: "absolute", top: 10, right: 10 },
-  center: { alignItems: "center", padding: 20 },
   statusBar: { height: 26, backgroundColor: "#2ECC71", marginLeft: -15, marginRight: -50, justifyContent: "center", alignItems: "center", borderBottomLeftRadius: 12, borderBottomRightRadius: 12, marginTop: 10},
   statusText: { color: "#fff", fontWeight: "bold", fontSize: 11, letterSpacing: 1, textTransform: "uppercase", },
 });

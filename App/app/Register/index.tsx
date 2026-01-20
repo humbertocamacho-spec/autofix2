@@ -208,7 +208,7 @@ export default function RegisterScreen() {
             onPress={handleRegister}
             disabled={!remember}
           >
-            <Text style={[styles.buttonText, { fontSize: scaleFont(17) }]}>Siguiente</Text>
+            <Text style={[styles.buttonText, { fontSize: scaleFont(17) }]}>Registrarse</Text>
           </TouchableOpacity>
 
           <View style={styles.newUserContainer}>
