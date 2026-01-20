@@ -6,5 +6,3 @@ if (!Constants.expoConfig?.extra) {
 
 export const API_URL: string = Constants.expoConfig.extra.API_URL;
 export const GOOGLE_API_KEY: string = Constants.expoConfig.extra.GOOGLE_API_KEY;
-
-console.log("DEBUG API_URL:", Constants.expoConfig.extra.API_URL);
