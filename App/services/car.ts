@@ -2,7 +2,7 @@ import { API_URL } from '@/config/env';
 import { Cars } from "@backend-types/car";
 import { authFetch } from "@/utils/authFetch";
 
-const BASE_URL = `${API_URL}/car`;
+const BASE_URL = `${API_URL}/api/car`;
 
 export async function getCars() {
   try {

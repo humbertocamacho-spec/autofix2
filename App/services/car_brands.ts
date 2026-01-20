@@ -3,7 +3,7 @@ import { authFetch } from "@/utils/authFetch";
 
 export async function getCarBrands() {
   try {
-    const res = await authFetch(`${API_URL}/car_brands`);
+    const res = await authFetch(`${API_URL}/api/car_brands`);
 
     if (!res.ok) {
       console.error("Error HTTP:", res.status);

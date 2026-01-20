@@ -2,7 +2,7 @@ import { API_URL } from '@/config/env';
 
 export async function getPartners() {
   try {
-    const res = await fetch(`${API_URL}/partners/map`);
+    const res = await fetch(`${API_URL}/api/partners/map`);
 
     if (!res.ok) {
       const text = await res.text();

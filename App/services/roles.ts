@@ -1,7 +1,7 @@
 import { Roles } from "@backend-types/roles";
 import { API_URL } from "../config/env";
 
-const BASE_URL = `${API_URL}/roles`;
+const BASE_URL = `${API_URL}/api/roles`;
 
 
 export async function getRoles() {
