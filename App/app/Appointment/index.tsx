@@ -224,16 +224,20 @@ export default function AppointmentScreen() {
                 <Text style={styles.valueText}>{location}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.detailItem} onPress={handleCall}>
-                <Ionicons name="call-outline" size={20} color="#27B9BA" style={styles.icon} />
+              <TouchableOpacity style={styles.detailItem} onPress={phone ? handleCall : undefined} disabled={!phone}>
+                <Ionicons name="call-outline" size={20} color={phone ? "#27B9BA" : "gray"} style={styles.icon}/>
                 <Text style={styles.labelText}>Teléfono: </Text>
-                <Text style={styles.valueText}>{phone}</Text>
+                <Text style={[styles.valueText, { color: phone ? "#000" : "gray" }]}>
+                  {phone && phone !== "" ? phone : "No disponible"}
+                </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.detailItem} onPress={handleWhatsapp}>
-                <Ionicons name="logo-whatsapp" size={20} color="#27B9BA" style={styles.icon} />
+              <TouchableOpacity style={styles.detailItem} onPress={whatsapp ? handleWhatsapp : undefined} disabled={!whatsapp}>
+                <Ionicons name="logo-whatsapp" size={20} color={whatsapp ? "#27B9BA" : "gray"} style={styles.icon}/>
                 <Text style={styles.labelText}>WhatsApp: </Text>
-                <Text style={styles.valueText}>{whatsapp}</Text>
+                <Text style={[styles.valueText, { color: whatsapp ? "#000" : "gray" }]}>
+                  {whatsapp && whatsapp !== "" ? whatsapp : "No disponible"}
+                </Text>
               </TouchableOpacity>
             </View>
 
