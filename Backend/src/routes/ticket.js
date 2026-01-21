@@ -1,7 +1,7 @@
 import express from "express";
 import db from "../config/db.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { sendWhatsappTemplate } from "../services/whatsapp.service.js";
+import { sendWhatsappMessage } from "../services/whatsapp.service.js";
 
 const router = express.Router();
 
@@ -193,28 +193,37 @@ router.post("/", authMiddleware, async (req, res) => {
 
     if (partnerRows.length && partnerRows[0].whatsapp) {
       const partner = partnerRows[0];
-      const clientName = clientRows.length ? clientRows[0].name : "Cliente";
+      const clientName = clientRows.length
+        ? clientRows[0].name
+        : "Cliente";
 
       const appointmentDate = new Date(date);
-      const formattedDate = appointmentDate.toLocaleDateString("es-MX", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
+
+      const formattedDate = appointmentDate.toLocaleDateString("es-MX");
       const formattedTime = appointmentDate.toLocaleTimeString("es-MX", {
         hour: "2-digit",
         minute: "2-digit",
       });
 
-      await sendWhatsappTemplate(
-        partner.whatsapp,  
-        partner.name,      
-        clientName,        
-        formattedDate,     
-        formattedTime,   
-        notes || "Sin notas"
-        );
+      const message = `
+        📌 Nueva cita agendada
+
+        Hola ${partner.name},
+
+        El cliente ${clientName} ha agendado una cita en tu taller.
+
+        🗓 Fecha: ${formattedDate}
+        ⏰ Hora: ${formattedTime}
+        🏢 Taller: Autofix
+        💬 Nota del cliente: ${notes || "Sin nota"}
+
+        Por favor revisa la cita y prepárate para atender al cliente.
+
+        Gracias por usar Autofix.
+        `;
+
+
+      await sendWhatsappMessage(partner.whatsapp, message);
     }
 
     return res.json({
@@ -224,7 +233,9 @@ router.post("/", authMiddleware, async (req, res) => {
 
   } catch (error) {
     console.error("Error creando ticket:", error);
-    res.status(500).json({ message: "Error creando ticket" });
+    return res.status(500).json({
+      message: "Error creando ticket",
+    });
   }
 });
 
