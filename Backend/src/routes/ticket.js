@@ -208,13 +208,13 @@ router.post("/", authMiddleware, async (req, res) => {
       });
 
       await sendWhatsappTemplate(
-        partner.whatsapp,  // número de WhatsApp del partner
-        formattedDate,
-        formattedTime,
-        clientName,
-        notes || "Sin notas",
-        "Autofix Taller"
-      );
+        partner.whatsapp,  
+        partner.name,      
+        clientName,        
+        formattedDate,     
+        formattedTime,   
+        notes || "Sin notas"
+        );
     }
 
     return res.json({
