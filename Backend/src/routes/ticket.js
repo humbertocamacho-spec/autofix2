@@ -1,6 +1,7 @@
 import express from "express";
 import db from "../config/db.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { sendWhatsapp } from "../services/whatsapp.service.js";
 
 const router = express.Router();
 
@@ -168,21 +169,63 @@ router.get("/by-id/:id", authMiddleware, async (req, res) => {
 
 // Endpoint to create a ticket
 router.post("/", authMiddleware, async (req, res) => {
-    const { client_id, car_id, partner_id, date, notes } = req.body;
+  const { client_id, car_id, partner_id, date, notes } = req.body;
 
-    try {
-        const [result] = await db.query(
-            `INSERT INTO tickets (client_id, car_id, partner_id, date, notes)
-             VALUES (?, ?, ?, ?, ?)`,
-            [client_id, car_id, partner_id, date, notes]
-        );
+  try {
 
-        res.json({ message: "Ticket creado", id: result.insertId });
+    const [result] = await db.query(
+      `INSERT INTO tickets (client_id, car_id, partner_id, date, notes)
+       VALUES (?, ?, ?, ?, ?)`,
+      [client_id, car_id, partner_id, date, notes]
+    );
 
-    } catch (error) {
-        console.error("Error creando ticket:", error);
-        res.status(500).json({ message: "Error creando ticket" });
+    const ticketId = result.insertId;
+
+    const [partnerRows] = await db.query(
+      `SELECT name, whatsapp FROM partners WHERE id = ?`,
+      [partner_id]
+    );
+
+    const [clientRows] = await db.query(
+      `SELECT name FROM users WHERE id = ?`,
+      [client_id]
+    );
+
+    if (partnerRows.length && partnerRows[0].whatsapp) {
+      const partner = partnerRows[0];
+      const clientName = clientRows.length ? clientRows[0].name : "Cliente";
+
+      const appointmentDate = new Date(date);
+      const formattedDate = appointmentDate.toLocaleDateString("es-MX", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+      const formattedTime = appointmentDate.toLocaleTimeString("es-MX", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      await sendWhatsappTemplate(
+        partner.whatsapp,  // número de WhatsApp del partner
+        formattedDate,
+        formattedTime,
+        clientName,
+        notes || "Sin notas",
+        "Autofix Taller"
+      );
     }
+
+    return res.json({
+      message: "Ticket creado y notificación enviada al partner",
+      id: ticketId,
+    });
+
+  } catch (error) {
+    console.error("Error creando ticket:", error);
+    res.status(500).json({ message: "Error creando ticket" });
+  }
 });
 
 // Endpoint to delete a ticket
