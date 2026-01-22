@@ -63,11 +63,7 @@ export default function PartnerDetailScreen() {
   const handleWhatsapp = () => {
     if (!whatsapp) return;
 
-    let phoneNumber = whatsapp.replace(/\D/g, '');
-
-    if (phoneNumber.length === 10) {
-      phoneNumber = `52${phoneNumber}`;
-    }
+    const phoneNumber = whatsapp.replace(/\D/g, '');
 
     const url = `https://wa.me/${phoneNumber}`;
 

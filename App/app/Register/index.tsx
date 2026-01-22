@@ -73,7 +73,7 @@ export default function RegisterScreen() {
       const res = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone: fullPhone, email, password }),
+        body: JSON.stringify({ name,  phone, countryCode: callingCode, email, password }),
       });
 
       const data = await res.json();

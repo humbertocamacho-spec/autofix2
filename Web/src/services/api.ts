@@ -13,11 +13,11 @@ export async function login(email: string, password: string) {
 }
 
 // Register
-export async function register(name: string, phone: string, email: string, password: string) {
+export async function register(name: string, phone: string, countryCode: string, email: string, password: string) {
   const res = await fetch(`${API_URL}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, phone, email, password }),
+    body: JSON.stringify({ name, phone, countryCode, email, password }),
   });
   return res.json();
 }
