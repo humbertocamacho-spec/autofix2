@@ -205,6 +205,7 @@
       "name_error": "Este campo es obligatorio",
       "user_error": "Este campo es obligatorio",
       "phone_error": "Este campo es obligatorio",
+      "whatsapp_error": "Este campo es obligatorio",
       "location_error": "Este campo es obligatorio",
       "latitude_error": "Este campo es obligatorio",
       "longitude_error": "Este campo es obligatorio",

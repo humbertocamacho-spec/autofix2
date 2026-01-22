@@ -125,6 +125,7 @@ export default function PartnersTable() {
     if (!name.trim()) newErrors.name = t("partners_screen.table.name_error");
     if (!userId) newErrors.userId = t("partners_screen.table.user_error");
     if (!phone.trim()) newErrors.phone = t("partners_screen.table.phone_error");
+    if (!whatsapp.trim()) newErrors.whatsapp = t("partners_screen.table.whatsapp_error");
     if (!location.trim()) newErrors.location = t("partners_screen.table.location_error");
     if (!latitude.trim()) newErrors.latitude = t("partners_screen.table.latitude_error");
     if (!longitude.trim()) newErrors.longitude = t("partners_screen.table.longitude_error");
@@ -429,19 +430,20 @@ export default function PartnersTable() {
                     className={`w-full px-3 py-2 rounded-lg border ${errors.phone ? "border-red-500" : "border-gray-300"} `}
                     value={phone}
                     onChange={(e) => { setPhone(e.target.value); setErrors((prev) => ({ ...prev, phone: "" })); }}
-                    placeholder="Ej. 55 1234 5678"
+                    placeholder="Ej. +52 551 234 5678"
                   />
                   {submitted && errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.whatsapp")}</label>
+                  <RequiredLabel required>{t("partners_screen.table.whatsapp")}</RequiredLabel>
                   <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg"
+                    className={`w-full px-3 py-2 rounded-lg border ${errors.whatsapp ? "border-red-500" : "border-gray-300"} `}
                     value={whatsapp}
-                    onChange={(e) => setWhatsapp(e.target.value)}
-                    placeholder="Ej. 55 1234 5678"
+                    onChange={(e) => { setWhatsapp(e.target.value); setErrors((prev) => ({ ...prev, whatsapp: "" })); }}
+                    placeholder="Ej. +52 551 234 5678"
                   />
+                  {submitted && errors.whatsapp && <p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>}
                 </div>
 
                 <div className="col-span-2">

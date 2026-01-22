@@ -205,6 +205,7 @@
       "name_error": "This field is required",
       "user_error": "This field is required",
       "phone_error": "This field is required",
+      "whatsapp_error": "This field is required",
       "location_error": "This field is required",
       "latitude_error": "This field is required",
       "longitude_error": "This field is required",
