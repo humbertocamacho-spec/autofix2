@@ -4,6 +4,7 @@ import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View, Text, Image, T
 import { Ionicons } from '@expo/vector-icons';
 import type { RememberCheckBoxProps } from '../../services/remember_check_box';
 import { API_URL } from '../../config/env';
+import CountryPicker, { Country, CountryCode,} from 'react-native-country-picker-modal';
 
 const RememberCheckBox: React.FC<RememberCheckBoxProps> = ({ value, onValueChange, label }) => (
   <TouchableOpacity
@@ -30,6 +31,8 @@ export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
+  const [countryCode, setCountryCode] = useState<CountryCode>('MX');
+  const [callingCode, setCallingCode] = useState('52');
 
   const router = useRouter();
 
@@ -49,15 +52,15 @@ export default function RegisterScreen() {
     }
 
     const emailvalidate = /^[^\s@]+@gmail\.com$/;
-    const phonevalidate = /^[0-9]{10}$/;
-
+    const fullPhone = `+${callingCode}${phone}`;
+    
     if (!emailvalidate.test(email)) {
       Alert.alert('Error', 'El correo electrónico es inválido. Recuerda que debe incluir el símbolo "@" y un dominio (example@email.com).');
       return;
     }
 
-    if (!phonevalidate.test(phone)) {
-      Alert.alert('Error', 'El número debe ser de 10 dígitos y solo contener números, sin espacios, guiones o extensiones.');
+    if (fullPhone.length < 10 || fullPhone.length > 16) {
+      Alert.alert('Error', 'El número de teléfono no es válido');
       return;
     }
 
@@ -70,7 +73,7 @@ export default function RegisterScreen() {
       const res = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone, email, password }),
+        body: JSON.stringify({ name, phone: fullPhone, email, password }),
       });
 
       const data = await res.json();
@@ -139,17 +142,43 @@ export default function RegisterScreen() {
               <Ionicons name="mail-outline" size={Math.min(width * 0.05, 28)} color="#27B9BA" />
             </View>
 
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={[styles.inputField, { fontSize: scaleFont(16) }]}
-                placeholder="Teléfono"
-                placeholderTextColor="#888"
-                value={phone}
-                onChangeText={setPhone}
-                keyboardType="phone-pad"
-                autoCapitalize="none"
+            <View style={[styles.inputWrapper, { paddingHorizontal: 14 }]}>
+              <CountryPicker
+                countryCode={countryCode}
+                withFilter
+                withFlag
+                withCallingCode
+                withEmoji
+                onSelect={(country: Country) => {
+                  setCountryCode(country.cca2);
+                  setCallingCode(country.callingCode[0]);
+                }}
               />
-              <Ionicons name="call-outline" size={Math.min(width * 0.05, 28)} color="#27B9BA" />
+
+              <Text style={{ marginHorizontal: 6, fontSize: 16 }}>
+                +{callingCode}
+              </Text>
+
+              <View style={{ width: 1, height: 25, backgroundColor: '#ddd', marginHorizontal: 8 }} />
+
+              <TextInput
+                style={[styles.inputField, { fontSize: scaleFont(16), flex: 1 }]}
+                placeholder="Número de teléfono"
+                placeholderTextColor="#888"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={(text) => {
+                  const clean = text.replace(/[^0-9]/g, '');
+                  setPhone(clean);
+                }}
+                maxLength={15}
+              />
+
+              <Ionicons
+                name="call-outline"
+                size={Math.min(width * 0.05, 28)}
+                color="#27B9BA"
+              />
             </View>
 
             <View style={styles.inputWrapper}>
