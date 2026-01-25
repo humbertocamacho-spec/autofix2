@@ -430,7 +430,7 @@ export default function PartnersTable() {
                     className={`w-full px-3 py-2 rounded-lg border ${errors.phone ? "border-red-500" : "border-gray-300"} `}
                     value={phone}
                     onChange={(e) => { setPhone(e.target.value); setErrors((prev) => ({ ...prev, phone: "" })); }}
-                    placeholder="Ej. +52 551 234 5678"
+                    placeholder="Ej. +521 551 234 5678"
                   />
                   {submitted && errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 </div>
@@ -438,12 +438,24 @@ export default function PartnersTable() {
                 <div>
                   <RequiredLabel required>{t("partners_screen.table.whatsapp")}</RequiredLabel>
                   <input
-                    className={`w-full px-3 py-2 rounded-lg border ${errors.whatsapp ? "border-red-500" : "border-gray-300"} `}
+                    className={`w-full px-3 py-2 rounded-lg border ${
+                      errors.whatsapp ? "border-red-500" : "border-gray-300"
+                    }`}
                     value={whatsapp}
-                    onChange={(e) => { setWhatsapp(e.target.value); setErrors((prev) => ({ ...prev, whatsapp: "" })); }}
-                    placeholder="Ej. +52 551 234 5678"
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, "");
+
+                      if (value.length === 10) {
+                        value = `+521${value}`;
+                      }
+                      setWhatsapp(value);
+                      setErrors((prev) => ({ ...prev, whatsapp: "" }));
+                    }}
+                    placeholder="+521 551 234 5678"
                   />
-                  {submitted && errors.whatsapp && <p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>}
+                  {submitted && errors.whatsapp && (
+                    <p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>
+                  )}
                 </div>
 
                 <div className="col-span-2">

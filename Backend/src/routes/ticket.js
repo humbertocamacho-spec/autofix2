@@ -1,24 +1,24 @@
 import express from "express";
 import db from "../config/db.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { sendWhatsappMessage } from "../services/whatsapp.service.js";
+import { sendWhatsappMessage } from '../services/whatsapp.js';
 
 const router = express.Router();
 
 // Endpoint to get all tickets (App)
 router.get("/app", authMiddleware, async (req, res) => {
-    try {
-        const { user_id } = req.user;
+  try {
+    const { user_id } = req.user;
 
-        const [clientRows] = await db.query( "SELECT id FROM clients WHERE user_id = ?", [user_id]);
+    const [clientRows] = await db.query( "SELECT id FROM clients WHERE user_id = ?", [user_id]);
 
-        if (!clientRows.length) {
-            return res.json([]);
-        }
+    if (!clientRows.length) {
+      return res.json([]);
+    }
 
-        const client_id = clientRows[0].id;
+    const client_id = clientRows[0].id;
 
-        const [rows] = await db.query(`
+    const [rows] = await db.query(`
       SELECT 
         t.id,
         t.client_id,
@@ -40,131 +40,131 @@ router.get("/app", authMiddleware, async (req, res) => {
       ORDER BY t.date DESC
     `, [client_id]);
 
-        res.json(rows);
-    } catch (error) {
-        console.error("Error obteniendo tickets app:", error);
-        res.status(500).json({ message: "Error al obtener tickets" });
-    }
+      res.json(rows);
+  } catch (error) {
+      console.error("Error obteniendo tickets app:", error);
+      res.status(500).json({ message: "Error al obtener tickets" });
+  }
 });
 
 // Endpoint to get all tickets (Web)
 router.get("/", authMiddleware, async (req, res) => {
-    try {
-        const { role_name, user_id, client_id } = req.user;
-        const params = [];
+  try {
+    const { role_name, user_id, client_id } = req.user;
+    const params = [];
 
-        let query = `
-            SELECT 
-                t.id,
-                t.client_id,
-                u.name AS client_name,
-                u.deleted_at AS user_deleted_at,
-                t.car_id,
-                c.name AS car_name,
-                c.year AS car_year,
-                c.model AS car_model,
-                c.model,
-                c.year,
-                t.partner_id,
-                p.name AS partner_name,
-                p.logo_url,       
-                p.phone,
-                t.date,
-                t.notes,
-                t.status
-            FROM tickets t
-            LEFT JOIN users u ON u.id = t.client_id
-            LEFT JOIN cars c ON c.id = t.car_id
-            LEFT JOIN partners p ON p.id = t.partner_id
-        `;
+    let query = `
+        SELECT 
+            t.id,
+            t.client_id,
+            u.name AS client_name,
+            u.deleted_at AS user_deleted_at,
+            t.car_id,
+            c.name AS car_name,
+            c.year AS car_year,
+            c.model AS car_model,
+            c.model,
+            c.year,
+            t.partner_id,
+            p.name AS partner_name,
+            p.logo_url,       
+            p.phone,
+            t.date,
+            t.notes,
+            t.status
+        FROM tickets t
+        LEFT JOIN users u ON u.id = t.client_id
+        LEFT JOIN cars c ON c.id = t.car_id
+        LEFT JOIN partners p ON p.id = t.partner_id
+    `;
 
-        if (role_name === "client") {
-            query += ` WHERE t.client_id = ?`;
-            params.push(client_id);
-        }
-
-        if (role_name === "partner") {
-            // Get all partners for the user
-            const [partners] = await db.query( "SELECT id FROM partners WHERE user_id = ?",[user_id]);
-
-            const partnerIds = partners.map(p => p.id);
-
-            if (partnerIds.length === 0) { return res.json([]); }
-
-            query += ` WHERE t.partner_id IN (?)`;
-            params.push(partnerIds);
-        }
-
-        query += ` ORDER BY t.date DESC`;
-
-        const [rows] = await db.query(query, params);
-        res.json(rows);
-
-    } catch (error) {
-        console.error("Error obteniendo tickets", error);
-        res.status(500).json({ message: "Error al obtener tickets" });
+    if (role_name === "client") {
+        query += ` WHERE t.client_id = ?`;
+        params.push(client_id);
     }
+
+    if (role_name === "partner") {
+        // Get all partners for the user
+        const [partners] = await db.query( "SELECT id FROM partners WHERE user_id = ?",[user_id]);
+
+        const partnerIds = partners.map(p => p.id);
+
+        if (partnerIds.length === 0) { return res.json([]); }
+
+        query += ` WHERE t.partner_id IN (?)`;
+        params.push(partnerIds);
+    }
+
+    query += ` ORDER BY t.date DESC`;
+
+    const [rows] = await db.query(query, params);
+    res.json(rows);
+
+  } catch (error) {
+      console.error("Error obteniendo tickets", error);
+      res.status(500).json({ message: "Error al obtener tickets" });
+  }
 });
 
 // Endpoint to get tickets for a car
 router.get("/:car_id/:partner_id/:client_id", authMiddleware, async (req, res) => {
-    const { car_id, partner_id, client_id } = req.params;
+  const { car_id, partner_id, client_id } = req.params;
 
-    try {
-        const [carRows] = await db.query(`
-            SELECT c.*, cb.name AS brand_name
-            FROM cars c
-            LEFT JOIN car_brands cb ON cb.id = c.car_brand_id
-            WHERE c.id = ?
-        `, [car_id]);
+  try {
+    const [carRows] = await db.query(`
+      SELECT c.*, cb.name AS brand_name
+      FROM cars c
+      LEFT JOIN car_brands cb ON cb.id = c.car_brand_id
+      WHERE c.id = ?
+    `, [car_id]);
 
-        if (!carRows.length)
-            return res.status(404).json({ message: "Vehículo no encontrado" });
+    if (!carRows.length)
+      return res.status(404).json({ message: "Vehículo no encontrado" });
 
-        const [partnerRows] = await db.query(`SELECT * FROM partners WHERE id = ?`, [partner_id]);
-        if (!partnerRows.length)
-            return res.status(404).json({ message: "Taller no encontrado" });
+    const [partnerRows] = await db.query(`SELECT * FROM partners WHERE id = ?`, [partner_id]);
+    if (!partnerRows.length)
+      return res.status(404).json({ message: "Taller no encontrado" });
 
-        const [clientRows] = await db.query(`SELECT * FROM clients WHERE id = ?`, [client_id]);
-        if (!clientRows.length)
-            return res.status(404).json({ message: "Cliente no encontrado" });
+    const [clientRows] = await db.query(`SELECT * FROM clients WHERE id = ?`, [client_id]);
+    if (!clientRows.length)
+      return res.status(404).json({ message: "Cliente no encontrado" });
 
-        const [ticketRows] = await db.query(`
-            SELECT *
-            FROM tickets
-            WHERE car_id = ? AND partner_id = ? AND client_id = ?
-            ORDER BY id DESC
-            LIMIT 1
-        `, [car_id, partner_id, client_id]);
+    const [ticketRows] = await db.query(`
+      SELECT *
+      FROM tickets
+      WHERE car_id = ? AND partner_id = ? AND client_id = ?
+      ORDER BY id DESC
+      LIMIT 1
+    `, [car_id, partner_id, client_id]);
 
-        res.json({
-            car: carRows[0],
-            partner: partnerRows[0],
-            client: clientRows[0],
-            ticket: ticketRows.length ? ticketRows[0] : null
-        });
+    res.json({
+      car: carRows[0],
+      partner: partnerRows[0],
+      client: clientRows[0],
+      ticket: ticketRows.length ? ticketRows[0] : null
+    });
 
-    } catch (error) {
-        console.error("Error obteniendo ticket:", error);
-        res.status(500).json({ message: "Error al obtener ticket" });
-    }
+  } catch (error) {
+      console.error("Error obteniendo ticket:", error);
+      res.status(500).json({ message: "Error al obtener ticket" });
+  }
 });
 
 // Endpoint to get a ticket by id
 router.get("/by-id/:id", authMiddleware, async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    try {
-        const [rows] = await db.query(`SELECT * FROM tickets WHERE id = ?`, [id]);
+  try {
+    const [rows] = await db.query(`SELECT * FROM tickets WHERE id = ?`, [id]);
 
-        if (!rows.length)
-            return res.status(404).json({ message: "Ticket no encontrado" });
+    if (!rows.length)
+      return res.status(404).json({ message: "Ticket no encontrado" });
 
-        res.json(rows[0]);
-    } catch (error) {
-        console.error("Error obteniendo ticket:", error);
-        res.status(500).json({ message: "Error al obtener ticket" });
-    }
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error obteniendo ticket:", error);
+    res.status(500).json({ message: "Error al obtener ticket" });
+  }
 });
 
 // Endpoint to create a ticket
@@ -172,147 +172,202 @@ router.post("/", authMiddleware, async (req, res) => {
   const { client_id, car_id, partner_id, date, notes } = req.body;
 
   try {
-
+    //Crear el ticket
     const [result] = await db.query(
       `INSERT INTO tickets (client_id, car_id, partner_id, date, notes)
        VALUES (?, ?, ?, ?, ?)`,
       [client_id, car_id, partner_id, date, notes]
     );
-
     const ticketId = result.insertId;
 
+    //Obtener datos del partner
     const [partnerRows] = await db.query(
       `SELECT name, whatsapp FROM partners WHERE id = ?`,
       [partner_id]
     );
 
+    //Obtener nombre del cliente
     const [clientRows] = await db.query(
       `SELECT name FROM users WHERE id = ?`,
       [client_id]
     );
 
+    //Obtener datos del auto
+    const [carRows] = await db.query(
+      `SELECT name, model, year, plate 
+       FROM cars 
+       WHERE id = ?`,
+      [car_id]
+    );
+
+    // Construir nombre del auto de forma inteligente
+    let carName = "Vehículo desconocido";
+    if (carRows.length > 0) {
+      const car = carRows[0];
+      
+      // usar el campo 'name' si existe y no está vacío
+      if (car.name && car.name.trim() !== '') {
+        carName = car.name.trim();
+      } else {
+        // armar con modelo + año + placas
+        const parts = [];
+        if (car.model) parts.push(car.model.trim());
+        if (car.year) parts.push(`(${car.year.trim()})`);
+        if (car.plate) parts.push(`- ${car.plate.trim()}`);
+        
+        carName = parts.join(' ').trim();
+        
+        // Si aún está vacío, fallback a ID
+        if (!carName) {
+          carName = `Vehículo ID: ${car_id}`;
+        }
+      }
+    }
+
+    // Enviar WhatsApp solo si el partner tiene número registrado
     if (partnerRows.length && partnerRows[0].whatsapp) {
       const partner = partnerRows[0];
-      const clientName = clientRows.length
-        ? clientRows[0].name
-        : "Cliente";
+      const clientName = clientRows.length ? clientRows[0].name : 'Cliente';
 
       const appointmentDate = new Date(date);
-
-      const formattedDate = appointmentDate.toLocaleDateString("es-MX");
-      const formattedTime = appointmentDate.toLocaleTimeString("es-MX", {
-        hour: "2-digit",
-        minute: "2-digit",
+      const formattedDate = appointmentDate.toLocaleDateString('es-MX', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      const formattedTime = appointmentDate.toLocaleTimeString('es-MX', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
       });
 
       const message = `
-        📌 Nueva cita agendada
+Nueva cita agendada 📌
 
-        Hola ${partner.name},
+Hola ${partner.name} 👋🏻
 
-        El cliente ${clientName} ha agendado una cita en tu taller.
+${clientName} ha agendado una nueva cita en tu taller:
 
-        🗓 Fecha: ${formattedDate}
-        ⏰ Hora: ${formattedTime}
-        🏢 Taller: Autofix
-        💬 Nota del cliente: ${notes || "Sin nota"}
+🗓 Fecha: ${formattedDate}
+⏰ Hora: ${formattedTime}
+🚘 Auto: ${carName}
+💬 Nota del cliente: ${notes || "Sin nota"}
 
-        Por favor revisa la cita y prepárate para atender al cliente.
+Por favor revisa la cita en el sistema y prepárate para atenderlo.
+¡Gracias por ser parte de Autofix!
+      `.trim();
 
-        Gracias por usar Autofix.
-        `;
+      // Limpiar y normalizar número de WhatsApp
+      let phone = partner.whatsapp.replace(/\D/g, '');
+      if (phone.length === 10) {
+        phone = '+52' + phone;
+      } else if (phone.startsWith('52')) {
+        phone = '+' + phone;
+      } else if (!phone.startsWith('+')) {
+        phone = '+52' + phone; // fallback México
+      }
 
+      console.log("📤 Enviando WhatsApp a:", phone);
 
-      await sendWhatsappMessage(partner.whatsapp, message);
+      try {
+        await sendWhatsappMessage(phone, message);
+        console.log("✅ WhatsApp enviado correctamente");
+      } catch (err) {
+        console.error("❌ Error enviando WhatsApp:", err.message || err);
+      }
+    } else {
+      console.log("ℹ️ No se envía WhatsApp: partner sin número o no encontrado");
     }
 
-    return res.json({
-      message: "Ticket creado y notificación enviada al partner",
+    // Respuesta exitosa
+    return res.status(201).json({
+      message: "Ticket creado correctamente",
       id: ticketId,
     });
 
   } catch (error) {
     console.error("Error creando ticket:", error);
     return res.status(500).json({
-      message: "Error creando ticket",
+      message: "Error al crear el ticket",
     });
   }
 });
 
 // Endpoint to delete a ticket
 router.delete("/:id", authMiddleware, async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    try {
-        const [result] = await db.query( "DELETE FROM tickets WHERE id = ?", [id]);
+  try {
+    const [result] = await db.query( "DELETE FROM tickets WHERE id = ?", [id]);
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ ok: false, message: "Ticket no encontrado" });
-        }
-
-        return res.json({ ok: true, message: "Ticket eliminado correctamente" });
-
-    } catch (error) {
-        console.error("Error eliminando ticket:", error);
-        res.status(500).json({ ok: false, message: "Error al eliminar el ticket" });
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ ok: false, message: "Ticket no encontrado" });
     }
+
+    return res.json({ ok: true, message: "Ticket eliminado correctamente" });
+
+  } catch (error) {
+    console.error("Error eliminando ticket:", error);
+    res.status(500).json({ ok: false, message: "Error al eliminar el ticket" });
+  }
 });
 
 // Endpoint to update a ticket status
 router.put("/:id/status", authMiddleware, async (req, res) => {
-    const { id } = req.params;
-    const { status } = req.body;
+  const { id } = req.params;
+  const { status } = req.body;
 
-    const allowedStatus = ["pendiente", "revision", "finalizado"];
+  const allowedStatus = ["pendiente", "revision", "finalizado"];
 
-    if (!allowedStatus.includes(status)) {
-        return res.status(400).json({ message: "Status inválido" });
+  if (!allowedStatus.includes(status)) {
+    return res.status(400).json({ message: "Status inválido" });
+  }
+
+  try {
+    const [result] = await db.query( `UPDATE tickets SET status = ? WHERE id = ?`, [status, id]);
+
+    if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Ticket no encontrado" });
     }
 
-    try {
-        const [result] = await db.query( `UPDATE tickets SET status = ? WHERE id = ?`, [status, id]);
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: "Ticket no encontrado" });
-        }
-
-        res.json({ message: "Status actualizado correctamente" });
-    } catch (error) {
-        console.error("Error actualizando status:", error);
-        res.status(500).json({ message: "Error al actualizar status" });
-    }
+    res.json({ message: "Status actualizado correctamente" });
+  } catch (error) {
+    console.error("Error actualizando status:", error);
+    res.status(500).json({ message: "Error al actualizar status" });
+  }
 });
 
 // Endpoint to get the hours occupied by a partner for a specific date
 router.get("/occupied", async (req, res) => {
-    try {
-        const { partner_id, date } = req.query;
+  try {
+    const { partner_id, date } = req.query;
 
-        if (!partner_id || !date) {
-            return res.status(400).json({ message: "Faltan parámetros (partner_id o date)" });
-        }
-
-        const [rows] = await db.query(
-            `
-            SELECT 
-                DATE_FORMAT(date, '%h:%i %p') AS hour
-            FROM 
-                tickets
-            WHERE 
-                partner_id = ? 
-                AND DATE(date) = ?
-            `,
-            [partner_id, date]
-        );
-
-        const occupiedHours = rows.map(r => r.hour);
-
-        return res.json({ occupied_hours: occupiedHours });
-
-    } catch (error) {
-        console.error("Error obteniendo horas ocupadas:", error);
-        return res.status(500).json({ message: "Error obteniendo horas ocupadas" });
+    if (!partner_id || !date) {
+        return res.status(400).json({ message: "Faltan parámetros (partner_id o date)" });
     }
+
+    const [rows] = await db.query(
+        `
+      SELECT 
+          DATE_FORMAT(date, '%h:%i %p') AS hour
+      FROM 
+          tickets
+      WHERE 
+          partner_id = ? 
+          AND DATE(date) = ?
+      `,
+      [partner_id, date]
+    );
+
+    const occupiedHours = rows.map(r => r.hour);
+
+    return res.json({ occupied_hours: occupiedHours });
+
+  } catch (error) {
+      console.error("Error obteniendo horas ocupadas:", error);
+      return res.status(500).json({ message: "Error obteniendo horas ocupadas" });
+  }
 });
 
 export default router;
