@@ -172,7 +172,6 @@ router.post("/", authMiddleware, async (req, res) => {
   const { client_id, car_id, partner_id, date, notes } = req.body;
 
   try {
-    //Crear el ticket
     const [result] = await db.query(
       `INSERT INTO tickets (client_id, car_id, partner_id, date, notes)
        VALUES (?, ?, ?, ?, ?)`,
