@@ -30,11 +30,6 @@
       },
       "ios": {
         "simulator": false         
-      },
-      "env": {
-        "API_URL": "https://autofixapp.autofix.lat",
-        "GOOGLE_API_KEY": "AIzaSyDwkMf1ECQfbEWLVvYC1UJ_HUNDI0_aDCw",
-        "GOOGLE_API_KEY_IOS": "AIzaSyCCGn5gqx_VmrAq0izYqyUYbbFrGVAlcE8"
       }
     }
   },

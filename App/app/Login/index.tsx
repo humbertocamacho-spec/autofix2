@@ -193,6 +193,12 @@ export default function LoginScreen() {
             <Text style={[styles.buttonText, { fontSize: scaleFont(17) }]}>Iniciar Sesión</Text>
           </TouchableOpacity>
 
+          <View style={{ marginTop: 15, alignItems: 'center' }}>
+            <Text style={{ fontSize: 12, color: '#999', textAlign: 'center' }}>
+              API: {API_URL}
+            </Text>
+          </View>
+
           <View style={styles.newUserContainer}>
             <Text>¿No tienes un usuario?</Text>
             <TouchableOpacity onPress={() => router.push('/Register')}>
