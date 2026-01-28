@@ -7,6 +7,11 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "http://192.168.1.x:3000",  // ← usa IP local o ngrok para dev
+        "EXPO_PUBLIC_GOOGLE_API_KEY": "AIzaSyDwkMf1ECQfbEWLVvYC1UJ_HUNDI0_aDCw",
+        "EXPO_PUBLIC_GOOGLE_API_KEY_IOS": "AIzaSyCCGn5gqx_VmrAq0izYqyUYbbFrGVAlcE8r"
+      },
       "android": {
         "buildType": "apk"
       },
@@ -16,20 +21,30 @@
     },
     "preview": {
       "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://autofixapp.autofix.lat",
+        "EXPO_PUBLIC_GOOGLE_API_KEY": "AIzaSyDwkMf1ECQfbEWLVvYC1UJ_HUNDI0_aDCw",
+        "EXPO_PUBLIC_GOOGLE_API_KEY_IOS": "AIzaSyCCGn5gqx_VmrAq0izYqyUYbbFrGVAlcE8r"
+      },
       "android": {
-        "buildType": "apk"         
+        "buildType": "apk"
       },
       "ios": {
-        "simulator": false         
+        "simulator": false
       }
     },
     "production": {
       "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://autofixapp.autofix.lat",
+        "EXPO_PUBLIC_GOOGLE_API_KEY": "AIzaSyDwkMf1ECQfbEWLVvYC1UJ_HUNDI0_aDCw",
+        "EXPO_PUBLIC_GOOGLE_API_KEY_IOS": "AIzaSyCCGn5gqx_VmrAq0izYqyUYbbFrGVAlcE8r"
+      },
       "android": {
-        "buildType": "app-bundle"  
+        "buildType": "app-bundle"
       },
       "ios": {
-        "simulator": false         
+        "simulator": false
       }
     }
   },
