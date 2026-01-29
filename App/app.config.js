@@ -1,4 +1,3 @@
-// app.config.ts  (o .js)
 export default {
   expo: {
     name: 'AutoFix',
@@ -13,7 +12,7 @@ export default {
       supportsTablet: true,
       bundleIdentifier: 'com.autofix.mx.autofixapp',
       config: {
-        googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY_IOS,  // ← OK aquí (se resuelve en build time)
+        googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY_IOS,
       },
       infoPlist: {
         "ITSAppUsesNonExemptEncryption": false
@@ -28,7 +27,7 @@ export default {
       package: 'com.autofix.mx.autofixapp',
       config: {
         googleMaps: {
-          apiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,  // ← OK aquí también
+          apiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,
         }
       },
       versionCode: 6,
@@ -49,9 +48,6 @@ export default {
       eas: {
         projectId: '0ba948f4-0961-441f-9e14-cbbf6ec47528',
       },
-      // ← BORRA o comenta estas líneas:
-      // API_URL: process.env.API_URL,
-      // GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
     },
   },
 };

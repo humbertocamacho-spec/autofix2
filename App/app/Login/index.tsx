@@ -125,48 +125,6 @@ export default function LoginScreen() {
           keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
         >
 
-          {/* === DEBUG EN PANTALLA - CUADRO ROJO ARRIBA === */}
-          <View style={{
-            backgroundColor: '#ffebee',
-            borderWidth: 2,
-            borderColor: '#c62828',
-            borderRadius: 12,
-            padding: 16,
-            marginBottom: 30,
-          }}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#c62828', marginBottom: 12, textAlign: 'center' }}>
-              DEBUG - NO BORRAR AÚN
-            </Text>
-
-            <Text style={{ fontSize: 15, marginBottom: 8 }}>
-              <Text style={{ fontWeight: 'bold' }}>API_URL cargada: </Text>
-              {debugApiUrl || 'NO DEFINIDA (undefined)'}
-            </Text>
-
-            <Text style={{ fontSize: 13, color: '#555', marginBottom: 12, lineHeight: 18 }}>
-              Si ves "fallback" o algo raro → la variable EXPO_PUBLIC_API_URL NO se inyectó en el build.
-            </Text>
-
-            {fetchDetailError ? (
-              <View style={{ marginTop: 12 }}>
-                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#c62828', marginBottom: 4 }}>
-                  Detalle del error al intentar login:
-                </Text>
-                <Text style={{
-                  fontSize: 13,
-                  color: '#b71c1c',
-                  backgroundColor: '#ffcdd2',
-                  padding: 10,
-                  borderRadius: 8,
-                  fontFamily: Platform.OS === 'android' ? 'monospace' : 'Courier',
-                }}>
-                  {fetchDetailError}
-                </Text>
-              </View>
-            ) : null}
-          </View>
-
-          {/* Tu UI original */}
           <View style={{ alignItems: 'center', marginBottom: height * -0.03, marginTop: -50 }}>
             <Image
               source={require('../../assets/images/LogoAutoFix.png')}
