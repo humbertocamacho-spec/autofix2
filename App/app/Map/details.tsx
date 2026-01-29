@@ -224,7 +224,7 @@ export default function PartnerDetailScreen() {
           )}
 
           {partnerCertifications.length === 0 && (
-            <Text style={{ fontSize: 15, color: "#555", marginBottom: 5 }}> No cuenta con certificación</Text>
+            <Text style={{ fontSize: 15, color: "#555", marginBottom: 5 }}>No cuenta con certificación</Text>
           )}
 
           <View style={{ flexDirection: 'row', marginTop: -5, marginBottom: 10 }}>

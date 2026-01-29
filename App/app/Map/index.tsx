@@ -1,7 +1,7 @@
 import * as Location from 'expo-location';
 import { Stack, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Animated, Dimensions, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView} from 'react-native';
+import { KeyboardAvoidingView,Platform, ActivityIndicator, Alert, Animated, Dimensions, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView} from 'react-native';
 import MapView, { Marker, Region } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { getPartners } from '@/services/partners';
@@ -276,37 +276,47 @@ export default function MapScreen() {
           </MapView>
         </View>
 
-        <View style={styles.searchContainer}>
-          <View style={styles.searchWrapped}>
-            <Ionicons name="search-outline" size={20} color="#7a7a7a" marginRight={10} />
-            <TextInput style={styles.searchInput} placeholder="Buscar Tiendas" placeholderTextColor="#666" value={searchText} onChangeText={setSearchText} />
-          </View>
+        <KeyboardAvoidingView  behavior={Platform.OS === 'ios' ? 'padding' : 'position'} keyboardVerticalOffset={Platform.OS === 'ios' ? -50 : -110} style={styles.searchContainerWrapper}>
 
-          <TouchableOpacity
-            onPress={() =>
-              router.push({
-                pathname: '/Recommendations',
-                params: {
-                  latitude: region?.latitude.toString() || '',
-                  longitude: region?.longitude.toString() || '',
-                  radius: distanceRadius.toString(),
-                },
-              })
-            }
-          >
-            <Text style={styles.recommendationsButton}>Recomendaciones Cercanas</Text>
-          </TouchableOpacity>
-
-          <ScrollView style={styles.scrollSpecialities} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            <View style={styles.specialityContainer}>
-              {specialities.map((item) => (
-                <TouchableOpacity key={item.id} style={[styles.specialityButton, selectedSpeciality === item.id && styles.specialityButtonActive]} onPress={() => setSelectedSpeciality(selectedSpeciality === item.id ? null : item.id)}>
-                  <Text style={[styles.specialityText, selectedSpeciality === item.id && styles.specialityTextActive]}>{item.name}</Text>
-                </TouchableOpacity>
-              ))}
+          <View style={styles.searchContainer}>
+            <View style={styles.searchWrapped}>
+              <Ionicons name="search-outline" size={20} color="#7a7a7a" marginRight={10} />
+              <TextInput 
+                style={styles.searchInput} 
+                placeholder="Buscar Tiendas" 
+                placeholderTextColor="#666" 
+                value={searchText} 
+                onChangeText={setSearchText}
+                returnKeyType="done"
+              />
             </View>
-          </ScrollView>
-        </View>
+
+            <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: '/Recommendations',
+                  params: {
+                    latitude: region?.latitude.toString() || '',
+                    longitude: region?.longitude.toString() || '',
+                    radius: distanceRadius.toString(),
+                  },
+                })
+              }
+            >
+              <Text style={styles.recommendationsButton}>Recomendaciones Cercanas</Text>
+            </TouchableOpacity>
+
+            <ScrollView style={styles.scrollSpecialities} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+              <View style={styles.specialityContainer}>
+                {specialities.map((item) => (
+                  <TouchableOpacity key={item.id} style={[styles.specialityButton, selectedSpeciality === item.id && styles.specialityButtonActive]} onPress={() => setSelectedSpeciality(selectedSpeciality === item.id ? null : item.id)}>
+                    <Text style={[styles.specialityText, selectedSpeciality === item.id && styles.specialityTextActive]}>{item.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
 
         <Modal visible={mapModalVisible} animationType="fade" transparent={true} onRequestClose={() => setMapModalVisible(false)}>
           <View style={styles.modalOverlay}>
@@ -445,7 +455,6 @@ const styles = StyleSheet.create({
   buttonText: { color: '#fff', fontWeight: 'bold' },
   partnerButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#27B9BA', paddingVertical: 12, paddingHorizontal: 15, borderRadius: 10, marginHorizontal: 15, marginTop: 5, justifyContent: 'center', elevation: 3, },
   partnerButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold', },
-  searchContainer: { width: '100%', height: 350, backgroundColor: '#fff', padding: 10, elevation: 5,},
   scrollSpecialities: { maxHeight: "100%", marginTop: 10, marginBottom: 10, },
   scrollContent: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', paddingBottom: 10, },
   specialityContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
@@ -472,5 +481,7 @@ const styles = StyleSheet.create({
   markerBubble: { width: 30, height: 30, borderRadius: 30, backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center', borderWidth: 1,},
   markerImage: { width: 30, height: 30, borderRadius: 15,},
   markerArrow: { width: 0, height: 0, borderLeftWidth: 6, borderRightWidth: 6, borderTopWidth: 5, borderLeftColor: 'transparent', borderRightColor: 'transparent', marginTop: -2,},
+  searchContainerWrapper: { bottom: 0, left: 0, right: 0,},
+  searchContainer: {  backgroundColor: '#fff',  maxHeight: 340,  padding: 10,  borderTopLeftRadius: 20,  borderTopRightRadius: 20,  elevation: 12,},
 
 });
