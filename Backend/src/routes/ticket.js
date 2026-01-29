@@ -177,109 +177,77 @@ router.post("/", authMiddleware, async (req, res) => {
        VALUES (?, ?, ?, ?, ?)`,
       [client_id, car_id, partner_id, date, notes]
     );
+
     const ticketId = result.insertId;
 
-    //Obtener datos del partner
     const [partnerRows] = await db.query(
       `SELECT name, whatsapp FROM partners WHERE id = ?`,
       [partner_id]
     );
 
-    //Obtener nombre del cliente
     const [clientRows] = await db.query(
       `SELECT name FROM users WHERE id = ?`,
       [client_id]
     );
 
-    //Obtener datos del auto
     const [carRows] = await db.query(
-      `SELECT name, model, year, plate 
-       FROM cars 
-       WHERE id = ?`,
+      `SELECT name, model, year, plate FROM cars WHERE id = ?`,
       [car_id]
     );
 
-    // Construir nombre del auto de forma inteligente
     let carName = "Vehículo desconocido";
-    if (carRows.length > 0) {
+    if (carRows.length) {
       const car = carRows[0];
-      
-      // usar el campo 'name' si existe y no está vacío
-      if (car.name && car.name.trim() !== '') {
+      if (car.name?.trim()) {
         carName = car.name.trim();
       } else {
-        // armar con modelo + año + placas
         const parts = [];
-        if (car.model) parts.push(car.model.trim());
-        if (car.year) parts.push(`(${car.year.trim()})`);
-        if (car.plate) parts.push(`- ${car.plate.trim()}`);
-        
-        carName = parts.join(' ').trim();
-        
-        // Si aún está vacío, fallback a ID
-        if (!carName) {
-          carName = `Vehículo ID: ${car_id}`;
-        }
+        if (car.model) parts.push(car.model);
+        if (car.year) parts.push(`(${car.year})`);
+        if (car.plate) parts.push(`- ${car.plate}`);
+        carName = parts.join(" ").trim() || `Vehículo ID: ${car_id}`;
       }
     }
 
-    // Enviar WhatsApp solo si el partner tiene número registrado
     if (partnerRows.length && partnerRows[0].whatsapp) {
       const partner = partnerRows[0];
-      const clientName = clientRows.length ? clientRows[0].name : 'Cliente';
+      const clientName = clientRows.length ? clientRows[0].name : "Cliente";
 
       const appointmentDate = new Date(date);
-      const formattedDate = appointmentDate.toLocaleDateString('es-MX', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-      const formattedTime = appointmentDate.toLocaleTimeString('es-MX', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
+      const formattedDate = appointmentDate.toLocaleDateString("es-MX", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
 
-      const message = `
-Nueva cita agendada 📌
+      const formattedTime = appointmentDate.toLocaleTimeString("es-MX", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
 
-Hola ${partner.name} 👋🏻
-
-${clientName} ha agendado una nueva cita en tu taller:
-
-🗓 Fecha: ${formattedDate}
-⏰ Hora: ${formattedTime}
-🚘 Auto: ${carName}
-💬 Nota del cliente: ${notes || "Sin nota"}
-
-Por favor revisa la cita en el sistema y prepárate para atenderlo.
-¡Gracias por ser parte de Autofix!
-      `.trim();
-
-      // Limpiar y normalizar número de WhatsApp
-      let phone = partner.whatsapp.replace(/\D/g, '');
-      if (phone.length === 10) {
-        phone = '+52' + phone;
-      } else if (phone.startsWith('52')) {
-        phone = '+' + phone;
-      } else if (!phone.startsWith('+')) {
-        phone = '+52' + phone; // fallback México
-      }
+      let phone = partner.whatsapp.replace(/\D/g, "");
+      if (phone.length === 10) phone = `+52${phone}`;
+      else if (phone.startsWith("52")) phone = `+${phone}`;
+      else if (!phone.startsWith("+")) phone = `+52${phone}`;
 
       console.log("📤 Enviando WhatsApp a:", phone);
 
       try {
-        await sendWhatsappMessage(phone, message);
-        console.log("✅ WhatsApp enviado correctamente");
+        await sendWhatsappTemplate(phone, {
+          "1": partner.name,
+          "2": clientName,
+          "3": formattedDate,
+          "4": formattedTime,
+          "5": carName,
+          "6": notes || "Sin nota",
+        });
       } catch (err) {
         console.error("❌ Error enviando WhatsApp:", err.message || err);
       }
-    } else {
-      console.log("ℹ️ No se envía WhatsApp: partner sin número o no encontrado");
     }
 
-    // Respuesta exitosa
     return res.status(201).json({
       message: "Ticket creado correctamente",
       id: ticketId,

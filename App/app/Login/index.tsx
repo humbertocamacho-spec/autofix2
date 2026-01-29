@@ -25,7 +25,6 @@ const RememberCheckBox: React.FC<RememberCheckBoxProps> = ({ value, onValueChang
 export default function LoginScreen() {
   const router = useRouter();
   const { width, height } = useWindowDimensions();
-
   const scaleFont = (size: number) => size * PixelRatio.getFontScale();
   const moderateScale = (size: number) => size * (width / 375);
 
@@ -34,6 +33,10 @@ export default function LoginScreen() {
   const [error, setError] = useState('');
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Estados nuevos para debug visible en pantalla
+  const [debugApiUrl, setDebugApiUrl] = useState(API_URL);
+  const [fetchDetailError, setFetchDetailError] = useState('');
 
   useEffect(() => {
     const loadSavedCredentials = async () => {
@@ -53,11 +56,16 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     if (!email || !password) {
       setError('Completa todos los campos');
+      setFetchDetailError('Campos vacíos');
       return;
     }
 
+    setError('');
+    setFetchDetailError('');
+
     try {
-      const res = await fetch(`${API_URL}/api/auth/login`, {
+      const url = `${debugApiUrl}/api/auth/login`; // usamos debugApiUrl para mostrarla
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -66,35 +74,37 @@ export default function LoginScreen() {
       const data = await res.json();
 
       if (!data.ok || !data.user) {
-          setError(data.message || "Error en el login");
-          return;
-        }
+        const msg = data.message || 'Error en el login (respuesta no ok)';
+        setError(msg);
+        setFetchDetailError(`Status: ${res.status}\nRespuesta: ${JSON.stringify(data, null, 2)}\nURL: ${url}`);
+        return;
+      }
 
-        await AsyncStorage.setItem('token', data.token);
+      await AsyncStorage.setItem('token', data.token);
+      const userId = data.user.id;
+      const clientId = data.user.client_id;
+      await AsyncStorage.setItem('user_id', userId.toString());
+      await AsyncStorage.setItem('client_id', clientId ? clientId.toString() : '');
 
-        const userId = data.user.id;
-        const clientId = data.user.client_id;
+      if (remember) {
+        await AsyncStorage.setItem('savedEmail', email);
+        await AsyncStorage.setItem('savedPassword', password);
+      } else {
+        await AsyncStorage.removeItem('savedEmail');
+        await AsyncStorage.removeItem('savedPassword');
+      }
 
-        await AsyncStorage.setItem("user_id", userId.toString());
-        await AsyncStorage.setItem("client_id", clientId ? clientId.toString() : "");
-
-        // Recordar credenciales
-        if (remember) {
-          await AsyncStorage.setItem('savedEmail', email);
-          await AsyncStorage.setItem('savedPassword', password);
-        } else {
-          await AsyncStorage.removeItem('savedEmail');
-          await AsyncStorage.removeItem('savedPassword');
-        }
-
-        router.replace('/Map');
-
-
-      } catch (err: any) {
-    console.log("ERROR LOGIN APP:", err?.response?.data || err.message || err);
-    setError(err?.response?.data?.message || "Error desconocido");
-  }
-
+      router.replace('/Map');
+    } catch (err: any) {
+      const errorMsg = err?.message || 'Error desconocido';
+      setError(errorMsg);
+      setFetchDetailError(
+        `Error completo:\n${errorMsg}\n` +
+        `Stack: ${err?.stack || 'No disponible'}\n` +
+        `URL intentada: ${debugApiUrl}/api/auth/login\n` +
+        `Tipo: ${err?.name || 'Desconocido'}`
+      );
+    }
   };
 
   const handleForgotPassword = () => {
@@ -113,6 +123,49 @@ export default function LoginScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
+
+          {/* === DEBUG EN PANTALLA - CUADRO ROJO ARRIBA === */}
+          <View style={{
+            backgroundColor: '#ffebee',
+            borderWidth: 2,
+            borderColor: '#c62828',
+            borderRadius: 12,
+            padding: 16,
+            marginBottom: 30,
+          }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#c62828', marginBottom: 12, textAlign: 'center' }}>
+              DEBUG - NO BORRAR AÚN
+            </Text>
+
+            <Text style={{ fontSize: 15, marginBottom: 8 }}>
+              <Text style={{ fontWeight: 'bold' }}>API_URL cargada: </Text>
+              {debugApiUrl || 'NO DEFINIDA (undefined)'}
+            </Text>
+
+            <Text style={{ fontSize: 13, color: '#555', marginBottom: 12, lineHeight: 18 }}>
+              Si ves "fallback" o algo raro → la variable EXPO_PUBLIC_API_URL NO se inyectó en el build.
+            </Text>
+
+            {fetchDetailError ? (
+              <View style={{ marginTop: 12 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#c62828', marginBottom: 4 }}>
+                  Detalle del error al intentar login:
+                </Text>
+                <Text style={{
+                  fontSize: 13,
+                  color: '#b71c1c',
+                  backgroundColor: '#ffcdd2',
+                  padding: 10,
+                  borderRadius: 8,
+                  fontFamily: Platform.OS === 'android' ? 'monospace' : 'Courier',
+                }}>
+                  {fetchDetailError}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+
+          {/* Tu UI original */}
           <View style={{ alignItems: 'center', marginBottom: height * -0.03, marginTop: -50 }}>
             <Image
               source={require('../../assets/images/LogoAutoFix.png')}
@@ -143,7 +196,6 @@ export default function LoginScreen() {
             </View>
 
             <View style={styles.inputWrapper}>
-
               <TextInput
                 style={[styles.inputField, { fontSize: scaleFont(16), color: '#000' }]}
                 placeholder="Contraseña"
@@ -153,7 +205,6 @@ export default function LoginScreen() {
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
               />
-
               <TouchableOpacity
                 onPress={() => {
                   if (password.length > 0) setShowPassword(!showPassword);
@@ -205,10 +256,10 @@ export default function LoginScreen() {
   );
 }
 
+// styles igual (no cambié nada)
 const styles = StyleSheet.create({
   inputWrapper: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#ddd', marginBottom: 15, paddingHorizontal: 15, height: 55, },
   inputField: { flex: 1, height: '100%' },
-  inputIcon: { marginLeft: 10 },
   actionsContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 100 },
   checkboxContainer: { flexDirection: 'row', alignItems: 'center' },
   checkbox: { width: 20, height: 20, borderWidth: 1, borderColor: '#ccc', borderRadius: 4 },
