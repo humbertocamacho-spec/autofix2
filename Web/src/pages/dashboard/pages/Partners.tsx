@@ -13,7 +13,7 @@ export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [specialities, setSpecialities] = useState<{ id: number; name: string }[]>([]);
-  const [allPartnerSpecialities, setAllPartnerSpecialities] = useState< { partner_id: number; speciality_id: number }[]>([]);
+  const [allPartnerSpecialities, setAllPartnerSpecialities] = useState<{ partner_id: number; speciality_id: number }[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -53,7 +53,7 @@ export default function PartnersTable() {
   const fetchPartners = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await authFetch(`${VITE_API_URL}/api/partners`, { headers: { Authorization: `Bearer ${token}`, },});
+      const res = await authFetch(`${VITE_API_URL}/api/partners`, { headers: { Authorization: `Bearer ${token}`, }, });
       const data: Partner[] = await res.json();
       setPartners(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -103,7 +103,7 @@ export default function PartnersTable() {
   const getPartnerSpecialities = (partnerId: number) => {
     return allPartnerSpecialities
       .filter(ps => ps.partner_id === partnerId)
-      .map(rel => { const spec = specialities.find(s => s.id === rel.speciality_id); return spec?.name;})
+      .map(rel => { const spec = specialities.find(s => s.id === rel.speciality_id); return spec?.name; })
       .filter(Boolean) as string[];
   };
 
@@ -206,7 +206,7 @@ export default function PartnersTable() {
     await fetch(`${VITE_API_URL}/api/partner_specialities`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
-      body: JSON.stringify({ partner_id: partnerId, speciality_ids: selectedSpecialities,}),
+      body: JSON.stringify({ partner_id: partnerId, speciality_ids: selectedSpecialities, }),
     });
 
     alert(t(isEditing ? "partners_screen.success.update" : "partners_screen.success.create"));
@@ -217,12 +217,12 @@ export default function PartnersTable() {
 
   // Actions
   const deletePartner = async (partner: Partner) => {
-    const confirmed = window.confirm( t("partners_screen.confirm.deactivate", { name: partner.name }));
+    const confirmed = window.confirm(t("partners_screen.confirm.deactivate", { name: partner.name }));
     if (!confirmed) return;
 
-    const res = await authFetch(`${VITE_API_URL}/api/partners/${partner.id}`, { method: "DELETE",});
+    const res = await authFetch(`${VITE_API_URL}/api/partners/${partner.id}`, { method: "DELETE", });
 
-    if (!res.ok) { alert(t("partners_screen.errors.deactivate")); return;}
+    if (!res.ok) { alert(t("partners_screen.errors.deactivate")); return; }
 
     alert(t("partners_screen.success.deactivate"));
     fetchPartners();
@@ -230,19 +230,19 @@ export default function PartnersTable() {
 
   // Restore partner
   const restorePartner = async (partner: Partner) => {
-    const confirmed = window.confirm( t("partners_screen.confirm.restore", { name: partner.name }));
+    const confirmed = window.confirm(t("partners_screen.confirm.restore", { name: partner.name }));
     if (!confirmed) return;
 
-    const res = await authFetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, { method: "PATCH",});
+    const res = await authFetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, { method: "PATCH", });
 
-    if (!res.ok) { alert(t("partners_screen.errors.restore")); return;}
+    if (!res.ok) { alert(t("partners_screen.errors.restore")); return; }
 
     alert(t("partners_screen.success.restore"));
     fetchPartners();
   };
 
   // Filter partners by name
-  const filtered = partners .filter((p) => p.name.toLowerCase().includes(search.toLowerCase())) .sort((a, b) => a.id - b.id);
+  const filtered = partners.filter((p) => p.name.toLowerCase().includes(search.toLowerCase())).sort((a, b) => a.id - b.id);
 
   return (
     <DashboardLayout>
@@ -325,7 +325,7 @@ export default function PartnersTable() {
                       {(() => {
                         const specs = getPartnerSpecialities(item.id);
 
-                        if (specs.length === 0) { return <span className="text-gray-400 text-sm">-</span>;}
+                        if (specs.length === 0) { return <span className="text-gray-400 text-sm">-</span>; }
 
                         const visible = specs.slice(0, 2);
                         const hiddenCount = specs.length - visible.length;
@@ -333,7 +333,7 @@ export default function PartnersTable() {
                         return (
                           <div className="text-sm text-gray-700" title={specs.join("\n")}>
                             <ul className="list-disc list-outside pl-4 space-y-0.5 leading-snug">
-                              {visible.map((name, idx) => ( <li key={idx}>{name}</li>))}
+                              {visible.map((name, idx) => (<li key={idx}>{name}</li>))}
                               {hiddenCount > 0 && (<li className="text-gray-400 italic"> +{hiddenCount} {t("partners_screen.table.hidden")}</li>)}
                             </ul>
                           </div>
@@ -345,7 +345,7 @@ export default function PartnersTable() {
 
                     <td className="py-3 px-4 text-center">
                       <span
-                        title={ item.deleted_at ? t("users_screen.table.status_inactive") : t("users_screen.table.status_active")} 
+                        title={item.deleted_at ? t("users_screen.table.status_inactive") : t("users_screen.table.status_active")}
                         className={`inline-block w-3 h-3 rounded-full ${item.deleted_at ? "bg-red-500" : "bg-green-500"}`}
                       />
                     </td>
@@ -438,19 +438,21 @@ export default function PartnersTable() {
                 <div>
                   <RequiredLabel required>{t("partners_screen.table.whatsapp")}</RequiredLabel>
                   <input
-                    className={`w-full px-3 py-2 rounded-lg border ${
-                      errors.whatsapp ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 rounded-lg border ${errors.whatsapp ? "border-red-500" : "border-gray-300"
+                      }`}
                     value={whatsapp}
                     onChange={(e) => {
-                      let value = e.target.value.replace(/\D/g, "");
-
-                      if (value.length === 10) {
-                        value = `+521${value}`;
+                      let value = e.target.value;
+                      // Permitir solo + al inicio y números
+                      value = value.replace(/(?!^\+)[^\d]/g, "");
+                      // Evitar más de un +
+                      if ((value.match(/\+/g) || []).length > 1) {
+                        value = value.replace(/\+/g, "");
                       }
                       setWhatsapp(value);
                       setErrors((prev) => ({ ...prev, whatsapp: "" }));
                     }}
+
                     placeholder="+521 551 234 5678"
                   />
                   {submitted && errors.whatsapp && (
