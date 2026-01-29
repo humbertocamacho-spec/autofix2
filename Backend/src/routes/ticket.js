@@ -1,7 +1,7 @@
 import express from "express";
 import db from "../config/db.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import { sendWhatsappMessage } from '../services/whatsapp.js';
+import { sendWhatsappTemplate } from '../services/whatsapp.js';
 
 const router = express.Router();
 
