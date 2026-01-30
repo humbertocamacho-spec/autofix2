@@ -277,7 +277,7 @@ export default function PartnersTable() {
               <thead>
                 <tr className="text-gray-600 border-b">
                   <th className="pb-3 w-12">{t("partners_screen.table.id")}</th>
-                  <th className="pb-3 w-40">{t("partners_screen.table.name")}</th>
+                  <th className="pb-4 w-40">{t("partners_screen.table.name")}</th>
                   <th className="pb-3 w-40">{t("partners_screen.table.phone")}</th>
                   <th className="pb-3 w-40">{t("partners_screen.table.whatsapp")}</th>
                   <th className="pb-3 ">{t("partners_screen.table.location")}</th>
