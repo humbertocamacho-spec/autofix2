@@ -124,13 +124,14 @@ export default function PartnersTable() {
 
     if (!name.trim()) newErrors.name = t("partners_screen.table.name_error");
     if (!userId) newErrors.userId = t("partners_screen.table.user_error");
-    if (!phone.trim()) newErrors.phone = t("partners_screen.table.phone_error");
-    if (!whatsapp.trim()) newErrors.whatsapp = t("partners_screen.table.whatsapp_error");
     if (!location.trim()) newErrors.location = t("partners_screen.table.location_error");
     if (!latitude.trim()) newErrors.latitude = t("partners_screen.table.latitude_error");
     if (!longitude.trim()) newErrors.longitude = t("partners_screen.table.longitude_error");
     if (!logoUrl.trim()) newErrors.logoUrl = t("partners_screen.table.logo_url_error");
     if (!description.trim()) newErrors.description = t("partners_screen.table.description_error");
+    if (phone && phone.length !== 10) { newErrors.phone = t("partners_screen.table.phone_error"); }
+    if (whatsapp && whatsapp.length !== 10) { newErrors.whatsapp = t("partners_screen.table.whatsapp_error"); }
+    
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
@@ -172,7 +173,7 @@ export default function PartnersTable() {
     setName(partner.name);
     setUserId(partner.user_id);
     setPhone(partner.phone);
-    setWhatsapp(partner.whatsapp);
+    setWhatsapp( partner.whatsapp ? partner.whatsapp.replace(/^\+521/, "") : "");
     setLocation(partner.location);
     setLatitude(partner.latitude || "");
     setLongitude(partner.longitude || "");
@@ -189,7 +190,8 @@ export default function PartnersTable() {
     setSubmitted(true);
     if (!validateForm()) return;
 
-    const body = { name, user_id: userId, phone, whatsapp, location, latitude, longitude, land_use_permit: landUsePermit, scanner_handling: scannerHandling, logo_url: logoUrl, description, priority };
+    const body = { name, user_id: userId, phone, whatsapp: whatsapp ? `+521${whatsapp}` : null, location, latitude, longitude, 
+    land_use_permit: landUsePermit, scanner_handling: scannerHandling, logo_url: logoUrl, description, priority, };
     const url = isEditing ? `${VITE_API_URL}/api/partners/${currentPartner?.id}` : `${VITE_API_URL}/api/partners`;
     const method = isEditing ? "PUT" : "POST";
     const token = localStorage.getItem("token");
@@ -425,39 +427,48 @@ export default function PartnersTable() {
                 </div>
 
                 <div>
-                  <RequiredLabel required>{t("partners_screen.table.phone")}</RequiredLabel>
+                  <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.phone")}</label>
                   <input
-                    className={`w-full px-3 py-2 rounded-lg border ${errors.phone ? "border-red-500" : "border-gray-300"} `}
+                    className={`w-full border px-3 py-2 rounded-lg ${ submitted && errors.phone ? "border-red-500" : "border-gray-300"}`}
                     value={phone}
-                    onChange={(e) => { setPhone(e.target.value); setErrors((prev) => ({ ...prev, phone: "" })); }}
-                    placeholder="Ej. +521 551 234 5678"
+                    onChange={(e) => {
+                      let value = e.target.value;
+
+                      value = value.replace(/\D/g, "");
+
+                      if (value.length > 10) { value = value.slice(0, 10);}
+
+                      setPhone(value);
+                      setErrors((prev) => ({ ...prev, phone: "" }));
+                    }}
+                    placeholder="5512345678"
                   />
                   {submitted && errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                 </div>
 
                 <div>
-                  <RequiredLabel required>{t("partners_screen.table.whatsapp")}</RequiredLabel>
-                  <input
-                    className={`w-full px-3 py-2 rounded-lg border ${errors.whatsapp ? "border-red-500" : "border-gray-300"
-                      }`}
-                    value={whatsapp}
-                    onChange={(e) => {
-                      let value = e.target.value;
-                      // Permitir solo + al inicio y números
-                      value = value.replace(/(?!^\+)[^\d]/g, "");
-                      // Evitar más de un +
-                      if ((value.match(/\+/g) || []).length > 1) {
-                        value = value.replace(/\+/g, "");
-                      }
-                      setWhatsapp(value);
-                      setErrors((prev) => ({ ...prev, whatsapp: "" }));
-                    }}
+                  <label className="text-sm font-semibold text-gray-600"> {t("partners_screen.table.whatsapp")}</label>
 
-                    placeholder="+521 551 234 5678"
-                  />
-                  {submitted && errors.whatsapp && (
-                    <p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>
-                  )}
+                  <div className="flex">
+                    <span className="px-3 py-2 border border-r-0 border-gray-300 rounded-l-lg bg-gray-100 text-gray-600"> +521</span>
+
+                    <input
+                      className={`w-full border border-gray-300 px-3 py-2 rounded-r-lg ${ submitted && errors.whatsapp ? "border-red-500" : ""}`}
+                      value={whatsapp}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, "");
+
+                        if (value.length > 10) { value = value.slice(0, 10);}
+
+                        setWhatsapp(value);
+                        setErrors((prev) => ({ ...prev, whatsapp: "" }));
+                      }}
+                      placeholder="5512345678"
+                      inputMode="numeric"
+                      type="tel"
+                    />
+                  </div>
+                  {submitted && errors.whatsapp && ( <p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>)}
                 </div>
 
                 <div className="col-span-2">
