@@ -131,8 +131,7 @@ export default function PartnersTable() {
     if (!longitude.trim()) newErrors.longitude = t("partners_screen.table.longitude_error");
     if (!logoUrl.trim()) newErrors.logoUrl = t("partners_screen.table.logo_url_error");
     if (!description.trim()) newErrors.description = t("partners_screen.table.description_error");
-    if (whatsapp && whatsapp.length !== 10) { newErrors.whatsapp = t("partners_screen.table.whatsapp_error"); }
-    
+ 
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
@@ -174,7 +173,7 @@ export default function PartnersTable() {
     setName(partner.name);
     setUserId(partner.user_id);
     setPhone(partner.phone);
-    setWhatsapp( partner.whatsapp ? partner.whatsapp.replace(/^\+521/, "") : "");
+    setWhatsapp(partner.whatsapp || "");
     setLocation(partner.location);
     setLatitude(partner.latitude || "");
     setLongitude(partner.longitude || "");
@@ -191,7 +190,7 @@ export default function PartnersTable() {
     setSubmitted(true);
     if (!validateForm()) return;
 
-    const body = { name, user_id: userId, phone, whatsapp: whatsapp ? `+521${whatsapp}` : null, location, latitude, longitude, 
+    const body = { name, user_id: userId, phone, whatsapp: normalizeWhatsappForTwilio(whatsapp),location, latitude, longitude, 
     land_use_permit: landUsePermit, scanner_handling: scannerHandling, logo_url: logoUrl, description, priority, };
     const url = isEditing ? `${VITE_API_URL}/api/partners/${currentPartner?.id}` : `${VITE_API_URL}/api/partners`;
     const method = isEditing ? "PUT" : "POST";
@@ -246,6 +245,21 @@ export default function PartnersTable() {
 
   // Filter partners by name
   const filtered = partners.filter((p) => p.name.toLowerCase().includes(search.toLowerCase())).sort((a, b) => a.id - b.id);
+
+  // Normalize whatsapp number for Twilio
+  const normalizeWhatsappForTwilio = (value?: string) => {
+    if (!value || value === "+" || value.length < 4) {
+      return null;
+    }
+
+    // México → +521 SOLO si hay número real
+    if (value.startsWith("+52") && value.length > 4) {
+      return value.replace("+52", "+521");
+    }
+
+    return value;
+  };
+
 
   return (
     <DashboardLayout>
@@ -468,26 +482,36 @@ export default function PartnersTable() {
                 <div>
                   <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.whatsapp")}</label>
 
-                  <div className="flex">
-                    <span className="px-3 py-2 border border-r-0 border-gray-300 rounded-l-lg bg-gray-100 text-gray-600"> +521</span>
+                  <PhoneInput
+                    country="mx"
+                    value={whatsapp}
+                    onChange={(value) => {
+                      if (!value) { setWhatsapp(""); return;}
 
-                    <input
-                      className={`w-full border border-gray-300 px-3 py-2 rounded-r-lg ${ submitted && errors.whatsapp ? "border-red-500" : ""}`}
-                      value={whatsapp}
-                      onChange={(e) => {
-                        let value = e.target.value.replace(/\D/g, "");
+                      setWhatsapp(`+${value}`);
+                      setErrors((prev) => ({ ...prev, whatsapp: "" }));
+                    }}
+                    enableSearch
+                    disableSearchIcon
+                    countryCodeEditable={false}
+                    inputProps={{ name: "whatsapp" }}
+                    containerStyle={{ width: "100%" }}
+                    inputStyle={{
+                      width: "100%",
+                      height: "42px",
+                      borderRadius: "0.5rem",
+                      borderColor:
+                        submitted && errors.whatsapp ? "#ef4444" : "#d1d5db",
+                    }}
+                    buttonStyle={{
+                      borderRadius: "0.5rem 0 0 0.5rem",
+                      borderColor:
+                        submitted && errors.whatsapp ? "#ef4444" : "#d1d5db",
+                    }}
+                    placeholder="+52 55 1234 5678"
+                  />
 
-                        if (value.length > 10) { value = value.slice(0, 10);}
-
-                        setWhatsapp(value);
-                        setErrors((prev) => ({ ...prev, whatsapp: "" }));
-                      }}
-                      placeholder="5512345678"
-                      inputMode="numeric"
-                      type="tel"
-                    />
-                  </div>
-                  {submitted && errors.whatsapp && ( <p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>)}
+                  {submitted && errors.whatsapp && (<p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>)}
                 </div>
 
                 <div className="col-span-2">
