@@ -8,6 +8,8 @@ import type { Partner } from "../../../types/partner";
 import type { User } from "../../../types/users";
 import Can from "../../../components/Can";
 import { authFetch } from "../../../utils/authFetch";
+import "react-phone-input-2/lib/style.css";
+import PhoneInput from "react-phone-input-2";
 
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -129,7 +131,6 @@ export default function PartnersTable() {
     if (!longitude.trim()) newErrors.longitude = t("partners_screen.table.longitude_error");
     if (!logoUrl.trim()) newErrors.logoUrl = t("partners_screen.table.logo_url_error");
     if (!description.trim()) newErrors.description = t("partners_screen.table.description_error");
-    if (phone && phone.length !== 10) { newErrors.phone = t("partners_screen.table.phone_error"); }
     if (whatsapp && whatsapp.length !== 10) { newErrors.whatsapp = t("partners_screen.table.whatsapp_error"); }
     
     setErrors(newErrors);
@@ -428,26 +429,44 @@ export default function PartnersTable() {
 
                 <div>
                   <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.phone")}</label>
-                  <input
-                    className={`w-full border px-3 py-2 rounded-lg ${ submitted && errors.phone ? "border-red-500" : "border-gray-300"}`}
+
+                  <PhoneInput
+                    country="mx"
                     value={phone}
-                    onChange={(e) => {
-                      let value = e.target.value;
-
-                      value = value.replace(/\D/g, "");
-
-                      if (value.length > 10) { value = value.slice(0, 10);}
-
-                      setPhone(value);
+                    onChange={(value) => {
+                      setPhone(`+${value}`);
                       setErrors((prev) => ({ ...prev, phone: "" }));
                     }}
-                    placeholder="5512345678"
+                    enableSearch
+                    disableSearchIcon
+                    countryCodeEditable={false}
+                    inputProps={{
+                      name: "phone",
+                      required: true,
+                    }}
+                    containerStyle={{ width: "100%" }}
+                    inputStyle={{
+                      width: "100%",
+                      height: "42px",
+                      borderRadius: "0.5rem",
+                      borderColor:
+                        submitted && errors.phone ? "#ef4444" : "#d1d5db",
+                    }}
+                    buttonStyle={{
+                      borderRadius: "0.5rem 0 0 0.5rem",
+                      borderColor:
+                        submitted && errors.phone ? "#ef4444" : "#d1d5db",
+                    }}
+                    placeholder="+52 55 1234 5678"
                   />
-                  {submitted && errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+
+                  {submitted && errors.phone && (
+                    <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                  )}
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-gray-600"> {t("partners_screen.table.whatsapp")}</label>
+                  <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.whatsapp")}</label>
 
                   <div className="flex">
                     <span className="px-3 py-2 border border-r-0 border-gray-300 rounded-l-lg bg-gray-100 text-gray-600"> +521</span>
