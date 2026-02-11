@@ -42,6 +42,7 @@ export default function PartnersTable() {
 
   const { user } = useAuthContext();
   const { t } = useTranslation();
+  const DEFAULT_LOGO_URL ="https://pakexhibitions.com/public/uploads/exhibition_logo/465-wheels%20image.PNG";
 
   // Initial load of partners, users and specialities
   useEffect(() => {
@@ -173,7 +174,7 @@ export default function PartnersTable() {
     setName(partner.name);
     setUserId(partner.user_id);
     setPhone(partner.phone);
-    setWhatsapp(partner.whatsapp || "");
+    setWhatsapp(partner.whatsapp?.startsWith("+521") ? partner.whatsapp.replace("+521", "+52") : partner.whatsapp || "");
     setLocation(partner.location);
     setLatitude(partner.latitude || "");
     setLongitude(partner.longitude || "");
@@ -252,14 +253,16 @@ export default function PartnersTable() {
       return null;
     }
 
-    // México → +521 SOLO si hay número real
-    if (value.startsWith("+52") && value.length > 4) {
+    if (value.startsWith("+521")) {
+      return value;
+    }
+
+    if (value.startsWith("+52")) {
       return value.replace("+52", "+521");
     }
 
     return value;
   };
-
 
   return (
     <DashboardLayout>
@@ -562,24 +565,47 @@ export default function PartnersTable() {
                   <input
                     className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.logoUrl ? "border-red-500" : "border-gray-300"}`}
                     value={logoUrl}
-                    onChange={(e) => { setLogoUrl(e.target.value); setErrors((prev) => ({ ...prev, logoUrl: "" })); }}
+                    onChange={(e) => {
+                      setLogoUrl(e.target.value);
+                      setErrors((prev) => ({ ...prev, logoUrl: "" }));
+                    }}
                     placeholder={t("partners_screen.table.logo_url_placeholder")}
                   />
-                  {submitted && errors.logoUrl && (
-                    <p className="text-red-500 text-xs mt-1">{errors.logoUrl}</p>
-                  )}
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLogoUrl(DEFAULT_LOGO_URL);
+                        setErrors((prev) => ({ ...prev, logoUrl: "" }));
+                      }}
+                      className="mt-2 px-4 py-1.5 text-xs bg-gray-200 rounded-lg hover:bg-gray-300 transition"
+                    >
+                      {t("partners_screen.table.logo_url_default")}
+                    </button>
+
+                    <p className="text-xs text-gray-500">
+                      {t("partners_screen.table.logo_url_message")}
+                    </p>
+                  </div>
+
+                  {submitted && errors.logoUrl && (<p className="text-red-500 text-xs mt-1">{errors.logoUrl}</p>)}
 
                   {logoUrl && (
                     <div className="mt-3 flex items-center gap-3">
                       <img
+                        key={logoUrl}
                         src={logoUrl}
                         alt="Logo preview"
                         className="h-16 w-16 object-contain border rounded-lg bg-white"
                         onError={(e) => {
+                          console.error("No se pudo cargar:", logoUrl);
                           e.currentTarget.style.display = "none";
                         }}
                       />
-                      <span className="text-xs text-gray-500">{t("partners_screen.table.logo_url_preview")}</span>
+                      <span className="text-xs text-gray-500">
+                        {logoUrl === DEFAULT_LOGO_URL ? "Logo por defecto" : t("partners_screen.table.logo_url_preview")}
+                      </span>
                     </div>
                   )}
                 </div>

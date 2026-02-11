@@ -213,7 +213,9 @@
       "description_error": "Este campo es obligatorio",
       "name_placeholder": "Ej. Taller Mecánico El Rayo",
       "logo_url_placeholder": "https://example.com/logo.png",
-      "description_placeholder": "Ej. Taller especializado en frenos, suspensión y mantenimiento general"
+      "description_placeholder": "Ej. Taller especializado en frenos, suspensión y mantenimiento general",
+      "logo_url_default": "Logo por defecto",
+      "logo_url_message": "Si el partner no cuenta con una imagen, selecciona la opción predeterminada. Podrás cambiarla después."
     },
     "confirm": {
       "deactivate": "¿Seguro que deseas desactivar el partner \"{{name}}\"?",
