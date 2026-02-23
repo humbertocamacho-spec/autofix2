@@ -54,7 +54,7 @@
         "serviceAccountKeyPath": "./keys/google-play-service-account.json"
       },
       "ios": {
-        "ascAppId": "TU_APPLE_APP_ID"
+        "ascAppId": "6759493115"
       }
     }
   }

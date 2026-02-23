@@ -10,7 +10,7 @@ export default {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'com.autofix.mx.autofixapp',
+      bundleIdentifier: 'com.autofix.mx.autofixappios',
       config: {
         googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY_IOS,
       },
