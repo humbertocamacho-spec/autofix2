@@ -15,7 +15,9 @@ export default {
         googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY_IOS,
       },
       infoPlist: {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocationWhenInUseUsageDescription": "Usamos tu ubicación para mostrar talleres cercanos.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Usamos tu ubicación para mostrar talleres cercanos."
       }
     },
     splash: {

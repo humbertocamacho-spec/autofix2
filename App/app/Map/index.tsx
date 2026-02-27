@@ -58,6 +58,7 @@ export default function MapScreen() {
   const [searchText, setSearchText] = useState('');
   const [distanceRadius, setDistanceRadius] = useState(10);
   const [loadedMarkers, setLoadedMarkers] = useState<Set<string | number>>(new Set());
+  
 
   // Reset markers when filters change
   useEffect(() => {
@@ -87,28 +88,43 @@ export default function MapScreen() {
   }, []);
 
   // Get user location
+  // Get user location (FIX ANTI FREEZE)
   useEffect(() => {
+    let mounted = true;
+
     (async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
+
         if (status !== 'granted') {
-          Alert.alert('Permiso denegado', 'Se mostrará la ubicación por defecto.');
-          setRegion(defaultRegion);
-        } else {
-          const { coords } = await Location.getCurrentPositionAsync({});
+          if (mounted) setRegion(defaultRegion);
+          return;
+        }
+
+        const location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
+
+        if (mounted) {
           setRegion({
-            latitude: coords.latitude,
-            longitude: coords.longitude,
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
             latitudeDelta: 0.04,
             longitudeDelta: 0.04,
           });
         }
-      } catch {
-        setRegion(defaultRegion);
+
+      } catch (error) {
+        console.log('Error ubicación inicial:', error);
+        if (mounted) setRegion(defaultRegion);
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     })();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -327,18 +343,36 @@ export default function MapScreen() {
               <View style={styles.markerFixed}>
                 <Ionicons name="location-sharp" size={40} color="red" />
               </View>
-              <TouchableOpacity style={styles.gpsButton} onPress={async () => {
-                const { coords } = await Location.getCurrentPositionAsync({});
+              <TouchableOpacity
+                style={styles.gpsButton}
+                onPress={async () => {
+                  try {
+                    const { status } = await Location.getForegroundPermissionsAsync();
 
-                const realRegion = {
-                  latitude: coords.latitude,
-                  longitude: coords.longitude,
-                  latitudeDelta: 0.01,
-                  longitudeDelta: 0.01,
-                };
-                setTempRegion(realRegion);
-                modalMapRef.current?.animateToRegion(realRegion, 1000);
-              }}
+                    if (status !== 'granted') {
+                      Alert.alert( 'Permiso requerido', 'Activa la ubicación en configuración.');
+                      return;
+                    }
+
+                    const location = await Location.getCurrentPositionAsync({
+                      accuracy: Location.Accuracy.Balanced,
+                    });
+
+                    const realRegion = {
+                      latitude: location.coords.latitude,
+                      longitude: location.coords.longitude,
+                      latitudeDelta: 0.01,
+                      longitudeDelta: 0.01,
+                    };
+
+                    setTempRegion(realRegion);
+                    modalMapRef.current?.animateToRegion(realRegion, 1000);
+
+                  } catch (error) {
+                    console.log('Error GPS modal:', error);
+                    Alert.alert( 'Error de ubicación', 'No se pudo obtener la ubicación. Intenta nuevamente.');
+                  }
+                }}
               >
                 <Ionicons name="locate" size={28} color="#27B9BA" />
               </TouchableOpacity>
