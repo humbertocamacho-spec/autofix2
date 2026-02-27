@@ -51,7 +51,7 @@ export default function RegisterScreen() {
       return;
     }
 
-    const emailvalidate = /^[^\s@]+@gmail\.com$/;
+    const emailvalidate = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const fullPhone = `+${callingCode}${phone}`;
     
     if (!emailvalidate.test(email)) {
