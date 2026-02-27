@@ -30,7 +30,7 @@ export default {
           apiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,
         }
       },
-      versionCode: 10,
+      versionCode: 11,
       permissions: [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",

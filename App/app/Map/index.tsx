@@ -223,7 +223,7 @@ export default function MapScreen() {
                 <Marker
                   key={partner.id}
                   coordinate={{ latitude: lat, longitude: lon }}
-                  anchor={{ x: 0.5, y: 0.5 }}
+                  anchor={{ x: 0.5, y: 1 }}
                   tracksViewChanges={!alreadyLoaded}
                   onPress={() => {
                     const specs = partnersSpecialities
@@ -267,8 +267,7 @@ export default function MapScreen() {
                         <View style={styles.markerImage} />
                       )}
                     </View>
-
-                    <View style={[ styles.markerArrow, { borderTopColor: isMatch ? '#00ff00' : '#ffffff' },]}/>
+                    <View style={[ styles.markerPointer, { borderTopColor: isMatch ? '#00ff00' : '#ddd' }, ]}/>
                   </View>   
                 </Marker>
               );
@@ -478,9 +477,9 @@ const styles = StyleSheet.create({
   distanceOptionText: { fontSize: 15, fontWeight: "600", color: "#333", },
   distanceOptionTextActive: { color: "#fff", fontWeight: "bold", },
   markerContainer: { alignItems: 'center',},
-  markerBubble: { width: 30, height: 30, borderRadius: 30, backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center', borderWidth: 1,},
-  markerImage: { width: 30, height: 30, borderRadius: 15,},
-  markerArrow: { width: 0, height: 0, borderLeftWidth: 6, borderRightWidth: 6, borderTopWidth: 5, borderLeftColor: 'transparent', borderRightColor: 'transparent', marginTop: -2,},
+  markerBubble: { width: 31, height: 31, borderRadius: 16,backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center', borderWidth: 1.5, borderColor: '#000', overflow: 'hidden',},
+  markerImage: { width: '100%', height: '100%', resizeMode: 'cover',},
+  markerPointer: { width: 0, height: 0, borderLeftWidth: 9, borderRightWidth: 9, borderTopWidth: 5, borderLeftColor: 'transparent', borderRightColor: 'transparent', marginTop: -2,},
   searchContainerWrapper: { bottom: 0, left: 0, right: 0,},
   searchContainer: {  backgroundColor: '#fff',  maxHeight: 340,  padding: 10,  borderTopLeftRadius: 20,  borderTopRightRadius: 20,  elevation: 12,},
 
