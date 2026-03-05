@@ -14,7 +14,6 @@ export default function RecommendationsScreen() {
   const { latitude, longitude, radius } = params;
   const distanceRadius = parseFloat(radius as string) || 10;
 
-
   const [partners, setPartners] = useState<Partner[]>([]);
   const [region, setRegion] = useState<{ latitude: number; longitude: number } | null>(null);
   const [loading, setLoading] = useState(true);

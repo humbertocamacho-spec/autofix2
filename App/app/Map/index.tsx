@@ -114,14 +114,11 @@ export default function MapScreen() {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
 
-        if (status !== 'granted') {
-          if (mounted) setRegion(defaultRegion);
+        if (status !== 'granted') { if (mounted) setRegion(defaultRegion);
           return;
         }
 
-        const location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.Balanced,
-        });
+        const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced,});
 
         if (mounted) {
           setRegion({
@@ -371,9 +368,7 @@ export default function MapScreen() {
                       return;
                     }
 
-                    const location = await Location.getCurrentPositionAsync({
-                      accuracy: Location.Accuracy.Balanced,
-                    });
+                    const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced,});
 
                     const realRegion = {
                       latitude: location.coords.latitude,
@@ -418,14 +413,8 @@ export default function MapScreen() {
 
               {[10, 15, 20, 25, 30].map((km) => (
                 <TouchableOpacity key={km}
-                  style={[
-                    styles.distanceOption,
-                    distanceRadius === km && styles.distanceOptionActive,
-                  ]}
-                  onPress={() => {
-                    setDistanceRadius(km);
-                    setDistanceModalVisible(false);
-                  }}
+                  style={[ styles.distanceOption, distanceRadius === km && styles.distanceOptionActive,]}
+                  onPress={() => { setDistanceRadius(km); setDistanceModalVisible(false);}}
                 >
                   <Text style={[ styles.distanceOptionText, distanceRadius === km && styles.distanceOptionTextActive,]}>
                     {km} km
