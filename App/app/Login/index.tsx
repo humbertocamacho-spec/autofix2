@@ -1,6 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ScrollView, useWindowDimensions, PixelRatio } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../../config/env';
@@ -37,6 +38,7 @@ export default function LoginScreen() {
   // Estados nuevos para debug visible en pantalla
   const [debugApiUrl, setDebugApiUrl] = useState(API_URL);
   const [fetchDetailError, setFetchDetailError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadSavedCredentials = async () => {
@@ -56,15 +58,16 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     if (!email || !password) {
       setError('Completa todos los campos');
-      setFetchDetailError('Campos vacíos');
       return;
     }
 
+    setLoading(true);
     setError('');
     setFetchDetailError('');
 
     try {
-      const url = `${debugApiUrl}/api/auth/login`; // usamos debugApiUrl para mostrarla
+      const url = `${debugApiUrl}/api/auth/login`;
+
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -74,17 +77,16 @@ export default function LoginScreen() {
       const data = await res.json();
 
       if (!data.ok || !data.user) {
-        const msg = data.message || 'Error en el login (respuesta no ok)';
-        setError(msg);
-        setFetchDetailError(`Status: ${res.status}\nRespuesta: ${JSON.stringify(data, null, 2)}\nURL: ${url}`);
+        setError(data.message || 'Credenciales incorrectas');
         return;
       }
 
       await AsyncStorage.setItem('token', data.token);
-      const userId = data.user.id;
-      const clientId = data.user.client_id;
-      await AsyncStorage.setItem('user_id', userId.toString());
-      await AsyncStorage.setItem('client_id', clientId ? clientId.toString() : '');
+      await AsyncStorage.setItem('user_id', data.user.id.toString());
+      await AsyncStorage.setItem(
+        'client_id',
+        data.user.client_id ? data.user.client_id.toString() : ''
+      );
 
       if (remember) {
         await AsyncStorage.setItem('savedEmail', email);
@@ -95,15 +97,11 @@ export default function LoginScreen() {
       }
 
       router.replace('/Map');
+
     } catch (err: any) {
-      const errorMsg = err?.message || 'Error desconocido';
-      setError(errorMsg);
-      setFetchDetailError(
-        `Error completo:\n${errorMsg}\n` +
-        `Stack: ${err?.stack || 'No disponible'}\n` +
-        `URL intentada: ${debugApiUrl}/api/auth/login\n` +
-        `Tipo: ${err?.name || 'Desconocido'}`
-      );
+      setError('Error de conexión. Intenta nuevamente.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -196,11 +194,17 @@ export default function LoginScreen() {
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
           <TouchableOpacity
-            style={[styles.button, { paddingVertical: moderateScale(12) }]}
+            style={[
+              styles.button, { paddingVertical: moderateScale(12) }, loading && { opacity: 0.6 }
+            ]}
             onPress={handleLogin}
-            disabled={!email || !password}
+            disabled={!email || !password || loading}
           >
-            <Text style={[styles.buttonText, { fontSize: scaleFont(17) }]}>Iniciar Sesión</Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={[styles.buttonText, { fontSize: scaleFont(17) }]}> Iniciar Sesión</Text>
+            )}
           </TouchableOpacity>
 
           <View style={styles.newUserContainer}>

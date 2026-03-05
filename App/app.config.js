@@ -16,8 +16,7 @@ export default {
       },
       infoPlist: {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSLocationWhenInUseUsageDescription": "Usamos tu ubicación para mostrar talleres cercanos.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Usamos tu ubicación para mostrar talleres cercanos."
+        "NSLocationWhenInUseUsageDescription": "AutoFix usa tu ubicación para mostrar talleres mecánicos cercanos a tu posición actual y facilitar la búsqueda de servicios automotrices en tu zona. Por ejemplo, mostramos los talleres más próximos a ti en el mapa."
       }
     },
     splash: {
