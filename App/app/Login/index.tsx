@@ -35,7 +35,6 @@ export default function LoginScreen() {
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Estados nuevos para debug visible en pantalla
   const [debugApiUrl, setDebugApiUrl] = useState(API_URL);
   const [fetchDetailError, setFetchDetailError] = useState('');
   const [loading, setLoading] = useState(false);

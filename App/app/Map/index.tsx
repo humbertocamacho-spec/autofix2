@@ -9,6 +9,7 @@ import { Partner } from '@backend-types/partner';
 import { getSpecialities } from '@/services/specialities';
 import { getPartnerSpecialities } from '@/services/partner_specialities';
 import { Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
@@ -58,7 +59,25 @@ export default function MapScreen() {
   const [searchText, setSearchText] = useState('');
   const [distanceRadius, setDistanceRadius] = useState(10);
   const [loadedMarkers, setLoadedMarkers] = useState<Set<string | number>>(new Set());
-  
+
+  // Check if user is authenticated
+  const requireAuth = async (callback: () => void) => {
+    const token = await AsyncStorage.getItem("token");
+
+    if (!token) {
+      Alert.alert(
+        "Cuenta requerida",
+        "Debes iniciar sesión para continuar.",
+        [
+          { text: "Cancelar", style: "cancel" },
+          { text: "Iniciar sesión", onPress: () => router.push("/Login"),},
+        ]
+      );
+      return;
+    }
+
+    callback();
+  };
 
   // Reset markers when filters change
   useEffect(() => {
@@ -88,7 +107,6 @@ export default function MapScreen() {
   }, []);
 
   // Get user location
-  // Get user location (FIX ANTI FREEZE)
   useEffect(() => {
     let mounted = true;
 
@@ -238,16 +256,15 @@ export default function MapScreen() {
               return (
                 <Marker
                   key={partner.id}
-                  coordinate={{ latitude: lat, longitude: lon }}
-                  anchor={{ x: 0.5, y: 1 }}
-                  tracksViewChanges={!alreadyLoaded}
-                  onPress={() => {
-                    const specs = partnersSpecialities
-                      .filter((ps) => ps.partner_id === partner.id)
-                      .map((ps) => {
-                        const spec = specialities.find((s) => s.id === ps.speciality_id);
-                        return spec ? spec.name : "";
-                      });
+                  coordinate={{ latitude: Number(partner.latitude), longitude: Number(partner.longitude),}}
+                  onPress={() =>
+                    requireAuth(() => {
+                      const specs = partnersSpecialities
+                        .filter((ps) => ps.partner_id === partner.id)
+                        .map((ps) => {
+                          const spec = specialities.find((s) => s.id === ps.speciality_id);
+                          return spec ? spec.name : "";
+                        });
 
                       router.push({
                         pathname: "../Map/details",
@@ -264,9 +281,9 @@ export default function MapScreen() {
                           specialities: JSON.stringify(specs),
                         },
                       });
-                    }}
-                  >
-
+                    })
+                  }
+                >
                   <View style={styles.markerContainer}>
                     <View style={[ styles.markerBubble, { borderColor: isMatch ? '#00ff00' : '#ddd' },]}>
                       {partner.logo_url ? (
@@ -427,7 +444,12 @@ export default function MapScreen() {
                 <Text style={styles.menuTitle}>Menú</Text>
               </View>
 
-              <TouchableOpacity style={styles.menuButton} onPress={() => { toggleMenu(); router.replace('../Login');}}>
+              <TouchableOpacity style={styles.menuButton}  
+                onPress={async () => {
+                  await AsyncStorage.removeItem("token");
+                  toggleMenu();
+                  router.replace("../Login");
+                }}>
                 <Ionicons name="log-out-outline" size={20} color="#000" style={{ marginRight: 10 }} />
                 <Text style={styles.menuButtonText}>Cerrar sesión</Text>
               </TouchableOpacity>
@@ -445,11 +467,18 @@ export default function MapScreen() {
 
               {showCitasSubMenu && (
                 <View style={{ marginBottom: 5 }}>
-                  <TouchableOpacity style={styles.subMenuButton} onPress={() => { toggleMenu(); router.push('../Ticket/TicketsPending'); }}>
+                  
+                  <TouchableOpacity
+                    style={styles.subMenuButton}
+                    onPress={() => requireAuth(() => { toggleMenu(); router.push('../Ticket/TicketsPending');})}
+                  >
                     <Text style={styles.subMenuText}>Pendientes</Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity style={styles.subMenuButton} onPress={() => { toggleMenu(); router.push('../Ticket/TicketsConfirmed'); }}>
+                  <TouchableOpacity
+                    style={styles.subMenuButton}
+                    onPress={() => requireAuth(() => { toggleMenu(); router.push('../Ticket/TicketsConfirmed');})}
+                  >
                     <Text style={styles.subMenuText}>Confirmadas</Text>
                   </TouchableOpacity>
                 </View>

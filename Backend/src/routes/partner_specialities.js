@@ -5,7 +5,7 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 // Endpoint to get all partner specialities
-router.get("/", authMiddleware, async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const [rows] = await db.query(`
         SELECT 
@@ -22,7 +22,7 @@ router.get("/", authMiddleware, async (req, res) => {
 });
 
 // Endpoint to get all partner specialities
-router.get("/:partnerId", authMiddleware, async (req, res) => {
+router.get("/:partnerId", async (req, res) => {
   const { partnerId } = req.params;
 
   try {

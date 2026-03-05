@@ -1,11 +1,12 @@
 import { Stack, useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions, ActivityIndicator,Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { getPartners } from "@/services/partners";
 import { Partner } from "@backend-types/partner";
 import { getSpecialities } from '@/services/specialities';
 import { getPartnerSpecialities } from '@/services/partner_specialities';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RecommendationsScreen() {
   const router = useRouter();
@@ -20,6 +21,19 @@ export default function RecommendationsScreen() {
 
   const [specialities, setSpecialities] = useState<any[]>([]);
   const [partnersSpecialities, setPartnersSpecialities] = useState<any[]>([]);
+
+  // Check if user is authenticated
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check if user is authenticated
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = await AsyncStorage.getItem('token');
+      setIsAuthenticated(!!token);
+    };
+
+    checkAuth();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -121,21 +135,36 @@ export default function RecommendationsScreen() {
               .filter((name) => name !== "");
 
             return (
-              <TouchableOpacity key={partner.id} style={styles.partnerCard} onPress={() => router.push({
-                pathname: "../Map/details",
-                params: {
-                  id: partner.id.toString(),
-                  name: partner.name,
-                  location: partner.location,
-                  phone: partner.phone || "",
-                  whatsapp: partner.whatsapp || "",
-                  logo_url: partner.logo_url || "",
-                  latitude: partner.latitude,
-                  longitude: partner.longitude,
-                  description: partner.description,
-                  specialities: JSON.stringify(specs),
-                },
-              })}>
+              <TouchableOpacity key={partner.id} style={styles.partnerCard} 
+                onPress={async () => {
+                  if (!isAuthenticated) {
+                    Alert.alert(
+                      "Inicia sesión",
+                      "Necesitas una cuenta para ver los detalles del taller y continuar.",
+                      [
+                        { text: "Cancelar", style: "cancel" },
+                        { text: "Iniciar sesión", onPress: () => router.push("/Login") }
+                      ]
+                    );
+                    return;
+                  }
+
+                  router.push({
+                    pathname: "../Map/details",
+                    params: {
+                      id: partner.id.toString(),
+                      name: partner.name,
+                      location: partner.location,
+                      phone: partner.phone || "",
+                      whatsapp: partner.whatsapp || "",
+                      logo_url: partner.logo_url || "",
+                      latitude: partner.latitude,
+                      longitude: partner.longitude,
+                      description: partner.description,
+                      specialities: JSON.stringify(specs),
+                    },
+                  });
+                }}>
 
                 <View style={styles.cardImageWrapper}>
                   <Image
