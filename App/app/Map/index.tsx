@@ -454,6 +454,11 @@ export default function MapScreen() {
                 />
               </TouchableOpacity>
 
+              <TouchableOpacity style={styles.menuButton} onPress={() => { toggleMenu(); router.push('../Profile/ProfileScreen');}}>
+                <Ionicons name="person-outline" size={20} color="#000" style={{ marginRight: 10 }} />
+                <Text style={styles.menuButtonText}>Mi cuenta</Text>
+              </TouchableOpacity>
+
               {showCitasSubMenu && (
                 <View style={{ marginBottom: 5 }}>
                   

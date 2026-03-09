@@ -63,7 +63,6 @@ export default function VehicleScreen() {
 
     const foundBrand = car_brands.find((b: CarBrands) => b.id === car.car_brand_id);
     setBrandName(foundBrand ? foundBrand.name : "");
-
     setName(car.name);
     setModel(car.model);
     setYear(car.year);

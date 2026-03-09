@@ -216,6 +216,7 @@ router.put("/me", authMiddleware, async (req, res) => {
       return res.status(400).json({ ok: false, message: "Datos incompletos" });
     }
 
+    const phonevalidate = /^[0-9]{7,15}$/;
     if (!phonevalidate.test(phone)) {
       return res.status(400).json({ ok: false, message: "Teléfono inválido" });
     }
@@ -229,7 +230,10 @@ router.put("/me", authMiddleware, async (req, res) => {
       [name, email, fullPhone, address || null, photo_url || null, req.user.user_id]
     );
 
-    res.json({ ok: true, message: "Perfil actualizado" });
+    const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [req.user.user_id]);
+    const user = rows[0];
+
+    res.json({ ok: true, message: "Perfil actualizado", user });
   } catch (error) {
     console.error("UPDATE ME ERROR:", error);
     res.status(500).json({ ok: false, message: "Error al actualizar perfil" });
