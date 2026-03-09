@@ -253,15 +253,16 @@ export default function MapScreen() {
               return (
                 <Marker
                   key={partner.id}
-                  coordinate={{ latitude: Number(partner.latitude), longitude: Number(partner.longitude),}}
-                  onPress={() =>
-                    requireAuth(() => {
-                      const specs = partnersSpecialities
-                        .filter((ps) => ps.partner_id === partner.id)
-                        .map((ps) => {
-                          const spec = specialities.find((s) => s.id === ps.speciality_id);
-                          return spec ? spec.name : "";
-                        });
+                  coordinate={{ latitude: lat, longitude: lon }}
+                  anchor={{ x: 0.5, y: 0.5 }}
+                  tracksViewChanges={!alreadyLoaded}
+                  onPress={() => {
+                    const specs = partnersSpecialities
+                      .filter((ps) => ps.partner_id === partner.id)
+                      .map((ps) => {
+                        const spec = specialities.find((s) => s.id === ps.speciality_id);
+                        return spec ? spec.name : "";
+                      });
 
                       router.push({
                         pathname: "../Map/details",
@@ -278,9 +279,8 @@ export default function MapScreen() {
                           specialities: JSON.stringify(specs),
                         },
                       });
-                    })
-                  }
-                >
+                    }}
+                  >
                   <View style={styles.markerContainer}>
                     <View style={[ styles.markerBubble, { borderColor: isMatch ? '#00ff00' : '#ddd' },]}>
                       {partner.logo_url ? (

@@ -6,7 +6,6 @@ import { getPartners } from "@/services/partners";
 import { Partner } from "@backend-types/partner";
 import { getSpecialities } from '@/services/specialities';
 import { getPartnerSpecialities } from '@/services/partner_specialities';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RecommendationsScreen() {
   const router = useRouter();
@@ -20,19 +19,6 @@ export default function RecommendationsScreen() {
 
   const [specialities, setSpecialities] = useState<any[]>([]);
   const [partnersSpecialities, setPartnersSpecialities] = useState<any[]>([]);
-
-  // Check if user is authenticated
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // Check if user is authenticated
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = await AsyncStorage.getItem('token');
-      setIsAuthenticated(!!token);
-    };
-
-    checkAuth();
-  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -135,19 +121,7 @@ export default function RecommendationsScreen() {
 
             return (
               <TouchableOpacity key={partner.id} style={styles.partnerCard} 
-                onPress={async () => {
-                  if (!isAuthenticated) {
-                    Alert.alert(
-                      "Inicia sesión",
-                      "Necesitas una cuenta para ver los detalles del taller y continuar.",
-                      [
-                        { text: "Cancelar", style: "cancel" },
-                        { text: "Iniciar sesión", onPress: () => router.push("/Login") }
-                      ]
-                    );
-                    return;
-                  }
-
+                onPress={() => {
                   router.push({
                     pathname: "../Map/details",
                     params: {

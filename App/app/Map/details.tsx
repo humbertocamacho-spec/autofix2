@@ -1,8 +1,9 @@
 import { Stack, useLocalSearchParams, useRouter, } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Dimensions, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getPartnerCertifications } from '@/services/partner_certifications';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
@@ -77,6 +78,40 @@ export default function PartnerDetailScreen() {
       const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
       Linking.openURL(url).catch(() => alert('No se pudo abrir la ubicación'));
     }
+  };
+
+  const handleAppointment = async () => {
+    const token = await AsyncStorage.getItem("token");
+
+    if (!token) {
+      Alert.alert(
+        "Inicia sesión",
+        "Necesitas iniciar sesión para agendar una cita.",
+        [
+          { text: "Cancelar", style: "cancel" },
+          {
+            text: "Iniciar sesión",
+            onPress: () => router.push("/Login"),
+          },
+        ]
+      );
+      return;
+    }
+
+    router.push({
+      pathname: "/Appointment",
+      params: {
+        id,
+        name,
+        location,
+        phone,
+        whatsapp,
+        logo_url,
+        latitude: latitude.toString(),
+        longitude: longitude.toString(),
+        description
+      }
+    });
   };
 
   const isAutofix = (name: string) =>
@@ -286,20 +321,7 @@ export default function PartnerDetailScreen() {
           <View style={styles.buttonRow}>
             <TouchableOpacity
               style={[styles.actionButton, { backgroundColor: '#27B9BA' }]}
-              onPress={() => router.push({
-                pathname: "/Appointment",
-                params: {
-                  id,
-                  name,
-                  location,
-                  phone,
-                  whatsapp,
-                  logo_url,
-                  latitude: latitude.toString(),
-                  longitude: longitude.toString(),
-                  description
-                }
-              })}
+              onPress={handleAppointment}
             >
               <Text style={styles.actionButtonText}>Agendar Cita</Text>
             </TouchableOpacity>
