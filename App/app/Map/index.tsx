@@ -433,14 +433,9 @@ export default function MapScreen() {
                 <Text style={styles.menuTitle}>Menú</Text>
               </View>
 
-              <TouchableOpacity style={styles.menuButton}  
-                onPress={async () => {
-                  await AsyncStorage.removeItem("token");
-                  toggleMenu();
-                  router.replace("../Login");
-                }}>
-                <Ionicons name="log-out-outline" size={20} color="#000" style={{ marginRight: 10 }} />
-                <Text style={styles.menuButtonText}>Cerrar sesión</Text>
+              <TouchableOpacity style={styles.menuButton} onPress={() => requireAuth(() => { toggleMenu(); router.push('../Profile/ProfileScreen');})}>
+                <Ionicons name="person-outline" size={20} color="#000" style={{ marginRight: 10 }} />
+                <Text style={styles.menuButtonText}>Mi cuenta</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.menuButton} onPress={() => setShowCitasSubMenu(!showCitasSubMenu)}>
@@ -452,11 +447,6 @@ export default function MapScreen() {
                   color="#000"
                   style={{ marginLeft: 'auto' }}
                 />
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.menuButton} onPress={() => { toggleMenu(); router.push('../Profile/ProfileScreen');}}>
-                <Ionicons name="person-outline" size={20} color="#000" style={{ marginRight: 10 }} />
-                <Text style={styles.menuButtonText}>Mi cuenta</Text>
               </TouchableOpacity>
 
               {showCitasSubMenu && (
@@ -477,6 +467,16 @@ export default function MapScreen() {
                   </TouchableOpacity>
                 </View>
               )}
+
+              <TouchableOpacity style={styles.menuButton}  
+                onPress={async () => {
+                  await AsyncStorage.removeItem("token");
+                  toggleMenu();
+                  router.replace("../Login");
+                }}>
+                <Ionicons name="log-out-outline" size={20} color="#000" style={{ marginRight: 10 }} />
+                <Text style={styles.menuButtonText}>Cerrar sesión</Text>
+              </TouchableOpacity>
             </Animated.View>
           </View>
         )}
