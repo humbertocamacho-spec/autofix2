@@ -71,7 +71,7 @@ export default function ProfileScreen() {
   const handleDeleteAccount = () => {
     Alert.alert(
       "Eliminar cuenta",
-      "¿Estás seguro que deseas eliminar tu cuenta? Esta acción sera evaluada por un administrador, si cambias de opinion comunicate a info@autofix.lat",
+      "¿Estás seguro de que deseas eliminar tu cuenta?\n\nTu cuenta será desactivada para conservar el historial y será revisada por un administrador.\n\nSi cambias de opinión o necesitas ayuda, contáctanos en info@autofix.lat.",
       [
         { text: "Cancelar", style: "cancel" },
         {
@@ -80,7 +80,7 @@ export default function ProfileScreen() {
           onPress: async () => {
             try {
               await deleteAccount();
-              Alert.alert("Cuenta eliminada", "Tu cuenta ha sido eliminada.");
+              Alert.alert("Cuenta eliminada", "Tu cuenta ha sido desactivada.");
               router.replace("/Login");
             } catch (error: any) {
               Alert.alert("Error", error.message || "No se pudo eliminar la cuenta");

@@ -240,6 +240,29 @@ router.put("/me", authMiddleware, async (req, res) => {
   }
 });
 
+// Endpoint Delete Account
+router.delete("/me", authMiddleware, async (req, res) => {
+  try {
+
+    await pool.query(
+      "UPDATE users SET deleted_at = NOW() WHERE id = ?",
+      [req.user.user_id]
+    );
+
+    res.json({
+      ok: true,
+      message: "Cuenta eliminada correctamente"
+    });
+
+  } catch (error) {
+    console.error("DELETE ACCOUNT ERROR:", error);
+    res.status(500).json({
+      ok: false,
+      message: "Error eliminando cuenta"
+    });
+  }
+});
+
 // Endpoint Change Password
 router.put("/change-password", authMiddleware, async (req, res) => {
   try {
