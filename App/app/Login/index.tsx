@@ -1,6 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Image, Text, TextInput, TouchableOpacity, View, ScrollView, useWindowDimensions, PixelRatio } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../../config/env';
@@ -25,7 +26,6 @@ const RememberCheckBox: React.FC<RememberCheckBoxProps> = ({ value, onValueChang
 export default function LoginScreen() {
   const router = useRouter();
   const { width, height } = useWindowDimensions();
-
   const scaleFont = (size: number) => size * PixelRatio.getFontScale();
   const moderateScale = (size: number) => size * (width / 375);
 
@@ -34,6 +34,11 @@ export default function LoginScreen() {
   const [error, setError] = useState('');
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Estados nuevos para debug visible en pantalla
+  const [debugApiUrl, setDebugApiUrl] = useState(API_URL);
+  const [fetchDetailError, setFetchDetailError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadSavedCredentials = async () => {
@@ -56,8 +61,14 @@ export default function LoginScreen() {
       return;
     }
 
+    setLoading(true);
+    setError('');
+    setFetchDetailError('');
+
     try {
-      const res = await fetch(`${API_URL}/api/auth/login`, {
+      const url = `${debugApiUrl}/api/auth/login`;
+
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -66,35 +77,32 @@ export default function LoginScreen() {
       const data = await res.json();
 
       if (!data.ok || !data.user) {
-          setError(data.message || "Error en el login");
-          return;
-        }
+        setError(data.message || 'Credenciales incorrectas');
+        return;
+      }
 
-        await AsyncStorage.setItem('token', data.token);
+      await AsyncStorage.setItem('token', data.token);
+      await AsyncStorage.setItem('user_id', data.user.id.toString());
+      await AsyncStorage.setItem(
+        'client_id',
+        data.user.client_id ? data.user.client_id.toString() : ''
+      );
 
-        const userId = data.user.id;
-        const clientId = data.user.client_id;
+      if (remember) {
+        await AsyncStorage.setItem('savedEmail', email);
+        await AsyncStorage.setItem('savedPassword', password);
+      } else {
+        await AsyncStorage.removeItem('savedEmail');
+        await AsyncStorage.removeItem('savedPassword');
+      }
 
-        await AsyncStorage.setItem("user_id", userId.toString());
-        await AsyncStorage.setItem("client_id", clientId ? clientId.toString() : "");
+      router.replace('/Map');
 
-        // Recordar credenciales
-        if (remember) {
-          await AsyncStorage.setItem('savedEmail', email);
-          await AsyncStorage.setItem('savedPassword', password);
-        } else {
-          await AsyncStorage.removeItem('savedEmail');
-          await AsyncStorage.removeItem('savedPassword');
-        }
-
-        router.replace('/Map');
-
-
-      } catch (err: any) {
-    console.log("ERROR LOGIN APP:", err?.response?.data || err.message || err);
-    setError(err?.response?.data?.message || "Error desconocido");
-  }
-
+    } catch (err: any) {
+      setError('Error de conexión. Intenta nuevamente.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleForgotPassword = () => {
@@ -104,15 +112,17 @@ export default function LoginScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <KeyboardAvoidingView
-        style={{ flex: 1, backgroundColor: '#f5f5f5' }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 25 }}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+        <KeyboardAvoidingView
+          style={{ flex: 1, justifyContent: 'center', padding: 25 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
         >
+
           <View style={{ alignItems: 'center', marginBottom: height * -0.03, marginTop: -50 }}>
             <Image
               source={require('../../assets/images/LogoAutoFix.png')}
@@ -143,7 +153,6 @@ export default function LoginScreen() {
             </View>
 
             <View style={styles.inputWrapper}>
-
               <TextInput
                 style={[styles.inputField, { fontSize: scaleFont(16), color: '#000' }]}
                 placeholder="Contraseña"
@@ -153,7 +162,6 @@ export default function LoginScreen() {
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
               />
-
               <TouchableOpacity
                 onPress={() => {
                   if (password.length > 0) setShowPassword(!showPassword);
@@ -186,11 +194,17 @@ export default function LoginScreen() {
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
           <TouchableOpacity
-            style={[styles.button, { paddingVertical: moderateScale(12) }]}
+            style={[
+              styles.button, { paddingVertical: moderateScale(12) }, loading && { opacity: 0.6 }
+            ]}
             onPress={handleLogin}
-            disabled={!email || !password}
+            disabled={!email || !password || loading}
           >
-            <Text style={[styles.buttonText, { fontSize: scaleFont(17) }]}>Iniciar Sesión</Text>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={[styles.buttonText, { fontSize: scaleFont(17) }]}> Iniciar Sesión</Text>
+            )}
           </TouchableOpacity>
 
           <View style={styles.newUserContainer}>
@@ -199,16 +213,16 @@ export default function LoginScreen() {
               <Text style={[styles.linkText, { marginLeft: 5 }]}>Regístrate aquí</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </ScrollView>
     </>
   );
 }
 
+// styles igual (no cambié nada)
 const styles = StyleSheet.create({
   inputWrapper: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 8, borderWidth: 1, borderColor: '#ddd', marginBottom: 15, paddingHorizontal: 15, height: 55, },
   inputField: { flex: 1, height: '100%' },
-  inputIcon: { marginLeft: 10 },
   actionsContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 100 },
   checkboxContainer: { flexDirection: 'row', alignItems: 'center' },
   checkbox: { width: 20, height: 20, borderWidth: 1, borderColor: '#ccc', borderRadius: 4 },

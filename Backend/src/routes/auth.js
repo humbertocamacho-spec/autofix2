@@ -6,7 +6,7 @@ import { ROLES, getRoleId } from "../utils/roles.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
-const emailvalidate = /^[^\s@]+@gmail\.com$/;
+const emailvalidate = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phonevalidate = /^[0-9]{10}$/;
 
 async function getRoleName(roleId) {
@@ -91,31 +91,67 @@ router.post('/login', async (req, res) => {
 // Endpoint Register
 router.post('/register', async (req, res) => {
   try {
-    const { name, phone, email, password } = req.body;
-    if (!name || !phone || !email || !password) {
+    const { name, phone, countryCode, email, password } = req.body;
+
+    if (!name || !phone || !countryCode || !email || !password) {
       return res.status(400).json({ ok: false, message: 'Todos los campos son obligatorios' });
     }
-    if (!emailvalidate.test(email)) return res.status(400).json({ ok: false, message: "Correo inválido" });
-    if (!phonevalidate.test(phone)) return res.status(400).json({ ok: false, message: "Teléfono inválido" });
-    if (password.length < 8) return res.status(400).json({ ok: false, message: "Contraseña mínima de 8 caracteres" });
 
-    const [existing] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
-    if (existing.length > 0) return res.status(400).json({ ok: false, message: 'Email ya registrado' });
+    if (!emailvalidate.test(email)) {
+      return res.status(400).json({ ok: false, message: 'Correo inválido' });
+    }
+
+    if (!phonevalidate.test(phone)) {
+      return res.status(400).json({ ok: false, message: 'Teléfono inválido' });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ ok: false, message: 'Contraseña mínima de 8 caracteres' });
+    }
+
+    // Number validation
+    const fullPhone = `+${countryCode}${phone}`;
+
+    const [existingEmail] = await pool.query(
+      'SELECT id FROM users WHERE email = ?',
+      [email]
+    );
+    if (existingEmail.length > 0) {
+      return res.status(400).json({ ok: false, message: 'Email ya registrado' });
+    }
+
+    const [phoneExists] = await pool.query(
+      'SELECT id FROM users WHERE phone = ?',
+      [fullPhone]
+    );
+    if (phoneExists.length > 0) {
+      return res.status(400).json({ ok: false, message: 'Teléfono ya registrado' });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const clientRoleId = await getRoleId(ROLES.CLIENT);
 
     const [result] = await pool.query(
-      'INSERT INTO users (name, phone, email, password, role_id) VALUES (?, ?, ?, ?, ?)',
-      [name, phone, email, hashedPassword, clientRoleId]
+      `INSERT INTO users (name, phone, email, password, role_id)
+       VALUES (?, ?, ?, ?, ?)`,
+      [name, fullPhone, email, hashedPassword, clientRoleId]
     );
 
     const userId = result.insertId;
-    await pool.query('INSERT INTO clients (user_id) VALUES (?)', [userId]);
 
-    res.json({ ok: true, message: 'Usuario y cliente creados', userId });
+    await pool.query(
+      'INSERT INTO clients (user_id) VALUES (?)',
+      [userId]
+    );
+
+    res.json({
+      ok: true,
+      message: 'Usuario registrado correctamente',
+      userId
+    });
+
   } catch (error) {
-    console.error("Error en register:", error);
+    console.error('Error en register:', error);
     res.status(500).json({ ok: false, message: 'Error al registrar usuario' });
   }
 });
@@ -171,31 +207,26 @@ router.get("/me", authMiddleware, async (req, res) => {
   }
 });
 
-// Endpoint Update Me (Perfil)
+// Endpoint Update Me (Profile)
 router.put("/me", authMiddleware, async (req, res) => {
   try {
-    const { name, phone, email, address, photo_url } = req.body;
+    const { name, phone, countryCode, email, address, photo_url } = req.body;
 
-    if (!name || !email || !phone) {
-      return res.status(400).json({ ok: false, message: "Nombre, email y teléfono son obligatorios",});
+    if (!name || !email || !phone || !countryCode) {
+      return res.status(400).json({ ok: false, message: "Datos incompletos" });
     }
 
     if (!phonevalidate.test(phone)) {
-      return res.status(400).json({ ok: false, message: "Teléfono inválido",});
+      return res.status(400).json({ ok: false, message: "Teléfono inválido" });
     }
+
+    const fullPhone = `+${countryCode}${phone}`;
 
     await pool.query(
       `UPDATE users 
        SET name = ?, email = ?, phone = ?, address = ?, photo_url = ?
        WHERE id = ?`,
-      [
-        name,
-        email,
-        phone,
-        address || null,
-        photo_url || null,
-        req.user.user_id,
-      ]
+      [name, email, fullPhone, address || null, photo_url || null, req.user.user_id]
     );
 
     res.json({ ok: true, message: "Perfil actualizado" });

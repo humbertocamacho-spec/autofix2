@@ -204,7 +204,8 @@
       "hidden": "more",
       "name_error": "This field is required",
       "user_error": "This field is required",
-      "phone_error": "This field is required",
+      "phone_error": "The phone number must be 10 digits",
+      "whatsapp_error": "The whatsapp number must be 10 digits",
       "location_error": "This field is required",
       "latitude_error": "This field is required",
       "longitude_error": "This field is required",
@@ -212,7 +213,9 @@
       "description_error": "This field is required",
       "name_placeholder": "Ej. The Rayo Mechanical Workshop",
       "logo_url_placeholder": "https://example.com/logo.png",
-      "description_placeholder": "Ej. Workshop specializing in brakes, suspension and general maintenance"
+      "description_placeholder": "Ej. Workshop specializing in brakes, suspension and general maintenance",
+      "logo_url_default": "Default logo",
+      "logo_url_message": "If the partner does not have an image, select the default option. You can change it later."
     },
     "confirm": {
       "deactivate": "Are you sure you want to deactivate the partner \"{{name}}\"?",

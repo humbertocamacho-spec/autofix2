@@ -44,5 +44,5 @@ const styles = StyleSheet.create({
   confirmText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
   actionButton: { paddingVertical: 12, borderRadius: 10, alignItems: "center" },
   actionButtonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
-  personageImage: { width: "100%", height: "50%", resizeMode: "center", marginBottom: -80, marginTop: 30,},
+  personageImage: { width: "100%", height: 250, resizeMode: "contain",  marginTop: 30,}
 });

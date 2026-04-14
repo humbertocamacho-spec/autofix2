@@ -224,16 +224,48 @@ export default function AppointmentScreen() {
                 <Text style={styles.valueText}>{location}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.detailItem} onPress={handleCall}>
-                <Ionicons name="call-outline" size={20} color="#27B9BA" style={styles.icon} />
-                <Text style={styles.labelText}>Teléfono: </Text>
-                <Text style={styles.valueText}>{phone}</Text>
+              <TouchableOpacity
+                style={styles.detailItem}
+                onPress={phone ? handleCall : undefined}
+                disabled={!phone}
+                activeOpacity={phone ? 0.7 : 1}
+              >
+                <Ionicons
+                  name={phone ? "call-outline" : "close-circle-outline"}
+                  size={20}
+                  color={phone ? "#27B9BA" : "gray"}
+                  style={styles.icon}
+                />
+
+                <Text style={[ styles.labelText,{ color: phone ? "#27B9BA" : "gray" }]}>
+                  Teléfono:
+                </Text>
+
+                <Text style={[ styles.valueText,{ color: phone ? "#000" : "gray" }]}>
+                  {phone && phone !== "" ? phone : "No disponible"}
+                </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.detailItem} onPress={handleWhatsapp}>
-                <Ionicons name="logo-whatsapp" size={20} color="#27B9BA" style={styles.icon} />
-                <Text style={styles.labelText}>WhatsApp: </Text>
-                <Text style={styles.valueText}>{whatsapp}</Text>
+              <TouchableOpacity
+                style={styles.detailItem}
+                onPress={whatsapp ? handleWhatsapp : undefined}
+                disabled={!whatsapp}
+                activeOpacity={whatsapp ? 0.7 : 1}
+              >
+                <Ionicons
+                  name={whatsapp ? "logo-whatsapp" : "close-circle-outline"}
+                  size={20}
+                  color={whatsapp ? "#27B9BA" : "gray"}
+                  style={styles.icon}
+                />
+
+                <Text style={[ styles.labelText,{ color: whatsapp ? "#27B9BA" : "gray" }]}>
+                  WhatsApp:
+                </Text>
+
+                <Text style={[ styles.valueText, {color: whatsapp ? "#000" : "gray" }]}>
+                  {whatsapp && whatsapp !== "" ? whatsapp : "No disponible"}
+                </Text>
               </TouchableOpacity>
             </View>
 

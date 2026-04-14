@@ -63,11 +63,7 @@ export default function PartnerDetailScreen() {
   const handleWhatsapp = () => {
     if (!whatsapp) return;
 
-    let phoneNumber = whatsapp.replace(/\D/g, '');
-
-    if (phoneNumber.length === 10) {
-      phoneNumber = `52${phoneNumber}`;
-    }
+    const phoneNumber = whatsapp.replace(/\D/g, '');
 
     const url = `https://wa.me/${phoneNumber}`;
 
@@ -228,7 +224,7 @@ export default function PartnerDetailScreen() {
           )}
 
           {partnerCertifications.length === 0 && (
-            <Text style={{ fontSize: 15, color: "#555", marginBottom: 5 }}> No cuenta con certificación</Text>
+            <Text style={{ fontSize: 15, color: "#555", marginBottom: 5 }}>No cuenta con certificación</Text>
           )}
 
           <View style={{ flexDirection: 'row', marginTop: -5, marginBottom: 10 }}>

@@ -8,12 +8,14 @@ import type { Partner } from "../../../types/partner";
 import type { User } from "../../../types/users";
 import Can from "../../../components/Can";
 import { authFetch } from "../../../utils/authFetch";
+import "react-phone-input-2/lib/style.css";
+import PhoneInput from "react-phone-input-2";
 
 export default function PartnersTable() {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [specialities, setSpecialities] = useState<{ id: number; name: string }[]>([]);
-  const [allPartnerSpecialities, setAllPartnerSpecialities] = useState< { partner_id: number; speciality_id: number }[]>([]);
+  const [allPartnerSpecialities, setAllPartnerSpecialities] = useState<{ partner_id: number; speciality_id: number }[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -40,6 +42,7 @@ export default function PartnersTable() {
 
   const { user } = useAuthContext();
   const { t } = useTranslation();
+  const DEFAULT_LOGO_URL ="https://pakexhibitions.com/public/uploads/exhibition_logo/465-wheels%20image.PNG";
 
   // Initial load of partners, users and specialities
   useEffect(() => {
@@ -53,7 +56,7 @@ export default function PartnersTable() {
   const fetchPartners = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await authFetch(`${VITE_API_URL}/api/partners`, { headers: { Authorization: `Bearer ${token}`, },});
+      const res = await authFetch(`${VITE_API_URL}/api/partners`, { headers: { Authorization: `Bearer ${token}`, }, });
       const data: Partner[] = await res.json();
       setPartners(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -103,7 +106,7 @@ export default function PartnersTable() {
   const getPartnerSpecialities = (partnerId: number) => {
     return allPartnerSpecialities
       .filter(ps => ps.partner_id === partnerId)
-      .map(rel => { const spec = specialities.find(s => s.id === rel.speciality_id); return spec?.name;})
+      .map(rel => { const spec = specialities.find(s => s.id === rel.speciality_id); return spec?.name; })
       .filter(Boolean) as string[];
   };
 
@@ -124,12 +127,12 @@ export default function PartnersTable() {
 
     if (!name.trim()) newErrors.name = t("partners_screen.table.name_error");
     if (!userId) newErrors.userId = t("partners_screen.table.user_error");
-    if (!phone.trim()) newErrors.phone = t("partners_screen.table.phone_error");
     if (!location.trim()) newErrors.location = t("partners_screen.table.location_error");
     if (!latitude.trim()) newErrors.latitude = t("partners_screen.table.latitude_error");
     if (!longitude.trim()) newErrors.longitude = t("partners_screen.table.longitude_error");
     if (!logoUrl.trim()) newErrors.logoUrl = t("partners_screen.table.logo_url_error");
     if (!description.trim()) newErrors.description = t("partners_screen.table.description_error");
+ 
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
@@ -171,7 +174,7 @@ export default function PartnersTable() {
     setName(partner.name);
     setUserId(partner.user_id);
     setPhone(partner.phone);
-    setWhatsapp(partner.whatsapp);
+    setWhatsapp(partner.whatsapp?.startsWith("+521") ? partner.whatsapp.replace("+521", "+52") : partner.whatsapp || "");
     setLocation(partner.location);
     setLatitude(partner.latitude || "");
     setLongitude(partner.longitude || "");
@@ -188,7 +191,8 @@ export default function PartnersTable() {
     setSubmitted(true);
     if (!validateForm()) return;
 
-    const body = { name, user_id: userId, phone, whatsapp, location, latitude, longitude, land_use_permit: landUsePermit, scanner_handling: scannerHandling, logo_url: logoUrl, description, priority };
+    const body = { name, user_id: userId, phone, whatsapp: normalizeWhatsappForTwilio(whatsapp),location, latitude, longitude, 
+    land_use_permit: landUsePermit, scanner_handling: scannerHandling, logo_url: logoUrl, description, priority, };
     const url = isEditing ? `${VITE_API_URL}/api/partners/${currentPartner?.id}` : `${VITE_API_URL}/api/partners`;
     const method = isEditing ? "PUT" : "POST";
     const token = localStorage.getItem("token");
@@ -205,7 +209,7 @@ export default function PartnersTable() {
     await fetch(`${VITE_API_URL}/api/partner_specialities`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
-      body: JSON.stringify({ partner_id: partnerId, speciality_ids: selectedSpecialities,}),
+      body: JSON.stringify({ partner_id: partnerId, speciality_ids: selectedSpecialities, }),
     });
 
     alert(t(isEditing ? "partners_screen.success.update" : "partners_screen.success.create"));
@@ -216,12 +220,12 @@ export default function PartnersTable() {
 
   // Actions
   const deletePartner = async (partner: Partner) => {
-    const confirmed = window.confirm( t("partners_screen.confirm.deactivate", { name: partner.name }));
+    const confirmed = window.confirm(t("partners_screen.confirm.deactivate", { name: partner.name }));
     if (!confirmed) return;
 
-    const res = await authFetch(`${VITE_API_URL}/api/partners/${partner.id}`, { method: "DELETE",});
+    const res = await authFetch(`${VITE_API_URL}/api/partners/${partner.id}`, { method: "DELETE", });
 
-    if (!res.ok) { alert(t("partners_screen.errors.deactivate")); return;}
+    if (!res.ok) { alert(t("partners_screen.errors.deactivate")); return; }
 
     alert(t("partners_screen.success.deactivate"));
     fetchPartners();
@@ -229,19 +233,36 @@ export default function PartnersTable() {
 
   // Restore partner
   const restorePartner = async (partner: Partner) => {
-    const confirmed = window.confirm( t("partners_screen.confirm.restore", { name: partner.name }));
+    const confirmed = window.confirm(t("partners_screen.confirm.restore", { name: partner.name }));
     if (!confirmed) return;
 
-    const res = await authFetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, { method: "PATCH",});
+    const res = await authFetch(`${VITE_API_URL}/api/partners/${partner.id}/restore`, { method: "PATCH", });
 
-    if (!res.ok) { alert(t("partners_screen.errors.restore")); return;}
+    if (!res.ok) { alert(t("partners_screen.errors.restore")); return; }
 
     alert(t("partners_screen.success.restore"));
     fetchPartners();
   };
 
   // Filter partners by name
-  const filtered = partners .filter((p) => p.name.toLowerCase().includes(search.toLowerCase())) .sort((a, b) => a.id - b.id);
+  const filtered = partners.filter((p) => p.name.toLowerCase().includes(search.toLowerCase())).sort((a, b) => a.id - b.id);
+
+  // Normalize whatsapp number for Twilio
+  const normalizeWhatsappForTwilio = (value?: string) => {
+    if (!value || value === "+" || value.length < 4) {
+      return null;
+    }
+
+    if (value.startsWith("+521")) {
+      return value;
+    }
+
+    if (value.startsWith("+52")) {
+      return value.replace("+52", "+521");
+    }
+
+    return value;
+  };
 
   return (
     <DashboardLayout>
@@ -274,7 +295,7 @@ export default function PartnersTable() {
               <thead>
                 <tr className="text-gray-600 border-b">
                   <th className="pb-3 w-12">{t("partners_screen.table.id")}</th>
-                  <th className="pb-3 w-40">{t("partners_screen.table.name")}</th>
+                  <th className="pb-4 w-40">{t("partners_screen.table.name")}</th>
                   <th className="pb-3 w-40">{t("partners_screen.table.phone")}</th>
                   <th className="pb-3 w-40">{t("partners_screen.table.whatsapp")}</th>
                   <th className="pb-3 ">{t("partners_screen.table.location")}</th>
@@ -324,7 +345,7 @@ export default function PartnersTable() {
                       {(() => {
                         const specs = getPartnerSpecialities(item.id);
 
-                        if (specs.length === 0) { return <span className="text-gray-400 text-sm">-</span>;}
+                        if (specs.length === 0) { return <span className="text-gray-400 text-sm">-</span>; }
 
                         const visible = specs.slice(0, 2);
                         const hiddenCount = specs.length - visible.length;
@@ -332,7 +353,7 @@ export default function PartnersTable() {
                         return (
                           <div className="text-sm text-gray-700" title={specs.join("\n")}>
                             <ul className="list-disc list-outside pl-4 space-y-0.5 leading-snug">
-                              {visible.map((name, idx) => ( <li key={idx}>{name}</li>))}
+                              {visible.map((name, idx) => (<li key={idx}>{name}</li>))}
                               {hiddenCount > 0 && (<li className="text-gray-400 italic"> +{hiddenCount} {t("partners_screen.table.hidden")}</li>)}
                             </ul>
                           </div>
@@ -344,7 +365,7 @@ export default function PartnersTable() {
 
                     <td className="py-3 px-4 text-center">
                       <span
-                        title={ item.deleted_at ? t("users_screen.table.status_inactive") : t("users_screen.table.status_active")} 
+                        title={item.deleted_at ? t("users_screen.table.status_inactive") : t("users_screen.table.status_active")}
                         className={`inline-block w-3 h-3 rounded-full ${item.deleted_at ? "bg-red-500" : "bg-green-500"}`}
                       />
                     </td>
@@ -424,24 +445,76 @@ export default function PartnersTable() {
                 </div>
 
                 <div>
-                  <RequiredLabel required>{t("partners_screen.table.phone")}</RequiredLabel>
-                  <input
-                    className={`w-full px-3 py-2 rounded-lg border ${errors.phone ? "border-red-500" : "border-gray-300"} `}
+                  <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.phone")}</label>
+
+                  <PhoneInput
+                    country="mx"
                     value={phone}
-                    onChange={(e) => { setPhone(e.target.value); setErrors((prev) => ({ ...prev, phone: "" })); }}
-                    placeholder="Ej. 55 1234 5678"
+                    onChange={(value) => {
+                      setPhone(`+${value}`);
+                      setErrors((prev) => ({ ...prev, phone: "" }));
+                    }}
+                    enableSearch
+                    disableSearchIcon
+                    countryCodeEditable={false}
+                    inputProps={{
+                      name: "phone",
+                      required: true,
+                    }}
+                    containerStyle={{ width: "100%" }}
+                    inputStyle={{
+                      width: "100%",
+                      height: "42px",
+                      borderRadius: "0.5rem",
+                      borderColor:
+                        submitted && errors.phone ? "#ef4444" : "#d1d5db",
+                    }}
+                    buttonStyle={{
+                      borderRadius: "0.5rem 0 0 0.5rem",
+                      borderColor:
+                        submitted && errors.phone ? "#ef4444" : "#d1d5db",
+                    }}
+                    placeholder="+52 55 1234 5678"
                   />
-                  {submitted && errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+
+                  {submitted && errors.phone && (
+                    <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                  )}
                 </div>
 
                 <div>
                   <label className="text-sm font-semibold text-gray-600">{t("partners_screen.table.whatsapp")}</label>
-                  <input
-                    className="w-full border border-gray-300 px-3 py-2 rounded-lg"
+
+                  <PhoneInput
+                    country="mx"
                     value={whatsapp}
-                    onChange={(e) => setWhatsapp(e.target.value)}
-                    placeholder="Ej. 55 1234 5678"
+                    onChange={(value) => {
+                      if (!value) { setWhatsapp(""); return;}
+
+                      setWhatsapp(`+${value}`);
+                      setErrors((prev) => ({ ...prev, whatsapp: "" }));
+                    }}
+                    enableSearch
+                    disableSearchIcon
+                    countryCodeEditable={false}
+                    inputProps={{ name: "whatsapp" }}
+                    containerStyle={{ width: "100%" }}
+                    inputStyle={{
+                      width: "100%",
+                      height: "42px",
+                      borderRadius: "0.5rem",
+                      borderColor:
+                        submitted && errors.whatsapp ? "#ef4444" : "#d1d5db",
+                    }}
+                    buttonStyle={{
+                      borderRadius: "0.5rem 0 0 0.5rem",
+                      borderColor:
+                        submitted && errors.whatsapp ? "#ef4444" : "#d1d5db",
+                    }}
+                    placeholder="+52 55 1234 5678"
                   />
+
+                  {submitted && errors.whatsapp && (<p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>)}
                 </div>
 
                 <div className="col-span-2">
@@ -492,24 +565,47 @@ export default function PartnersTable() {
                   <input
                     className={`w-full px-3 py-2 rounded-lg border ${submitted && errors.logoUrl ? "border-red-500" : "border-gray-300"}`}
                     value={logoUrl}
-                    onChange={(e) => { setLogoUrl(e.target.value); setErrors((prev) => ({ ...prev, logoUrl: "" })); }}
+                    onChange={(e) => {
+                      setLogoUrl(e.target.value);
+                      setErrors((prev) => ({ ...prev, logoUrl: "" }));
+                    }}
                     placeholder={t("partners_screen.table.logo_url_placeholder")}
                   />
-                  {submitted && errors.logoUrl && (
-                    <p className="text-red-500 text-xs mt-1">{errors.logoUrl}</p>
-                  )}
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLogoUrl(DEFAULT_LOGO_URL);
+                        setErrors((prev) => ({ ...prev, logoUrl: "" }));
+                      }}
+                      className="mt-2 px-4 py-1.5 text-xs bg-gray-200 rounded-lg hover:bg-gray-300 transition"
+                    >
+                      {t("partners_screen.table.logo_url_default")}
+                    </button>
+
+                    <p className="text-xs text-gray-500">
+                      {t("partners_screen.table.logo_url_message")}
+                    </p>
+                  </div>
+
+                  {submitted && errors.logoUrl && (<p className="text-red-500 text-xs mt-1">{errors.logoUrl}</p>)}
 
                   {logoUrl && (
                     <div className="mt-3 flex items-center gap-3">
                       <img
+                        key={logoUrl}
                         src={logoUrl}
                         alt="Logo preview"
                         className="h-16 w-16 object-contain border rounded-lg bg-white"
                         onError={(e) => {
+                          console.error("No se pudo cargar:", logoUrl);
                           e.currentTarget.style.display = "none";
                         }}
                       />
-                      <span className="text-xs text-gray-500">{t("partners_screen.table.logo_url_preview")}</span>
+                      <span className="text-xs text-gray-500">
+                        {logoUrl === DEFAULT_LOGO_URL ? "Logo por defecto" : t("partners_screen.table.logo_url_preview")}
+                      </span>
                     </div>
                   )}
                 </div>

@@ -40,6 +40,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
+    "react-native-country-picker-modal": "^2.0.0",
     "react-native-dotenv": "^3.4.11",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-maps": "1.20.1",
@@ -52,6 +53,7 @@
   "devDependencies": {
     "@types/axios": "^0.9.36",
     "@types/expo__vector-icons": "^9.0.1",
+    "@types/hapi__boom": "^7.4.1",
     "@types/node": "^24.10.0",
     "@types/react": "~19.1.0",
     "babel-plugin-module-resolver": "^5.0.2",

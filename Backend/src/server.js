@@ -14,6 +14,7 @@ import clientRoutes from "./routes/client.js";
 import pendingTicketsRoutes from "./routes/pending_tickets.js";
 import partnerCertificationsRoutes from "./routes/partner_certifications.js";
 import certificationsRoutes from './routes/certifications.js';
+import 'dotenv/config'
 
 //Web
 import rolesRoutes from "./routes/roles.js";

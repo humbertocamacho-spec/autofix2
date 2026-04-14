@@ -1,7 +1,7 @@
 import * as Location from 'expo-location';
 import { Stack, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Animated, Dimensions, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView} from 'react-native';
+import { KeyboardAvoidingView,Platform, ActivityIndicator, Alert, Animated, Dimensions, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView} from 'react-native';
 import MapView, { Marker, Region } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { getPartners } from '@/services/partners';
@@ -58,6 +58,7 @@ export default function MapScreen() {
   const [searchText, setSearchText] = useState('');
   const [distanceRadius, setDistanceRadius] = useState(10);
   const [loadedMarkers, setLoadedMarkers] = useState<Set<string | number>>(new Set());
+  
 
   // Reset markers when filters change
   useEffect(() => {
@@ -87,28 +88,43 @@ export default function MapScreen() {
   }, []);
 
   // Get user location
+  // Get user location (FIX ANTI FREEZE)
   useEffect(() => {
+    let mounted = true;
+
     (async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
+
         if (status !== 'granted') {
-          Alert.alert('Permiso denegado', 'Se mostrará la ubicación por defecto.');
-          setRegion(defaultRegion);
-        } else {
-          const { coords } = await Location.getCurrentPositionAsync({});
+          if (mounted) setRegion(defaultRegion);
+          return;
+        }
+
+        const location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
+
+        if (mounted) {
           setRegion({
-            latitude: coords.latitude,
-            longitude: coords.longitude,
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
             latitudeDelta: 0.04,
             longitudeDelta: 0.04,
           });
         }
-      } catch {
-        setRegion(defaultRegion);
+
+      } catch (error) {
+        console.log('Error ubicación inicial:', error);
+        if (mounted) setRegion(defaultRegion);
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
     })();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -223,7 +239,7 @@ export default function MapScreen() {
                 <Marker
                   key={partner.id}
                   coordinate={{ latitude: lat, longitude: lon }}
-                  anchor={{ x: 0.5, y: 0.5 }}
+                  anchor={{ x: 0.5, y: 1 }}
                   tracksViewChanges={!alreadyLoaded}
                   onPress={() => {
                     const specs = partnersSpecialities
@@ -267,8 +283,7 @@ export default function MapScreen() {
                         <View style={styles.markerImage} />
                       )}
                     </View>
-
-                    <View style={[ styles.markerArrow, { borderTopColor: isMatch ? '#00ff00' : '#ffffff' },]}/>
+                    <View style={[ styles.markerPointer, { borderTopColor: isMatch ? '#00ff00' : '#ddd' }, ]}/>
                   </View>   
                 </Marker>
               );
@@ -276,37 +291,47 @@ export default function MapScreen() {
           </MapView>
         </View>
 
-        <View style={styles.searchContainer}>
-          <View style={styles.searchWrapped}>
-            <Ionicons name="search-outline" size={20} color="#7a7a7a" marginRight={10} />
-            <TextInput style={styles.searchInput} placeholder="Buscar Tiendas" placeholderTextColor="#666" value={searchText} onChangeText={setSearchText} />
-          </View>
+        <KeyboardAvoidingView  behavior={Platform.OS === 'ios' ? 'padding' : 'position'} keyboardVerticalOffset={Platform.OS === 'ios' ? -50 : -110} style={styles.searchContainerWrapper}>
 
-          <TouchableOpacity
-            onPress={() =>
-              router.push({
-                pathname: '/Recommendations',
-                params: {
-                  latitude: region?.latitude.toString() || '',
-                  longitude: region?.longitude.toString() || '',
-                  radius: distanceRadius.toString(),
-                },
-              })
-            }
-          >
-            <Text style={styles.recommendationsButton}>Recomendaciones Cercanas</Text>
-          </TouchableOpacity>
-
-          <ScrollView style={styles.scrollSpecialities} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            <View style={styles.specialityContainer}>
-              {specialities.map((item) => (
-                <TouchableOpacity key={item.id} style={[styles.specialityButton, selectedSpeciality === item.id && styles.specialityButtonActive]} onPress={() => setSelectedSpeciality(selectedSpeciality === item.id ? null : item.id)}>
-                  <Text style={[styles.specialityText, selectedSpeciality === item.id && styles.specialityTextActive]}>{item.name}</Text>
-                </TouchableOpacity>
-              ))}
+          <View style={styles.searchContainer}>
+            <View style={styles.searchWrapped}>
+              <Ionicons name="search-outline" size={20} color="#7a7a7a" marginRight={10} />
+              <TextInput 
+                style={styles.searchInput} 
+                placeholder="Buscar Tiendas" 
+                placeholderTextColor="#666" 
+                value={searchText} 
+                onChangeText={setSearchText}
+                returnKeyType="done"
+              />
             </View>
-          </ScrollView>
-        </View>
+
+            <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: '/Recommendations',
+                  params: {
+                    latitude: region?.latitude.toString() || '',
+                    longitude: region?.longitude.toString() || '',
+                    radius: distanceRadius.toString(),
+                  },
+                })
+              }
+            >
+              <Text style={styles.recommendationsButton}>Recomendaciones Cercanas</Text>
+            </TouchableOpacity>
+
+            <ScrollView style={styles.scrollSpecialities} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+              <View style={styles.specialityContainer}>
+                {specialities.map((item) => (
+                  <TouchableOpacity key={item.id} style={[styles.specialityButton, selectedSpeciality === item.id && styles.specialityButtonActive]} onPress={() => setSelectedSpeciality(selectedSpeciality === item.id ? null : item.id)}>
+                    <Text style={[styles.specialityText, selectedSpeciality === item.id && styles.specialityTextActive]}>{item.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
 
         <Modal visible={mapModalVisible} animationType="fade" transparent={true} onRequestClose={() => setMapModalVisible(false)}>
           <View style={styles.modalOverlay}>
@@ -318,18 +343,36 @@ export default function MapScreen() {
               <View style={styles.markerFixed}>
                 <Ionicons name="location-sharp" size={40} color="red" />
               </View>
-              <TouchableOpacity style={styles.gpsButton} onPress={async () => {
-                const { coords } = await Location.getCurrentPositionAsync({});
+              <TouchableOpacity
+                style={styles.gpsButton}
+                onPress={async () => {
+                  try {
+                    const { status } = await Location.getForegroundPermissionsAsync();
 
-                const realRegion = {
-                  latitude: coords.latitude,
-                  longitude: coords.longitude,
-                  latitudeDelta: 0.01,
-                  longitudeDelta: 0.01,
-                };
-                setTempRegion(realRegion);
-                modalMapRef.current?.animateToRegion(realRegion, 1000);
-              }}
+                    if (status !== 'granted') {
+                      Alert.alert( 'Permiso requerido', 'Activa la ubicación en configuración.');
+                      return;
+                    }
+
+                    const location = await Location.getCurrentPositionAsync({
+                      accuracy: Location.Accuracy.Balanced,
+                    });
+
+                    const realRegion = {
+                      latitude: location.coords.latitude,
+                      longitude: location.coords.longitude,
+                      latitudeDelta: 0.01,
+                      longitudeDelta: 0.01,
+                    };
+
+                    setTempRegion(realRegion);
+                    modalMapRef.current?.animateToRegion(realRegion, 1000);
+
+                  } catch (error) {
+                    console.log('Error GPS modal:', error);
+                    Alert.alert( 'Error de ubicación', 'No se pudo obtener la ubicación. Intenta nuevamente.');
+                  }
+                }}
               >
                 <Ionicons name="locate" size={28} color="#27B9BA" />
               </TouchableOpacity>
@@ -445,7 +488,6 @@ const styles = StyleSheet.create({
   buttonText: { color: '#fff', fontWeight: 'bold' },
   partnerButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#27B9BA', paddingVertical: 12, paddingHorizontal: 15, borderRadius: 10, marginHorizontal: 15, marginTop: 5, justifyContent: 'center', elevation: 3, },
   partnerButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold', },
-  searchContainer: { width: '100%', height: 350, backgroundColor: '#fff', padding: 10, elevation: 5,},
   scrollSpecialities: { maxHeight: "100%", marginTop: 10, marginBottom: 10, },
   scrollContent: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', paddingBottom: 10, },
   specialityContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
@@ -469,8 +511,10 @@ const styles = StyleSheet.create({
   distanceOptionText: { fontSize: 15, fontWeight: "600", color: "#333", },
   distanceOptionTextActive: { color: "#fff", fontWeight: "bold", },
   markerContainer: { alignItems: 'center',},
-  markerBubble: { width: 30, height: 30, borderRadius: 30, backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center', borderWidth: 1,},
-  markerImage: { width: 30, height: 30, borderRadius: 15,},
-  markerArrow: { width: 0, height: 0, borderLeftWidth: 6, borderRightWidth: 6, borderTopWidth: 5, borderLeftColor: 'transparent', borderRightColor: 'transparent', marginTop: -2,},
+  markerBubble: { width: 31, height: 31, borderRadius: 16,backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center', borderWidth: 1.5, borderColor: '#000', overflow: 'hidden',},
+  markerImage: { width: '100%', height: '100%', resizeMode: 'cover',},
+  markerPointer: { width: 0, height: 0, borderLeftWidth: 9, borderRightWidth: 9, borderTopWidth: 5, borderLeftColor: 'transparent', borderRightColor: 'transparent', marginTop: -2,},
+  searchContainerWrapper: { bottom: 0, left: 0, right: 0,},
+  searchContainer: {  backgroundColor: '#fff',  maxHeight: 340,  padding: 10,  borderTopLeftRadius: 20,  borderTopRightRadius: 20,  elevation: 12,},
 
 });
